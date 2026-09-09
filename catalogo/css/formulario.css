@@ -1,0 +1,508 @@
+/* =========================================================
+   BOUTIQUE DE LA VISIÓN — Checkout
+   Riesgo de diseño: panel editorial casi negro con la
+   tipografía del modelo en gran escala como marca de agua
+   vertical, evocando el forro interior de un estuche de
+   lujo. Contrasta con el formulario claro, de etiquetas
+   flotantes y una "columna vertebral" dorada que numera
+   los pasos reales del proceso de compra.
+   ========================================================= */
+:root{
+  --cream:      #fbf8f1;
+  --cream-deep: #f4efe3;
+  --ink:        #241f19;
+  --ink-soft:   #55503f;
+  --ink-black:  #15130f;
+  --ink-black-2:#1d1a14;
+  --gold:       #c9a227;
+  --gold-light: #e8cf82;
+  --gold-gradient: linear-gradient(135deg, #d9b64a 0%, #f3e3ab 45%, #c9a227 100%);
+
+  --font-display: 'Cormorant Garamond', Georgia, serif;
+  --font-body: 'Jost', 'Segoe UI', sans-serif;
+
+  --shadow-soft: 0 24px 70px -30px rgba(0,0,0,0.55);
+}
+
+*{ box-sizing:border-box; }
+html{ scroll-behavior:smooth; }
+body{
+  margin:0;
+  background: var(--cream);
+  color: var(--ink);
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+}
+img{ max-width:100%; display:block; }
+button{ font-family:inherit; cursor:pointer; }
+
+.back-link{
+  position: fixed;
+  top: 22px;
+  left: 32px;
+  z-index: 60;
+  font-size: 12.5px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink);
+  background: rgba(251,248,241,0.85);
+  backdrop-filter: blur(6px);
+  padding: 9px 16px;
+  border-radius: 999px;
+  border: 1px solid rgba(36,31,25,0.15);
+  text-decoration:none;
+  transition: border-color .2s ease, color .2s ease;
+}
+.back-link:hover{ border-color: var(--gold); color: var(--gold); }
+
+/* =========================================================
+   LAYOUT — split asimétrico
+   ========================================================= */
+.checkout{
+  min-height: 100vh;
+  display: grid;
+  grid-template-columns: 42% 58%;
+}
+
+/* ---------- panel editorial ---------- */
+.checkout-summary{
+  position: relative;
+  background: linear-gradient(165deg, var(--ink-black) 0%, var(--ink-black-2) 100%);
+  color: var(--cream);
+  padding: 100px 56px 56px;
+  overflow: hidden;
+  display:flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+.summary-watermark{
+  position: absolute;
+  top: 50%;
+  left: -6%;
+  transform: translateY(-50%) rotate(-90deg);
+  transform-origin: left center;
+  font-family: var(--font-display);
+  font-style: italic;
+  font-weight: 500;
+  font-size: 150px;
+  white-space: nowrap;
+  color: rgba(232,207,130,0.07);
+  letter-spacing: 0.01em;
+  pointer-events:none;
+  user-select:none;
+}
+.summary-top{
+  position: relative;
+  z-index: 2;
+  display:flex;
+  align-items:center;
+  gap: 16px;
+  margin-bottom: 40px;
+}
+.summary-logo{
+  height: 42px;
+  filter: brightness(0) invert(1) sepia(0.4) saturate(4) hue-rotate(-10deg);
+  opacity: 0.9;
+}
+.summary-eyebrow{
+  font-size: 11.5px;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--gold-light);
+  margin: 0;
+}
+
+.summary-product{ position:relative; z-index:2; }
+.summary-image-wrap{
+  background: radial-gradient(circle at 50% 40%, rgba(232,207,130,0.14), transparent 65%);
+  border: 1px solid rgba(232,207,130,0.25);
+  border-radius: 20px;
+  padding: 28px;
+  margin-bottom: 26px;
+}
+.summary-image-wrap img{
+  filter: drop-shadow(0 16px 20px rgba(0,0,0,0.5));
+}
+.summary-collection{
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: 15px;
+  color: var(--gold-light);
+  margin: 0 0 6px;
+}
+.summary-name{
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: clamp(28px, 4.2vw, 40px);
+  line-height: 1.1;
+  margin: 0 0 14px;
+  color: var(--cream);
+}
+.summary-desc{
+  font-size: 14px;
+  line-height: 1.7;
+  color: rgba(251,248,241,0.65);
+  max-width: 380px;
+  margin: 0 0 28px;
+}
+
+.summary-price-tag{
+  position: relative;
+  display:inline-flex;
+  align-items:baseline;
+  gap: 10px;
+  background: var(--cream);
+  color: var(--ink);
+  padding: 12px 20px 12px 26px;
+  border-radius: 4px 12px 12px 4px;
+  transform: rotate(-2deg);
+  box-shadow: var(--shadow-soft);
+}
+.summary-price-tag::before{
+  content:"";
+  position:absolute;
+  left: -6px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 12px;
+  height: 12px;
+  background: var(--ink-black);
+  border: 2px solid var(--gold-light);
+  border-radius: 50%;
+}
+.tag-label{
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+.tag-amount{
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 22px;
+  color: var(--ink);
+}
+
+.summary-note{
+  position: relative;
+  z-index: 2;
+  font-size: 12.5px;
+  line-height: 1.7;
+  color: rgba(251,248,241,0.5);
+  border-top: 1px solid rgba(232,207,130,0.2);
+  padding-top: 20px;
+  max-width: 380px;
+}
+
+/* ---------- formulario ---------- */
+.checkout-form-wrap{
+  padding: 110px 8vw 90px 7vw;
+  max-width: 760px;
+}
+
+.step{
+  border: none;
+  margin: 0 0 56px;
+  padding: 0 0 0 60px;
+  position: relative;
+  min-width: 0;
+}
+.step:not(:last-of-type)::after{
+  content:"";
+  position:absolute;
+  left: 19px;
+  top: 42px;
+  bottom: -56px;
+  width: 1px;
+  background: linear-gradient(180deg, rgba(201,162,39,0.5), rgba(201,162,39,0.08));
+}
+.step-marker{
+  position:absolute;
+  left:0;
+  top:0;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 1px solid var(--gold);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background: var(--cream);
+  z-index: 2;
+}
+.step-marker span{
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 15px;
+  color: var(--gold);
+}
+.step-body legend{
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-style: italic;
+  font-size: 26px;
+  color: var(--ink);
+  padding: 0;
+  margin: 4px 0 26px;
+}
+
+.field-grid{
+  display:grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 26px 28px;
+}
+.field--full{ grid-column: 1 / -1; }
+
+.field{ position: relative; }
+.field input{
+  width: 100%;
+  border: none;
+  border-bottom: 1px solid rgba(36,31,25,0.25);
+  background: transparent;
+  font-family: var(--font-body);
+  font-size: 16px;
+  color: var(--ink);
+  padding: 10px 2px 10px;
+  outline: none;
+  transition: border-color .2s ease;
+}
+.field input:focus{ border-color: var(--gold); }
+.field label{
+  position: absolute;
+  left: 2px;
+  top: 10px;
+  font-size: 15.5px;
+  color: var(--ink-soft);
+  pointer-events:none;
+  transform-origin: left top;
+  transition: transform .18s ease, color .18s ease, top .18s ease;
+}
+.field input:focus + label,
+.field input:not(:placeholder-shown) + label{
+  top: -12px;
+  transform: scale(0.78);
+  color: var(--gold);
+}
+
+/* ---------- opciones tipo choice ---------- */
+.choice-row{
+  display:flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 28px;
+}
+.choice{
+  position: relative;
+  display:flex;
+  align-items:center;
+  gap: 9px;
+  font-size: 13.5px;
+  border: 1px solid rgba(36,31,25,0.2);
+  border-radius: 999px;
+  padding: 11px 18px;
+  cursor:pointer;
+  transition: border-color .2s ease, background .2s ease;
+}
+.choice input{ position:absolute; opacity:0; }
+.choice input:checked ~ span{ color: var(--ink); font-weight: 500; }
+.choice:has(input:checked){
+  border-color: var(--gold);
+  background: rgba(201,162,39,0.09);
+}
+.choice span::before{ content:none; }
+
+/* ---------- fórmula óptica ---------- */
+.prescription-block{
+  border: 1px dashed rgba(201,162,39,0.4);
+  border-radius: 16px;
+  padding: 24px;
+  background: rgba(201,162,39,0.04);
+}
+.prescription-grid{
+  display:grid;
+  grid-template-columns: 110px repeat(3, 1fr);
+  gap: 12px;
+  align-items:center;
+  margin-bottom: 20px;
+}
+.prescription-head{
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  text-align: center;
+}
+.prescription-eye{
+  font-size: 13.5px;
+  font-weight: 500;
+  color: var(--ink);
+}
+.prescription-eye small{ color: var(--ink-soft); font-weight: 400; }
+.prescription-grid input{
+  width: 100%;
+  text-align:center;
+  border: 1px solid rgba(36,31,25,0.2);
+  border-radius: 8px;
+  padding: 9px 4px;
+  font-family: var(--font-body);
+  font-size: 14px;
+  background: #fff;
+  outline: none;
+  transition: border-color .2s ease;
+}
+.prescription-grid input:focus{ border-color: var(--gold); }
+
+.file-field{
+  display:flex;
+  align-items:center;
+  gap: 14px;
+  flex-wrap: wrap;
+  cursor: pointer;
+}
+.file-field input{ position:absolute; opacity:0; width:0; height:0; }
+.file-cta{
+  border: 1px solid var(--gold);
+  color: var(--gold);
+  border-radius: 999px;
+  padding: 10px 18px;
+  font-size: 13px;
+  transition: background .2s ease, color .2s ease;
+}
+.file-field:hover .file-cta{ background: var(--gold); color:#fff; }
+.file-name{ font-size: 12.5px; color: var(--ink-soft); }
+
+.prescription-block[data-visible="false"]{ display:none; }
+
+/* ---------- pago / envío ---------- */
+.choice-row--payment .choice{ flex: 1 1 200px; text-align:center; justify-content:center; }
+
+.terms{
+  display:flex;
+  align-items:flex-start;
+  gap: 12px;
+  font-size: 13px;
+  color: var(--ink-soft);
+  line-height: 1.55;
+  margin: 6px 0 32px;
+  cursor: pointer;
+}
+.terms input{ margin-top: 3px; accent-color: var(--gold); flex-shrink:0; }
+
+.submit-btn{
+  display:inline-flex;
+  align-items:center;
+  gap: 10px;
+  background: var(--gold-gradient);
+  color: var(--ink);
+  border: none;
+  border-radius: 999px;
+  font-weight: 600;
+  font-size: 14.5px;
+  padding: 16px 32px;
+  box-shadow: var(--shadow-soft);
+  transition: transform .15s ease, filter .2s ease;
+}
+.submit-btn:hover{ filter: brightness(1.05); }
+.submit-btn:active{ transform: scale(0.97); }
+.submit-btn--ghost{
+  background: transparent;
+  border: 1px solid var(--gold);
+  color: var(--ink);
+  text-decoration:none;
+  box-shadow:none;
+  margin-top: 30px;
+}
+
+/* ---------- confirmación ---------- */
+.confirmation{
+  max-width: 520px;
+  padding-top: 40px;
+}
+.confirmation-mark{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: var(--gold-gradient);
+  color: var(--ink);
+  font-size: 26px;
+  margin-bottom: 26px;
+}
+.confirmation-eyebrow{
+  font-size: 12px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin: 0 0 10px;
+}
+.confirmation h2{
+  font-family: var(--font-display);
+  font-style: italic;
+  font-weight: 600;
+  font-size: clamp(26px, 5vw, 34px);
+  margin: 0 0 16px;
+}
+.confirmation-copy{
+  font-size: 15px;
+  line-height: 1.75;
+  color: var(--ink-soft);
+}
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+@media (max-width: 980px){
+  .checkout{ grid-template-columns: 1fr; }
+  .checkout-summary{ padding: 88px 32px 40px; }
+  .summary-watermark{ display:none; }
+  .checkout-form-wrap{ padding: 52px 24px 80px; max-width:none; }
+  .field-grid{ grid-template-columns: 1fr; gap: 22px; }
+  .prescription-grid{ grid-template-columns: 90px repeat(3,1fr); gap:8px; }
+  .summary-image-wrap{ max-width: 320px; margin-left:auto; margin-right:auto; }
+}
+
+@media (max-width: 720px){
+  .checkout-summary{ padding: 84px 24px 36px; text-align:center; }
+  .summary-top{ justify-content:center; }
+  .summary-price-tag{ transform:none; }
+  .summary-desc{ margin-left:auto; margin-right:auto; }
+  .checkout-form-wrap{ padding: 44px 18px 70px; }
+  .step{ padding-left: 52px; margin-bottom: 46px; }
+  .step-body legend{ font-size: 22px; }
+  .choice-row--payment .choice{ flex: 1 1 100%; }
+}
+
+@media (max-width: 480px){
+  .back-link{ top:14px; left:14px; padding:7px 12px; font-size:11px; }
+  .checkout-summary{ padding-top: 70px; }
+  .summary-logo{ height:34px; }
+  .summary-image-wrap{ padding: 18px; }
+  .tag-amount{ font-size: 19px; }
+
+  .checkout-form-wrap{ padding: 36px 14px 60px; }
+  .step{ padding-left: 44px; margin-bottom: 40px; }
+  .step-marker{ width:32px; height:32px; }
+  .step-marker span{ font-size: 13px; }
+  .step:not(:last-of-type)::after{ left:15px; bottom:-40px; }
+  .step-body legend{ font-size: 20px; }
+
+  .field input{ font-size: 16px; }
+  .choice{ font-size: 12.5px; padding: 10px 14px; }
+  .choice-row{ gap: 10px; }
+
+  .prescription-block{ padding: 16px; }
+  .prescription-grid{ grid-template-columns: 66px repeat(3,1fr); gap:6px; }
+  .prescription-head{ font-size: 9.5px; }
+  .prescription-eye{ font-size: 12px; }
+  .prescription-grid input{ padding: 8px 2px; font-size: 12.5px; }
+  .file-field{ gap:10px; }
+
+  .submit-btn{ width: 100%; justify-content:center; }
+  .submit-btn--ghost{ width: 100%; text-align:center; justify-content:center; }
+}
+
+@media (prefers-reduced-motion: reduce){
+  *{ transition:none !important; scroll-behavior:auto !important; }
+}

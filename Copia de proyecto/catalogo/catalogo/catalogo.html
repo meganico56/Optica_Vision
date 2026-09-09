@@ -1,0 +1,426 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Kantumruy+Pro:ital,wght@0,100..700;1,100..700&display=swap"
+      rel="stylesheet"
+    />
+
+    <link
+      rel="stylesheet"
+      href="https://cdn-uicons.flaticon.com/4.0.0/uicons-regular-rounded/css/uicons-regular-rounded.css"
+    />
+    <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/4.0.0/uicons-bold-rounded/css/uicons-bold-rounded.css'>
+    <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/4.0.0/uicons-bold-straight/css/uicons-bold-straight.css'>
+    <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/4.0.0/uicons-brands/css/uicons-brands.css'>
+    <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/4.0.0/uicons-solid-rounded/css/uicons-solid-rounded.css'>
+    <link rel="stylesheet" href="catalogo.css" />
+    <title>Boutique de la visión Catálogo</title>
+  </head>
+  <body>
+    <header>
+      <!----contenedor del logo-->
+      <div class="logo">
+        <a href="inicio" class="logo_link">
+          <img src="imagenes/boutique logo.png" alt="Logo Boutique de la visión"/>
+        </a>
+      </div>
+
+      <!-------------------barra de buscador------------------->
+
+      <form class="buscador" action="/buscar" method="get">
+        <input type="text" name="q" placeholder="Buscar productos..." class="busc">
+        <button type="submit" class="bot_bus">
+          <i class="fi fi-br-search"></i>
+        </button>
+      </form>
+
+      <!----Menú de Navegación---->
+      <nav class="menu_nav">
+        <ul class="men_nv">
+          <li><a href="#"class="activo">inicio </a></li>
+          <li><a href="#">noticias </i></a></li>
+          <li><a href="#" >explorar  </a></li>
+          <li><a href="#" >agendar cita </a></li>
+          <li><a href="#"><i class="fi fi-br-interrogation"></i></a></li>
+          <li><a href="#"><i class="fi fi-br-shopping-cart"></i></a></li>
+          <li><a href="#"">Sneider Parra<i class="fi fi-br-user"></i></a></li> 
+        </ul>
+      </nav>
+      <!-------menu desplegable------->
+      <div class="mendescon">
+        <!-------boton menu------>
+        <button class="btn_ham" id="Id_ham">
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+
+        <!---------opciones menu----------->
+        <nav class=" men_oc" id="id_men_ocu">
+          <ul>
+            <li><a href="#">mi perfil</a></li>
+            <li><a href="#">historial citas</a></li>
+            <li><a href="#">mis compras</a></li>
+            <li><a href="#">soporte tecnico</a></li>
+          </ul>
+
+        </nav>
+      </div>
+    </header>
+
+
+    <!--------seccion principal catalogo-------->
+    <section class="catalogo_G">
+
+      <!------------------------------imagen fondo-------------------------------------------->
+      <img src="imagenes/fondo-boutique.png" alt="fondo catalogo" class="imag_fond">
+
+      <!--------------------------contenido de encima-------------------------------------------------->
+      <div class="catalogo_cont">
+        <ul class="botons">
+          <li><a href="#" class="activo">Destacado</a></li>
+          <li><a href="#">mujer</a></li>
+          <li><a href="#">hombre</a></li>
+          <li><a href="#">niños</a></li>
+          <li><a href="#">accesorios</a></li>
+        </ul>
+
+        <div class="titulo-pagina">
+          <h1><b>Catalogo</b></h1>
+        </div>
+
+        <section class="contenedor-productos">
+          <!------ tarjetas de productos------>
+          <!-----Primer producto---->
+          <article class="producto-card">
+            <div class="producto-imagen">
+              <img
+                src="https://bosico.vtexassets.com/arquivos/ids/2021785-800-auto?v=638574487288700000&width=800&height=auto&aspect=true"
+                alt="Isabella Caztle"
+                width="200"
+              />
+            </div>
+            <div class="producto-info">
+              <h3>Isabella Caztle</h3>
+              <p class="precio">$150.000</p>
+            </div>
+
+            <button class="btn-carrito1">
+              comprar producto
+              <i class="fi fi-br-usd-circle"></i>
+            </button>
+
+            <button class="btn-carrito">
+              agregar al carrito
+              <i class="fi fi-rr-shopping-cart"></i>
+            </button>
+          </article>
+
+          <!-----segundo producto--------->
+          <article class="producto-card">
+            <div class="producto-imagen">
+              <img
+                src="https://images2.ray-ban.com//cdn-record-files-pi/7a1ca51a-50df-4468-bb71-add7002829f0/c6fba4b8-a020-45d9-a871-add700282b73/0RB3625__9196G5__STD__shad__qt.png?impolicy=RB_Product_clone&width=700&bgc=%23f2f2f2"
+                alt="brazos para gafas"
+                width="200"
+              />
+            </div>
+            <div class="producto-info">
+              <h3>Isabella Caztle</h3>
+              <p class="precio">$150.000</p>
+            </div>
+
+            <button class="btn-carrito1">
+              comprar producto
+              <i class="fi fi-br-usd-circle"></i>
+            </button>
+            
+            <button class="btn-carrito">
+              Agregar al Carrito
+              <i class="fi fi-rr-shopping-cart"></i>
+            </button>
+          </article>
+
+          <!-----tercer producto-------->
+          <article class="producto-card">
+            <div class="producto-imagen">
+              <img
+                src="https://df5apg8r0m634.cloudfront.net/p/5657/1-9dmxDSfcgn.jpg"
+                alt="almohadilla para gafas"
+                width="200"
+              />
+            </div>
+            <div class="producto-info">
+              <h3>Isabella Caztle</h3>
+              <p class="precio">$150.000</p>
+            </div>
+
+            <button class="btn-carrito1">
+              comprar producto
+              <i class="fi fi-br-usd-circle"></i>
+            </button>
+            <button class="btn-carrito">
+              Agregar al Carrito
+              <i class="fi fi-rr-shopping-cart"></i>
+            </button>
+          </article>
+
+          <!-----cuarto producto-------->
+          <article class="producto-card">
+            <div class="producto-imagen">
+              <img
+                src="https://grandvision-media.imgix.net/asset/3771da47-7fd4-4121-9477-b37a3a923410/original_png/0BE2384__3001__P21__shad__qt.png"
+                alt="Isabella Caztle"
+                width="200"
+              />
+            </div>
+            <div class="producto-info">
+              <h3>Isabella Caztle</h3>
+              <p class="precio">$150.000</p>
+            </div>
+            <button class="btn-carrito1">
+              comprar producto
+              <i class="fi fi-br-usd-circle"></i>
+            </button>
+            <button class="btn-carrito">
+              Agregar al Carrito
+              <i class="fi fi-rr-shopping-cart"></i>
+            </button>
+          </article>
+
+          <!-----quinto producto-------->
+          <article class="producto-card">
+            <div class="producto-imagen">
+              <img
+                src="https://magento.opticalia.com/media/catalog/product/cache/e4be6767ec9b37c1ae8637aee2f57a6a/a/c/acg550471_19.png"
+                alt="Isabella Caztle"
+                width="200"
+              />
+            </div>
+            <div class="producto-info">
+              <h3>Isabella Caztle</h3>
+              <p class="precio">$150.000</p>
+            </div>
+            <button class="btn-carrito1">
+              comprar producto
+              <i class="fi fi-br-usd-circle"></i>
+            </button>
+            <button class="btn-carrito">
+              Agregar al Carrito
+              <i class="fi fi-rr-shopping-cart"></i>
+            </button>
+          </article>
+
+          <!-----sexto producto-------->
+          <article class="producto-card">
+            <div class="producto-imagen">
+              <img
+                src="https://www.optimil.es/wp-content/uploads/2020/11/AH8184-C6.A.png"
+                alt="Isabella Caztle"
+                width="200"
+              />
+            </div>
+            <div class="producto-info">
+              <h3>Isabella Caztle</h3>
+              <p class="precio">$150.000</p>
+            </div>
+            <button class="btn-carrito1">
+              comprar producto
+              <i class="fi fi-br-usd-circle"></i>
+            </button>
+            <button class="btn-carrito">
+              Agregar al Carrito
+              <i class="fi fi-rr-shopping-cart"></i>
+            </button>
+          </article>
+
+          <!-----septimo producto-------->
+
+          <article class="producto-card">
+            <div class="producto-imagen">
+              <img
+                src="https://cdn.grupoelcorteingles.es/statics/manager/contents/images/uploads/2025/10/HJILdvwRle.jpeg?impolicy=Resize&width=800&height=800"
+                alt="Isabella Caztle"
+                width="200"
+              />
+            </div>
+            <div class="producto-info">
+              <h3>Isabella Caztle</h3>
+              <p class="precio">$150.000</p>
+            </div>
+            <button class="btn-carrito1">
+              comprar producto
+              <i class="fi fi-br-usd-circle"></i>
+            </button>
+            <button class="btn-carrito">
+                Agregar al Carrito
+                <i class="fi fi-rr-shopping-cart"></i>
+            </button>
+          </article>
+
+          <!-----octavo producto-------->
+          <article class="producto-card">
+            <div class="producto-imagen">
+              <img
+                src="https://vasari.vteximg.com.br/arquivos/ids/237102-1000-1000/VNM179543-NG.jpg?v=638688343740430000"
+                alt="Isabella Caztle"
+                width="200"
+              />
+            </div>
+            <div class="producto-info">
+              <h3>Isabella Caztle</h3>
+              <p class="precio">$150.000</p>
+            </div>
+            <button class="btn-carrito1">
+              comprar producto
+              <i class="fi fi-br-usd-circle"></i>
+            </button>
+            <button class="btn-carrito">
+              Agregar al Carrito
+              <i class="fi fi-rr-shopping-cart"></i>
+            </button>
+          </article>
+
+          <!-----noveno producto-------->
+          <article class="producto-card">
+            <div class="producto-imagen">
+              <img
+                src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRbXcle9xtcjrS7sliMstfcje8EO3g_KhN98Q&s"
+                alt="Isabella Caztle"
+                width="200"
+              />
+            </div>
+            <div class="producto-info">
+              <h3>Isabella Caztle</h3>
+              <p class="precio">$150.000</p>
+            </div>
+            <button class="btn-carrito1">
+              comprar producto
+              <i class="fi fi-br-usd-circle"></i>
+            </button>
+            <button class="btn-carrito">
+              Agregar al Carrito
+              <i class="fi fi-rr-shopping-cart"></i>
+            </button>
+          </article>
+
+          <!-----décimo producto-------->
+          <article class="producto-card">
+            <div class="producto-imagen">
+              <img
+                src="https://images2.ray-ban.com//cdn-record-files-pi/49395a33-05c7-463b-97ce-b37901109b56/e91ee4f3-a398-43a8-b3e8-b37901109dd0/0RB3928__001_8H__P21__shad__qt.png?impolicy=RB_Product_clone&width=700&bgc=%23f2f2f2"
+                alt="Isabella Caztle"
+                width="200"
+              />
+            </div>
+            <div class="producto-info">
+              <h3>Isabella Caztle</h3>
+              <p class="precio">$150.000</p>
+            </div>
+            <button class="btn-carrito1">
+              comprar producto
+              <i class="fi fi-br-usd-circle"></i>
+            </button>
+            <button class="btn-carrito">
+              Agregar al Carrito
+              <i class="fi fi-rr-shopping-cart"></i>
+            </button>
+          </article>
+
+          <!-----undécimo producto-------->
+          <article class="producto-card">
+            <div class="producto-imagen">
+              <img
+                src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQMa1RIE6KOn0ZYybtDRl86-ovBannItREThA&s"
+                alt="Isabella Caztle"
+                width="200"
+              />
+            </div>
+            <div class="producto-info">
+              <h3>Isabella Caztle</h3>
+              <p class="precio">$150.000</p>
+            </div>
+            <button class="btn-carrito1">
+              comprar producto
+              <i class="fi fi-br-usd-circle"></i>
+            </button>
+            <button class="btn-carrito">
+              Agregar al Carrito
+              <i class="fi fi-rr-shopping-cart"></i>
+            </button>
+          </article>
+
+          <!-----duodécimo producto-------->
+          <article class="producto-card">
+            <div class="producto-imagen">
+              <img
+                src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR6d_cUkCO_M5EWmJkVirBP5wRPuEpznnjQ3w&s"
+                alt="Isabella Caztle"
+                width="200"
+              />
+            </div>
+            <div class="producto-info">
+              <h3>Isabella Caztle</h3>
+              <p class="precio">$150.000</p>
+            </div>
+            <button class="btn-carrito1">
+              comprar producto
+              <i class="fi fi-br-usd-circle"></i>
+            </button>
+            <button class="btn-carrito">
+              Agregar al Carrito
+              <i class="fi fi-rr-shopping-cart"></i>
+            </button>
+          </article>
+      </div>
+      </section>
+    </section>
+
+    <footer class="site-footer">
+      <div class="footer-inner">
+      <div class="footer-col">
+        <h4>Ayuda</h4>
+        <a href="#">¿Cómo puedo apartar una cita?</a>
+        <a href="#">¿Cómo se la formula que necesito?</a>
+        <a href="#">Preguntas frecuentes</a>
+      </div>
+
+      <div class="footer-col">
+        <h4>Nosotros</h4>
+        <a href="#">Óptica</a>
+        <a href="#">Ubicación</a>
+        <a href="#">Nuestra historia</a>
+        <a href="#">Política de privacidad</a>
+      </div>
+
+      <div class="footer-col">
+        <h4>Contacto</h4>
+        <p><span class="pin">&#9679;</span> Calle 17 # 14-49, Duitama</p>
+        <p>contacto@boutiquevision.com</p>
+      </div>
+
+      <div class="footer-col">
+        <h4>Métodos de pago</h4>
+          <div class="payment-methods">
+            <span style="color: #1a1f71;">VISA</span>
+            <span style="color: #eb001b;">MC</span>
+            <span style="color: #007bc1;">AMEX</span>
+            <span style="color: #2b84c6;">pse</span>
+            <span style="color: #58164b;">NEQUI</span>
+            <span style="color: #000000;"><i class="fa-solid fa-money-bill"></i></span>
+          </div>
+      </div>
+
+      <p class="footer-copy">&copy; 2026 Boutique de la Visión. Todos los derechos reservados.</p>
+    </footer>
+
+    <!---------------etiqueta java script--------------->
+
+    <script src="catalogo.js">alert("java script conectado")</script>
+  </body>
+</html>

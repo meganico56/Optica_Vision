@@ -1,0 +1,238 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Kantumruy+Pro:ital,wght@0,100..700;1,100..700&display=swap" rel="stylesheet"/>
+    <link
+      rel="stylesheet"
+      href="https://cdn-uicons.flaticon.com/4.0.0/uicons-regular-rounded/css/uicons-regular-rounded.css"
+    />
+    <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/4.0.0/uicons-bold-rounded/css/uicons-bold-rounded.css'>
+    <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/4.0.0/uicons-bold-straight/css/uicons-bold-straight.css'>
+    <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/4.0.0/uicons-brands/css/uicons-brands.css'>
+    <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/4.0.0/uicons-solid-rounded/css/uicons-solid-rounded.css'>
+    <link rel="stylesheet" href="../catalogo/css/catalogo.css"/>
+    <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/4.0.0/uicons-regular-straight/css/uicons-regular-straight.css'>
+    <title>Boutique de la visión Catálogo</title>
+  </head>
+  <body>
+    <header>
+      <!----contenedor del logo-->
+      <div class="logo">
+        <img src="../catalogo/imagenes/boutique logo.png" alt="Logo Boutique de la visión" />
+      </div>
+
+      <!-------------------barra de buscador------------------->
+
+      <form class="buscador" action="/buscar" method="get">
+        <input type="text" name="q" placeholder="Buscar productos..." class="busc">
+        <buttom type="submit" class="bot_bus">
+          <i class="fi fi-br-search"></i>
+        </buttom>
+      </form>
+
+      <!----Menú de Navegación---->
+      <nav>
+        <ul>
+          <li><a href="#">inicio</a></li>
+          <li><a href="#">noticias</a></li>
+          <li><a href="#">explorar</a></li>
+          <li><a href="#">agendar cita</a></li>
+          <li><a href="#">iniciar sesión</a></li>
+        </ul>
+      </nav>
+    </header>
+
+    <section class="catalogo_G">
+
+      <!------------------------------imagen fondo-------------------------------------------->
+      <img src="imagenes/fondo-boutique.png" alt="fondo catalogo" class="imag_fond">
+
+      <!--------------------------contenido de encima-------------------------------------------------->
+      <div class="catalogo_cont">
+        <div class="botons">
+          <li><a href="#">Destacado</a></li>
+          <li><a href="#">mujer</a></li>
+          <li><a href="#">hombre</a></li>
+          <li><a href="#">niños</a></li>
+          <li><a href="#">accesorios</a></li>
+        </div>
+
+          <!-- Ruta de navegación (breadcrumb) -->
+  <p class="ruta-navegacion">Catálogo / Mujer / <span>Isabella Caztle</span></p>
+
+  <!-- ======================= CONTENIDO PRINCIPAL ======================= -->
+  <main class="contenedor-producto">
+
+    <!-- ----- COLUMNA IZQUIERDA: galería de imágenes / probador virtual ----- -->
+    <section class="columna-visual">
+
+      <!-- Botones para alternar entre "ver producto" y "pruébatelo" -->
+      <div class="alternador">
+        <button class="btn-alternar activo" data-vista="vista-producto">
+          <i class="ti ti-eye" aria-hidden="true"></i> Ver producto
+        </button>
+        <button class="btn-alternar" data-vista="vista-probador">
+          <i class="ti ti-camera" aria-hidden="true"></i> Pruébatelo
+        </button>
+      </div>
+
+      <!-- Vista 1: galería normal del producto -->
+      <div id="vista-producto" class="vista">
+        <div class="galeria">
+
+          <!-- Miniaturas de imágenes del producto -->
+          <div class="miniaturas">
+            <button class="miniatura activa" data-imagen="0">
+              <i class="ti ti-sunglasses" aria-hidden="true"></i>
+            </button>
+            <button class="miniatura" data-imagen="1">
+              <i class="ti ti-sunglasses" aria-hidden="true"></i>
+            </button>
+            <button class="miniatura" data-imagen="2">
+              <i class="ti ti-sunglasses" aria-hidden="true"></i>
+            </button>
+            <button class="miniatura" data-imagen="3">
+              <i class="ti ti-sunglasses" aria-hidden="true"></i>
+            </button>
+          </div>
+
+          <!-- Imagen principal del producto -->
+          <div class="imagen-principal">
+            <i class="ti ti-sunglasses" aria-hidden="true">
+              <img src="imagenes/modelo2.png" alt="Gafas de sol Isabella Caztle" class="imagen-producto" />
+            </i>
+          </div>
+        </div>
+      </div>
+
+      <!-- Vista 2: probador virtual (oculta por defecto) -->
+      <div id="vista-probador" class="vista oculto">
+        <div class="probador">
+          <!-- Zona donde se mostraría la cámara o foto del cliente -->
+          <div class="camara-marco">
+            <i class="ti ti-user-circle icono-rostro" aria-hidden="true"></i>
+            <i class="ti ti-sunglasses icono-gafas-superpuestas" aria-hidden="true"></i>
+            <p class="texto-camara">Vista previa con cámara</p>
+          </div>
+
+          <button class="btn-activar-camara">
+            <i class="ti ti-camera" aria-hidden="true"></i> Activar cámara
+          </button>
+
+          <p class="nota-probador">
+            Activa tu cámara para ver cómo te quedan las gafas antes de comprarlas.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ----- COLUMNA DERECHA: información del producto ----- -->
+    <section class="columna-info">
+
+    <p class="marca">Isabella Caztle</p>
+
+    <h1 class="nombre-producto">
+        Gafas de sol Isabella Caztle
+    </h1>
+
+    <div class="resenia">
+      <div class="estrellas"></div>
+      <div class="texto">
+      <a>4.8 (327 reseñas) |</a><i class="fi fi-rs-eye"></i><a>18 personas viendo este producto</a>
+      </div>
+    </div>
+    
+
+    <p class="precio">$150.000</p>
+
+    <!-- Selector de color -->
+    <div class="bloque">
+        <p class="etiqueta">Color</p>
+
+        <div class="colores">
+            <button class="color color-negro seleccionado"></button>
+            <button class="color color-dorado"></button>
+            <button class="color color-verde"></button>
+        </div>
+    </div>
+
+    <!-- Cantidad -->
+    <div class="bloque">
+        <p class="etiqueta">Cantidad</p>
+
+        <div class="selector-cantidad">
+            <button id="restar">−</button>
+            <span id="cantidad">1</span>
+            <button id="sumar">+</button>
+        </div>
+    </div>
+
+    <!-- BOTONES -->
+    <div class="atributos">
+
+        <button class="btn-agregar-carrito">
+            <i class="fi fi-rs-shopping-cart"></i></i>
+            AGREGAR AL CARRITO
+        </button>
+
+        <button
+            class="btn-comprar-ahora"
+            onclick="window.location.href='formulario.html'"><i class="fi fi-sr-shopping-bag"></i>
+            COMPRAR AHORA
+        </button>
+
+    </div>
+
+    <p id="mensaje-confirmacion" class="mensaje-confirmacion oculto">
+        Producto agregado al carrito.
+    </p>
+
+</section>
+  </main>
+</section>
+
+    <footer class="site-footer">
+      <div class="footer-inner">
+        <div class="footer-col">
+          <h4>Ayuda</h4>
+          <a href="#">¿Cómo puedo apartar una cita?</a>
+          <a href="#">¿Cómo se la formula que necesito?</a>
+          <a href="#">Preguntas frecuentes</a>
+        </div>
+
+        <div class="footer-col">
+          <h4>Nosotros</h4>
+          <a href="#">Óptica</a>
+          <a href="#">Ubicación</a>
+          <a href="#">Nuestra historia</a>
+          <a href="#">Política de privacidad</a>
+        </div>
+
+        <div class="footer-col">
+          <h4>Contacto</h4>
+          <p><span class="pin">&#9679;</span> Calle 17 # 14-49, Duitama</p>
+          <p>contacto@boutiquevision.com</p>
+        </div>
+
+        <div class="footer-col">
+          <h4>Métodos de pago</h4>
+            <div class="payment-methods">
+              <span style="color: #1a1f71;">VISA</span>
+              <span style="color: #eb001b;">MC</span>
+              <span style="color: #007bc1;">AMEX</span>
+              <span style="color: #2b84c6;">pse</span>
+              <span style="color: #58164b;">NEQUI</span>
+              <span style="color: #000000;"><i class="fa-solid fa-money-bill"></i></span>
+            </div>
+        </div>
+      <p class="footer-copy">&copy; 2026 Boutique de la Visión. Todos los derechos reservados.</p>
+    </footer>
+  <!-- Script con la lógica de interacción de la página -->
+  <script src="../catalogo/js/script.js"></script>
+  </body>
+</html>

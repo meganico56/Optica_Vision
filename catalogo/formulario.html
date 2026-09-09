@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Confirmar pedido | Boutique de la Visión</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500;1,600&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../catalogo/css/formulario.css">
+</head>
+<body>
+
+<a class="back-link" href="catalogo.html">&larr; Volver a la colección</a>
+
+<main class="checkout">
+
+  <!-- ============ PANEL EDITORIAL (resumen del pedido) ============ -->
+  <aside class="checkout-summary" id="checkoutSummary">
+    <span class="summary-watermark" id="summaryWatermark" aria-hidden="true">Isabella Castells</span>
+
+    <div class="summary-top">
+      <img src="img/logo.png" alt="Boutique de la Visión" class="summary-logo">
+      <p class="summary-eyebrow">Resumen del pedido</p>
+    </div>
+
+    <div class="summary-product">
+      <div class="summary-image-wrap">
+        <img id="summaryImage" src="/catalogo/imagenes/modelo2.png" alt="Montura seleccionada">
+      </div>
+      <p class="summary-collection" id="summaryCollection">"Isabella Castells"</p>
+      <h1 class="summary-name" id="summaryName">Luna Aviator Classic</h1>
+      <p class="summary-desc" id="summaryDesc">
+        Sumérgete en una experiencia visual sin precedentes con nuestra exclusiva montura.
+      </p>
+
+      <div class="summary-price-tag">
+        <span class="tag-string" aria-hidden="true"></span>
+        <span class="tag-label">Precio</span>
+        <span class="tag-amount" id="summaryPrice">$ 890.000 COP</span>
+      </div>
+    </div>
+
+    <p class="summary-note">
+      El envío y la asesoría óptica están incluidos. Un especialista validará tu
+      fórmula antes de fabricar el lente definitivo.
+    </p>
+  </aside>
+
+  <!-- ============ FORMULARIO ============ -->
+  <section class="checkout-form-wrap">
+
+    <form id="purchaseForm" novalidate>
+
+      <!-- 01 — Datos personales -->
+      <fieldset class="step">
+        <div class="step-marker"><span>01</span></div>
+        <div class="step-body">
+          <legend>Datos personales</legend>
+
+          <div class="field-grid">
+            <div class="field">
+              <input type="text" id="nombre" name="nombre" placeholder="Nombre completo" pattern="[A-Za-zÁÉÍÓÚáéíóúÑñ ]+" title="Solo se permiten letras." required autocomplete="name">
+              <label for="nombre">Nombre completo</label>
+            </div>
+            <div class="field">
+              <input type="text" id="documento" name="documento" placeholder=" " required inputmode="numeric" autocomplete="off">
+              <label for="documento">Documento de identidad</label>
+            </div>
+            <div class="field">
+              <input type="email" id="correo" name="correo" placeholder=" " required autocomplete="email">
+              <label for="correo">Correo electrónico</label>
+            </div>
+            <div class="field">
+              <input type="tel" id="telefono" name="telefono" placeholder=" " required autocomplete="tel">
+              <label for="telefono">Teléfono / WhatsApp</label>
+            </div>
+          </div>
+        </div>
+      </fieldset>
+
+      <!-- 02 — Envío -->
+      <fieldset class="step">
+        <div class="step-marker"><span>02</span></div>
+        <div class="step-body">
+          <legend>Dirección de envío</legend>
+
+          <div class="field-grid">
+            <div class="field field--full">
+              <input type="text" id="direccion" name="direccion" placeholder=" " required autocomplete="street-address">
+              <label for="direccion">Dirección</label>
+            </div>
+            <div class="field">
+              <input type="text" id="ciudad" name="ciudad" placeholder=" " required autocomplete="address-level2">
+              <label for="ciudad">Ciudad</label>
+            </div>
+            <div class="field">
+              <input type="text" id="departamento" name="departamento" placeholder=" " required autocomplete="address-level1">
+              <label for="departamento">Departamento</label>
+            </div>
+            <div class="field field--full">
+              <input type="text" id="indicaciones" name="indicaciones" placeholder=" " autocomplete="off">
+              <label for="indicaciones">Indicaciones adicionales (opcional)</label>
+            </div>
+          </div>
+        </div>
+      </fieldset>
+
+      <!-- 03 — Fórmula óptica -->
+      <fieldset class="step">
+        <div class="step-marker"><span>03</span></div>
+        <div class="step-body">
+          <legend>Fórmula óptica</legend>
+
+          <div class="choice-row" role="radiogroup" aria-label="¿Tienes fórmula médica?">
+            <label class="choice">
+              <input type="radio" name="tieneFormula" value="si" checked>
+              <span>Tengo fórmula médica</span>
+            </label>
+            <label class="choice">
+              <input type="radio" name="tieneFormula" value="no">
+              <span>No tengo, deseo asesoría</span>
+            </label>
+          </div>
+
+          <div class="prescription-block" id="prescriptionBlock">
+            <div class="prescription-grid">
+              <div class="prescription-head"></div>
+              <div class="prescription-head">Esfera</div>
+              <div class="prescription-head">Cilindro</div>
+              <div class="prescription-head">Eje</div>
+
+              <div class="prescription-eye">OD <small>(derecho)</small></div>
+              <input type="text" name="odEsfera" placeholder="-0.00">
+              <input type="text" name="odCilindro" placeholder="-0.00">
+              <input type="text" name="odEje" placeholder="0°">
+
+              <div class="prescription-eye">OI <small>(izquierdo)</small></div>
+              <input type="text" name="oiEsfera" placeholder="-0.00">
+              <input type="text" name="oiCilindro" placeholder="-0.00">
+              <input type="text" name="oiEje" placeholder="0°">
+            </div>
+
+            <label class="file-field" for="formulaFile">
+              <input type="file" id="formulaFile" name="formulaFile" accept="image/*,.pdf">
+              <span class="file-cta">Adjuntar fórmula (foto o PDF)</span>
+              <span class="file-name" id="formulaFileName">Ningún archivo seleccionado</span>
+            </label>
+          </div>
+        </div>
+      </fieldset>
+
+      <!-- 04 — Pago -->
+      <fieldset class="step">
+        <div class="step-marker"><span>04</span></div>
+        <div class="step-body">
+          <legend>Método de pago</legend>
+
+          <div class="choice-row choice-row--payment" role="radiogroup" aria-label="Método de pago">
+            <label class="choice">
+              <input type="radio" name="pago" value="tarjeta" checked>
+              <span>Tarjeta crédito / débito</span>
+            </label>
+            <label class="choice">
+              <input type="radio" name="pago" value="contraentrega">
+              <span>Pago contraentrega</span>
+            </label>
+            <label class="choice">
+              <input type="radio" name="pago" value="transferencia">
+              <span>Transferencia bancaria</span>
+            </label>
+          </div>
+
+          <label class="terms">
+            <input type="checkbox" id="terminos" required>
+            <span>He revisado mis datos y acepto las políticas de tratamiento de datos y devoluciones.</span>
+          </label>
+
+          <button type="submit" class="submit-btn">
+            Confirmar pedido
+            <svg viewBox="0 0 24 24" width="16" height="16"><path d="M5 12h13M13 6l6 6-6 6" stroke="currentColor" stroke-width="1.8" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+        </div>
+      </fieldset>
+
+    </form>
+
+    <!-- Confirmación (se muestra tras enviar) -->
+    <div class="confirmation" id="confirmation" hidden>
+      <span class="confirmation-mark">&#10003;</span>
+      <p class="confirmation-eyebrow">Pedido recibido</p>
+      <h2>Gracias, <span id="confirmName">—</span>.</h2>
+      <p class="confirmation-copy">
+        Tu solicitud del modelo <strong id="confirmModel">—</strong> fue registrada con el número
+        <strong id="confirmOrderId">—</strong>. Un asesor de Boutique de la Visión se pondrá en
+        contacto contigo para validar tu fórmula y coordinar el pago y el envío.
+      </p>
+      <a href="index.html" class="submit-btn submit-btn--ghost">Volver a la colección</a>
+    </div>
+
+  </section>
+
+</main>
+
+<script src="js/models.js"></script>
+<script src="js/formulario.js"></script>
+</body>
+</html>

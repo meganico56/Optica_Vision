@@ -1,0 +1,158 @@
+.kantumruy-pro-400 {
+  font-family: "Kantumruy Pro", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 400;
+  font-style: normal;
+}
+
+.inicio{
+    display: flex;
+    justify-content: space-around;
+    align-items: center;    
+    flex-direction: row;
+    height: 100vh;
+    background-image: url('c:\Users\USER\AppData\Local\Packages\5319275A.WhatsAppDesktop_cv1g1gvanyjgm\LocalState\sessions\F1E7BE123571B031371F48C1371D2343A53E6E03\transfers\2026-23\WhatsApp Image 2026-06-02 at 11.56.11 AM.jpeg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+.logo{
+    width: 100px;
+    height: 100px;
+    background-color: #ffffff00;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-size: 24px;
+    border-radius: 20px;
+}
+.formulario{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background-color: #ffffff00;
+    padding: 40px;
+    border-radius: 10px;
+    background-color: #ffffff;
+    width: 300px;
+    height: 500px;
+    box-shadow: 0px 11px 20px rgba(48, 44, 44, 0.754);
+    margin-top: 50px;
+}
+.formulario h1{
+    font-size: 24px;
+    margin-bottom: 20px;
+    justify-content: start;
+}
+.titulo{
+    display: flex;
+    justify-content: start;
+    align-items: start;
+    width: 100%;
+    margin-top: 1px;
+}
+.subtitulo{
+    display: flex;
+    justify-content: start;
+    width: 100%;
+}
+.username, .password{
+    width: 80%;
+    padding: 10px;
+    margin-bottom: 10px;
+    border-color: #000000;
+    border-radius: 5px;
+    gap: 10px;
+}
+.olvidar{
+    background-color: transparent;
+    border: none;
+    color: #000000;
+    cursor: pointer;
+    font-size: 14px;
+}
+.olvidar:hover{
+    color: #9d8624;
+}
+.iniciar{
+    padding: 5px 70px;
+    background-color: #000000;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+.iniciar:hover{
+    background-color: #9d8624;
+    padding: 7px 80px;
+    transition: all 0.3s ease;
+}
+.registrar{
+    padding: 5px 75px;
+    background-color: #000000;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 10px;
+}
+.registrar:hover{
+    background-color: #9d8624;
+    padding: 7px 85px;
+    transition: all 0.3s ease;
+}
+.google{
+    padding: 5px 82px;
+    background-color: #000000;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+.google:hover{
+    background-color: #9d8624;
+    padding: 7px 90px;
+    transition: all 0.3s ease;
+}
+.facebook{
+    padding: 5px 75px;
+    background-color: #000000;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 10px;
+}
+.facebook:hover{
+    background-color: #9d8624;
+    padding: 7px 85px;
+    transition: all 0.3s ease;
+}
+.copyright{
+    display: flex;
+    justify-content: start;
+    align-items: start;
+    background-color: #9d8624;
+    color: #000000;
+    margin-top: 70px;
+}
+@media (max-width: 768px) {
+    .inicio{
+        flex-direction: column;
+    }
+    .formulario{
+        width: 90%;
+        height: auto;
+        padding: 20px;
+    }
+    .iniciar, .registrar, .google, .facebook{
+        padding: 10px;
+        width: 100%;
+    }
+    .copyright{
+        width: 100%;
+        text-align: center;
+    }
+}
