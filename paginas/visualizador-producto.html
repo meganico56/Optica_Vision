@@ -5,225 +5,306 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Kantumruy+Pro:ital,wght@0,100..700;1,100..700&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet"/>
     <link rel="stylesheet" href="https://cdn-uicons.flaticon.com/4.0.0/uicons-regular-rounded/css/uicons-regular-rounded.css"/>
     <link rel="stylesheet" href="https://cdn-uicons.flaticon.com/4.0.0/uicons-solid-rounded/css/uicons-solid-rounded.css"/>
     <link rel="stylesheet" href="../estilos/estilo-visualizador.css"/>
     <title>Boutique de la Visión - Visualizador de Productos</title>
   </head>
   <body>
-    <header>
-      <!----contenedor del logo-->
-      <div class="logo">
-        <img src="../imagenes/logos/logo-boutique.png" alt="Logo Boutique de la visión" />
+    <!-- Parallax Background -->
+    <div class="parallax-background">
+      <div class="parallax-image" style="background-image: url('../imagenes/fondos/fondo-boutique.png')"></div>
+      <div class="parallax-overlay"></div>
+    </div>
+
+    <!-- Header con Glassmorphism -->
+    <header class="glass-header">
+      <div class="header-content">
+        <div class="logo">
+          <img src="../imagenes/logos/logo-boutique.png" alt="Logo Boutique de la Visión" />
+        </div>
+
+        <nav class="main-nav">
+          <ul>
+            <li><a href="catalogo.html">Catálogo</a></li>
+            <li><a href="#">Colecciones</a></li>
+            <li><a href="#">Marcas</a></li>
+            <li><a href="inicio-sesion.html">Mi Cuenta</a></li>
+          </ul>
+        </nav>
+
+        <div class="header-actions">
+          <button class="search-btn"><i class="fi fi-br-search"></i></button>
+          <button class="cart-btn"><i class="fi fi-rs-shopping-cart"></i><span class="cart-count">0</span></button>
+        </div>
       </div>
-
-      <!-------------------barra de buscador------------------->
-
-      <form class="buscador" action="/buscar" method="get">
-        <input type="text" name="q" placeholder="Buscar productos..." class="busc">
-        <button type="submit" class="bot_bus">
-          <i class="fi fi-br-search"></i>
-        </button>
-      </form>
-
-      <!----Menú de Navegación---->
-      <nav>
-        <ul>
-          <li><a href="#">inicio</a></li>
-          <li><a href="#">noticias</a></li>
-          <li><a href="#">explorar</a></li>
-          <li><a href="#">agendar cita</a></li>
-          <li><a href="#">iniciar sesión</a></li>
-        </ul>
-      </nav>
     </header>
 
-    <section class="catalogo_G">
-
-      <!------------------------------imagen fondo-------------------------------------------->
-      <img src="../imagenes/fondos/fondo-boutique.png" alt="fondo catalogo" class="imag_fond">
-
-      <!--------------------------contenido de encima-------------------------------------------------->
-      <div class="catalogo_cont">
-        <div class="botons">
-          <li><a href="#">Destacado</a></li>
-          <li><a href="#">mujer</a></li>
-          <li><a href="#">hombre</a></li>
-          <li><a href="#">niños</a></li>
-          <li><a href="#">accesorios</a></li>
-        </div>
-
-          <!-- Ruta de navegación (breadcrumb) -->
-  <p class="ruta-navegacion">Catálogo / Mujer / <span>Isabella Caztle</span></p>
-
-  <!-- ======================= CONTENIDO PRINCIPAL ======================= -->
-  <main class="contenedor-producto">
-
-    <!-- ----- COLUMNA IZQUIERDA: galería de imágenes / probador virtual ----- -->
-    <section class="columna-visual">
-
-      <!-- Botones para alternar entre "ver producto" y "pruébatelo" -->
-      <div class="alternador">
-        <button class="btn-alternar activo" data-vista="vista-producto">
-          <i class="ti ti-eye" aria-hidden="true"></i> Ver producto
-        </button>
-        <button class="btn-alternar" data-vista="vista-probador">
-          <i class="ti ti-camera" aria-hidden="true"></i> Pruébatelo
-        </button>
+    <!-- Main Content -->
+    <main class="product-viewer">
+      <!-- Breadcrumb -->
+      <div class="breadcrumb">
+        <a href="catalogo.html">Catálogo</a> / <a href="#">Gafas de Sol</a> / <span>Isabella Caztle</span>
       </div>
 
-      <!-- Vista 1: galería normal del producto -->
-      <div id="vista-producto" class="vista">
-        <div class="galeria">
+      <!-- Product Section -->
+      <section class="product-section">
+        <!-- Left Column - Gallery -->
+        <div class="product-gallery">
+          <div class="gallery-container">
+            <div class="main-image-wrapper">
+              <img src="../imagenes/productos/gafas-modelo2.png" alt="Gafas de sol Isabella Caztle" class="main-image" id="mainImage"/>
+              <div class="image-zoom" id="imageZoom">
+                <i class="fi fi-br-expand"></i>
+              </div>
+            </div>
+            
+            <div class="thumbnail-gallery">
+              <button class="thumbnail active" data-image="../imagenes/productos/gafas-modelo1.png">
+                <img src="../imagenes/productos/gafas-modelo1.png" alt="Vista 1"/>
+              </button>
+              <button class="thumbnail" data-image="../imagenes/productos/gafas-modelo2.png">
+                <img src="../imagenes/productos/gafas-modelo2.png" alt="Vista 2"/>
+              </button>
+              <button class="thumbnail" data-image="../imagenes/productos/gafas-modelo3.png">
+                <img src="../imagenes/productos/gafas-modelo3.png" alt="Vista 3"/>
+              </button>
+              <button class="thumbnail" data-image="../imagenes/productos/gafas-modelo4.png">
+                <img src="../imagenes/productos/gafas-modelo4.png" alt="Vista 4"/>
+              </button>
+            </div>
+          </div>
 
-          <!-- Miniaturas de imágenes del producto -->
-          <div class="miniaturas">
-            <button class="miniatura activa" data-imagen="0">
-              <i class="ti ti-sunglasses" aria-hidden="true"></i>
+          <!-- Virtual Try-On -->
+          <div class="virtual-try-on">
+            <button class="try-on-btn" id="tryOnBtn">
+              <i class="fi fi-br-camera"></i>
+              <span>Pruébatelo Virtual</span>
             </button>
-            <button class="miniatura" data-imagen="1">
-              <i class="ti ti-sunglasses" aria-hidden="true"></i>
+            <div class="try-on-panel" id="tryOnPanel">
+              <div class="camera-placeholder">
+                <i class="fi fi-br-user"></i>
+                <p>Activa tu cámara para probar las gafas</p>
+              </div>
+              <button class="activate-camera">Activar Cámara</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right Column - Product Info -->
+        <div class="product-info">
+          <div class="brand-tag">Ray-Ban</div>
+          <h1 class="product-title">Gafas de Sol Isabella Caztle</h1>
+          
+          <div class="product-rating">
+            <div class="stars">
+              <i class="fi fi-sr-star"></i>
+              <i class="fi fi-sr-star"></i>
+              <i class="fi fi-sr-star"></i>
+              <i class="fi fi-sr-star"></i>
+              <i class="fi fi-sr-star-half"></i>
+            </div>
+            <span class="rating-count">4.8 (327 reseñas)</span>
+            <span class="viewers"><i class="fi fi-rs-eye"></i> 18 viendo ahora</span>
+          </div>
+
+          <div class="price-section">
+            <span class="current-price">$150.000</span>
+            <span class="original-price">$180.000</span>
+            <span class="discount">-17%</span>
+          </div>
+
+          <div class="product-description">
+            <p>Montura elegante de acetato negro con forma rectangular, ideal para rostros ovalados y cuadrados. Protección UV400 con cristales polarizados que ofrecen claridad excepcional y reducción de reflejos.</p>
+          </div>
+
+          <!-- Product Details -->
+          <div class="product-details">
+            <div class="detail-item">
+              <span class="detail-label">Material:</span>
+              <span class="detail-value">Acetato de alta calidad</span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-label">Género:</span>
+              <span class="detail-value">Mujer</span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-label">Categoría:</span>
+              <span class="detail-value">Gafas de Sol</span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-label">Disponibilidad:</span>
+              <span class="detail-value available">En stock (15 unidades)</span>
+            </div>
+          </div>
+
+          <!-- Color Selection -->
+          <div class="color-selection">
+            <h3>Color</h3>
+            <div class="color-options">
+              <button class="color-option active" data-color="negro" style="background-color: #1a1a1a;"></button>
+              <button class="color-option" data-color="dorado" style="background-color: #d4af37;"></button>
+              <button class="color-option" data-color="tortuga" style="background-color: #8b7355;"></button>
+              <button class="color-option" data-color="rosado" style="background-color: #e8a0ac;"></button>
+            </div>
+          </div>
+
+          <!-- Quantity Selection -->
+          <div class="quantity-selection">
+            <h3>Cantidad</h3>
+            <div class="quantity-controls">
+              <button class="quantity-btn minus" id="minusBtn">−</button>
+              <input type="number" class="quantity-input" id="quantityInput" value="1" min="1" max="10"/>
+              <button class="quantity-btn plus" id="plusBtn">+</button>
+            </div>
+          </div>
+
+          <!-- Action Buttons -->
+          <div class="action-buttons">
+            <button class="btn-add-cart" id="addToCartBtn">
+              <i class="fi fi-rs-shopping-cart"></i>
+              <span>Agregar al Carrito</span>
             </button>
-            <button class="miniatura" data-imagen="2">
-              <i class="ti ti-sunglasses" aria-hidden="true"></i>
-            </button>
-            <button class="miniatura" data-imagen="3">
-              <i class="ti ti-sunglasses" aria-hidden="true"></i>
+            <button class="btn-buy-now" onclick="window.location.href='formulario-pedido.html'">
+              <i class="fi fi-sr-shopping-bag"></i>
+              <span>Comprar Ahora</span>
             </button>
           </div>
 
-          <!-- Imagen principal del producto -->
-          <div class="imagen-principal">
-            <img src="../imagenes/productos/gafas-modelo2.png" alt="Gafas de sol Isabella Caztle" class="imagen-producto" />
+          <!-- Features -->
+          <div class="product-features">
+            <div class="feature">
+              <i class="fi fi-br-shield-check"></i>
+              <span>Garantía de 2 años</span>
+            </div>
+            <div class="feature">
+              <i class="fi fi-br-truck"></i>
+              <span>Envío gratis +$100k</span>
+            </div>
+            <div class="feature">
+              <i class="fi fi-br-undo"></i>
+              <span>Devolución en 30 días</span>
+            </div>
           </div>
         </div>
-      </div>
+      </section>
 
-      <!-- Vista 2: probador virtual (oculta por defecto) -->
-      <div id="vista-probador" class="vista oculto">
-        <div class="probador">
-          <!-- Zona donde se mostraría la cámara o foto del cliente -->
-          <div class="camara-marco">
-            <i class="ti ti-user-circle icono-rostro" aria-hidden="true"></i>
-            <i class="ti ti-sunglasses icono-gafas-superpuestas" aria-hidden="true"></i>
-            <p class="texto-camara">Vista previa con cámara</p>
+      <!-- Related Products Carousel -->
+      <section class="related-products">
+        <h2 class="section-title">Productos Relacionados</h2>
+        <div class="carousel-container">
+          <button class="carousel-nav prev" id="prevCarousel"><i class="fi fi-br-angle-left"></i></button>
+          
+          <div class="carousel-track" id="carouselTrack">
+            <div class="product-card">
+              <div class="card-image">
+                <img src="../imagenes/productos/gafas-modelo1.png" alt="Gafas Aviador"/>
+                <div class="card-badge">Nuevo</div>
+              </div>
+              <div class="card-info">
+                <h3>Gafas Aviador Clásico</h3>
+                <p class="card-price">$180.000</p>
+                <button class="card-btn">Ver</button>
+              </div>
+            </div>
+
+            <div class="product-card">
+              <div class="card-image">
+                <img src="../imagenes/productos/gafas-modelo3.png" alt="Gafas Oversized"/>
+                <div class="card-badge sale">-15%</div>
+              </div>
+              <div class="card-info">
+                <h3>Gafas Oversized</h3>
+                <p class="card-price">$135.000</p>
+                <button class="card-btn">Ver</button>
+              </div>
+            </div>
+
+            <div class="product-card">
+              <div class="card-image">
+                <img src="../imagenes/productos/gafas-modelo4.png" alt="Gafas Cat Eye"/>
+              </div>
+              <div class="card-info">
+                <h3>Gafas Cat Eye</h3>
+                <p class="card-price">$165.000</p>
+                <button class="card-btn">Ver</button>
+              </div>
+            </div>
+
+            <div class="product-card">
+              <div class="card-image">
+                <img src="../imagenes/productos/gafas-modelo2.png" alt="Gafas Wayfarer"/>
+                <div class="card-badge popular">Popular</div>
+              </div>
+              <div class="card-info">
+                <h3>Gafas Wayfarer</h3>
+                <p class="card-price">$145.000</p>
+                <button class="card-btn">Ver</button>
+              </div>
+            </div>
+
+            <div class="product-card">
+              <div class="card-image">
+                <img src="../imagenes/productos/gafas-modelo1.png" alt="Gafas Round"/>
+              </div>
+              <div class="card-info">
+                <h3>Gafas Round Metal</h3>
+                <p class="card-price">$195.000</p>
+                <button class="card-btn">Ver</button>
+              </div>
+            </div>
           </div>
 
-          <button class="btn-activar-camara">
-            <i class="ti ti-camera" aria-hidden="true"></i> Activar cámara
-          </button>
-
-          <p class="nota-probador">
-            Activa tu cámara para ver cómo te quedan las gafas antes de comprarlas.
-          </p>
+          <button class="carousel-nav next" id="nextCarousel"><i class="fi fi-br-angle-right"></i></button>
         </div>
-      </div>
-    </section>
+      </section>
+    </main>
 
-    <!-- ----- COLUMNA DERECHA: información del producto ----- -->
-    <section class="columna-info">
-
-    <p class="marca">Isabella Caztle</p>
-
-    <h1 class="nombre-producto">
-        Gafas de sol Isabella Caztle
-    </h1>
-
-    <div class="resenia">
-      <div class="estrellas"></div>
-      <div class="texto">
-      <a>4.8 (327 reseñas) |</a><i class="fi fi-rs-eye"></i><a>18 personas viendo este producto</a>
-      </div>
-    </div>
-    
-
-    <p class="precio">$150.000</p>
-
-    <!-- Selector de color -->
-    <div class="bloque">
-        <p class="etiqueta">Color</p>
-
-        <div class="colores">
-            <button class="color color-negro seleccionado"></button>
-            <button class="color color-dorado"></button>
-            <button class="color color-verde"></button>
-        </div>
-    </div>
-
-    <!-- Cantidad -->
-    <div class="bloque">
-        <p class="etiqueta">Cantidad</p>
-
-        <div class="selector-cantidad">
-            <button id="restar">−</button>
-            <span id="cantidad">1</span>
-            <button id="sumar">+</button>
-        </div>
-    </div>
-
-    <!-- BOTONES -->
-    <div class="atributos">
-
-        <button class="btn-agregar-carrito">
-            <i class="fi fi-rs-shopping-cart"></i>
-            AGREGAR AL CARRITO
-        </button>
-
-        <button
-            class="btn-comprar-ahora"
-            onclick="window.location.href='formulario-pedido.html'"><i class="fi fi-sr-shopping-bag"></i>
-            COMPRAR AHORA
-        </button>
-
-    </div>
-
-    <p id="mensaje-confirmacion" class="mensaje-confirmacion oculto">
-        Producto agregado al carrito.
-    </p>
-
-</section>
-  </main>
-</section>
-
+    <!-- Footer -->
     <footer class="site-footer">
-      <div class="footer-inner">
-        <div class="footer-col">
+      <div class="footer-content">
+        <div class="footer-section">
           <h4>Ayuda</h4>
-          <a href="#">¿Cómo puedo apartar una cita?</a>
-          <a href="#">¿Cómo se la formula que necesito?</a>
+          <a href="#">¿Cómo apartar una cita?</a>
+          <a href="#">Fórmula óptica</a>
           <a href="#">Preguntas frecuentes</a>
         </div>
-
-        <div class="footer-col">
+        <div class="footer-section">
           <h4>Nosotros</h4>
-          <a href="#">Óptica</a>
+          <a href="#">Nuestra Óptica</a>
           <a href="#">Ubicación</a>
-          <a href="#">Nuestra historia</a>
+          <a href="#">Historia</a>
           <a href="#">Política de privacidad</a>
         </div>
-
-        <div class="footer-col">
+        <div class="footer-section">
           <h4>Contacto</h4>
-          <p><span class="pin">&#9679;</span> Calle 17 # 14-49, Duitama</p>
-          <p>contacto@boutiquevision.com</p>
+          <p><i class="fi fi-br-marker"></i> Calle 17 # 14-49, Duitama</p>
+          <p><i class="fi fi-br-envelope"></i> contacto@boutiquevision.com</p>
+          <p><i class="fi fi-br-phone-call"></i> +57 311 555 7890</p>
         </div>
-
-        <div class="footer-col">
-          <h4>Métodos de pago</h4>
-            <div class="payment-methods">
-              <span style="color: #1a1f71;">VISA</span>
-              <span style="color: #eb001b;">MC</span>
-              <span style="color: #007bc1;">AMEX</span>
-              <span style="color: #2b84c6;">pse</span>
-              <span style="color: #58164b;">NEQUI</span>
-              <span style="color: #000000;"><i class="fa-solid fa-money-bill"></i></span>
-            </div>
+        <div class="footer-section">
+          <h4>Métodos de Pago</h4>
+          <div class="payment-methods">
+            <span style="color: #1a1f71;">VISA</span>
+            <span style="color: #eb001b;">MC</span>
+            <span style="color: #007bc1;">AMEX</span>
+            <span style="color: #2b84c6;">PSE</span>
+            <span style="color: #58164b;">NEQUI</span>
+          </div>
         </div>
-      <p class="footer-copy">&copy; 2026 Boutique de la Visión. Todos los derechos reservados.</p>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2026 Boutique de la Visión. Todos los derechos reservados.</p>
+      </div>
     </footer>
-  <!-- Script con la lógica de interacción de la página -->
-  <script src="../scripts/interaccion-visualizador.js"></script>
+
+    <!-- Notification -->
+    <div class="notification" id="notification">
+      <i class="fi fi-sr-check-circle"></i>
+      <span>Producto agregado al carrito</span>
+    </div>
+
+    <script src="../scripts/interaccion-visualizador.js"></script>
   </body>
 </html>
