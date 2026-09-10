@@ -1,0 +1,170 @@
+.kantumruy-pro-400 {
+  font-family: "Kantumruy Pro", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 400;
+  font-style: normal;
+}
+
+.inicio{
+    display: flex;
+    justify-content: space-around;
+    align-items: center;    
+    flex-direction: row;
+    height: 100vh;
+    background-image: url('../imagenes/fondos/fondo-boutique.png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+.logo{
+    width: 6.25rem;
+    height: 6.25rem;
+    background-color: #ffffff00;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-size: 1.5rem;
+    border-radius: 1.25rem;
+}
+.formulario{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background-color: #ffffff00;
+    padding: 2.5rem;
+    border-radius: 1.25rem;
+    background-color: #ffffff;
+    width: 18.75rem;
+    height: 31.25rem;
+    box-shadow: 0px 11px 20px rgba(48, 44, 44, 0.754);
+    margin-top: 3.125rem;
+}
+.formulario h1{
+    font-size: 1.5rem;
+    margin-bottom: 1.25rem;
+    justify-content: start;
+}
+.titulo{
+    display: flex;
+    justify-content: start;
+    align-items: start;
+    width: 100%;
+    margin-top: 1px;
+}
+.subtitulo{
+    display: flex;
+    justify-content: start;
+    width: 100%;
+}
+.subtitulo h1{
+    font-size: 2.5rem;
+    color: #000000;
+    margin-top: 0.5rem;
+}
+.username, .password{     
+    width: 80%;
+    padding: 0.625rem;
+    margin-bottom: 0.625rem;
+    border-color: #bab6b6ca;
+    border-radius: 0.3125rem;
+    gap: 0.625rem;
+}
+.olvidar{
+    background-color: transparent;
+    border: none;
+    color: #000000;
+    cursor: pointer;
+    font-size: 0.875rem;
+}
+.olvidar:hover{
+    color: #9d8624;
+}
+.iniciar{
+    padding: 5px 4.375rem;
+    background-color: #000000;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+.iniciar:hover{
+    background-color: #9d8624;
+    padding: 7px 80px;
+    transition: all 0.3s ease;
+}
+.registrar{
+    padding: 5px 75px;
+    background-color: #000000;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 10px;
+}
+.registrar:hover{
+    background-color: #9d8624;
+    padding: 7px 85px;
+    transition: all 0.3s ease;
+}
+.google{
+    padding: 5px 82px;
+    background-color: #000000;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+.google:hover{
+    background-color: #9d8624;
+    padding: 7px 85px;
+    transition: all 0.3s ease;
+}
+.facebook{
+    padding: 5px 75px;
+    background-color: #000000;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 10px;
+}
+.facebook:hover{
+    background-color: #9d8624;
+    padding: 7px 78px;
+    transition: all 0.3s ease;
+}
+.copyright{
+    display: flex;
+    justify-content: start;
+    align-items: start;
+    background-color: #9d8624;
+    color: #000000;
+    margin-top: 70px;
+}
+@media (max-width: 576px){
+    .inicio{
+        flex-direction: column;
+    }
+    .formulario{
+        width: 100%;
+        height: auto;
+        margin-top: 20px;
+    }
+    .logo{
+        margin-top: 20px;
+    }
+    .iniciar, .google, .facebook{
+        padding: 10px;
+        width: 100%;
+    }
+    .registrar{
+        padding: 13px;
+        margin-top: 10px;
+    }
+    .copyright{
+        justify-content: center;
+        align-items: center;
+    }
+}
