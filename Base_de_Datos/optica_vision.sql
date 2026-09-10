@@ -12,8 +12,9 @@ create table rol (
 insert into rol (nombre_rol, descripcion) values
 ('Administrador', 'Administra la optica: usuarios, catalogo, compras y reportes'),
 ('Vendedor', 'Atiende clientes y registra ventas en el punto de venta'),
-('Optometra', 'Realiza examenes visuales, emite recetas opticas y atiende citas'),
 ('Cliente', 'Persona que agenda citas, recibe formulas y compra productos en la optica');
+-- El rol Optometra se elimina: el examen visual ahora lo realiza un tercero externo
+-- que no es usuario del sistema (ver tabla optometra_externo mas adelante).
 
 
 create table usuario (
@@ -27,7 +28,6 @@ create table usuario (
     direccion varchar(150),
     fecha_nacimiento date,
     contrasena varchar(100),
-    numero_licencia_profesional varchar(50),
     estado enum('Activo', 'Inactivo') not null default 'Activo',
     id_rol int not null,
     foreign key (id_rol) references rol(id_rol),
@@ -50,14 +50,9 @@ begin
         set message_text = 'el rol indicado para el usuario no existe';
     end if;
 
-    if v_rol in ('Administrador', 'Vendedor', 'Optometra') and (new.correo is null or new.contrasena is null) then
+    if v_rol in ('Administrador', 'Vendedor') and (new.correo is null or new.contrasena is null) then
         signal sqlstate '45000'
         set message_text = 'el personal interno debe tener correo y contrasena para acceder al sistema';
-    end if;
-
-    if v_rol = 'Optometra' and new.numero_licencia_profesional is null then
-        signal sqlstate '45000'
-        set message_text = 'un optometra debe registrar su numero de licencia profesional';
     end if;
 
     if v_rol = 'Cliente' and new.fecha_nacimiento is null then
@@ -73,18 +68,17 @@ end //
 delimiter ;
 
 
-insert into usuario (nombre, apellido, tipo_documento, num_documento, telefono, correo, contrasena, numero_licencia_profesional, estado, id_rol) values
-('Camila', 'Torres', 'C.C.', '1032987651', '3115557890', 'camila.torres@visionclara.com', 'CamT2026*', null, 'Activo', 1),
-('Andrés', 'Ramírez', 'C.C.', '1019456782', '3124448821', 'andres.ramirez@visionclara.com', 'AndR890!', null, 'Activo', 2),
-('Diana', 'Castillo', 'C.C.', '1026773401', '3138812345', 'diana.castillo@visionclara.com', 'DiaC451$', null, 'Activo', 2),
-('Julián', 'Vargas', 'C.C.', '1014229087', '3157790012', 'julian.vargas@visionclara.com', 'JulV703#', 'TO-45678', 'Activo', 3);
+insert into usuario (nombre, apellido, tipo_documento, num_documento, telefono, correo, contrasena, estado, id_rol) values
+('Camila', 'Torres', 'C.C.', '1032987651', '3115557890', 'camila.torres@visionclara.com', 'CamT2026*', 'Activo', 1),
+('Andrés', 'Ramírez', 'C.C.', '1019456782', '3124448821', 'andres.ramirez@visionclara.com', 'AndR890!', 'Activo', 2),
+('Diana', 'Castillo', 'C.C.', '1026773401', '3138812345', 'diana.castillo@visionclara.com', 'DiaC451$', 'Activo', 2);
 
 
 insert into usuario (nombre, apellido, tipo_documento, num_documento, telefono, correo, direccion, fecha_nacimiento, contrasena, estado, id_rol) values
-('Sofía', 'Herrera', 'C.C.', '1032456789', '3201234567', 'sofia.herrera@gmail.com', 'Cra 45 #12-30, Bogotá', '1996-03-14', 'SofH2026*', 'Activo', 4),
-('Mateo', 'Rojas', 'C.C.', '1098765432', '3112345678', 'mateo.rojas@gmail.com', 'Cll 80 #22-15, Bogotá', '1990-11-02', null, 'Activo', 4),
-('Valentina', 'Cruz', 'C.C.', '52741369', '3023456789', 'valentina.cruz@gmail.com', 'Cra 7 #63-20, Bogotá', '1985-06-23', null, 'Activo', 4),
-('Santiago', 'Molina', 'T.I.', '1015987456', '3134567890', 'contacto.molina@gmail.com', 'Cll 19 #4-56, Bogotá', '2010-09-30', null, 'Activo', 4);
+('Sofía', 'Herrera', 'C.C.', '1032456789', '3201234567', 'sofia.herrera@gmail.com', 'Cra 45 #12-30, Bogotá', '1996-03-14', 'SofH2026*', 'Activo', 3),
+('Mateo', 'Rojas', 'C.C.', '1098765432', '3112345678', 'mateo.rojas@gmail.com', 'Cll 80 #22-15, Bogotá', '1990-11-02', null, 'Activo', 3),
+('Valentina', 'Cruz', 'C.C.', '52741369', '3023456789', 'valentina.cruz@gmail.com', 'Cra 7 #63-20, Bogotá', '1985-06-23', null, 'Activo', 3),
+('Santiago', 'Molina', 'T.I.', '1015987456', '3134567890', 'contacto.molina@gmail.com', 'Cll 19 #4-56, Bogotá', '2010-09-30', null, 'Activo', 3);
 
 -- ---------------------------------------------------------------------
 -- marca
@@ -273,6 +267,28 @@ insert into detalle_compra (cantidad, precio_unitario, subtotal, id_producto, nu
 (10, 180000.00, 1800000.00, 3, 3);
 
 
+-- ---------------------------------------------------------------------
+-- optometra_externo
+-- El examen visual ahora lo realiza un tercero: el optometra deja de ser
+-- un usuario interno del sistema (no inicia sesion, no tiene rol ni
+-- contrasena) y se registra unicamente como dato de referencia externo.
+-- No se almacena numero de licencia profesional por no ser un dato que
+-- la optica requiera registrar.
+-- ---------------------------------------------------------------------
+create table optometra_externo (
+    id_optometra_externo int auto_increment primary key,
+    nombre varchar(100) not null,
+    apellido varchar(100) not null,
+    entidad_examinadora varchar(150) not null,
+    telefono varchar(20),
+    correo varchar(100),
+    estado enum('Activo', 'Inactivo') not null default 'Activo'
+);
+
+insert into optometra_externo (nombre, apellido, entidad_examinadora, telefono, correo, estado) values
+('Julián', 'Vargas', 'Centro de Optometría VisiónTotal S.A.S.', '3157790012', 'julian.vargas@visiontotal.com', 'Activo');
+
+
 create table cita (
     id_cita int auto_increment primary key,
     fecha_hora datetime not null,
@@ -281,9 +297,9 @@ create table cita (
     estado enum('Programada', 'Confirmada', 'Completada', 'Cancelada', 'No asistio') not null default 'Programada',
     observaciones varchar(255),
     id_cliente int not null,
-    id_optometra int not null,
+    id_optometra_externo int not null,
     foreign key (id_cliente) references usuario(id_usuario),
-    foreign key (id_optometra) references usuario(id_usuario)
+    foreign key (id_optometra_externo) references optometra_externo(id_optometra_externo)
 );
 
 
@@ -293,7 +309,7 @@ before insert on cita
 for each row
 begin
     declare v_rol_cliente varchar(50);
-    declare v_rol_optometra varchar(50);
+    declare v_optometra_activo int;
     declare v_choques int;
 
     select r.nombre_rol into v_rol_cliente
@@ -305,36 +321,36 @@ begin
         set message_text = 'la cita debe quedar registrada a nombre de un usuario con rol cliente';
     end if;
 
-    select r.nombre_rol into v_rol_optometra
-    from usuario u join rol r on r.id_rol = u.id_rol
-    where u.id_usuario = new.id_optometra;
+    select count(*) into v_optometra_activo
+    from optometra_externo
+    where id_optometra_externo = new.id_optometra_externo and estado = 'Activo';
 
-    if v_rol_optometra is null or v_rol_optometra <> 'Optometra' then
+    if v_optometra_activo = 0 then
         signal sqlstate '45000'
-        set message_text = 'la cita debe ser atendida por un usuario con rol optometra';
+        set message_text = 'la cita debe quedar asociada a un optometra externo activo';
     end if;
 
     select count(*) into v_choques
     from cita
-    where id_optometra = new.id_optometra
+    where id_optometra_externo = new.id_optometra_externo
       and estado in ('Programada', 'Confirmada')
       and new.fecha_hora < date_add(fecha_hora, interval duracion_minutos minute)
       and date_add(new.fecha_hora, interval new.duracion_minutos minute) > fecha_hora;
 
     if v_choques > 0 then
         signal sqlstate '45000'
-        set message_text = 'el optometra ya tiene una cita programada que se cruza con este horario';
+        set message_text = 'el optometra externo ya tiene una cita programada que se cruza con este horario';
     end if;
 end //
 delimiter ;
 
 
-insert into cita (fecha_hora, duracion_minutos, motivo, estado, observaciones, id_cliente, id_optometra) values
-('2026-08-09 09:00:00', 30, 'Examen visual de rutina', 'Completada', 'Se detecta miopia y astigmatismo leve, se emite receta', 5, 4),
-('2026-08-14 15:00:00', 30, 'Control visual por hipermetropia y presbicia', 'Completada', 'Se recomienda lente progresivo, se emite receta', 7, 4),
-('2026-08-19 10:30:00', 30, 'Control visual pediatrico', 'Completada', 'Paciente menor de edad, se emite receta con vigencia reducida', 8, 4),
-('2026-09-15 11:00:00', 30, 'Primera valoracion visual', 'Programada', null, 6, 4),
-('2026-09-20 09:00:00', 30, 'Control de seguimiento', 'Cancelada', 'La cliente reprogramara mas adelante', 5, 4);
+insert into cita (fecha_hora, duracion_minutos, motivo, estado, observaciones, id_cliente, id_optometra_externo) values
+('2026-08-09 09:00:00', 30, 'Examen visual de rutina', 'Completada', 'Se detecta miopia y astigmatismo leve, se emite receta', 4, 1),
+('2026-08-14 15:00:00', 30, 'Control visual por hipermetropia y presbicia', 'Completada', 'Se recomienda lente progresivo, se emite receta', 6, 1),
+('2026-08-19 10:30:00', 30, 'Control visual pediatrico', 'Completada', 'Paciente menor de edad, se emite receta con vigencia reducida', 7, 1),
+('2026-09-15 11:00:00', 30, 'Primera valoracion visual', 'Programada', null, 5, 1),
+('2026-09-20 09:00:00', 30, 'Control de seguimiento', 'Cancelada', 'La cliente reprogramara mas adelante', 4, 1);
 
 
 create table receta_optica (
@@ -353,10 +369,10 @@ create table receta_optica (
     diagnostico varchar(150),
     observaciones varchar(255),
     id_cliente int not null,
-    id_usuario int not null,
+    id_optometra_externo int not null,
     id_cita int,
     foreign key (id_cliente) references usuario(id_usuario),
-    foreign key (id_usuario) references usuario(id_usuario),
+    foreign key (id_optometra_externo) references optometra_externo(id_optometra_externo),
     foreign key (id_cita) references cita(id_cita)
 );
 
@@ -366,18 +382,18 @@ create trigger tr_validar_receta
 before insert on receta_optica
 for each row
 begin
-    declare v_rol_optometra varchar(50);
+    declare v_optometra_activo int;
     declare v_rol_cliente varchar(50);
     declare v_fecha_nacimiento date;
     declare v_edad int;
 
-    select r.nombre_rol into v_rol_optometra
-    from usuario u join rol r on r.id_rol = u.id_rol
-    where u.id_usuario = new.id_usuario;
+    select count(*) into v_optometra_activo
+    from optometra_externo
+    where id_optometra_externo = new.id_optometra_externo and estado = 'Activo';
 
-    if v_rol_optometra is null or v_rol_optometra <> 'Optometra' then
+    if v_optometra_activo = 0 then
         signal sqlstate '45000'
-        set message_text = 'la receta optica debe quedar registrada a nombre de un usuario con rol optometra';
+        set message_text = 'la receta optica debe quedar registrada a nombre de un optometra externo activo';
     end if;
 
     select r.nombre_rol, u.fecha_nacimiento into v_rol_cliente, v_fecha_nacimiento
@@ -400,10 +416,10 @@ end //
 delimiter ;
 
 
-insert into receta_optica (fecha_emision, fecha_vencimiento, od_esfera, od_cilindro, od_eje, od_adicion, oi_esfera, oi_cilindro, oi_eje, oi_adicion, distancia_pupilar, diagnostico, observaciones, id_cliente, id_usuario, id_cita) values
-('2026-08-10', '2027-08-10', -2.25, -0.50, 180, null, -2.00, -0.75, 175, null, 62.0, 'Miopia y astigmatismo leve', 'Control en un año', 5, 4, 1),
-('2026-08-15', '2027-08-15', 1.00, null, null, 1.75, 1.25, null, null, 1.75, 60.5, 'Hipermetropia y presbicia', 'Recomendado lente progresivo', 7, 4, 2),
-('2026-08-20', '2027-02-20', -1.00, -0.25, 90, null, -1.25, -0.25, 85, null, 55.0, 'Miopia leve bilateral', 'Paciente pediatrico, control cada 6 meses', 8, 4, 3);
+insert into receta_optica (fecha_emision, fecha_vencimiento, od_esfera, od_cilindro, od_eje, od_adicion, oi_esfera, oi_cilindro, oi_eje, oi_adicion, distancia_pupilar, diagnostico, observaciones, id_cliente, id_optometra_externo, id_cita) values
+('2026-08-10', '2027-08-10', -2.25, -0.50, 180, null, -2.00, -0.75, 175, null, 62.0, 'Miopia y astigmatismo leve', 'Control en un año', 4, 1, 1),
+('2026-08-15', '2027-08-15', 1.00, null, null, 1.75, 1.25, null, null, 1.75, 60.5, 'Hipermetropia y presbicia', 'Recomendado lente progresivo', 6, 1, 2),
+('2026-08-20', '2027-02-20', -1.00, -0.25, 90, null, -1.25, -0.25, 85, null, 55.0, 'Miopia leve bilateral', 'Paciente pediatrico, control cada 6 meses', 7, 1, 3);
 
 
 create table promocion (
@@ -469,11 +485,11 @@ delimiter ;
 
 
 insert into venta (fecha, total, estado, es_cotizacion, id_cliente, codigo_promocion, id_receta, id_usuario) values
-('2026-08-18 10:15:00', 400000.00, 'Completada', false, 5, null, 1, 2),
-('2026-08-19 14:30:00', 250000.00, 'Completada', false, 6, null, null, 3),
-('2026-08-20 09:00:00', 202000.00, 'Completada', false, 7, null, 2, 2),
-('2026-08-21 16:45:00', 520000.00, 'Completada', false, 8, 2, 3, 1),
-('2026-08-25 11:00:00', 26000.00, 'Pendiente', true, 5, null, null, 3);
+('2026-08-18 10:15:00', 400000.00, 'Completada', false, 4, null, 1, 2),
+('2026-08-19 14:30:00', 250000.00, 'Completada', false, 5, null, null, 3),
+('2026-08-20 09:00:00', 202000.00, 'Completada', false, 6, null, 2, 2),
+('2026-08-21 16:45:00', 520000.00, 'Completada', false, 7, 2, 3, 1),
+('2026-08-25 11:00:00', 26000.00, 'Pendiente', true, 4, null, null, 3);
 
 
 create table detalle_venta (
@@ -681,9 +697,9 @@ begin
         set message_text = 'el usuario que genera el reporte no existe';
     end if;
 
-    if new.tipo_reporte = 'Recetas' and v_rol not in ('Optometra', 'Administrador') then
+    if new.tipo_reporte = 'Recetas' and v_rol <> 'Administrador' then
         signal sqlstate '45000'
-        set message_text = 'solo un optometra o el administrador pueden generar reportes de recetas, por tratarse de datos clinicos de los clientes';
+        set message_text = 'solo el administrador puede generar reportes de recetas, por tratarse de datos clinicos de los clientes, ya que el optometra es un tercero externo sin acceso al sistema';
     end if;
 end //
 delimiter ;
@@ -742,8 +758,8 @@ insert into reporte (titulo, tipo_reporte, id_usuario_genera, descripcion, conte
 insert into reporte (titulo, tipo_reporte, id_usuario_genera, descripcion, contenido) values (
     'Reporte de recetas emitidas',
     'Recetas',
-    4,
-    'Estado de las recetas opticas emitidas a los clientes',
+    1,
+    'Estado de las recetas opticas emitidas a los clientes por el tercero externo',
     concat(
         'Recetas emitidas: ', (select count(*) from receta_optica),
         ' | recetas vigentes: ', (select count(*) from receta_optica where fecha_vencimiento >= curdate()),
@@ -772,7 +788,7 @@ insert into reporte (titulo, tipo_reporte, id_usuario_genera, descripcion, conte
     'Reporte de citas',
     'Citas',
     1,
-    'Estado de las citas agendadas con los optometras',
+    'Estado de las citas agendadas con los optometras externos',
     concat(
         'Citas totales: ', (select count(*) from cita),
         ' | completadas: ', (select count(*) from cita where estado = 'Completada'),
@@ -811,19 +827,20 @@ order by v.codigo_venta, p.fecha;
 
 select c.id_cita, c.fecha_hora, c.duracion_minutos, c.motivo, c.estado,
        concat(cl.nombre, ' ', cl.apellido) as cliente,
-       concat(o.nombre, ' ', o.apellido) as optometra
+       concat(o.nombre, ' ', o.apellido) as optometra_externo,
+       o.entidad_examinadora
 from cita c
 join usuario cl on cl.id_usuario = c.id_cliente
-join usuario o on o.id_usuario = c.id_optometra
+join optometra_externo o on o.id_optometra_externo = c.id_optometra_externo
 order by c.fecha_hora;
 
 
 select concat(cl.nombre, ' ', cl.apellido) as cliente, r.fecha_emision, r.fecha_vencimiento,
        r.od_esfera, r.od_cilindro, r.od_eje, r.oi_esfera, r.oi_cilindro, r.oi_eje,
-       concat(u.nombre, ' ', u.apellido) as emitida_por, r.id_cita
+       concat(o.nombre, ' ', o.apellido) as emitida_por, o.entidad_examinadora, r.id_cita
 from receta_optica r
 join usuario cl on cl.id_usuario = r.id_cliente
-join usuario u on u.id_usuario = r.id_usuario
+join optometra_externo o on o.id_optometra_externo = r.id_optometra_externo
 order by r.fecha_emision;
 
 
