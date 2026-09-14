@@ -1,24 +1,28 @@
+@import url('global.css');
+
 /* ═══════════════════════════════════════════════════════════
    BOUTIQUE DE LA VISIÓN — Visualizador de Producto
    Sistema de Temas: Claro (default) · Oscuro (.dark-mode)
-   Paleta: Blanco · Dorado #bda229 · Negro #161615 · Gris #737372
+   Paleta: Blanco · Dorado #cca43b / #b08c2f · Negro #222222 · Gris #555555
    ═══════════════════════════════════════════════════════════ */
 
-/* ── Variables base (siempre iguales) ─────────────────────── */
+/* ── Variables base ───────────────────────────────────────── */
 :root {
-  --gold:        #bda229;
-  --gold-light:  #d4af37;
-  --gold-glow:   rgba(189, 162, 41, 0.38);
-  --gold-subtle: rgba(189, 162, 41, 0.14);
-  --gold-mid:    rgba(189, 162, 41, 0.55);
-  --ink:         #161615;
-  --ink-soft:    #737372;
+  --gold:        #cca43b;
+  --gold-dark:   #b08c2f;
+  --gold-light:  #e5c96d;
+  --gold-glow:   rgba(204, 164, 59, 0.38);
+  --gold-subtle: rgba(204, 164, 59, 0.14);
+  --gold-mid:    rgba(204, 164, 59, 0.55);
+  --ink:         #222222;
+  --ink-soft:    #555555;
   --white:       #ffffff;
+  --border:      #e8e8e8;
   --radius:      18px;
   --radius-sm:   10px;
   --radius-xs:   6px;
-  --font-serif:  'Cormorant Garamond', Georgia, serif;
-  --font-sans:   'Kantumruy Pro', sans-serif;
+  --font-serif:  'Montserrat', sans-serif;
+  --font-sans:   'Inter', sans-serif;
   --ease:        cubic-bezier(0.4, 0, 0.2, 1);
   --transition:  all 0.35s var(--ease);
 

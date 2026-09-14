@@ -1,25 +1,21 @@
-/* =========================================================
-   BOUTIQUE DE LA VISIÓN — Checkout
-   Riesgo de diseño: panel editorial casi negro con la
-   tipografía del modelo en gran escala como marca de agua
-   vertical, evocando el forro interior de un estuche de
-   lujo. Contrasta con el formulario claro, de etiquetas
-   flotantes y una "columna vertebral" dorada que numera
-   los pasos reales del proceso de compra.
-   ========================================================= */
+@import url('global.css');
+
 :root{
-  --cream:      #fbf8f1;
-  --cream-deep: #f4efe3;
-  --ink:        #241f19;
-  --ink-soft:   #55503f;
+  --cream:      #ffffff;
+  --cream-deep: #faf8f5;
+  --ink:        #222222;
+  --ink-soft:   #555555;
   --ink-black:  #15130f;
   --ink-black-2:#1d1a14;
-  --gold:       #c9a227;
-  --gold-light: #e8cf82;
-  --gold-gradient: linear-gradient(135deg, #d9b64a 0%, #f3e3ab 45%, #c9a227 100%);
+  --gold:       #cca43b;
+  --gold-dark:  #b08c2f;
+  --gold-light: #e5c96d;
+  --border:     #e8e8e8;
+  --bg:         #ffffff;
+  --gold-gradient: linear-gradient(135deg, #cca43b 0%, #e5c96d 45%, #b08c2f 100%);
 
-  --font-display: 'Cormorant Garamond', Georgia, serif;
-  --font-body: 'Jost', 'Segoe UI', sans-serif;
+  --font-display: 'Montserrat', sans-serif;
+  --font-body:    'Inter', sans-serif;
 
   --shadow-soft: 0 24px 70px -30px rgba(0,0,0,0.55);
 }

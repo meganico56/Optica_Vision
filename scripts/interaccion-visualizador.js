@@ -35,7 +35,7 @@ document.addEventListener('DOMContentLoaded', function () {
       themeIcon.className = isDark ? 'fi fi-br-moon' : 'fi fi-br-brightness';
     }
     localStorage.setItem('bv-theme', isDark ? 'dark' : 'light');
-    showToast(isDark ? '🌙 Modo oscuro activado' : '☀️ Modo claro activado');
+    showToast(isDark ? 'Modo oscuro activado' : 'Modo claro activado');
   });
 
   // ══════════════════════════════════════════════════════════

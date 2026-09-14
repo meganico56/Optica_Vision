@@ -1,0 +1,202 @@
+/* ============================================================
+   BOUTIQUE DE LA VISIÓN — Autenticación (Login & Registro)
+   ============================================================ */
+
+.inicio {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;    
+    flex-direction: row;
+    min-height: 100vh;
+    padding: 2rem 1rem;
+    background-image: url('../imagenes/fondos/fondo-boutique.png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+}
+
+.inicio .logo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.inicio .logo img {
+    max-width: 220px;
+    height: auto;
+    filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.9));
+}
+
+.formulario {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--bg);
+    padding: 2.5rem;
+    border-radius: 1.25rem;
+    width: 100%;
+    max-width: 420px;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+    border: 1px solid var(--border);
+}
+
+.titulo {
+    display: flex;
+    justify-content: flex-start;
+    align-items: flex-start;
+    width: 100%;
+}
+
+.titulo h5 {
+    font-family: var(--font-title);
+    color: var(--gold-dark);
+    font-size: 0.9rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+}
+
+.subtitulo {
+    display: flex;
+    justify-content: flex-start;
+    width: 100%;
+    margin-bottom: 1.5rem;
+}
+
+.subtitulo h1 {
+    font-family: var(--font-title);
+    font-size: 2rem;
+    color: var(--text-dark);
+    font-weight: 700;
+    margin-top: 0.25rem;
+}
+
+.formulario input[type="text"],
+.formulario input[type="email"],
+.formulario input[type="password"],
+.username, 
+.password {     
+    width: 100%;
+    padding: 0.75rem 1rem;
+    margin-bottom: 1rem;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    font-family: var(--font-body);
+    font-size: 0.95rem;
+    color: var(--text-dark);
+    background-color: #fafafa;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.formulario input:focus,
+.username:focus, 
+.password:focus {
+    outline: none;
+    border-color: var(--gold);
+    box-shadow: 0 0 0 3px var(--gold-subtle);
+    background-color: var(--bg);
+}
+
+.olvidar {
+    background-color: transparent;
+    border: none;
+    color: var(--text-muted);
+    cursor: pointer;
+    font-family: var(--font-body);
+    font-size: 0.875rem;
+    margin-bottom: 1rem;
+    transition: color 0.3s ease;
+    align-self: flex-end;
+}
+
+.olvidar:hover {
+    color: var(--gold-dark);
+    text-decoration: underline;
+}
+
+.iniciar, .registrar, .google, .facebook {
+    width: 100%;
+    padding: 0.75rem 1.5rem;
+    font-family: var(--font-title);
+    font-weight: 600;
+    font-size: 0.95rem;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-bottom: 0.75rem;
+}
+
+.iniciar {
+    background-color: var(--gold);
+    color: #ffffff;
+    box-shadow: 0 4px 12px var(--gold-glow);
+}
+
+.iniciar:hover {
+    background-color: var(--gold-dark);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px var(--gold-glow);
+}
+
+.registrar {
+    background-color: transparent;
+    color: var(--text-dark);
+    border: 1px solid var(--border);
+}
+
+.registrar:hover {
+    background-color: var(--border);
+    color: var(--text-dark);
+}
+
+.formulario p {
+    font-family: var(--font-body);
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    margin: 0.5rem 0;
+    text-align: center;
+}
+
+.google {
+    background-color: #ffffff;
+    color: #444444;
+    border: 1px solid var(--border);
+}
+
+.google:hover {
+    background-color: #f5f5f5;
+    border-color: #cccccc;
+}
+
+.facebook {
+    background-color: #1877f2;
+    color: #ffffff;
+}
+
+.facebook:hover {
+    background-color: #166fe5;
+}
+
+footer .copyright {
+    background: var(--gold-dark);
+    color: #ffffff;
+    text-align: center;
+    padding: 12px 5%;
+    font-size: 0.85rem;
+}
+
+@media (max-width: 768px) {
+    .inicio {
+        flex-direction: column;
+        justify-content: center;
+        gap: 2rem;
+    }
+    
+    .formulario {
+        width: 100%;
+        padding: 1.75rem;
+    }
+}
