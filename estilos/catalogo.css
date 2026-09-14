@@ -16,7 +16,7 @@ body {
   font-family: "kantumruy pro", sans-serif;
   background-color: var(--blanco);
   min-height: 100vh;
-  overflow: auto;
+  overflow: hidden;
 }
 
 header {
@@ -24,7 +24,6 @@ header {
   align-items: center;
   justify-content: space-between;
   z-index: 1000;
-  position: relative;
   padding: 15px 50px;
   position: static;
   top: 0;
@@ -47,7 +46,7 @@ header {
   padding: 5px 6px 2px 2px;
   width: 100%;
   max-width: 400px;
-  margin: 0 600px 0 30px;
+  margin: 0 20px 0 30px;
   transition: all 0.3s ease;
 }
 
@@ -108,8 +107,9 @@ nav ul li a {
   font-weight: bold;
   letter-spacing: 2px;
   transition: color 0.3s ease;
-  padding: 15px;
+  padding: 8px 12px;
   border-radius: 15px;
+  display: inline-block;
 }
 
 nav ul li a:hover {
@@ -123,24 +123,24 @@ nav ul li a:hover {
   color: var(--dorado);
   background-color: var(--blanco);
   box-shadow:
-    4px 5px 10px rgba/244,
+    4px 5px 10px rgba(244,
     221,
     14,
-    0.822;
+    0.822);
   position: relative;
-  transform: transñateY(-2px);
+  transform: translateY(-2px);
 }
 
 .menu_nav ul li a.activo::after {
   content: "";
   position: absolute;
-  bottom: -6px;
+  bottom: 0px;
   left: 0;
-  width: 100%;
+  width: 80%;
   height: 3px;
   background-color: var(--dorado);
   border-radius: 20px;
-  transition: all 0.3 ease;
+  transition: all 0.3s ease;
 }
 
 .catalogo_G {
@@ -155,6 +155,8 @@ nav ul li a:hover {
 }
 
 .mendescon {
+  width: 3px;
+  height: 3px;
   background-color: var(--dorado);
   position: relative;
   display: flex;
@@ -163,7 +165,7 @@ nav ul li a:hover {
   z-index: 3;
 }
 
-.mendescon ul li .activo {
+.mendescon ul li a.activo {
   color: var(--dorado);
   background-color: var(--blanco);
   box-shadow: 4px 5px 10px rgba(244, 221, 14, 0.822);
@@ -203,7 +205,7 @@ nav ul li a:hover {
 }
 
 .men_oc {
-  position: absolute;
+  position: flex;
   top: 45px;
   left: 0;
   background-color: var(--blanco);
@@ -294,14 +296,14 @@ nav ul li a:hover {
   transform: translateY(-2px);
 }
 
-.catalogo_cont ul li .activo {
+.catalogo_cont ul li a.activo {
   color: var(--dorado);
   background-color: var(--blanco);
   box-shadow: 4px 5px 10px rgba(244, 221, 14, 0.822);
   position: relative;
   transform: translateY(-2px);
 }
-.catalogo_cont.activo::after {
+.catalogo_cont ul li a.activo::after {
   content: "";
   position: absolute;
   bottom: -6px;
@@ -343,9 +345,16 @@ nav ul li a:hover {
   flex-direction: column;
   align-items: center;
   justify-content: space-between;
+<<<<<<< Updated upstream
   transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
   gap: 12px;
   backdrop-filter: blur(8px);
+=======
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+  gap: 10px;
+>>>>>>> Stashed changes
 }
 
 .producto-card:hover {
@@ -448,7 +457,7 @@ nav ul li a:hover {
 .btn-carrito1:hover {
   background-color: var(--dorado);
   color: #050505;
-  border-color: var();
+  border-color: var(--dorado);
   box-shadow: 1px 3px 6px 1px rgba(255, 174, 0, 0.875);
 }
 
