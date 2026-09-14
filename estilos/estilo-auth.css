@@ -1,5 +1,7 @@
+@import url('global.css');
+
 /* ============================================================
-   BOUTIQUE DE LA VISIÓN — Autenticación (Login & Registro)
+   BOUTIQUE DE LA VISIÓN — Autenticación y Registro
    ============================================================ */
 
 .inicio {
@@ -8,7 +10,7 @@
     align-items: center;    
     flex-direction: row;
     min-height: 100vh;
-    padding: 2rem 1rem;
+    padding: 2.5rem 1rem;
     background-image: url('../imagenes/fondos/fondo-boutique.png');
     background-size: cover;
     background-position: center;
@@ -37,9 +39,12 @@
     padding: 2.5rem;
     border-radius: 1.25rem;
     width: 100%;
-    max-width: 420px;
-    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+    max-width: 520px;
+    height: auto;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.12);
     border: 1px solid var(--border);
+    margin-top: 1rem;
+    margin-bottom: 1rem;
 }
 
 .titulo {
@@ -62,7 +67,7 @@
     display: flex;
     justify-content: flex-start;
     width: 100%;
-    margin-bottom: 1.5rem;
+    margin-bottom: 1.25rem;
 }
 
 .subtitulo h1 {
@@ -73,14 +78,36 @@
     margin-top: 0.25rem;
 }
 
+/* Grilla de Campos de Registro */
+.campos {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    margin-bottom: 1.25rem;
+}
+
+.fila {
+    display: flex;
+    gap: 0.75rem;
+    width: 100%;
+}
+
+.fila .username, 
+.fila input {
+    flex: 1;
+    min-width: 0;
+}
+
 .formulario input[type="text"],
 .formulario input[type="email"],
 .formulario input[type="password"],
+.formulario input[type="tel"],
 .username, 
 .password {     
     width: 100%;
     padding: 0.75rem 1rem;
-    margin-bottom: 1rem;
+    margin-bottom: 0;
     border: 1px solid var(--border);
     border-radius: 8px;
     font-family: var(--font-body);
@@ -184,11 +211,11 @@ footer .copyright {
     background: var(--gold-dark);
     color: #ffffff;
     text-align: center;
-    padding: 12px 5%;
+    padding: 14px 5%;
     font-size: 0.85rem;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 576px) {
     .inicio {
         flex-direction: column;
         justify-content: center;
@@ -197,6 +224,11 @@ footer .copyright {
     
     .formulario {
         width: 100%;
-        padding: 1.75rem;
+        padding: 1.5rem;
+    }
+
+    .fila {
+        flex-direction: column;
+        gap: 0.75rem;
     }
 }
