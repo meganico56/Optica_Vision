@@ -1,3 +1,18 @@
+* {
+    box-sizing: border-box;
+}
+
+html,
+body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    min-height: 100%;
+}
+
+body {
+    font-family: "Kantumruy Pro", sans-serif;
+}
 .kantumruy-pro-400 {
   font-family: "Kantumruy Pro", sans-serif;
   font-optical-sizing: auto;
@@ -5,17 +20,20 @@
   font-style: normal;
 }
 
-.inicio{
+.inicio {
+    min-height: 100vh;
+    width: 100%;
     display: flex;
     justify-content: space-around;
-    align-items: center;    
+    align-items: center;
     flex-direction: row;
-    height: 100vh;
     background-image: url('../imagenes/fondos/fondo-boutique.png');
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
+    padding: 40px;
 }
+
 .logo{
     width: 100px;
     height: 100px;
@@ -27,49 +45,85 @@
     font-size: 24px;
     border-radius: 20px;
 }
-.formulario{
+.formulario {
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
-    background-color: #ffffff00;
-    padding: 40px;
-    border-radius: 10px;
+    justify-content: flex-start;
     background-color: #ffffff;
-    width: 300px;
-    height: 500px;
+    width: 420px;
+    min-height: 600px;
+    padding: 35px 40px;
+    border-radius: 10px;
     box-shadow: 0px 11px 20px rgba(48, 44, 44, 0.754);
-    margin-top: 50px;
+    margin: 0;
 }
 .formulario h1{
     font-size: 24px;
     margin-bottom: 20px;
     justify-content: start;
 }
-.titulo{
-    display: flex;
-    justify-content: start;
-    align-items: start;
-    width: 100%;
-    margin-top: 1px;
+.formulario p {
+    margin: 15px 0 10px 0;
+    font-size: 14px;
 }
-.subtitulo{
-    display: flex;
-    justify-content: start;
+.campos {
     width: 100%;
 }
-.subtitulo h1{
-    font-size: 2.5rem;
-    color: #000000;
-    margin-top: 10px;
-}
-.username, .password{
-    width: 80%;
-    padding: 10px;
-    margin-bottom: 10px;
-    border-color: #979797cc;
-    border-radius: 5px;
+
+.fila {
+    display: flex;
     gap: 10px;
+    width: 100%;
+    margin-bottom: 12px;
+}
+
+.fila .username {
+    width: 50%;
+    margin: 0;
+}
+
+.campos > .password {
+    width: 100%;
+    margin-bottom: 12px;
+}
+.titulo {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    width: 100%;
+    margin: 0;
+}
+
+.titulo h5 {
+    margin: 0;
+    font-size: 18px;
+}
+
+.subtitulo {
+    display: flex;
+    justify-content: flex-start;
+    width: 100%;
+}
+
+.subtitulo h1 {
+    font-size: 2rem;
+    color: #000000;
+    margin: 5px 0 25px 0;
+}
+.username,
+.password {
+    height: 42px;
+    padding: 10px 12px;
+    border: 1px solid #979797cc;
+    border-radius: 5px;
+    font-family: "Kantumruy Pro", sans-serif;
+    font-size: 14px;
+    outline: none;
+}
+.username:focus,
+.password:focus {
+    border-color: #9d8624;
 }
 .olvidar{
     background-color: transparent;
@@ -81,58 +135,61 @@
 .olvidar:hover{
     color: #9d8624;
 }
-.iniciar{
-    padding: 5px 70px;
+.iniciar {
+    width: 100%;
+    height: 42px;
+    padding: 10px;
     background-color: #000000;
-    color: #fff;
+    color: #ffffff;
     border: none;
     border-radius: 5px;
     cursor: pointer;
+    font-family: "Kantumruy Pro", sans-serif;
+    font-size: 15px;
+    margin-top: 5px;
 }
-.iniciar:hover{
+
+.iniciar:hover {
     background-color: #9d8624;
-    padding: 7px 80px;
     transition: all 0.3s ease;
 }
-.registrar{
-    padding: 3px 50px;
-    background-color: #fefefe00;
-    color: #000000;
+.registrar {
+    width: 100%;
+    padding: 8px;
+    background-color: transparent;
+    color:#000000;
     border: none;
     border-radius: 5px;
     cursor: pointer;
-    margin-top: 10px;
+    margin-top: 8px;
+    font-family: "Kantumruy Pro", sans-serif;
 }
-.registrar:hover{
+
+.registrar:hover {
     background-color: #9d8624;
     transition: all 0.5s ease;
 }
-.google{
-    padding: 5px 82px;
+.google,
+.facebook {
+    width: 100%;
+    height: 40px;
+    padding: 8px;
     background-color: #000000;
-    color: #fff;
+    color: #ffffff;
     border: none;
     border-radius: 5px;
     cursor: pointer;
+    font-family: "Kantumruy Pro", sans-serif;
 }
-.google:hover{
+
+.google:hover,
+.facebook:hover {
     background-color: #9d8624;
-    padding: 7px 90px;
     transition: all 0.3s ease;
 }
-.facebook{
-    padding: 5px 75px;
-    background-color: #000000;
-    color: #fff;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
+
+.facebook {
     margin-top: 10px;
-}
-.facebook:hover{
-    background-color: #9d8624;
-    padding: 7px 85px;
-    transition: all 0.3s ease;
 }
 .copyright{
     display: flex;
@@ -143,22 +200,59 @@
     margin-top: 70px;
 }
 @media (max-width: 768px) {
-    .inicio{
+
+    .inicio {
         flex-direction: column;
+        justify-content: center;
+        padding: 30px 20px;
+        min-height: 100vh;
     }
-    .formulario{
-        width: 90%;
-        height: auto;
-        padding: 20px;
+
+    .logo {
+        margin-bottom: 20px;
     }
-    .iniciar, .registrar, .google, .facebook{
-        padding: 10px;
+
+    .formulario {
+        width: 100%;
+        max-width: 420px;
+        min-height: auto;
+        padding: 30px 25px;
+        margin: 0;
+    }
+
+    .fila {
+        flex-direction: column;
+        gap: 12px;
+        margin-bottom: 12px;
+    }
+
+    .fila .username {
         width: 100%;
     }
-    .copyright{
-        justify-content: flex-end;
-        text-align: flex-end;
 
+    .campos > .password {
+        width: 100%;
+    }
+
+    .iniciar,
+    .registrar,
+    .google,
+    .facebook {
+        width: 100%;
     }
 }
-    
+@media (max-width: 450px) {
+
+    .inicio {
+        padding: 20px 15px;
+    }
+    .logo img {
+        max-width: 120px;
+    }
+    .formulario {
+        padding: 25px 20px;
+    }
+    .subtitulo h1 {
+        font-size: 1.7rem;
+    }
+}

@@ -15,6 +15,7 @@
     <div class="inicio">
         <div class="logo">
             <img src="../imagenes/logos/logo-boutique.png"
+            width="200" height="150"
             alt="Logo Boutique de la Visión">
         </div>
         <div class="formulario">
@@ -24,14 +25,48 @@
             <div class="subtitulo">
                 <h1>Crea tu cuenta</h1>
             </div>
-            <input type="text" id="username" class="username" placeholder="Nombre" required><br><br>
-            <input type="email" id="email" class="username" placeholder="E-mail" required><br><br>
-            <input type="password" id="password" class="password" placeholder="Contraseña" required><br><br>
-            <button class="iniciar" type="submit">Crear Cuenta</button>
-            <button class="registrar" type="button" onclick="window.location.href='inicio-sesion.html'">¿Ya tienes cuenta? Inicia sesión</button>
-            <p>Registrarte con otra cuenta</p>
-            <button class="google" type="submit">Google</button>
-            <button class="facebook" type="submit">Facebook</button>
+
+<div class="campos">
+
+    <!-- Nombre y apellido -->
+    <div class="fila">
+        <input type="text" id="username" class="username" placeholder="Nombre" required>
+
+        <input type="text" id="lastname" class="username" placeholder="Apellido" required>
+    </div>
+
+    <!-- Email y teléfono -->
+    <div class="fila">
+        <input type="email" id="email" class="username" placeholder="E-mail" required>
+
+        <input type="tel" id="phone" class="username" placeholder="Teléfono" required>
+    </div>
+
+    <!-- Dirección y ciudad -->
+    <div class="fila">
+        <input type="text" id="address" class="username" placeholder="Dirección" required>
+
+        <input type="text" id="city" class="username" placeholder="Ciudad" required>
+    </div>
+
+    <!-- Contraseña -->
+    <input type="password" id="password" class="password" placeholder="Contraseña" required>
+
+</div>
+
+<button class="iniciar" type="submit">Crear Cuenta</button>
+
+<button class="registrar" type="button"
+    onclick="window.location.href='inicio-sesion.html'">
+    ¿Ya tienes cuenta? Inicia sesión
+</button>
+
+<p>Registrarte con otra cuenta</p>
+
+<button class="google" type="submit">Google</button>
+
+<button class="facebook" type="submit">Facebook</button>
+
         </div>
     </div>
     <footer>
