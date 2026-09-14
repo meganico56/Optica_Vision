@@ -267,14 +267,7 @@ insert into detalle_compra (cantidad, precio_unitario, subtotal, id_producto, nu
 (10, 180000.00, 1800000.00, 3, 3);
 
 
--- ---------------------------------------------------------------------
--- optometra_externo
--- El examen visual ahora lo realiza un tercero: el optometra deja de ser
--- un usuario interno del sistema (no inicia sesion, no tiene rol ni
--- contrasena) y se registra unicamente como dato de referencia externo.
--- No se almacena numero de licencia profesional por no ser un dato que
--- la optica requiera registrar.
--- ---------------------------------------------------------------------
+
 create table optometra_externo (
     id_optometra_externo int auto_increment primary key,
     nombre varchar(100) not null,
