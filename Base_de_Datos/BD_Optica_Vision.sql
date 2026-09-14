@@ -6,15 +6,9 @@ use optica_vision;
 create table rol (
     id_rol int auto_increment primary key,
     nombre_rol varchar(50) not null,
-    descripcion varchar(150) not null
+    descripcion varchar(150) not null,
+    unique key uq_rol_nombre (nombre_rol)
 );
-
-insert into rol (nombre_rol, descripcion) values
-('Administrador', 'Administra la optica: usuarios, catalogo, compras y reportes'),
-('Vendedor', 'Atiende clientes y registra ventas en el punto de venta'),
-('Cliente', 'Persona que agenda citas, recibe formulas y compra productos en la optica');
--- El rol Optometra se elimina: el examen visual ahora lo realiza un tercero externo
--- que no es usuario del sistema (ver tabla optometra_externo mas adelante).
 
 
 create table usuario (
@@ -64,25 +58,15 @@ begin
         signal sqlstate '45000'
         set message_text = 'el tipo de documento t.i. corresponde a un menor de edad y solo aplica al rol cliente';
     end if;
+
+    if new.fecha_nacimiento is not null and new.fecha_nacimiento > curdate() then
+        signal sqlstate '45000'
+        set message_text = 'la fecha de nacimiento no puede ser una fecha futura';
+    end if;
 end //
 delimiter ;
 
 
-insert into usuario (nombre, apellido, tipo_documento, num_documento, telefono, correo, contrasena, estado, id_rol) values
-('Camila', 'Torres', 'C.C.', '1032987651', '3115557890', 'camila.torres@visionclara.com', 'CamT2026*', 'Activo', 1),
-('Andrés', 'Ramírez', 'C.C.', '1019456782', '3124448821', 'andres.ramirez@visionclara.com', 'AndR890!', 'Activo', 2),
-('Diana', 'Castillo', 'C.C.', '1026773401', '3138812345', 'diana.castillo@visionclara.com', 'DiaC451$', 'Activo', 2);
-
-
-insert into usuario (nombre, apellido, tipo_documento, num_documento, telefono, correo, direccion, fecha_nacimiento, contrasena, estado, id_rol) values
-('Sofía', 'Herrera', 'C.C.', '1032456789', '3201234567', 'sofia.herrera@gmail.com', 'Cra 45 #12-30, Bogotá', '1996-03-14', 'SofH2026*', 'Activo', 3),
-('Mateo', 'Rojas', 'C.C.', '1098765432', '3112345678', 'mateo.rojas@gmail.com', 'Cll 80 #22-15, Bogotá', '1990-11-02', null, 'Activo', 3),
-('Valentina', 'Cruz', 'C.C.', '52741369', '3023456789', 'valentina.cruz@gmail.com', 'Cra 7 #63-20, Bogotá', '1985-06-23', null, 'Activo', 3),
-('Santiago', 'Molina', 'T.I.', '1015987456', '3134567890', 'contacto.molina@gmail.com', 'Cll 19 #4-56, Bogotá', '2010-09-30', null, 'Activo', 3);
-
--- ---------------------------------------------------------------------
--- marca
--- ---------------------------------------------------------------------
 create table marca (
     id_marca int auto_increment primary key,
     nombre varchar(100) not null,
@@ -91,28 +75,14 @@ create table marca (
     unique key uq_marca_nombre (nombre)
 );
 
-insert into marca (nombre, pais_origen, estado) values
-('Ray-Ban', 'Italia', 'Activo'),
-('Vogue Eyewear', 'Italia', 'Activo'),
-('Essilor', 'Francia', 'Activo'),
-('Acuvue', 'Estados Unidos', 'Activo'),
-('Vision Clara (marca propia)', 'Colombia', 'Activo');
-
 
 create table categoria (
     id_categoria int auto_increment primary key,
     nombre varchar(100) not null,
     descripcion varchar(150),
-    estado enum('Activo', 'Inactivo') not null default 'Activo'
+    estado enum('Activo', 'Inactivo') not null default 'Activo',
+    unique key uq_categoria_nombre (nombre)
 );
-
-insert into categoria (nombre, descripcion, estado) values
-('Monturas', 'Armazones para lentes oftalmicos', 'Activo'),
-('Gafas de sol', 'Gafas con proteccion uv, con o sin formula', 'Activo'),
-('Lentes de contacto', 'Lentes de contacto blandos y rigidos', 'Activo'),
-('Lentes oftalmicos', 'Cristales graduados para montar en armazon', 'Activo'),
-('Soluciones de limpieza', 'Liquidos y accesorios de mantenimiento', 'Activo'),
-('Accesorios', 'Estuches, cordones y paños de limpieza', 'Activo');
 
 
 create table producto (
@@ -129,33 +99,10 @@ create table producto (
     id_marca int not null,
     estado enum('Activo', 'Inactivo') not null default 'Activo',
     foreign key (id_categoria) references categoria(id_categoria),
-    foreign key (id_marca) references marca(id_marca)
-);
-
-
-insert into producto (nombre, descripcion, precio, imagen, material, genero, existencia_actual, existencia_minima, id_categoria, id_marca) values
-('Montura clasica acetato negro', 'Montura de pasta color negro, forma rectangular', 180000.00, 'montura-clasica-negro.png', 'Acetato', 'Unisex', 0, 5, 1, 2),
-('Montura metalica redonda', 'Montura metalica ultraliviana, forma redonda', 320000.00, 'montura-metalica-redonda.png', 'Metal', 'Unisex', 0, 5, 1, 1),
-('Gafa de sol aviador', 'Gafa de sol clasica estilo aviador con proteccion uv400', 350000.00, 'gafa-sol-aviador.png', 'Metal', 'Hombre', 0, 5, 2, 1),
-('Gafa de sol oversized', 'Gafa de sol de pasta, montura grande, proteccion uv400', 250000.00, 'gafa-sol-oversized.png', 'Acetato', 'Mujer', 15, 5, 2, 2),
-('Lentes de contacto mensuales', 'Caja x6 lentes de contacto blandos de uso mensual', 85000.00, 'lentes-contacto-mensual.png', null, 'Unisex', 0, 10, 3, 4),
-('Lente oftalmico antireflejo', 'Par de cristales graduados con tratamiento antireflejo', 220000.00, 'lente-antireflejo.png', null, 'Unisex', 20, 5, 4, 3),
-('Liquido limpiador para lentes de contacto', 'Solucion multipropósito 355ml para lentes de contacto', 32000.00, 'liquido-limpiador.png', null, 'Unisex', 0, 10, 5, 4),
-('Estuche rigido para gafas', 'Estuche rigido acolchado, protege armazon y lentes', 18000.00, 'estuche-rigido.png', null, 'Unisex', 25, 8, 6, 5),
-('Paño de microfibra', 'Paño de microfibra para limpieza de lentes', 8000.00, 'pano-microfibra.png', null, 'Unisex', 40, 15, 6, 5);
-
-
-create table movimiento_inventario (
-    id_movimiento int auto_increment primary key,
-    fecha datetime not null default current_timestamp,
-    tipo_movimiento enum('Entrada por compra', 'Salida por venta', 'Entrada por devolucion', 'Ajuste manual') not null,
-    cantidad int not null,
-    existencia_resultante int not null,
-    id_producto int not null,
-    id_usuario int not null,
-    referencia varchar(100),
-    foreign key (id_producto) references producto(id_producto),
-    foreign key (id_usuario) references usuario(id_usuario)
+    foreign key (id_marca) references marca(id_marca),
+    unique key uq_producto_nombre_marca (nombre, id_marca),
+    check (precio >= 0),
+    check (existencia_actual >= 0)
 );
 
 
@@ -170,10 +117,6 @@ create table proveedor (
     unique key uq_proveedor_nit (nit)
 );
 
-insert into proveedor (nombre, nit, telefono, correo, direccion, estado) values
-('Distribuciones Ópticas del Norte S.A.S.', '900123456-1', '6017894521', 'ventas@distribucionesnorte.com', 'Cra 15 #93-42, Bogotá', 'Activo'),
-('Import Visión Ltda.', '900234567-2', '6013321098', 'contacto@importvision.com', 'Cll 72 #10-34, Bogotá', 'Activo');
-
 
 create table compra (
     numero_compra int auto_increment primary key,
@@ -187,7 +130,8 @@ create table compra (
     codigo_proveedor int not null,
     id_usuario int not null,
     foreign key (codigo_proveedor) references proveedor(codigo_proveedor),
-    foreign key (id_usuario) references usuario(id_usuario)
+    foreign key (id_usuario) references usuario(id_usuario),
+    unique key uq_compra_comprobante (codigo_proveedor, numero_comprobante)
 );
 
 
@@ -210,11 +154,6 @@ begin
 end //
 delimiter ;
 
-insert into compra (fecha, numero_comprobante, sub_total, impuesto, total, estado, observaciones, codigo_proveedor, id_usuario) values
-('2026-07-05 09:20:00', 'FE-1001', 4300000.00, 800000.00, 5100000.00, 'Confirmada', 'Reposicion de monturas', 1, 1),
-('2026-07-12 11:05:00', 'FE-2044', 2700000.00, 500000.00, 3200000.00, 'Confirmada', 'Lentes de contacto y solucion', 2, 1),
-('2026-08-01 08:40:00', 'FE-1050', 1800000.00, 0.00, 1800000.00, 'Pendiente', 'A la espera de confirmacion del proveedor', 1, 1);
-
 
 create table detalle_compra (
     id_detalle_compra int auto_increment primary key,
@@ -224,7 +163,8 @@ create table detalle_compra (
     id_producto int not null,
     numero_compra int not null,
     foreign key (id_producto) references producto(id_producto),
-    foreign key (numero_compra) references compra(numero_compra)
+    foreign key (numero_compra) references compra(numero_compra),
+    check (cantidad > 0)
 );
 
 
@@ -234,52 +174,16 @@ after insert on detalle_compra
 for each row
 begin
     declare v_estado varchar(20);
-    declare v_id_usuario int;
-    declare v_existencia_nueva int;
 
-    select estado, id_usuario into v_estado, v_id_usuario from compra where numero_compra = new.numero_compra;
+    select estado into v_estado from compra where numero_compra = new.numero_compra;
 
     if v_estado = 'Confirmada' then
         update producto
         set existencia_actual = existencia_actual + new.cantidad
         where id_producto = new.id_producto;
-
-        select existencia_actual into v_existencia_nueva from producto where id_producto = new.id_producto;
-
-        insert into movimiento_inventario (tipo_movimiento, cantidad, existencia_resultante, id_producto, id_usuario, referencia)
-        values ('Entrada por compra', new.cantidad, v_existencia_nueva, new.id_producto, v_id_usuario, concat('Compra #', new.numero_compra));
     end if;
 end //
 delimiter ;
-
-
-insert into detalle_compra (cantidad, precio_unitario, subtotal, id_producto, numero_compra) values
-(20, 95000.00, 1900000.00, 1, 1),
-(15, 160000.00, 2400000.00, 2, 1);
-
-
-insert into detalle_compra (cantidad, precio_unitario, subtotal, id_producto, numero_compra) values
-(50, 45000.00, 2250000.00, 5, 2),
-(30, 15000.00, 450000.00, 7, 2);
-
-
-insert into detalle_compra (cantidad, precio_unitario, subtotal, id_producto, numero_compra) values
-(10, 180000.00, 1800000.00, 3, 3);
-
-
-
-create table optometra_externo (
-    id_optometra_externo int auto_increment primary key,
-    nombre varchar(100) not null,
-    apellido varchar(100) not null,
-    entidad_examinadora varchar(150) not null,
-    telefono varchar(20),
-    correo varchar(100),
-    estado enum('Activo', 'Inactivo') not null default 'Activo'
-);
-
-insert into optometra_externo (nombre, apellido, entidad_examinadora, telefono, correo, estado) values
-('Julián', 'Vargas', 'Centro de Optometría VisiónTotal S.A.S.', '3157790012', 'julian.vargas@visiontotal.com', 'Activo');
 
 
 create table cita (
@@ -290,9 +194,11 @@ create table cita (
     estado enum('Programada', 'Confirmada', 'Completada', 'Cancelada', 'No asistio') not null default 'Programada',
     observaciones varchar(255),
     id_cliente int not null,
-    id_optometra_externo int not null,
+    id_usuario_atiende int not null,
     foreign key (id_cliente) references usuario(id_usuario),
-    foreign key (id_optometra_externo) references optometra_externo(id_optometra_externo)
+    foreign key (id_usuario_atiende) references usuario(id_usuario),
+    unique key uq_cita_cliente_fecha (id_cliente, fecha_hora),
+    check (duracion_minutos > 0)
 );
 
 
@@ -302,7 +208,7 @@ before insert on cita
 for each row
 begin
     declare v_rol_cliente varchar(50);
-    declare v_optometra_activo int;
+    declare v_rol_atiende varchar(50);
     declare v_choques int;
 
     select r.nombre_rol into v_rol_cliente
@@ -314,36 +220,28 @@ begin
         set message_text = 'la cita debe quedar registrada a nombre de un usuario con rol cliente';
     end if;
 
-    select count(*) into v_optometra_activo
-    from optometra_externo
-    where id_optometra_externo = new.id_optometra_externo and estado = 'Activo';
+    select r.nombre_rol into v_rol_atiende
+    from usuario u join rol r on r.id_rol = u.id_rol
+    where u.id_usuario = new.id_usuario_atiende;
 
-    if v_optometra_activo = 0 then
+    if v_rol_atiende is null or v_rol_atiende not in ('Vendedor', 'Administrador') then
         signal sqlstate '45000'
-        set message_text = 'la cita debe quedar asociada a un optometra externo activo';
+        set message_text = 'la cita debe quedar asignada a un usuario con rol vendedor o administrador';
     end if;
 
     select count(*) into v_choques
     from cita
-    where id_optometra_externo = new.id_optometra_externo
+    where id_usuario_atiende = new.id_usuario_atiende
       and estado in ('Programada', 'Confirmada')
       and new.fecha_hora < date_add(fecha_hora, interval duracion_minutos minute)
       and date_add(new.fecha_hora, interval new.duracion_minutos minute) > fecha_hora;
 
     if v_choques > 0 then
         signal sqlstate '45000'
-        set message_text = 'el optometra externo ya tiene una cita programada que se cruza con este horario';
+        set message_text = 'el usuario que atiende ya tiene una cita programada que se cruza con este horario';
     end if;
 end //
 delimiter ;
-
-
-insert into cita (fecha_hora, duracion_minutos, motivo, estado, observaciones, id_cliente, id_optometra_externo) values
-('2026-08-09 09:00:00', 30, 'Examen visual de rutina', 'Completada', 'Se detecta miopia y astigmatismo leve, se emite receta', 4, 1),
-('2026-08-14 15:00:00', 30, 'Control visual por hipermetropia y presbicia', 'Completada', 'Se recomienda lente progresivo, se emite receta', 6, 1),
-('2026-08-19 10:30:00', 30, 'Control visual pediatrico', 'Completada', 'Paciente menor de edad, se emite receta con vigencia reducida', 7, 1),
-('2026-09-15 11:00:00', 30, 'Primera valoracion visual', 'Programada', null, 5, 1),
-('2026-09-20 09:00:00', 30, 'Control de seguimiento', 'Cancelada', 'La cliente reprogramara mas adelante', 4, 1);
 
 
 create table receta_optica (
@@ -360,13 +258,16 @@ create table receta_optica (
     oi_adicion decimal(3,2),
     distancia_pupilar decimal(4,1),
     diagnostico varchar(150),
+    entidad_examinadora varchar(150) not null,
+    nombre_optometra_externo varchar(150) not null,
     observaciones varchar(255),
     id_cliente int not null,
-    id_optometra_externo int not null,
-    id_cita int,
+    id_cita int not null,
+    id_usuario_registra int not null,
     foreign key (id_cliente) references usuario(id_usuario),
-    foreign key (id_optometra_externo) references optometra_externo(id_optometra_externo),
-    foreign key (id_cita) references cita(id_cita)
+    foreign key (id_cita) references cita(id_cita),
+    foreign key (id_usuario_registra) references usuario(id_usuario),
+    unique key uq_receta_cita (id_cita)
 );
 
 
@@ -375,19 +276,11 @@ create trigger tr_validar_receta
 before insert on receta_optica
 for each row
 begin
-    declare v_optometra_activo int;
     declare v_rol_cliente varchar(50);
+    declare v_rol_registra varchar(50);
     declare v_fecha_nacimiento date;
     declare v_edad int;
-
-    select count(*) into v_optometra_activo
-    from optometra_externo
-    where id_optometra_externo = new.id_optometra_externo and estado = 'Activo';
-
-    if v_optometra_activo = 0 then
-        signal sqlstate '45000'
-        set message_text = 'la receta optica debe quedar registrada a nombre de un optometra externo activo';
-    end if;
+    declare v_id_cliente_cita int;
 
     select r.nombre_rol, u.fecha_nacimiento into v_rol_cliente, v_fecha_nacimiento
     from usuario u join rol r on r.id_rol = u.id_rol
@@ -396,6 +289,22 @@ begin
     if v_rol_cliente is null or v_rol_cliente <> 'Cliente' then
         signal sqlstate '45000'
         set message_text = 'la receta optica debe quedar asociada a un usuario con rol cliente';
+    end if;
+
+    select r.nombre_rol into v_rol_registra
+    from usuario u join rol r on r.id_rol = u.id_rol
+    where u.id_usuario = new.id_usuario_registra;
+
+    if v_rol_registra is null or v_rol_registra not in ('Vendedor', 'Administrador') then
+        signal sqlstate '45000'
+        set message_text = 'la receta optica debe quedar registrada por un usuario con rol vendedor o administrador';
+    end if;
+
+    select id_cliente into v_id_cliente_cita from cita where id_cita = new.id_cita;
+
+    if v_id_cliente_cita is null or v_id_cliente_cita <> new.id_cliente then
+        signal sqlstate '45000'
+        set message_text = 'la cita indicada no corresponde al cliente de la receta';
     end if;
 
     set v_edad = timestampdiff(year, v_fecha_nacimiento, new.fecha_emision);
@@ -409,12 +318,6 @@ end //
 delimiter ;
 
 
-insert into receta_optica (fecha_emision, fecha_vencimiento, od_esfera, od_cilindro, od_eje, od_adicion, oi_esfera, oi_cilindro, oi_eje, oi_adicion, distancia_pupilar, diagnostico, observaciones, id_cliente, id_optometra_externo, id_cita) values
-('2026-08-10', '2027-08-10', -2.25, -0.50, 180, null, -2.00, -0.75, 175, null, 62.0, 'Miopia y astigmatismo leve', 'Control en un año', 4, 1, 1),
-('2026-08-15', '2027-08-15', 1.00, null, null, 1.75, 1.25, null, null, 1.75, 60.5, 'Hipermetropia y presbicia', 'Recomendado lente progresivo', 6, 1, 2),
-('2026-08-20', '2027-02-20', -1.00, -0.25, 90, null, -1.25, -0.25, 85, null, 55.0, 'Miopia leve bilateral', 'Paciente pediatrico, control cada 6 meses', 7, 1, 3);
-
-
 create table promocion (
     codigo_promocion int auto_increment primary key,
     nombre varchar(100) not null,
@@ -423,12 +326,9 @@ create table promocion (
     valor_descuento decimal(10,2) not null,
     fecha_inicio date not null,
     fecha_fin date not null,
-    estado enum('Activo', 'Inactivo') not null default 'Activo'
+    estado enum('Activo', 'Inactivo') not null default 'Activo',
+    check (fecha_fin >= fecha_inicio)
 );
-
-insert into promocion (nombre, descripcion, tipo_descuento, valor_descuento, fecha_inicio, fecha_fin, estado) values
-('Segunda montura al 50%', 'Al comprar una montura, la segunda tiene 50% de descuento', 'Porcentaje', 50.00, '2026-07-01', '2026-12-31', 'Activo'),
-('Descuento fidelidad', 'Descuento fijo para clientes frecuentes', 'Valor fijo', 20000.00, '2026-01-01', '2026-12-31', 'Activo');
 
 
 create table venta (
@@ -444,7 +344,8 @@ create table venta (
     foreign key (id_cliente) references usuario(id_usuario),
     foreign key (codigo_promocion) references promocion(codigo_promocion),
     foreign key (id_receta) references receta_optica(id_receta),
-    foreign key (id_usuario) references usuario(id_usuario)
+    foreign key (id_usuario) references usuario(id_usuario),
+    check (total >= 0)
 );
 
 
@@ -477,14 +378,6 @@ end //
 delimiter ;
 
 
-insert into venta (fecha, total, estado, es_cotizacion, id_cliente, codigo_promocion, id_receta, id_usuario) values
-('2026-08-18 10:15:00', 400000.00, 'Completada', false, 4, null, 1, 2),
-('2026-08-19 14:30:00', 250000.00, 'Completada', false, 5, null, null, 3),
-('2026-08-20 09:00:00', 202000.00, 'Completada', false, 6, null, 2, 2),
-('2026-08-21 16:45:00', 520000.00, 'Completada', false, 7, 2, 3, 1),
-('2026-08-25 11:00:00', 26000.00, 'Pendiente', true, 4, null, null, 3);
-
-
 create table detalle_venta (
     codigo_detalle_venta int auto_increment primary key,
     cantidad int not null,
@@ -493,8 +386,31 @@ create table detalle_venta (
     codigo_venta int not null,
     id_producto int not null,
     foreign key (codigo_venta) references venta(codigo_venta),
-    foreign key (id_producto) references producto(id_producto)
+    foreign key (id_producto) references producto(id_producto),
+    check (cantidad > 0)
 );
+
+
+delimiter //
+create trigger tr_validar_existencia_venta
+before insert on detalle_venta
+for each row
+begin
+    declare v_es_cotizacion boolean;
+    declare v_existencia_actual int;
+
+    select es_cotizacion into v_es_cotizacion from venta where codigo_venta = new.codigo_venta;
+
+    if v_es_cotizacion = false then
+        select existencia_actual into v_existencia_actual from producto where id_producto = new.id_producto;
+
+        if v_existencia_actual < new.cantidad then
+            signal sqlstate '45000'
+            set message_text = 'no hay existencia suficiente del producto para completar la venta';
+        end if;
+    end if;
+end //
+delimiter ;
 
 
 delimiter //
@@ -503,39 +419,16 @@ after insert on detalle_venta
 for each row
 begin
     declare v_es_cotizacion boolean;
-    declare v_id_usuario int;
-    declare v_existencia_nueva int;
 
-    select es_cotizacion, id_usuario into v_es_cotizacion, v_id_usuario from venta where codigo_venta = new.codigo_venta;
+    select es_cotizacion into v_es_cotizacion from venta where codigo_venta = new.codigo_venta;
 
     if v_es_cotizacion = false then
         update producto
         set existencia_actual = existencia_actual - new.cantidad
         where id_producto = new.id_producto;
-
-        select existencia_actual into v_existencia_nueva from producto where id_producto = new.id_producto;
-
-        insert into movimiento_inventario (tipo_movimiento, cantidad, existencia_resultante, id_producto, id_usuario, referencia)
-        values ('Salida por venta', new.cantidad, v_existencia_nueva, new.id_producto, v_id_usuario, concat('Venta #', new.codigo_venta));
     end if;
 end //
 delimiter ;
-
-insert into detalle_venta (cantidad, precio_unitario, subtotal, codigo_venta, id_producto) values
-
-(1, 180000.00, 180000.00, 1, 1),
-(1, 220000.00, 220000.00, 1, 6),
-
-(1, 250000.00, 250000.00, 2, 4),
-
-(2, 85000.00, 170000.00, 3, 5),
-(1, 32000.00, 32000.00, 3, 7),
-
-(1, 320000.00, 320000.00, 4, 2),
-(1, 220000.00, 220000.00, 4, 6),
-
-(1, 18000.00, 18000.00, 5, 8),
-(1, 8000.00, 8000.00, 5, 9);
 
 
 create table pago (
@@ -545,8 +438,10 @@ create table pago (
     monto decimal(10,2) not null,
     referencia varchar(100),
     codigo_venta int not null,
-    foreign key (codigo_venta) references venta(codigo_venta)
+    foreign key (codigo_venta) references venta(codigo_venta),
+    check (monto > 0)
 );
+
 
 delimiter //
 create trigger tr_validar_pago
@@ -585,13 +480,6 @@ begin
 end //
 delimiter ;
 
-insert into pago (fecha, metodo_pago, monto, referencia, codigo_venta) values
-('2026-08-18 10:20:00', 'Tarjeta crédito', 400000.00, 'AUT-88231', 1),
-('2026-08-19 14:35:00', 'Efectivo', 250000.00, null, 2),
-('2026-08-20 09:05:00', 'Tarjeta débito', 150000.00, 'AUT-77410', 3),
-('2026-08-20 09:06:00', 'Efectivo', 52000.00, null, 3),
-('2026-08-21 16:50:00', 'Transferencia', 300000.00, 'TRX-556021', 4);
-
 
 create table devolucion (
     id_devolucion int auto_increment primary key,
@@ -602,8 +490,10 @@ create table devolucion (
     codigo_detalle_venta int not null,
     id_usuario int not null,
     foreign key (codigo_detalle_venta) references detalle_venta(codigo_detalle_venta),
-    foreign key (id_usuario) references usuario(id_usuario)
+    foreign key (id_usuario) references usuario(id_usuario),
+    check (cantidad > 0)
 );
+
 
 delimiter //
 create trigger tr_validar_devolucion
@@ -642,24 +532,14 @@ after insert on devolucion
 for each row
 begin
     declare v_id_producto int;
-    declare v_existencia_nueva int;
 
     select id_producto into v_id_producto from detalle_venta where codigo_detalle_venta = new.codigo_detalle_venta;
 
     update producto
     set existencia_actual = existencia_actual + new.cantidad
     where id_producto = v_id_producto;
-
-    select existencia_actual into v_existencia_nueva from producto where id_producto = v_id_producto;
-
-    insert into movimiento_inventario (tipo_movimiento, cantidad, existencia_resultante, id_producto, id_usuario, referencia)
-    values ('Entrada por devolucion', new.cantidad, v_existencia_nueva, v_id_producto, new.id_usuario, concat('Devolucion #', new.id_devolucion));
 end //
 delimiter ;
-
-
-insert into devolucion (motivo, cantidad, observaciones, codigo_detalle_venta, id_usuario) values
-('Producto defectuoso', 1, 'El cliente reportó que la gafa llegó con la bisagra floja; se genera nota de crédito', 3, 3);
 
 
 create table reporte (
@@ -672,6 +552,7 @@ create table reporte (
     contenido text not null,
     foreign key (id_usuario_genera) references usuario(id_usuario)
 );
+
 
 delimiter //
 create trigger tr_validar_generador_reporte
@@ -692,10 +573,136 @@ begin
 
     if new.tipo_reporte = 'Recetas' and v_rol <> 'Administrador' then
         signal sqlstate '45000'
-        set message_text = 'solo el administrador puede generar reportes de recetas, por tratarse de datos clinicos de los clientes, ya que el optometra es un tercero externo sin acceso al sistema';
+        set message_text = 'solo el administrador puede generar reportes de recetas, por tratarse de datos clinicos de los clientes examinados por un tercero externo';
     end if;
 end //
 delimiter ;
+
+use optica_vision;
+
+
+insert into rol (nombre_rol, descripcion) values
+('Administrador', 'Administra la optica: usuarios, catalogo, compras y reportes'),
+('Vendedor', 'Atiende clientes y registra ventas en el punto de venta'),
+('Cliente', 'Persona que agenda citas, recibe formulas y compra productos en la optica');
+
+
+insert into usuario (nombre, apellido, tipo_documento, num_documento, telefono, correo, contrasena, estado, id_rol) values
+('Camila', 'Torres', 'C.C.', '1032987651', '3115557890', 'camila.torres@visionclara.com', 'CamT2026*', 'Activo', 1),
+('Andrés', 'Ramírez', 'C.C.', '1019456782', '3124448821', 'andres.ramirez@visionclara.com', 'AndR890!', 'Activo', 2),
+('Diana', 'Castillo', 'C.C.', '1026773401', '3138812345', 'diana.castillo@visionclara.com', 'DiaC451$', 'Activo', 2);
+
+
+insert into usuario (nombre, apellido, tipo_documento, num_documento, telefono, correo, direccion, fecha_nacimiento, contrasena, estado, id_rol) values
+('Sofía', 'Herrera', 'C.C.', '1032456789', '3201234567', 'sofia.herrera@gmail.com', 'Cra 45 #12-30, Bogotá', '1996-03-14', 'SofH2026*', 'Activo', 3),
+('Mateo', 'Rojas', 'C.C.', '1098765432', '3112345678', 'mateo.rojas@gmail.com', 'Cll 80 #22-15, Bogotá', '1990-11-02', null, 'Activo', 3),
+('Valentina', 'Cruz', 'C.C.', '52741369', '3023456789', 'valentina.cruz@gmail.com', 'Cra 7 #63-20, Bogotá', '1985-06-23', null, 'Activo', 3),
+('Santiago', 'Molina', 'T.I.', '1015987456', '3134567890', 'contacto.molina@gmail.com', 'Cll 19 #4-56, Bogotá', '2010-09-30', null, 'Activo', 3);
+
+
+insert into marca (nombre, pais_origen, estado) values
+('Ray-Ban', 'Italia', 'Activo'),
+('Vogue Eyewear', 'Italia', 'Activo'),
+('Essilor', 'Francia', 'Activo'),
+('Acuvue', 'Estados Unidos', 'Activo'),
+('Vision Clara (marca propia)', 'Colombia', 'Activo');
+
+
+insert into categoria (nombre, descripcion, estado) values
+('Monturas', 'Armazones para lentes oftalmicos', 'Activo'),
+('Gafas de sol', 'Gafas con proteccion uv, con o sin formula', 'Activo'),
+('Lentes de contacto', 'Lentes de contacto blandos y rigidos', 'Activo'),
+('Lentes oftalmicos', 'Cristales graduados para montar en armazon', 'Activo'),
+('Soluciones de limpieza', 'Liquidos y accesorios de mantenimiento', 'Activo'),
+('Accesorios', 'Estuches, cordones y paños de limpieza', 'Activo');
+
+
+insert into producto (nombre, descripcion, precio, imagen, material, genero, existencia_actual, existencia_minima, id_categoria, id_marca) values
+('Montura clasica acetato negro', 'Montura de pasta color negro, forma rectangular', 180000.00, 'montura-clasica-negro.png', 'Acetato', 'Unisex', 0, 5, 1, 2),
+('Montura metalica redonda', 'Montura metalica ultraliviana, forma redonda', 320000.00, 'montura-metalica-redonda.png', 'Metal', 'Unisex', 0, 5, 1, 1),
+('Gafa de sol aviador', 'Gafa de sol clasica estilo aviador con proteccion uv400', 350000.00, 'gafa-sol-aviador.png', 'Metal', 'Hombre', 0, 5, 2, 1),
+('Gafa de sol oversized', 'Gafa de sol de pasta, montura grande, proteccion uv400', 250000.00, 'gafa-sol-oversized.png', 'Acetato', 'Mujer', 15, 5, 2, 2),
+('Lentes de contacto mensuales', 'Caja x6 lentes de contacto blandos de uso mensual', 85000.00, 'lentes-contacto-mensual.png', null, 'Unisex', 0, 10, 3, 4),
+('Lente oftalmico antireflejo', 'Par de cristales graduados con tratamiento antireflejo', 220000.00, 'lente-antireflejo.png', null, 'Unisex', 20, 5, 4, 3),
+('Liquido limpiador para lentes de contacto', 'Solucion multipropósito 355ml para lentes de contacto', 32000.00, 'liquido-limpiador.png', null, 'Unisex', 0, 10, 5, 4),
+('Estuche rigido para gafas', 'Estuche rigido acolchado, protege armazon y lentes', 18000.00, 'estuche-rigido.png', null, 'Unisex', 25, 8, 6, 5),
+('Paño de microfibra', 'Paño de microfibra para limpieza de lentes', 8000.00, 'pano-microfibra.png', null, 'Unisex', 40, 15, 6, 5);
+
+
+insert into proveedor (nombre, nit, telefono, correo, direccion, estado) values
+('Distribuciones Ópticas del Norte S.A.S.', '900123456-1', '6017894521', 'ventas@distribucionesnorte.com', 'Cra 15 #93-42, Bogotá', 'Activo'),
+('Import Visión Ltda.', '900234567-2', '6013321098', 'contacto@importvision.com', 'Cll 72 #10-34, Bogotá', 'Activo');
+
+
+insert into compra (fecha, numero_comprobante, sub_total, impuesto, total, estado, observaciones, codigo_proveedor, id_usuario) values
+('2026-07-05 09:20:00', 'FE-1001', 4300000.00, 800000.00, 5100000.00, 'Confirmada', 'Reposicion de monturas', 1, 1),
+('2026-07-12 11:05:00', 'FE-2044', 2700000.00, 500000.00, 3200000.00, 'Confirmada', 'Lentes de contacto y solucion', 2, 1),
+('2026-08-01 08:40:00', 'FE-1050', 1800000.00, 0.00, 1800000.00, 'Pendiente', 'A la espera de confirmacion del proveedor', 1, 1);
+
+
+insert into detalle_compra (cantidad, precio_unitario, subtotal, id_producto, numero_compra) values
+(20, 95000.00, 1900000.00, 1, 1),
+(15, 160000.00, 2400000.00, 2, 1);
+
+
+insert into detalle_compra (cantidad, precio_unitario, subtotal, id_producto, numero_compra) values
+(50, 45000.00, 2250000.00, 5, 2),
+(30, 15000.00, 450000.00, 7, 2);
+
+
+insert into detalle_compra (cantidad, precio_unitario, subtotal, id_producto, numero_compra) values
+(10, 180000.00, 1800000.00, 3, 3);
+
+
+insert into cita (fecha_hora, duracion_minutos, motivo, estado, observaciones, id_cliente, id_usuario_atiende) values
+('2026-08-09 09:00:00', 30, 'Entrega de resultados de examen visual y asesoria de montura', 'Completada', 'El cliente trae resultados con miopia y astigmatismo leve, se registra receta', 4, 2),
+('2026-08-14 15:00:00', 30, 'Entrega de resultados de examen visual', 'Completada', 'El cliente trae resultados con hipermetropia y presbicia, se recomienda lente progresivo', 6, 3),
+('2026-08-19 10:30:00', 30, 'Entrega de resultados de examen visual pediatrico', 'Completada', 'Paciente menor de edad, se registra receta con vigencia reducida', 7, 2),
+('2026-09-15 11:00:00', 30, 'Primera asesoria para eleccion de montura', 'Programada', null, 5, 3),
+('2026-09-20 09:00:00', 30, 'Control de seguimiento', 'Cancelada', 'La cliente reprogramara mas adelante', 4, 2);
+
+
+insert into receta_optica (fecha_emision, fecha_vencimiento, od_esfera, od_cilindro, od_eje, od_adicion, oi_esfera, oi_cilindro, oi_eje, oi_adicion, distancia_pupilar, diagnostico, entidad_examinadora, nombre_optometra_externo, observaciones, id_cliente, id_cita, id_usuario_registra) values
+('2026-08-10', '2027-08-10', -2.25, -0.50, 180, null, -2.00, -0.75, 175, null, 62.0, 'Miopia y astigmatismo leve', 'Centro de Optometría VisiónTotal S.A.S.', 'Julián Vargas', 'Control en un año', 4, 1, 2),
+('2026-08-15', '2027-08-15', 1.00, null, null, 1.75, 1.25, null, null, 1.75, 60.5, 'Hipermetropia y presbicia', 'Centro de Optometría VisiónTotal S.A.S.', 'Julián Vargas', 'Recomendado lente progresivo', 6, 2, 3),
+('2026-08-20', '2027-02-20', -1.00, -0.25, 90, null, -1.25, -0.25, 85, null, 55.0, 'Miopia leve bilateral', 'Centro de Optometría VisiónTotal S.A.S.', 'Julián Vargas', 'Paciente pediatrico, control cada 6 meses', 7, 3, 2);
+
+
+insert into promocion (nombre, descripcion, tipo_descuento, valor_descuento, fecha_inicio, fecha_fin, estado) values
+('Segunda montura al 50%', 'Al comprar una montura, la segunda tiene 50% de descuento', 'Porcentaje', 50.00, '2026-07-01', '2026-12-31', 'Activo'),
+('Descuento fidelidad', 'Descuento fijo para clientes frecuentes', 'Valor fijo', 20000.00, '2026-01-01', '2026-12-31', 'Activo');
+
+
+insert into venta (fecha, total, estado, es_cotizacion, id_cliente, codigo_promocion, id_receta, id_usuario) values
+('2026-08-18 10:15:00', 400000.00, 'Completada', false, 4, null, 1, 2),
+('2026-08-19 14:30:00', 250000.00, 'Completada', false, 5, null, null, 3),
+('2026-08-20 09:00:00', 202000.00, 'Completada', false, 6, null, 2, 2),
+('2026-08-21 16:45:00', 520000.00, 'Completada', false, 7, 2, 3, 1),
+('2026-08-25 11:00:00', 26000.00, 'Pendiente', true, 4, null, null, 3);
+
+
+insert into detalle_venta (cantidad, precio_unitario, subtotal, codigo_venta, id_producto) values
+(1, 180000.00, 180000.00, 1, 1),
+(1, 220000.00, 220000.00, 1, 6),
+(1, 250000.00, 250000.00, 2, 4),
+(2, 85000.00, 170000.00, 3, 5),
+(1, 32000.00, 32000.00, 3, 7),
+(1, 320000.00, 320000.00, 4, 2),
+(1, 220000.00, 220000.00, 4, 6),
+(1, 18000.00, 18000.00, 5, 8),
+(1, 8000.00, 8000.00, 5, 9);
+
+
+insert into pago (fecha, metodo_pago, monto, referencia, codigo_venta) values
+('2026-08-18 10:20:00', 'Tarjeta crédito', 400000.00, 'AUT-88231', 1),
+('2026-08-19 14:35:00', 'Efectivo', 250000.00, null, 2),
+('2026-08-20 09:05:00', 'Tarjeta débito', 150000.00, 'AUT-77410', 3),
+('2026-08-20 09:06:00', 'Efectivo', 52000.00, null, 3),
+('2026-08-21 16:50:00', 'Transferencia', 300000.00, 'TRX-556021', 4);
+
+
+insert into devolucion (motivo, cantidad, observaciones, codigo_detalle_venta, id_usuario) values
+('Producto defectuoso', 1, 'El cliente reportó que la gafa llegó con la bisagra floja; se genera nota de crédito', 3, 3);
 
 
 insert into reporte (titulo, tipo_reporte, id_usuario_genera, descripcion, contenido) values (
@@ -752,7 +759,7 @@ insert into reporte (titulo, tipo_reporte, id_usuario_genera, descripcion, conte
     'Reporte de recetas emitidas',
     'Recetas',
     1,
-    'Estado de las recetas opticas emitidas a los clientes por el tercero externo',
+    'Estado de las recetas opticas registradas a partir de examenes realizados por un tercero externo',
     concat(
         'Recetas emitidas: ', (select count(*) from receta_optica),
         ' | recetas vigentes: ', (select count(*) from receta_optica where fecha_vencimiento >= curdate()),
@@ -781,7 +788,7 @@ insert into reporte (titulo, tipo_reporte, id_usuario_genera, descripcion, conte
     'Reporte de citas',
     'Citas',
     1,
-    'Estado de las citas agendadas con los optometras externos',
+    'Estado de las citas agendadas en la optica para atencion de clientes',
     concat(
         'Citas totales: ', (select count(*) from cita),
         ' | completadas: ', (select count(*) from cita where estado = 'Completada'),
@@ -790,71 +797,3 @@ insert into reporte (titulo, tipo_reporte, id_usuario_genera, descripcion, conte
     )
 );
 
-
-
-select p.nombre as producto, c.nombre as categoria, m.nombre as marca,
-       p.existencia_actual, p.existencia_minima
-from producto p
-join categoria c on c.id_categoria = p.id_categoria
-join marca m on m.id_marca = p.id_marca
-order by c.nombre, p.nombre;
-
-
-select v.codigo_venta, v.fecha,
-       concat(cl.nombre, ' ', cl.apellido) as cliente,
-       concat(u.nombre, ' ', u.apellido) as atendida_por,
-       v.estado, v.es_cotizacion, v.total,
-       coalesce((select sum(p.monto) from pago p where p.codigo_venta = v.codigo_venta), 0) as total_pagado,
-       v.total - coalesce((select sum(p.monto) from pago p where p.codigo_venta = v.codigo_venta), 0) as saldo_pendiente
-from venta v
-join usuario cl on cl.id_usuario = v.id_cliente
-join usuario u on u.id_usuario = v.id_usuario
-order by v.fecha;
-
-
-select v.codigo_venta, p.fecha, p.metodo_pago, p.monto, p.referencia
-from pago p
-join venta v on v.codigo_venta = p.codigo_venta
-order by v.codigo_venta, p.fecha;
-
-
-select c.id_cita, c.fecha_hora, c.duracion_minutos, c.motivo, c.estado,
-       concat(cl.nombre, ' ', cl.apellido) as cliente,
-       concat(o.nombre, ' ', o.apellido) as optometra_externo,
-       o.entidad_examinadora
-from cita c
-join usuario cl on cl.id_usuario = c.id_cliente
-join optometra_externo o on o.id_optometra_externo = c.id_optometra_externo
-order by c.fecha_hora;
-
-
-select concat(cl.nombre, ' ', cl.apellido) as cliente, r.fecha_emision, r.fecha_vencimiento,
-       r.od_esfera, r.od_cilindro, r.od_eje, r.oi_esfera, r.oi_cilindro, r.oi_eje,
-       concat(o.nombre, ' ', o.apellido) as emitida_por, o.entidad_examinadora, r.id_cita
-from receta_optica r
-join usuario cl on cl.id_usuario = r.id_cliente
-join optometra_externo o on o.id_optometra_externo = r.id_optometra_externo
-order by r.fecha_emision;
-
-
-select d.id_devolucion, d.fecha, d.motivo, d.cantidad,
-       p.nombre as producto, concat(u.nombre, ' ', u.apellido) as registrada_por
-from devolucion d
-join detalle_venta dv on dv.codigo_detalle_venta = d.codigo_detalle_venta
-join producto p on p.id_producto = dv.id_producto
-join usuario u on u.id_usuario = d.id_usuario
-order by d.fecha;
-
-
-select m.id_movimiento, m.fecha, m.tipo_movimiento, m.cantidad, m.existencia_resultante,
-       p.nombre as producto, concat(u.nombre, ' ', u.apellido) as registrado_por, m.referencia
-from movimiento_inventario m
-join producto p on p.id_producto = m.id_producto
-join usuario u on u.id_usuario = m.id_usuario
-order by m.fecha, m.id_movimiento;
-
-select r.id_reporte, r.titulo, r.tipo_reporte, r.fecha_generacion,
-       u.nombre as generado_por, r.contenido
-from reporte r
-join usuario u on u.id_usuario = r.id_usuario_genera
-order by r.id_reporte;
