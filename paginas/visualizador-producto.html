@@ -18,63 +18,34 @@
   <body>
 
     <!-- ═══════════════ HEADER ═══════════════ -->
-    <header class="site-header" id="siteHeader">
-      <div class="header-inner">
+    <header class="navbar" id="siteHeader">
 
-        <!-- Logo -->
-        <div class="logo">
-          <a href="catalogo.html" class="logo-link">
-            <img src="../imagenes/logos/logo-boutique.png" alt="Logo Boutique de la Visión"/>
-          </a>
-        </div>
-
-        <!-- Buscador -->
-        <form class="buscador" action="/buscar" method="get">
-          <input type="text" name="q" placeholder="Buscar productos..." class="busc" />
-          <button type="submit" class="bot_bus">
-            <i class="fi fi-br-search"></i>
-          </button>
-        </form>
-
-        <!-- Nav principal -->
-        <nav class="main-nav">
-          <ul class="nav-list">
-            <li><a href="catalogo.html">Inicio</a></li>
-            <li><a href="#">Noticias</a></li>
-            <li><a href="#" class="activo">Explorar</a></li>
-            <li><a href="#">Agendar cita</a></li>
-            <li><a href="#"><i class="fi fi-br-interrogation"></i></a></li>
-            <li>
-              <a href="#" class="cart-link">
-                <i class="fi fi-br-shopping-cart"></i>
-                <span class="cart-badge" id="cartBadge">0</span>
-              </a>
-            </li>
-            <li><a href="inicio-sesion.html" class="user-link">Mi cuenta <i class="fi fi-br-user"></i></a></li>
-          </ul>
-        </nav>
-
-        <!-- Toggle modo claro / oscuro -->
-        <button class="theme-toggle" id="themeToggle" title="Cambiar modo">
-          <i class="fi fi-br-brightness" id="themeIcon"></i>
-        </button>
-
-        <!-- Hamburger -->
-        <div class="mendescon">
-          <button class="btn_ham" id="Id_ham">
-            <span></span><span></span><span></span>
-          </button>
-          <nav class="men_oc" id="id_men_ocu">
-            <ul>
-              <li><a href="#">Mi perfil</a></li>
-              <li><a href="#">Historial citas</a></li>
-              <li><a href="#">Mis compras</a></li>
-              <li><a href="#">Soporte técnico</a></li>
-            </ul>
-          </nav>
-        </div>
-
+      <!-- Logo -->
+      <div class="logo">
+        <a href="inicio.html" class="logo-link">
+          <img src="../imagenes/logos/logo-boutique.png" class="logo-icon" alt="Logo Boutique de la Visión"/>
+        </a>
       </div>
+
+      <!-- Buscador del catálogo -->
+      <form class="buscador" action="catalogo.html" method="get">
+        <input type="text" name="q" placeholder="Buscar productos..." class="busc" />
+        <button type="submit" class="bot_bus">
+          <i class="fi fi-br-search"></i>
+        </button>
+      </form>
+
+      <!-- Nav principal -->
+      <nav class="menu_nav">
+        <ul class="navbar-menu">
+          <li><a href="inicio.html">INICIO</a></li>
+          <li><a href="catalogo.html">CATÁLOGO</a></li>
+          <li><a href="visualizador-producto.html" class="activo">EXPLORAR</a></li>
+          <li><a href="formulario-pedido.html">AGENDAR CITA</a></li>
+          <li><a href="inicio-sesion.html">REGISTRO / LOGIN</a></li>
+        </ul>
+      </nav>
+
     </header>
 
     <!-- ═══════════════ BREADCRUMB ═══════════════ -->

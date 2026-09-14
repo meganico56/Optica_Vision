@@ -246,6 +246,10 @@ document.addEventListener('DOMContentLoaded', function () {
     const demoMsg = document.getElementById('demoMsg');
     if (demoMsg) demoMsg.remove();
 
+    // Resetear tarjeta de prueba virtual
+    if (tryOnPanel) tryOnPanel.classList.add('hidden');
+    if (tryOnBtn)   tryOnBtn.textContent = 'Activar';
+
     // Resetear modelo al primero
     modelCards.forEach((c, i) => c.classList.toggle('active', i === 0));
     if (glassesOverlay && modelCards[0]) glassesOverlay.src = modelCards[0].dataset.src;

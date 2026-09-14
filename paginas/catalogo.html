@@ -22,51 +22,30 @@
     <title>Boutique de la visión Catálogo</title>
   </head>
   <body>
-    <header>
-      <!----contenedor del logo-->
+    <header class="navbar">
+      <!-- Logo -->
       <div class="logo">
-        <a href="inicio" class="logo_link">
+        <a href="inicio.html" class="logo_link">
           <img src="../imagenes/logos/logo-boutique.png" alt="Logo Boutique de la visión"/>
         </a>
       </div>
 
-      <!-------------------barra de buscador------------------->
-
-      <form class="buscador" action="/buscar" method="get">
+      <!-- Barra de buscador -->
+      <form class="buscador" action="catalogo.html" method="get">
         <input type="text" name="q" placeholder="Buscar productos..." class="busc">
         <button type="submit" class="bot_bus">
           <i class="fi fi-br-search"></i>
         </button>
       </form>
 
-      <!----Menú de Navegación---->
+      <!-- Menú de Navegación -->
       <nav class="menu_nav">
-        <ul class="men_nv">
-          <li><a href="#" class="activo">inicio </a></li>
-          <li><a href="#">noticias </a></li>
-          <li><a href="#" >explorar  </a></li>
-          <li><a href="#" >agendar cita </a></li>
-          <!-------menu desplegable------->
-          <div class="mendescon">
-            <!-------boton menu------>
-            <button class="btn_ham" id="Id_ham">
-              <span></span>
-              <span></span>
-              <span></span>
-            </button>
-
-            <!---------opciones menu----------->
-            <nav class=" men_oc" id="id_men_ocu">
-              <ul>
-                <li><a href="#">mi perfil</a></li>
-                <li><a href="#">historial citas</a></li>
-                <li><a href="#">mis compras</a></li>
-                <li><a href="#">soporte tecnico</a></li>
-              </ul>
-            </nav>
-          </div>
-          <li><a href="#"><i class="fi fi-br-shopping-cart"></i></a></li>
-          <li><a href="#">Sneider Parra<i class="fi fi-br-user"></i></a></li> 
+        <ul class="navbar-menu">
+          <li><a href="inicio.html">INICIO</a></li>
+          <li><a href="catalogo.html" class="activo">CATÁLOGO</a></li>
+          <li><a href="visualizador-producto.html">EXPLORAR</a></li>
+          <li><a href="formulario-pedido.html">AGENDAR CITA</a></li>
+          <li><a href="inicio-sesion.html">REGISTRO / LOGIN</a></li>
         </ul>
       </nav>
     </header>

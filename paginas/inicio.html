@@ -18,8 +18,18 @@
 <header class="navbar">
 
     <div class="logo">
-        <img src="../imagenes/logos/logo-boutique.png" class="logo-icon" alt="Logo">
+        <a href="inicio.html">
+            <img src="../imagenes/logos/logo-boutique.png" class="logo-icon" alt="Logo">
+        </a>
     </div>
+
+    <!-- Buscador del catálogo -->
+    <form class="buscador" action="catalogo.html" method="get">
+        <input type="text" name="q" placeholder="Buscar productos..." class="busc">
+        <button type="submit" class="bot_bus">
+            <i class="fa-solid fa-magnifying-glass"></i>
+        </button>
+    </form>
 
     <input type="checkbox" id="menu-toggle" class="menu-toggle">
 
@@ -31,7 +41,7 @@
 
     <nav>
         <ul class="navbar-menu">
-            <li><a href="inicio.html">INICIO</a></li>
+            <li><a href="inicio.html" class="activo">INICIO</a></li>
             <li><a href="catalogo.html">CATÁLOGO</a></li>
             <li><a href="visualizador-producto.html">EXPLORAR</a></li>
             <li><a href="formulario-pedido.html">AGENDAR CITA</a></li>

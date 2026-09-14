@@ -16,10 +16,40 @@
   --font-body: 'Inter', sans-serif;
 }
 
+/* ============================================================
+   PREVENIR CURSOR Y ENTRADA DE TEXTO AL HACER CLIC EN LA PÁGINA
+   ============================================================ */
+html, body {
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  caret-color: transparent !important;
+}
+
+/* Permitir cursor de texto ÚNICAMENTE en inputs y campos editables al estar enfocados */
+input[type="text"]:focus,
+input[type="email"]:focus,
+input[type="password"]:focus,
+input[type="tel"]:focus,
+input[type="number"]:focus,
+input[type="search"]:focus,
+textarea:focus,
+.busc:focus,
+[contenteditable="true"]:focus {
+  caret-color: var(--text-dark) !important;
+  user-select: text !important;
+  -webkit-user-select: text !important;
+}
+
 *, *::before, *::after {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+}
+
+*:focus, *:focus-visible, *:active {
+  outline: none !important;
 }
 
 body {
@@ -40,6 +70,7 @@ a {
   text-decoration: none;
   color: inherit;
   transition: color 0.3s ease, transform 0.3s ease;
+  outline: none;
 }
 
 ul, ol {
@@ -49,10 +80,142 @@ ul, ol {
 img {
   max-width: 100%;
   height: auto;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-user-drag: none;
+  outline: none;
 }
 
 button, input, select, textarea {
   font-family: var(--font-body);
+  outline: none;
+}
+
+/* ==========================================
+   HEADER Y NAVBAR UNIFICADOS (Buscador Catálogo + Selección/Hover Inicio)
+   ========================================== */
+.site-header, .navbar, header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 5%;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--border);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  transition: all 0.3s ease;
+}
+
+.logo img, .logo-icon {
+  height: 55px;
+  width: auto;
+  object-fit: contain;
+  filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.9));
+  user-select: none;
+}
+
+/* Buscador Estilo Catálogo */
+.buscador {
+  display: flex;
+  align-items: center;
+  background-color: var(--bg);
+  border: 1.5px solid var(--border);
+  border-radius: 35px;
+  padding: 3px 4px 3px 14px;
+  width: 100%;
+  max-width: 380px;
+  margin: 0 1.5rem;
+  transition: all 0.3s ease;
+}
+
+.buscador:hover, .buscador:focus-within {
+  border-color: var(--gold);
+  box-shadow: 0 0 12px var(--gold-glow);
+}
+
+.busc {
+  border: none;
+  outline: none;
+  background: transparent;
+  width: 100%;
+  padding: 6px 8px;
+  font-size: 0.88rem;
+  font-family: var(--font-body);
+  color: var(--text-dark);
+}
+
+.busc::placeholder {
+  color: var(--text-muted);
+  font-size: 0.88rem;
+}
+
+.bot_bus {
+  border: none;
+  background-color: var(--gold);
+  color: #ffffff;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  flex-shrink: 0;
+}
+
+.bot_bus:hover {
+  background-color: var(--gold-dark);
+  transform: scale(1.05);
+}
+
+/* Navegación y Subrayado Animado Estilo Inicio */
+.navbar-menu, .main-nav .nav-list, nav ul, .men_nv {
+  display: flex;
+  align-items: center;
+  gap: 1.8rem;
+  list-style: none;
+}
+
+.navbar-menu li a, .main-nav .nav-list li a, nav ul li a, .men_nv li a {
+  position: relative;
+  color: var(--text-dark);
+  font-family: var(--font-title);
+  font-size: 0.85rem;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  padding: 6px 0;
+  text-transform: uppercase;
+  transition: color 0.3s ease;
+  background: transparent !important;
+  box-shadow: none !important;
+  border-radius: 0 !important;
+}
+
+.navbar-menu li a::after, .main-nav .nav-list li a::after, nav ul li a::after, .men_nv li a::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: -4px;
+  width: 0;
+  height: 2px;
+  background: var(--gold);
+  transition: width 0.3s ease;
+  border-radius: 2px;
+}
+
+.navbar-menu li a:hover, .main-nav .nav-list li a:hover, nav ul li a:hover, .men_nv li a:hover,
+.navbar-menu li a.activo, .main-nav .nav-list li a.activo, nav ul li a.activo, .men_nv li a.activo {
+  color: var(--gold) !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+.navbar-menu li a:hover::after, .main-nav .nav-list li a:hover::after, nav ul li a:hover::after, .men_nv li a:hover::after,
+.navbar-menu li a.activo::after, .main-nav .nav-list li a.activo::after, nav ul li a.activo::after, .men_nv li a.activo::after {
+  width: 100% !important;
 }
 
 /* Common utilities */
