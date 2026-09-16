@@ -8,9 +8,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Base de datos simulada
     const usuarios = [
-        { email: 'admin@opticavision.com', pass: 'admin123', rol: 'admin', url: 'panel-admin.html' },
-        { email: 'empleado@opticavision.com', pass: 'empleado123', rol: 'empleado', url: 'panel-admin.html' },
-        { email: 'cliente@opticavision.com', pass: 'cliente123', rol: 'cliente', url: 'inicio.html' }
+        { email: 'admin@admin.com', pass: 'admin', rol: 'admin', url: 'panel-admin.html' },
+        { email: 'empleado@empleado.com', pass: 'empleado', rol: 'empleado', url: 'panel-admin.html' },
+        { email: 'cliente@cliente.com', pass: 'cliente', rol: 'cliente', url: 'inicio.html' }
     ];
 
     if(btnLogin) {
