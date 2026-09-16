@@ -104,6 +104,26 @@ body {
 .sidebar-footer {
   padding: 20px;
   border-top: 1px solid var(--admin-border);
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.store-btn {
+  display: flex;
+  align-items: center;
+  color: var(--admin-text-muted);
+  text-decoration: none;
+  font-size: 0.9rem;
+  transition: color 0.3s ease;
+}
+
+.store-btn:hover {
+  color: var(--admin-gold);
+}
+
+.store-btn i {
+  margin-right: 10px;
 }
 
 .logout-btn {

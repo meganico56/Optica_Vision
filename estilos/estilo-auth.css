@@ -52,6 +52,25 @@
     justify-content: flex-start;
     align-items: flex-start;
     width: 100%;
+    position: relative;
+}
+
+.btn-volver {
+    position: absolute;
+    top: 0;
+    right: 0;
+    color: var(--text-muted);
+    font-family: var(--font-body);
+    font-size: 0.85rem;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: color 0.3s ease;
+}
+
+.btn-volver:hover {
+    color: var(--gold-dark);
 }
 
 .titulo h5 {

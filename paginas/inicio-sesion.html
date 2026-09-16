@@ -21,6 +21,7 @@
         <div class="formulario">
             <div class="titulo">                
                 <h5>Bienvenido</h5>
+                <a href="javascript:history.back()" class="btn-volver"><i class="fa-solid fa-arrow-left"></i> Volver</a>
             </div>
             <div class="subtitulo">
                 <h1>Inicia sesión </h1>
@@ -28,11 +29,11 @@
             <input type="email" id="username" class="username" placeholder="E-mail" required><br><br>
             <input type="password" id="password" class="password" placeholder="Contraseña" required><br><br>
             <button class="olvidar" type="submit">¿Olvidaste tu contraseña?</button>
-            <p><button class="iniciar" type="submit">Iniciar sesión</button></p>
+            <p><button class="iniciar" id="btnLogin" type="button">Iniciar sesión</button></p>
             <button class="registrar" type="button" onclick="window.location.href='registro-usuario.html'">Registrarse</button>
             <p>Iniciar sesión con otra cuenta</p>
-            <button class="google" type="submit">Google</button>
-            <button class="facebook" type="submit">Facebook</button>
+            <button class="google" type="button">Google</button>
+            <button class="facebook" type="button">Facebook</button>
         </div>
     </div>
     <footer>
@@ -40,5 +41,6 @@
             <p>© 2024 Todos los derechos reservados.</p>
         </div>
     </footer>
+    <script src="../scripts/auth-local.js"></script>
 </body>
 </html>
