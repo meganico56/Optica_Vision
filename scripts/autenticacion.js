@@ -14,6 +14,16 @@ document.addEventListener('DOMContentLoaded', () => {
     ];
 
     if(btnLogin) {
+        const triggerEnter = (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                btnLogin.click();
+            }
+        };
+
+        if (inputEmail) inputEmail.addEventListener('keydown', triggerEnter);
+        if (inputPass) inputPass.addEventListener('keydown', triggerEnter);
+
         btnLogin.addEventListener('click', (e) => {
             e.preventDefault(); // Por si estuviera dentro de un formulario
 
