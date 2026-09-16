@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel de Administrador - Boutique de la Visión</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <link rel="stylesheet" href="../estilos/global.css">
+    <link rel="stylesheet" href="../estilos/estilo-admin.css">
+</head>
+
+<body>
+
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <img src="../imagenes/logos/logo-boutique.png" alt="Logo" class="sidebar-logo">
+        </div>
+        
+        <nav class="sidebar-nav">
+            <a href="#" class="nav-item active">
+                <i class="fa-solid fa-chart-pie"></i>
+                Dashboard
+            </a>
+            <a href="#" class="nav-item">
+                <i class="fa-solid fa-users"></i>
+                Gestión de Usuarios
+            </a>
+            <a href="#" class="nav-item">
+                <i class="fa-solid fa-glasses"></i>
+                Catálogo e Inventario
+            </a>
+            <a href="#" class="nav-item">
+                <i class="fa-solid fa-truck-fast"></i>
+                Compras y Proveedores
+            </a>
+            <a href="#" class="nav-item">
+                <i class="fa-solid fa-cash-register"></i>
+                Ventas y Devoluciones
+            </a>
+            <a href="#" class="nav-item">
+                <i class="fa-solid fa-calendar-check"></i>
+                Citas y Recetas
+            </a>
+            <a href="#" class="nav-item">
+                <i class="fa-solid fa-tags"></i>
+                Promociones
+            </a>
+            <a href="#" class="nav-item">
+                <i class="fa-solid fa-file-invoice"></i>
+                Reportes Generales
+            </a>
+        </nav>
+        
+        <div class="sidebar-footer">
+            <a href="inicio.html" class="logout-btn">
+                <i class="fa-solid fa-right-from-bracket"></i>
+                Cerrar Sesión
+            </a>
+        </div>
+    </aside>
+
+    <!-- Contenido Principal -->
+    <main class="main-content">
+        
+        <!-- Top Bar -->
+        <header class="top-bar">
+            <div class="search-box">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <input type="text" placeholder="Buscar clientes, productos, pedidos...">
+            </div>
+            
+            <div class="top-bar-right">
+                <button class="theme-toggle" id="themeToggleBtn" title="Alternar modo claro/oscuro">
+                    <i class="fa-solid fa-sun"></i>
+                </button>
+                
+                <div class="notification-bell">
+                    <i class="fa-regular fa-bell"></i>
+                    <span class="notification-badge">3</span>
+                </div>
+                
+                <div class="admin-profile">
+                    <div class="admin-info">
+                        <div class="admin-name">Camila Torres</div>
+                        <div class="admin-role">Administradora</div>
+                    </div>
+                    <div class="admin-avatar">C</div>
+                </div>
+            </div>
+        </header>
+        
+        <!-- Dashboard Content -->
+        <div class="dashboard-container">
+            <h1 class="page-title">Visión General</h1>
+            
+            <!-- Tarjetas KPI -->
+            <div class="kpi-grid">
+                <div class="kpi-card">
+                    <div class="kpi-info">
+                        <p>Ingresos del Mes</p>
+                        <h3>$ 12.35M</h3>
+                    </div>
+                    <div class="kpi-icon">
+                        <i class="fa-solid fa-sack-dollar"></i>
+                    </div>
+                </div>
+                
+                <div class="kpi-card">
+                    <div class="kpi-info">
+                        <p>Ventas Completadas</p>
+                        <h3>84</h3>
+                    </div>
+                    <div class="kpi-icon">
+                        <i class="fa-solid fa-bag-shopping"></i>
+                    </div>
+                </div>
+                
+                <div class="kpi-card">
+                    <div class="kpi-info">
+                        <p>Citas Programadas</p>
+                        <h3>12</h3>
+                    </div>
+                    <div class="kpi-icon">
+                        <i class="fa-solid fa-calendar-days"></i>
+                    </div>
+                </div>
+                
+                <div class="kpi-card">
+                    <div class="kpi-info">
+                        <p>Clientes Registrados</p>
+                        <h3>142</h3>
+                    </div>
+                    <div class="kpi-icon">
+                        <i class="fa-solid fa-users"></i>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Tablas y Listas -->
+            <div class="data-section">
+                <!-- Últimas Ventas -->
+                <div class="data-card">
+                    <div class="data-card-header">
+                        <h2 class="data-card-title">Últimas Ventas</h2>
+                        <a href="#" class="view-all-btn">Ver todas <i class="fa-solid fa-arrow-right"></i></a>
+                    </div>
+                    
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>ID Venta</th>
+                                <th>Cliente</th>
+                                <th>Total</th>
+                                <th>Fecha</th>
+                                <th>Estado</th>
+                                <th>Acción</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>#VNT-00124</td>
+                                <td>Sofía Herrera</td>
+                                <td>$ 400.000</td>
+                                <td>18 Ago 2026</td>
+                                <td><span class="status-badge success">Completada</span></td>
+                                <td><button class="action-btn"><i class="fa-solid fa-eye"></i></button></td>
+                            </tr>
+                            <tr>
+                                <td>#VNT-00125</td>
+                                <td>Mateo Rojas</td>
+                                <td>$ 250.000</td>
+                                <td>19 Ago 2026</td>
+                                <td><span class="status-badge success">Completada</span></td>
+                                <td><button class="action-btn"><i class="fa-solid fa-eye"></i></button></td>
+                            </tr>
+                            <tr>
+                                <td>#VNT-00126</td>
+                                <td>Valentina Cruz</td>
+                                <td>$ 202.000</td>
+                                <td>20 Ago 2026</td>
+                                <td><span class="status-badge success">Completada</span></td>
+                                <td><button class="action-btn"><i class="fa-solid fa-eye"></i></button></td>
+                            </tr>
+                            <tr>
+                                <td>#VNT-00127</td>
+                                <td>Santiago Molina</td>
+                                <td>$ 520.000</td>
+                                <td>21 Ago 2026</td>
+                                <td><span class="status-badge success">Completada</span></td>
+                                <td><button class="action-btn"><i class="fa-solid fa-eye"></i></button></td>
+                            </tr>
+                            <tr>
+                                <td>#COT-00042</td>
+                                <td>Sofía Herrera</td>
+                                <td>$ 26.000</td>
+                                <td>25 Ago 2026</td>
+                                <td><span class="status-badge warning">Cotización</span></td>
+                                <td><button class="action-btn"><i class="fa-solid fa-eye"></i></button></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                
+                <!-- Alertas de Inventario -->
+                <div class="data-card">
+                    <div class="data-card-header">
+                        <h2 class="data-card-title">Alertas de Inventario</h2>
+                    </div>
+                    
+                    <ul class="alert-list">
+                        <li class="alert-item">
+                            <div class="alert-icon"><i class="fa-solid fa-box-open"></i></div>
+                            <div class="alert-details">
+                                <h4>Montura clásica acetato</h4>
+                                <p>Stock actual: 0 / Mínimo: 5</p>
+                            </div>
+                        </li>
+                        <li class="alert-item">
+                            <div class="alert-icon"><i class="fa-solid fa-box-open"></i></div>
+                            <div class="alert-details">
+                                <h4>Montura metálica redonda</h4>
+                                <p>Stock actual: 0 / Mínimo: 5</p>
+                            </div>
+                        </li>
+                        <li class="alert-item">
+                            <div class="alert-icon"><i class="fa-solid fa-box-open"></i></div>
+                            <div class="alert-details">
+                                <h4>Gafa de sol aviador</h4>
+                                <p>Stock actual: 0 / Mínimo: 5</p>
+                            </div>
+                        </li>
+                        <li class="alert-item">
+                            <div class="alert-icon"><i class="fa-solid fa-prescription-bottle-medical"></i></div>
+                            <div class="alert-details">
+                                <h4>Lentes de contacto mensual</h4>
+                                <p>Stock actual: 0 / Mínimo: 10</p>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            
+        </div>
+    </main>
+
+    <script>
+        const themeToggleBtn = document.getElementById('themeToggleBtn');
+        const icon = themeToggleBtn.querySelector('i');
+        
+        themeToggleBtn.addEventListener('click', () => {
+            document.documentElement.classList.toggle('light-mode');
+            
+            if (document.documentElement.classList.contains('light-mode')) {
+                icon.classList.remove('fa-sun');
+                icon.classList.add('fa-moon');
+            } else {
+                icon.classList.remove('fa-moon');
+                icon.classList.add('fa-sun');
+            }
+        });
+    </script>
+
+</body>
+</html>

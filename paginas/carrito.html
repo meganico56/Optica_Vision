@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Carrito de Compras - Boutique de la Visión</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <link rel="stylesheet" href="../estilos/global.css">
+    <link rel="stylesheet" href="../estilos/estilo-carrito.css">
+</head>
+
+<body>
+
+<!-- Header (Reutilizado) -->
+<header class="navbar">
+    <div class="logo">
+        <a href="inicio.html">
+            <img src="../imagenes/logos/logo-boutique.png" class="logo-icon" alt="Logo">
+        </a>
+    </div>
+
+    <form class="buscador" action="catalogo.html" method="get">
+        <input type="text" name="q" placeholder="Buscar productos..." class="busc">
+        <button type="submit" class="bot_bus">
+            <i class="fa-solid fa-magnifying-glass"></i>
+        </button>
+    </form>
+
+    <nav>
+        <ul class="navbar-menu">
+            <li><a href="inicio.html">INICIO</a></li>
+            <li><a href="catalogo.html">CATÁLOGO</a></li>
+            <li><a href="visualizador-producto.html">EXPLORAR</a></li>
+            <li><a href="formulario-pedido.html">AGENDAR CITA</a></li>
+            <li><a href="inicio-sesion.html">REGISTRO / LOGIN</a></li>
+        </ul>
+    </nav>
+</header>
+
+<!-- Header del Carrito (Stepper) -->
+<div class="cart-header-wrapper">
+    <h1 class="cart-title">Tu Carrito de Compras</h1>
+    
+    <div class="stepper">
+        <div class="step-item active">
+            <div class="step-circle">1</div>
+            <div class="step-label">Carrito</div>
+        </div>
+        <div class="step-item">
+            <div class="step-circle">2</div>
+            <div class="step-label">Envío</div>
+        </div>
+        <div class="step-item">
+            <div class="step-circle">3</div>
+            <div class="step-label">Pago</div>
+        </div>
+    </div>
+</div>
+
+<!-- Contenedor Principal del Carrito -->
+<main class="cart-container">
+    
+    <!-- Sección de Productos -->
+    <section class="cart-items-section">
+        <div class="cart-table-header">
+            <div>Producto</div>
+            <div>Cantidad</div>
+            <div style="text-align: right;">Total</div>
+        </div>
+
+        <!-- Producto 1 -->
+        <div class="cart-item">
+            <div class="item-details">
+                <div class="item-image-wrapper">
+                    <img src="../imagenes/productos/gafas-modelo1.png" alt="Luna Aviator Classic">
+                </div>
+                <div class="item-info">
+                    <h3>Luna Aviator Classic</h3>
+                    <p>Color: Dorado | Lente: Neutro</p>
+                    <button class="remove-btn">
+                        <i class="fa-solid fa-trash-can"></i> Eliminar
+                    </button>
+                </div>
+            </div>
+            
+            <div class="item-quantity">
+                <button class="qty-btn" onclick="updateQty('qty1', -1)"><i class="fa-solid fa-minus"></i></button>
+                <input type="text" id="qty1" class="qty-input" value="1" readonly>
+                <button class="qty-btn" onclick="updateQty('qty1', 1)"><i class="fa-solid fa-plus"></i></button>
+            </div>
+            
+            <div class="item-price">
+                $150.000
+            </div>
+        </div>
+
+        <!-- Producto 2 -->
+        <div class="cart-item">
+            <div class="item-details">
+                <div class="item-image-wrapper">
+                    <img src="../imagenes/productos/gafas-modelo2.png" alt="Isabella Castells">
+                </div>
+                <div class="item-info">
+                    <h3>Isabella Castells</h3>
+                    <p>Color: Negro | Lente: Polarizado</p>
+                    <button class="remove-btn">
+                        <i class="fa-solid fa-trash-can"></i> Eliminar
+                    </button>
+                </div>
+            </div>
+            
+            <div class="item-quantity">
+                <button class="qty-btn" onclick="updateQty('qty2', -1)"><i class="fa-solid fa-minus"></i></button>
+                <input type="text" id="qty2" class="qty-input" value="1" readonly>
+                <button class="qty-btn" onclick="updateQty('qty2', 1)"><i class="fa-solid fa-plus"></i></button>
+            </div>
+            
+            <div class="item-price">
+                $180.000
+            </div>
+        </div>
+        
+    </section>
+
+    <!-- Resumen del Pedido -->
+    <aside class="cart-summary">
+        <h2 class="summary-title">Resumen de Compra</h2>
+        
+        <div class="summary-row">
+            <span>Subtotal</span>
+            <span>$330.000</span>
+        </div>
+        
+        <div class="summary-row">
+            <span>Envío estimado</span>
+            <span>$15.000</span>
+        </div>
+        
+        <div class="summary-row discount" id="discount-row" style="display: none;">
+            <span>Descuento Promocional</span>
+            <span>-$30.000</span>
+        </div>
+        
+        <div class="promo-code">
+            <input type="text" class="promo-input" placeholder="Código de descuento" id="promoCode">
+            <button class="promo-btn" onclick="applyPromo()">Aplicar</button>
+        </div>
+        
+        <div class="summary-total">
+            <span>Total</span>
+            <span id="finalTotal">$345.000</span>
+        </div>
+        
+        <button class="checkout-btn" onclick="window.location.href='formulario-pedido.html'">
+            Continuar al pago <i class="fa-solid fa-arrow-right"></i>
+        </button>
+        
+        <div class="security-badges">
+            <i class="fa-brands fa-cc-visa"></i>
+            <i class="fa-brands fa-cc-mastercard"></i>
+            <i class="fa-solid fa-lock"></i>
+        </div>
+    </aside>
+
+</main>
+
+<script>
+    function updateQty(id, change) {
+        const input = document.getElementById(id);
+        let val = parseInt(input.value);
+        val += change;
+        if(val < 1) val = 1;
+        input.value = val;
+    }
+    
+    function applyPromo() {
+        const code = document.getElementById('promoCode').value;
+        if(code.toLowerCase() === 'optix2026') {
+            document.getElementById('discount-row').style.display = 'flex';
+            document.getElementById('finalTotal').innerText = '$315.000';
+            alert('¡Descuento aplicado correctamente!');
+        } else if(code.trim() !== '') {
+            alert('Código no válido');
+        }
+    }
+</script>
+
+</body>
+</html>
