@@ -5,6 +5,19 @@ document.addEventListener('DOMContentLoaded', () => {
     const btnLogin = document.getElementById('btnLogin');
     const inputEmail = document.getElementById('username');
     const inputPass = document.getElementById('password');
+    const togglePassword = document.getElementById('togglePassword');
+
+    // Toggle para mostrar/ocultar contraseña
+    if (togglePassword && inputPass) {
+        togglePassword.addEventListener('click', function (e) {
+            // Toggle type attribute
+            const type = inputPass.getAttribute('type') === 'password' ? 'text' : 'password';
+            inputPass.setAttribute('type', type);
+            // Toggle the eye icon
+            this.classList.toggle('fa-eye');
+            this.classList.toggle('fa-eye-slash');
+        });
+    }
 
     // Base de datos simulada
     const usuarios = [
