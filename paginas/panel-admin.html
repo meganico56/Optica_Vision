@@ -12,6 +12,12 @@
     
     <link rel="stylesheet" href="../estilos/global.css">
     <link rel="stylesheet" href="../estilos/estilo-admin.css">
+    <script>
+        // Cargar el tema guardado inmediatamente para evitar parpadeos
+        if (localStorage.getItem('theme') === 'light') {
+            document.documentElement.classList.add('light-mode');
+        }
+    </script>
 </head>
 
 <body>
@@ -19,7 +25,7 @@
     <!-- Sidebar -->
     <aside class="sidebar" id="sidebar">
         <div class="sidebar-header">
-            <img src="../imagenes/logos/logo-boutique.png" alt="Logo" class="sidebar-logo">
+            <img src="../imagenes/logos/logo-boutique.png" alt="Logo" class="sidebar-logo" id="mainLogo">
             <button class="sidebar-close" id="sidebarClose"><i class="fa-solid fa-xmark"></i></button>
         </div>
         
@@ -273,10 +279,37 @@
 
     <script>
         document.getElementById('todayDate').textContent = new Date().toLocaleDateString('es-CO',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+        
+        // Manejo del modo oscuro/claro con persistencia
         const themeBtn=document.getElementById('themeToggleBtn'),themeIcon=themeBtn.querySelector('i');
-        themeBtn.addEventListener('click',()=>{document.documentElement.classList.toggle('light-mode');themeIcon.classList.toggle('fa-sun');themeIcon.classList.toggle('fa-moon');});
+        const mainLogo = document.getElementById('mainLogo');
+        
+        function updateThemeUI(isLight) {
+            if(isLight) {
+                themeIcon.classList.remove('fa-sun'); themeIcon.classList.add('fa-moon');
+                if(mainLogo) mainLogo.src = '../imagenes/logos/logo-boutique.png';
+            } else {
+                themeIcon.classList.remove('fa-moon'); themeIcon.classList.add('fa-sun');
+                if(mainLogo) mainLogo.src = '../imagenes/logos/Logo_modo_oscuro.png';
+            }
+        }
+
+        if (document.documentElement.classList.contains('light-mode')) {
+            updateThemeUI(true);
+        } else {
+            updateThemeUI(false);
+        }
+
+        themeBtn.addEventListener('click',()=>{
+            document.documentElement.classList.toggle('light-mode');
+            const isLight = document.documentElement.classList.contains('light-mode');
+            localStorage.setItem('theme', isLight ? 'light' : 'dark');
+            updateThemeUI(isLight);
+        });
+
         const navItems=document.querySelectorAll('.nav-item[data-section]'),sections=document.querySelectorAll('.section-content');
         function showSection(id){sections.forEach(s=>s.classList.remove('active'));navItems.forEach(n=>n.classList.remove('active'));const t=document.getElementById('sec-'+id);if(t)t.classList.add('active');const n=document.querySelector('.nav-item[data-section="'+id+'"]');if(n)n.classList.add('active');}
+        
         navItems.forEach(item=>item.addEventListener('click',e=>{e.preventDefault();showSection(item.dataset.section);if(window.innerWidth<768)document.getElementById('sidebar').classList.remove('open');}));
         document.querySelectorAll('[data-goto]').forEach(link=>link.addEventListener('click',e=>{e.preventDefault();showSection(link.dataset.goto);}));
         document.getElementById('menuToggle').addEventListener('click',()=>document.getElementById('sidebar').classList.toggle('open'));
@@ -286,5 +319,6 @@
         if(sesion.email){document.getElementById('adminName').textContent=sesion.email.split('@')[0].replace('.',' ').replace(/\b\w/g,l=>l.toUpperCase());document.getElementById('adminAvatar').textContent=sesion.email[0].toUpperCase();}
     </script>
     <script src="../scripts/session-manager.js"></script>
+    <script src="../scripts/intro-animacion.js"></script>
 </body>
 </html>
