@@ -17,55 +17,26 @@
 <body>
 
     <!-- Sidebar -->
-    <aside class="sidebar">
+    <aside class="sidebar" id="sidebar">
         <div class="sidebar-header">
             <img src="../imagenes/logos/logo-boutique.png" alt="Logo" class="sidebar-logo">
+            <button class="sidebar-close" id="sidebarClose"><i class="fa-solid fa-xmark"></i></button>
         </div>
         
         <nav class="sidebar-nav">
-            <a href="#" class="nav-item active">
-                <i class="fa-solid fa-chart-pie"></i>
-                Dashboard
-            </a>
-            <a href="#" class="nav-item">
-                <i class="fa-solid fa-users"></i>
-                Gestión de Usuarios
-            </a>
-            <a href="#" class="nav-item">
-                <i class="fa-solid fa-glasses"></i>
-                Catálogo e Inventario
-            </a>
-            <a href="#" class="nav-item">
-                <i class="fa-solid fa-truck-fast"></i>
-                Compras y Proveedores
-            </a>
-            <a href="#" class="nav-item">
-                <i class="fa-solid fa-cash-register"></i>
-                Ventas y Devoluciones
-            </a>
-            <a href="#" class="nav-item">
-                <i class="fa-solid fa-calendar-check"></i>
-                Citas y Recetas
-            </a>
-            <a href="#" class="nav-item">
-                <i class="fa-solid fa-tags"></i>
-                Promociones
-            </a>
-            <a href="#" class="nav-item">
-                <i class="fa-solid fa-file-invoice"></i>
-                Reportes Generales
-            </a>
+            <a href="#" class="nav-item active" data-section="dashboard"><i class="fa-solid fa-chart-pie"></i><span>Dashboard</span></a>
+            <a href="#" class="nav-item" data-section="usuarios"><i class="fa-solid fa-users"></i><span>Gestión de Usuarios</span></a>
+            <a href="#" class="nav-item" data-section="inventario"><i class="fa-solid fa-glasses"></i><span>Catálogo e Inventario</span></a>
+            <a href="#" class="nav-item" data-section="compras"><i class="fa-solid fa-truck-fast"></i><span>Compras y Proveedores</span></a>
+            <a href="#" class="nav-item" data-section="ventas"><i class="fa-solid fa-cash-register"></i><span>Ventas y Devoluciones</span></a>
+            <a href="#" class="nav-item" data-section="citas"><i class="fa-solid fa-calendar-check"></i><span>Citas y Recetas</span></a>
+            <a href="#" class="nav-item" data-section="promociones"><i class="fa-solid fa-tags"></i><span>Promociones</span></a>
+            <a href="#" class="nav-item" data-section="reportes"><i class="fa-solid fa-file-invoice"></i><span>Reportes Generales</span></a>
         </nav>
         
         <div class="sidebar-footer">
-            <a href="inicio.html" class="store-btn">
-                <i class="fa-solid fa-store"></i>
-                Ver Tienda
-            </a>
-            <a href="inicio.html" class="logout-btn">
-                <i class="fa-solid fa-right-from-bracket"></i>
-                Cerrar Sesión
-            </a>
+            <a href="inicio.html" class="store-btn"><i class="fa-solid fa-store"></i><span>Ver Tienda</span></a>
+            <a href="inicio-sesion.html" class="logout-btn" id="logoutBtn"><i class="fa-solid fa-right-from-bracket"></i><span>Cerrar Sesión</span></a>
         </div>
     </aside>
 
@@ -74,9 +45,12 @@
         
         <!-- Top Bar -->
         <header class="top-bar">
-            <div class="search-box">
-                <i class="fa-solid fa-magnifying-glass"></i>
-                <input type="text" placeholder="Buscar clientes, productos, pedidos...">
+            <div class="topbar-left">
+                <button class="menu-toggle" id="menuToggle"><i class="fa-solid fa-bars"></i></button>
+                <div class="search-box">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    <input type="text" placeholder="Buscar clientes, productos, pedidos...">
+                </div>
             </div>
             
             <div class="top-bar-right">
@@ -86,64 +60,32 @@
                 
                 <div class="notification-bell">
                     <i class="fa-regular fa-bell"></i>
-                    <span class="notification-badge">3</span>
+                    <span class="notification-badge">5</span>
                 </div>
                 
                 <div class="admin-profile">
                     <div class="admin-info">
-                        <div class="admin-name">Camila Torres</div>
+                        <div class="admin-name" id="adminName">Camila Torres</div>
                         <div class="admin-role">Administradora</div>
                     </div>
-                    <div class="admin-avatar">C</div>
+                    <div class="admin-avatar" id="adminAvatar">C</div>
                 </div>
             </div>
         </header>
         
-        <!-- Dashboard Content -->
+        <!-- ============ DASHBOARD ============ -->
+        <div class="section-content active" id="sec-dashboard">
         <div class="dashboard-container">
-            <h1 class="page-title">Visión General</h1>
+            <div class="page-header"><div><h1 class="page-title">Visión General</h1><p class="page-subtitle" id="todayDate"></p></div><button class="btn-primary"><i class="fa-solid fa-arrow-down-to-bracket"></i> Exportar</button></div>
             
             <!-- Tarjetas KPI -->
             <div class="kpi-grid">
-                <div class="kpi-card">
-                    <div class="kpi-info">
-                        <p>Ingresos del Mes</p>
-                        <h3>$ 12.35M</h3>
-                    </div>
-                    <div class="kpi-icon">
-                        <i class="fa-solid fa-sack-dollar"></i>
-                    </div>
-                </div>
-                
-                <div class="kpi-card">
-                    <div class="kpi-info">
-                        <p>Ventas Completadas</p>
-                        <h3>84</h3>
-                    </div>
-                    <div class="kpi-icon">
-                        <i class="fa-solid fa-bag-shopping"></i>
-                    </div>
-                </div>
-                
-                <div class="kpi-card">
-                    <div class="kpi-info">
-                        <p>Citas Programadas</p>
-                        <h3>12</h3>
-                    </div>
-                    <div class="kpi-icon">
-                        <i class="fa-solid fa-calendar-days"></i>
-                    </div>
-                </div>
-                
-                <div class="kpi-card">
-                    <div class="kpi-info">
-                        <p>Clientes Registrados</p>
-                        <h3>142</h3>
-                    </div>
-                    <div class="kpi-icon">
-                        <i class="fa-solid fa-users"></i>
-                    </div>
-                </div>
+                <div class="kpi-card"><div class="kpi-info"><p>Ingresos del Mes</p><h3>$ 1.372M</h3><span class="kpi-trend up"><i class="fa-solid fa-arrow-trend-up"></i> +12% vs mes anterior</span></div><div class="kpi-icon gold"><i class="fa-solid fa-sack-dollar"></i></div></div>
+                <div class="kpi-card"><div class="kpi-info"><p>Ventas Completadas</p><h3>4</h3><span class="kpi-trend up"><i class="fa-solid fa-arrow-trend-up"></i> +2 esta semana</span></div><div class="kpi-icon blue"><i class="fa-solid fa-bag-shopping"></i></div></div>
+                <div class="kpi-card"><div class="kpi-info"><p>Citas Programadas</p><h3>1</h3><span class="kpi-trend neutral"><i class="fa-solid fa-minus"></i> Sep 15, 2026</span></div><div class="kpi-icon green"><i class="fa-solid fa-calendar-days"></i></div></div>
+                <div class="kpi-card"><div class="kpi-info"><p>Clientes Registrados</p><h3>4</h3><span class="kpi-trend up"><i class="fa-solid fa-arrow-trend-up"></i> +1 este mes</span></div><div class="kpi-icon purple"><i class="fa-solid fa-users"></i></div></div>
+                <div class="kpi-card alert-card"><div class="kpi-info"><p>Productos Bajo Mínimo</p><h3>5</h3><span class="kpi-trend down"><i class="fa-solid fa-triangle-exclamation"></i> Reposición urgente</span></div><div class="kpi-icon orange"><i class="fa-solid fa-box-open"></i></div></div>
+                <div class="kpi-card"><div class="kpi-info"><p>Recetas Vigentes</p><h3>3</h3><span class="kpi-trend neutral"><i class="fa-solid fa-file-medical"></i> 0 vencidas</span></div><div class="kpi-icon teal"><i class="fa-solid fa-prescription-bottle-medical"></i></div></div>
             </div>
             
             <!-- Tablas y Listas -->
@@ -151,123 +93,197 @@
                 <!-- Últimas Ventas -->
                 <div class="data-card">
                     <div class="data-card-header">
-                        <h2 class="data-card-title">Últimas Ventas</h2>
-                        <a href="#" class="view-all-btn">Ver todas <i class="fa-solid fa-arrow-right"></i></a>
+                        <h2 class="data-card-title"><i class="fa-solid fa-receipt"></i> Últimas Ventas</h2>
+                        <a href="#" class="view-all-btn" data-goto="ventas">Ver todas <i class="fa-solid fa-arrow-right"></i></a>
                     </div>
-                    
-                    <table class="admin-table">
-                        <thead>
-                            <tr>
-                                <th>ID Venta</th>
-                                <th>Cliente</th>
-                                <th>Total</th>
-                                <th>Fecha</th>
-                                <th>Estado</th>
-                                <th>Acción</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>#VNT-00124</td>
-                                <td>Sofía Herrera</td>
-                                <td>$ 400.000</td>
-                                <td>18 Ago 2026</td>
-                                <td><span class="status-badge success">Completada</span></td>
-                                <td><button class="action-btn"><i class="fa-solid fa-eye"></i></button></td>
-                            </tr>
-                            <tr>
-                                <td>#VNT-00125</td>
-                                <td>Mateo Rojas</td>
-                                <td>$ 250.000</td>
-                                <td>19 Ago 2026</td>
-                                <td><span class="status-badge success">Completada</span></td>
-                                <td><button class="action-btn"><i class="fa-solid fa-eye"></i></button></td>
-                            </tr>
-                            <tr>
-                                <td>#VNT-00126</td>
-                                <td>Valentina Cruz</td>
-                                <td>$ 202.000</td>
-                                <td>20 Ago 2026</td>
-                                <td><span class="status-badge success">Completada</span></td>
-                                <td><button class="action-btn"><i class="fa-solid fa-eye"></i></button></td>
-                            </tr>
-                            <tr>
-                                <td>#VNT-00127</td>
-                                <td>Santiago Molina</td>
-                                <td>$ 520.000</td>
-                                <td>21 Ago 2026</td>
-                                <td><span class="status-badge success">Completada</span></td>
-                                <td><button class="action-btn"><i class="fa-solid fa-eye"></i></button></td>
-                            </tr>
-                            <tr>
-                                <td>#COT-00042</td>
-                                <td>Sofía Herrera</td>
-                                <td>$ 26.000</td>
-                                <td>25 Ago 2026</td>
-                                <td><span class="status-badge warning">Cotización</span></td>
-                                <td><button class="action-btn"><i class="fa-solid fa-eye"></i></button></td>
-                            </tr>
-                        </tbody>
-                    </table>
+                    <table class="admin-table"><thead><tr><th>ID</th><th>Cliente</th><th>Total</th><th>Fecha</th><th>Estado</th><th>Acción</th></tr></thead>
+                    <tbody>
+                        <tr><td><span class="id-badge">#VNT-001</span></td><td>Sofía Herrera</td><td>$ 400.000</td><td>18 Ago 2026</td><td><span class="status-badge success">Completada</span></td><td><button class="action-btn"><i class="fa-solid fa-eye"></i></button></td></tr>
+                        <tr><td><span class="id-badge">#VNT-002</span></td><td>Mateo Rojas</td><td>$ 250.000</td><td>19 Ago 2026</td><td><span class="status-badge success">Completada</span></td><td><button class="action-btn"><i class="fa-solid fa-eye"></i></button></td></tr>
+                        <tr><td><span class="id-badge">#VNT-003</span></td><td>Valentina Cruz</td><td>$ 202.000</td><td>20 Ago 2026</td><td><span class="status-badge success">Completada</span></td><td><button class="action-btn"><i class="fa-solid fa-eye"></i></button></td></tr>
+                        <tr><td><span class="id-badge">#VNT-004</span></td><td>Santiago Molina</td><td>$ 520.000</td><td>21 Ago 2026</td><td><span class="status-badge success">Completada</span></td><td><button class="action-btn"><i class="fa-solid fa-eye"></i></button></td></tr>
+                        <tr><td><span class="id-badge">#COT-005</span></td><td>Sofía Herrera</td><td>$ 26.000</td><td>25 Ago 2026</td><td><span class="status-badge warning">Cotización</span></td><td><button class="action-btn"><i class="fa-solid fa-eye"></i></button></td></tr>
+                    </tbody></table>
                 </div>
                 
                 <!-- Alertas de Inventario -->
                 <div class="data-card">
-                    <div class="data-card-header">
-                        <h2 class="data-card-title">Alertas de Inventario</h2>
-                    </div>
-                    
+                    <div class="data-card-header"><h2 class="data-card-title"><i class="fa-solid fa-triangle-exclamation"></i> Alertas de Inventario</h2></div>
                     <ul class="alert-list">
-                        <li class="alert-item">
-                            <div class="alert-icon"><i class="fa-solid fa-box-open"></i></div>
-                            <div class="alert-details">
-                                <h4>Montura clásica acetato</h4>
-                                <p>Stock actual: 0 / Mínimo: 5</p>
-                            </div>
-                        </li>
-                        <li class="alert-item">
-                            <div class="alert-icon"><i class="fa-solid fa-box-open"></i></div>
-                            <div class="alert-details">
-                                <h4>Montura metálica redonda</h4>
-                                <p>Stock actual: 0 / Mínimo: 5</p>
-                            </div>
-                        </li>
-                        <li class="alert-item">
-                            <div class="alert-icon"><i class="fa-solid fa-box-open"></i></div>
-                            <div class="alert-details">
-                                <h4>Gafa de sol aviador</h4>
-                                <p>Stock actual: 0 / Mínimo: 5</p>
-                            </div>
-                        </li>
-                        <li class="alert-item">
-                            <div class="alert-icon"><i class="fa-solid fa-prescription-bottle-medical"></i></div>
-                            <div class="alert-details">
-                                <h4>Lentes de contacto mensual</h4>
-                                <p>Stock actual: 0 / Mínimo: 10</p>
-                            </div>
-                        </li>
+                        <li class="alert-item"><div class="alert-icon"><i class="fa-solid fa-box-open"></i></div><div class="alert-details"><h4>Montura clásica acetato negro</h4><p>Stock: 0 / Mín: 5 — <span class="danger-text">Agotado</span></p></div></li>
+                        <li class="alert-item"><div class="alert-icon"><i class="fa-solid fa-box-open"></i></div><div class="alert-details"><h4>Montura metálica redonda</h4><p>Stock: 0 / Mín: 5 — <span class="danger-text">Agotado</span></p></div></li>
+                        <li class="alert-item"><div class="alert-icon"><i class="fa-solid fa-box-open"></i></div><div class="alert-details"><h4>Gafa de sol aviador</h4><p>Stock: 0 / Mín: 5 — <span class="danger-text">Agotado</span></p></div></li>
+                        <li class="alert-item"><div class="alert-icon"><i class="fa-solid fa-prescription-bottle-medical"></i></div><div class="alert-details"><h4>Lentes de contacto mensuales</h4><p>Stock: 0 / Mín: 10 — <span class="danger-text">Agotado</span></p></div></li>
+                        <li class="alert-item"><div class="alert-icon"><i class="fa-solid fa-flask"></i></div><div class="alert-details"><h4>Líquido limpiador lentes contacto</h4><p>Stock: 0 / Mín: 10 — <span class="danger-text">Agotado</span></p></div></li>
                     </ul>
                 </div>
             </div>
-            
-        </div>
+        </div><!-- end dashboard-container -->
+        </div><!-- end sec-dashboard -->
+
+        <!-- ============ USUARIOS ============ -->
+        <div class="section-content" id="sec-usuarios">
+        <div class="dashboard-container">
+            <div class="page-header"><div><h1 class="page-title">Gestión de Usuarios</h1><p class="page-subtitle">Administradores, vendedores y clientes registrados</p></div><button class="btn-primary"><i class="fa-solid fa-user-plus"></i> Nuevo Usuario</button></div>
+            <div class="filter-row"><button class="filter-btn active">Todos</button><button class="filter-btn">Administradores</button><button class="filter-btn">Vendedores</button><button class="filter-btn">Clientes</button></div>
+            <div class="data-card">
+                <table class="admin-table"><thead><tr><th>#</th><th>Nombre</th><th>Documento</th><th>Teléfono</th><th>Correo</th><th>Rol</th><th>Estado</th><th>Acciones</th></tr></thead>
+                <tbody>
+                    <tr><td>1</td><td>Camila Torres</td><td>C.C. 1032987651</td><td>3115557890</td><td>camila.torres@visionclara.com</td><td><span class="role-badge admin">Administradora</span></td><td><span class="status-badge success">Activo</span></td><td class="action-group"><button class="action-btn"><i class="fa-solid fa-pen"></i></button><button class="action-btn danger"><i class="fa-solid fa-ban"></i></button></td></tr>
+                    <tr><td>2</td><td>Andrés Ramírez</td><td>C.C. 1019456782</td><td>3124448821</td><td>andres.ramirez@visionclara.com</td><td><span class="role-badge vendedor">Vendedor</span></td><td><span class="status-badge success">Activo</span></td><td class="action-group"><button class="action-btn"><i class="fa-solid fa-pen"></i></button><button class="action-btn danger"><i class="fa-solid fa-ban"></i></button></td></tr>
+                    <tr><td>3</td><td>Diana Castillo</td><td>C.C. 1026773401</td><td>3138812345</td><td>diana.castillo@visionclara.com</td><td><span class="role-badge vendedor">Vendedora</span></td><td><span class="status-badge success">Activo</span></td><td class="action-group"><button class="action-btn"><i class="fa-solid fa-pen"></i></button><button class="action-btn danger"><i class="fa-solid fa-ban"></i></button></td></tr>
+                    <tr><td>4</td><td>Sofía Herrera</td><td>C.C. 1032456789</td><td>3201234567</td><td>sofia.herrera@gmail.com</td><td><span class="role-badge cliente">Cliente</span></td><td><span class="status-badge success">Activo</span></td><td class="action-group"><button class="action-btn"><i class="fa-solid fa-eye"></i></button><button class="action-btn danger"><i class="fa-solid fa-ban"></i></button></td></tr>
+                    <tr><td>5</td><td>Mateo Rojas</td><td>C.C. 1098765432</td><td>3112345678</td><td>mateo.rojas@gmail.com</td><td><span class="role-badge cliente">Cliente</span></td><td><span class="status-badge success">Activo</span></td><td class="action-group"><button class="action-btn"><i class="fa-solid fa-eye"></i></button><button class="action-btn danger"><i class="fa-solid fa-ban"></i></button></td></tr>
+                    <tr><td>6</td><td>Valentina Cruz</td><td>C.C. 52741369</td><td>3023456789</td><td>valentina.cruz@gmail.com</td><td><span class="role-badge cliente">Cliente</span></td><td><span class="status-badge success">Activo</span></td><td class="action-group"><button class="action-btn"><i class="fa-solid fa-eye"></i></button><button class="action-btn danger"><i class="fa-solid fa-ban"></i></button></td></tr>
+                    <tr><td>7</td><td>Santiago Molina</td><td>T.I. 1015987456</td><td>3134567890</td><td>contacto.molina@gmail.com</td><td><span class="role-badge cliente">Cliente</span></td><td><span class="status-badge success">Activo</span></td><td class="action-group"><button class="action-btn"><i class="fa-solid fa-eye"></i></button><button class="action-btn danger"><i class="fa-solid fa-ban"></i></button></td></tr>
+                </tbody></table>
+            </div>
+        </div></div>
+
+        <!-- ============ INVENTARIO ============ -->
+        <div class="section-content" id="sec-inventario">
+        <div class="dashboard-container">
+            <div class="page-header"><div><h1 class="page-title">Catálogo e Inventario</h1><p class="page-subtitle">Productos registrados — marcas, categorías y existencias</p></div><button class="btn-primary"><i class="fa-solid fa-plus"></i> Nuevo Producto</button></div>
+            <div class="kpi-grid" style="grid-template-columns:repeat(3,1fr);margin-bottom:25px">
+                <div class="kpi-card"><div class="kpi-info"><p>Total Productos</p><h3>9</h3></div><div class="kpi-icon gold"><i class="fa-solid fa-glasses"></i></div></div>
+                <div class="kpi-card"><div class="kpi-info"><p>Bajo Mínimo</p><h3>5</h3></div><div class="kpi-icon orange"><i class="fa-solid fa-box-open"></i></div></div>
+                <div class="kpi-card"><div class="kpi-info"><p>Categorías Activas</p><h3>6</h3></div><div class="kpi-icon teal"><i class="fa-solid fa-tag"></i></div></div>
+            </div>
+            <div class="data-card">
+                <table class="admin-table"><thead><tr><th>ID</th><th>Producto</th><th>Categoría</th><th>Marca</th><th>Precio</th><th>Stock</th><th>Mín</th><th>Estado</th><th>Acc.</th></tr></thead>
+                <tbody>
+                    <tr><td>1</td><td>Montura clásica acetato negro</td><td>Monturas</td><td>Vogue Eyewear</td><td>$180.000</td><td><span class="stock-badge danger">0</span></td><td>5</td><td><span class="status-badge error">Agotado</span></td><td class="action-group"><button class="action-btn"><i class="fa-solid fa-pen"></i></button><button class="action-btn danger"><i class="fa-solid fa-trash"></i></button></td></tr>
+                    <tr><td>2</td><td>Montura metálica redonda</td><td>Monturas</td><td>Ray-Ban</td><td>$320.000</td><td><span class="stock-badge danger">0</span></td><td>5</td><td><span class="status-badge error">Agotado</span></td><td class="action-group"><button class="action-btn"><i class="fa-solid fa-pen"></i></button><button class="action-btn danger"><i class="fa-solid fa-trash"></i></button></td></tr>
+                    <tr><td>3</td><td>Gafa de sol aviador</td><td>Gafas de sol</td><td>Ray-Ban</td><td>$350.000</td><td><span class="stock-badge danger">0</span></td><td>5</td><td><span class="status-badge error">Agotado</span></td><td class="action-group"><button class="action-btn"><i class="fa-solid fa-pen"></i></button><button class="action-btn danger"><i class="fa-solid fa-trash"></i></button></td></tr>
+                    <tr><td>4</td><td>Gafa de sol oversized</td><td>Gafas de sol</td><td>Vogue Eyewear</td><td>$250.000</td><td><span class="stock-badge ok">15</span></td><td>5</td><td><span class="status-badge success">Disponible</span></td><td class="action-group"><button class="action-btn"><i class="fa-solid fa-pen"></i></button><button class="action-btn danger"><i class="fa-solid fa-trash"></i></button></td></tr>
+                    <tr><td>5</td><td>Lentes de contacto mensuales</td><td>Lentes contacto</td><td>Acuvue</td><td>$85.000</td><td><span class="stock-badge danger">0</span></td><td>10</td><td><span class="status-badge error">Agotado</span></td><td class="action-group"><button class="action-btn"><i class="fa-solid fa-pen"></i></button><button class="action-btn danger"><i class="fa-solid fa-trash"></i></button></td></tr>
+                    <tr><td>6</td><td>Lente oftálmico antireflejo</td><td>Lentes oftálmicos</td><td>Essilor</td><td>$220.000</td><td><span class="stock-badge ok">20</span></td><td>5</td><td><span class="status-badge success">Disponible</span></td><td class="action-group"><button class="action-btn"><i class="fa-solid fa-pen"></i></button><button class="action-btn danger"><i class="fa-solid fa-trash"></i></button></td></tr>
+                    <tr><td>7</td><td>Líquido limpiador lentes</td><td>Soluciones limpieza</td><td>Acuvue</td><td>$32.000</td><td><span class="stock-badge danger">0</span></td><td>10</td><td><span class="status-badge error">Agotado</span></td><td class="action-group"><button class="action-btn"><i class="fa-solid fa-pen"></i></button><button class="action-btn danger"><i class="fa-solid fa-trash"></i></button></td></tr>
+                    <tr><td>8</td><td>Estuche rígido para gafas</td><td>Accesorios</td><td>Visión Clara</td><td>$18.000</td><td><span class="stock-badge ok">25</span></td><td>8</td><td><span class="status-badge success">Disponible</span></td><td class="action-group"><button class="action-btn"><i class="fa-solid fa-pen"></i></button><button class="action-btn danger"><i class="fa-solid fa-trash"></i></button></td></tr>
+                    <tr><td>9</td><td>Paño de microfibra</td><td>Accesorios</td><td>Visión Clara</td><td>$8.000</td><td><span class="stock-badge ok">40</span></td><td>15</td><td><span class="status-badge success">Disponible</span></td><td class="action-group"><button class="action-btn"><i class="fa-solid fa-pen"></i></button><button class="action-btn danger"><i class="fa-solid fa-trash"></i></button></td></tr>
+                </tbody></table>
+            </div>
+        </div></div>
+
+        <!-- ============ COMPRAS ============ -->
+        <div class="section-content" id="sec-compras">
+        <div class="dashboard-container">
+            <div class="page-header"><div><h1 class="page-title">Compras y Proveedores</h1><p class="page-subtitle">Órdenes de compra y directorio de proveedores</p></div><button class="btn-primary"><i class="fa-solid fa-plus"></i> Nueva Compra</button></div>
+            <div class="data-section">
+                <div class="data-card">
+                    <div class="data-card-header"><h2 class="data-card-title"><i class="fa-solid fa-file-invoice-dollar"></i> Órdenes de Compra</h2></div>
+                    <table class="admin-table"><thead><tr><th>#</th><th>Comprobante</th><th>Proveedor</th><th>Fecha</th><th>Total</th><th>Estado</th><th>Acc.</th></tr></thead>
+                    <tbody>
+                        <tr><td>1</td><td>FE-1001</td><td>Dist. Ópticas del Norte</td><td>05 Jul 2026</td><td>$5.100.000</td><td><span class="status-badge success">Confirmada</span></td><td><button class="action-btn"><i class="fa-solid fa-eye"></i></button></td></tr>
+                        <tr><td>2</td><td>FE-2044</td><td>Import Visión Ltda.</td><td>12 Jul 2026</td><td>$3.200.000</td><td><span class="status-badge success">Confirmada</span></td><td><button class="action-btn"><i class="fa-solid fa-eye"></i></button></td></tr>
+                        <tr><td>3</td><td>FE-1050</td><td>Dist. Ópticas del Norte</td><td>01 Ago 2026</td><td>$1.800.000</td><td><span class="status-badge warning">Pendiente</span></td><td><button class="action-btn"><i class="fa-solid fa-eye"></i></button></td></tr>
+                    </tbody></table>
+                </div>
+                <div class="data-card">
+                    <div class="data-card-header"><h2 class="data-card-title"><i class="fa-solid fa-building"></i> Proveedores</h2><button class="btn-ghost"><i class="fa-solid fa-plus"></i> Añadir</button></div>
+                    <ul class="proveedor-list">
+                        <li class="proveedor-item"><div class="proveedor-avatar">DN</div><div class="proveedor-info"><h4>Dist. Ópticas del Norte S.A.S.</h4><p>NIT: 900123456-1 · ventas@distribucionesnorte.com</p><p><i class="fa-solid fa-phone"></i> 6017894521 · Cra 15 #93-42, Bogotá</p></div><span class="status-badge success">Activo</span></li>
+                        <li class="proveedor-item"><div class="proveedor-avatar">IV</div><div class="proveedor-info"><h4>Import Visión Ltda.</h4><p>NIT: 900234567-2 · contacto@importvision.com</p><p><i class="fa-solid fa-phone"></i> 6013321098 · Cll 72 #10-34, Bogotá</p></div><span class="status-badge success">Activo</span></li>
+                    </ul>
+                </div>
+            </div>
+        </div></div>
+
+        <!-- ============ VENTAS ============ -->
+        <div class="section-content" id="sec-ventas">
+        <div class="dashboard-container">
+            <div class="page-header"><div><h1 class="page-title">Ventas y Devoluciones</h1><p class="page-subtitle">Historial de transacciones, pagos y devoluciones</p></div><button class="btn-primary"><i class="fa-solid fa-plus"></i> Nueva Venta</button></div>
+            <div class="kpi-grid" style="grid-template-columns:repeat(4,1fr);margin-bottom:25px">
+                <div class="kpi-card"><div class="kpi-info"><p>Total Ingresos</p><h3>$1.372M</h3></div><div class="kpi-icon gold"><i class="fa-solid fa-sack-dollar"></i></div></div>
+                <div class="kpi-card"><div class="kpi-info"><p>Ventas Completadas</p><h3>4</h3></div><div class="kpi-icon green"><i class="fa-solid fa-check-circle"></i></div></div>
+                <div class="kpi-card"><div class="kpi-info"><p>Cotizaciones</p><h3>1</h3></div><div class="kpi-icon blue"><i class="fa-solid fa-file-pen"></i></div></div>
+                <div class="kpi-card"><div class="kpi-info"><p>Devoluciones</p><h3>1</h3></div><div class="kpi-icon orange"><i class="fa-solid fa-rotate-left"></i></div></div>
+            </div>
+            <div class="data-card">
+                <div class="data-card-header"><h2 class="data-card-title"><i class="fa-solid fa-cash-register"></i> Registro de Ventas</h2></div>
+                <table class="admin-table"><thead><tr><th>Cód.</th><th>Cliente</th><th>Fecha</th><th>Total</th><th>Cotiz.</th><th>Promo</th><th>Receta</th><th>Estado</th><th>Acc.</th></tr></thead>
+                <tbody>
+                    <tr><td><span class="id-badge">#001</span></td><td>Sofía Herrera</td><td>18 Ago 10:15</td><td>$400.000</td><td>No</td><td>—</td><td><i class="fa-solid fa-check text-gold"></i></td><td><span class="status-badge success">Completada</span></td><td><button class="action-btn"><i class="fa-solid fa-eye"></i></button></td></tr>
+                    <tr><td><span class="id-badge">#002</span></td><td>Mateo Rojas</td><td>19 Ago 14:30</td><td>$250.000</td><td>No</td><td>—</td><td>—</td><td><span class="status-badge success">Completada</span></td><td><button class="action-btn"><i class="fa-solid fa-eye"></i></button></td></tr>
+                    <tr><td><span class="id-badge">#003</span></td><td>Valentina Cruz</td><td>20 Ago 09:00</td><td>$202.000</td><td>No</td><td>—</td><td><i class="fa-solid fa-check text-gold"></i></td><td><span class="status-badge success">Completada</span></td><td><button class="action-btn"><i class="fa-solid fa-eye"></i></button></td></tr>
+                    <tr><td><span class="id-badge">#004</span></td><td>Santiago Molina</td><td>21 Ago 16:45</td><td>$520.000</td><td>No</td><td>Fidelidad</td><td><i class="fa-solid fa-check text-gold"></i></td><td><span class="status-badge success">Completada</span></td><td><button class="action-btn"><i class="fa-solid fa-eye"></i></button></td></tr>
+                    <tr><td><span class="id-badge">#005</span></td><td>Sofía Herrera</td><td>25 Ago 11:00</td><td>$26.000</td><td><span class="status-badge warning">Sí</span></td><td>—</td><td>—</td><td><span class="status-badge warning">Pendiente</span></td><td><button class="action-btn"><i class="fa-solid fa-eye"></i></button></td></tr>
+                </tbody></table>
+            </div>
+            <div class="data-card" style="margin-top:25px">
+                <div class="data-card-header"><h2 class="data-card-title"><i class="fa-solid fa-rotate-left"></i> Devoluciones Registradas</h2></div>
+                <table class="admin-table"><thead><tr><th>ID</th><th>Motivo</th><th>Cantidad</th><th>Observaciones</th><th>Venta</th><th>Registrado por</th></tr></thead>
+                <tbody><tr><td>1</td><td>Producto defectuoso</td><td>1</td><td>Bisagra floja — nota de crédito generada</td><td>#003 (Valentina Cruz)</td><td>Diana Castillo</td></tr></tbody></table>
+            </div>
+        </div></div>
+
+        <!-- ============ CITAS ============ -->
+        <div class="section-content" id="sec-citas">
+        <div class="dashboard-container">
+            <div class="page-header"><div><h1 class="page-title">Citas y Recetas Ópticas</h1><p class="page-subtitle">Agenda de atención y fórmulas clínicas registradas</p></div><button class="btn-primary"><i class="fa-solid fa-calendar-plus"></i> Nueva Cita</button></div>
+            <div class="data-section">
+                <div class="data-card">
+                    <div class="data-card-header"><h2 class="data-card-title"><i class="fa-solid fa-calendar-check"></i> Agenda de Citas</h2></div>
+                    <table class="admin-table"><thead><tr><th>#</th><th>Cliente</th><th>Fecha y Hora</th><th>Motivo</th><th>Atiende</th><th>Estado</th></tr></thead>
+                    <tbody>
+                        <tr><td>1</td><td>Sofía Herrera</td><td>09 Ago 2026 9:00</td><td>Entrega resultados examen visual</td><td>Andrés Ramírez</td><td><span class="status-badge success">Completada</span></td></tr>
+                        <tr><td>2</td><td>Valentina Cruz</td><td>14 Ago 2026 15:00</td><td>Entrega resultados examen visual</td><td>Diana Castillo</td><td><span class="status-badge success">Completada</span></td></tr>
+                        <tr><td>3</td><td>Santiago Molina</td><td>19 Ago 2026 10:30</td><td>Examen pediátrico</td><td>Andrés Ramírez</td><td><span class="status-badge success">Completada</span></td></tr>
+                        <tr><td>4</td><td>Mateo Rojas</td><td>15 Sep 2026 11:00</td><td>Primera asesoría elección montura</td><td>Diana Castillo</td><td><span class="status-badge info">Programada</span></td></tr>
+                        <tr><td>5</td><td>Sofía Herrera</td><td>20 Sep 2026 9:00</td><td>Control de seguimiento</td><td>Andrés Ramírez</td><td><span class="status-badge error">Cancelada</span></td></tr>
+                    </tbody></table>
+                </div>
+                <div class="data-card">
+                    <div class="data-card-header"><h2 class="data-card-title"><i class="fa-solid fa-file-medical"></i> Recetas Ópticas</h2><button class="btn-ghost"><i class="fa-solid fa-plus"></i> Nueva</button></div>
+                    <ul class="receta-list">
+                        <li class="receta-item"><div class="receta-header"><strong>Sofía Herrera</strong><span class="status-badge success">Vigente</span></div><p class="receta-dx"><i class="fa-solid fa-stethoscope"></i> Miopía y astigmatismo leve</p><div class="receta-data"><span><strong>OD:</strong> -2.25/-0.50/180°</span><span><strong>OI:</strong> -2.00/-0.75/175°</span><span><strong>DP:</strong> 62mm</span></div><p class="receta-footer"><i class="fa-regular fa-calendar"></i> 10 Ago 2026 · Vence: 10 Ago 2027</p></li>
+                        <li class="receta-item"><div class="receta-header"><strong>Valentina Cruz</strong><span class="status-badge success">Vigente</span></div><p class="receta-dx"><i class="fa-solid fa-stethoscope"></i> Hipermetropía y presbicia</p><div class="receta-data"><span><strong>OD:</strong> +1.00 Add.1.75</span><span><strong>OI:</strong> +1.25 Add.1.75</span><span><strong>DP:</strong> 60.5mm</span></div><p class="receta-footer"><i class="fa-regular fa-calendar"></i> 15 Ago 2026 · Vence: 15 Ago 2027</p></li>
+                        <li class="receta-item"><div class="receta-header"><strong>Santiago Molina</strong><span class="status-badge success">Vigente</span></div><p class="receta-dx"><i class="fa-solid fa-stethoscope"></i> Miopía leve bilateral (pediátrico)</p><div class="receta-data"><span><strong>OD:</strong> -1.00/-0.25/90°</span><span><strong>OI:</strong> -1.25/-0.25/85°</span><span><strong>DP:</strong> 55mm</span></div><p class="receta-footer"><i class="fa-regular fa-calendar"></i> 20 Ago 2026 · Vence: 20 Feb 2027 (6 meses)</p></li>
+                    </ul>
+                </div>
+            </div>
+        </div></div>
+
+        <!-- ============ PROMOCIONES ============ -->
+        <div class="section-content" id="sec-promociones">
+        <div class="dashboard-container">
+            <div class="page-header"><div><h1 class="page-title">Gestión de Promociones</h1><p class="page-subtitle">Descuentos activos, vencimientos y configuración</p></div><button class="btn-primary"><i class="fa-solid fa-plus"></i> Nueva Promoción</button></div>
+            <div class="promo-grid">
+                <div class="promo-card"><div class="promo-badge active-promo">Activa</div><div class="promo-icon"><i class="fa-solid fa-glasses"></i></div><h3>Segunda montura al 50%</h3><p>Al comprar una montura, la segunda tiene 50% de descuento.</p><div class="promo-detail"><span class="promo-pill percent">50% OFF</span></div><div class="promo-dates"><span><i class="fa-solid fa-calendar-day"></i> 01 Jul 2026</span><i class="fa-solid fa-arrow-right"></i><span><i class="fa-solid fa-calendar-xmark"></i> 31 Dic 2026</span></div><div class="promo-actions"><button class="btn-ghost"><i class="fa-solid fa-pen"></i> Editar</button><button class="btn-ghost danger"><i class="fa-solid fa-ban"></i> Desactivar</button></div></div>
+                <div class="promo-card"><div class="promo-badge active-promo">Activa</div><div class="promo-icon"><i class="fa-solid fa-heart"></i></div><h3>Descuento Fidelidad</h3><p>Descuento fijo para clientes frecuentes del programa de fidelización.</p><div class="promo-detail"><span class="promo-pill fixed">$20.000 OFF</span></div><div class="promo-dates"><span><i class="fa-solid fa-calendar-day"></i> 01 Ene 2026</span><i class="fa-solid fa-arrow-right"></i><span><i class="fa-solid fa-calendar-xmark"></i> 31 Dic 2026</span></div><div class="promo-actions"><button class="btn-ghost"><i class="fa-solid fa-pen"></i> Editar</button><button class="btn-ghost danger"><i class="fa-solid fa-ban"></i> Desactivar</button></div></div>
+                <div class="promo-card new-promo"><div class="promo-icon add-icon"><i class="fa-solid fa-plus"></i></div><h3>Crear nueva promoción</h3><p>Define un nuevo descuento por porcentaje o valor fijo para tus clientes.</p><button class="btn-primary" style="margin-top:1rem;width:100%">Crear promoción</button></div>
+            </div>
+        </div></div>
+
+        <!-- ============ REPORTES ============ -->
+        <div class="section-content" id="sec-reportes">
+        <div class="dashboard-container">
+            <div class="page-header"><div><h1 class="page-title">Reportes Generales</h1><p class="page-subtitle">Informes del sistema — solo acceso administrador</p></div><button class="btn-primary"><i class="fa-solid fa-file-circle-plus"></i> Generar Reporte</button></div>
+            <div class="reporte-grid">
+                <div class="reporte-card"><div class="reporte-icon general"><i class="fa-solid fa-chart-pie"></i></div><div class="reporte-info"><h3>Estado General</h3><p>Resumen de clientes, ventas y existencias</p><div class="reporte-meta"><span><i class="fa-solid fa-user"></i> Camila Torres</span></div><div class="reporte-content">Clientes: 4 | Ventas: 4 | Ingresos: $1.372.000 | Bajo mínimo: 5</div></div><button class="action-btn"><i class="fa-solid fa-download"></i></button></div>
+                <div class="reporte-card"><div class="reporte-icon ventas"><i class="fa-solid fa-bag-shopping"></i></div><div class="reporte-info"><h3>Reporte de Ventas</h3><p>Totales y mejor vendedor</p><div class="reporte-meta"><span><i class="fa-solid fa-user"></i> Camila Torres</span></div><div class="reporte-content">Completadas: 4 | Ingresos: $1.372.000 | Ticket prom: $343.000 | Mejor: Andrés Ramírez</div></div><button class="action-btn"><i class="fa-solid fa-download"></i></button></div>
+                <div class="reporte-card"><div class="reporte-icon stock"><i class="fa-solid fa-boxes-stacked"></i></div><div class="reporte-info"><h3>Existencias Bajas</h3><p>Productos bajo el mínimo</p><div class="reporte-meta"><span><i class="fa-solid fa-user"></i> Camila Torres</span></div><div class="reporte-content">5 alertas: Acetato(0/5); Metálica(0/5); Aviador(0/5); Contacto(0/10); Líquido(0/10)</div></div><button class="action-btn"><i class="fa-solid fa-download"></i></button></div>
+                <div class="reporte-card restricted"><div class="reporte-icon recetas"><i class="fa-solid fa-file-medical"></i></div><div class="reporte-info"><h3>Recetas Emitidas <span class="admin-only-badge"><i class="fa-solid fa-lock"></i> Solo Admin</span></h3><p>Datos clínicos protegidos</p><div class="reporte-meta"><span><i class="fa-solid fa-user"></i> Camila Torres</span></div><div class="reporte-content">Emitidas: 3 | Vigentes: 3 | Vencidas: 0</div></div><button class="action-btn"><i class="fa-solid fa-download"></i></button></div>
+                <div class="reporte-card"><div class="reporte-icon clientes"><i class="fa-solid fa-users"></i></div><div class="reporte-info"><h3>Reporte de Clientes</h3><p>Estado actual de clientes</p><div class="reporte-meta"><span><i class="fa-solid fa-user"></i> Andrés Ramírez</span></div><div class="reporte-content">Registrados: 4 | Con receta: 3 | Sin receta: 1</div></div><button class="action-btn"><i class="fa-solid fa-download"></i></button></div>
+                <div class="reporte-card"><div class="reporte-icon citas"><i class="fa-solid fa-calendar-days"></i></div><div class="reporte-info"><h3>Reporte de Citas</h3><p>Estado de la agenda</p><div class="reporte-meta"><span><i class="fa-solid fa-user"></i> Camila Torres</span></div><div class="reporte-content">Total: 5 | Completadas: 3 | Programadas: 1 | Canceladas: 1</div></div><button class="action-btn"><i class="fa-solid fa-download"></i></button></div>
+            </div>
+        </div></div>
+
     </main>
 
     <script>
-        const themeToggleBtn = document.getElementById('themeToggleBtn');
-        const icon = themeToggleBtn.querySelector('i');
-        
-        themeToggleBtn.addEventListener('click', () => {
-            document.documentElement.classList.toggle('light-mode');
-            
-            if (document.documentElement.classList.contains('light-mode')) {
-                icon.classList.remove('fa-sun');
-                icon.classList.add('fa-moon');
-            } else {
-                icon.classList.remove('fa-moon');
-                icon.classList.add('fa-sun');
-            }
-        });
+        document.getElementById('todayDate').textContent = new Date().toLocaleDateString('es-CO',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+        const themeBtn=document.getElementById('themeToggleBtn'),themeIcon=themeBtn.querySelector('i');
+        themeBtn.addEventListener('click',()=>{document.documentElement.classList.toggle('light-mode');themeIcon.classList.toggle('fa-sun');themeIcon.classList.toggle('fa-moon');});
+        const navItems=document.querySelectorAll('.nav-item[data-section]'),sections=document.querySelectorAll('.section-content');
+        function showSection(id){sections.forEach(s=>s.classList.remove('active'));navItems.forEach(n=>n.classList.remove('active'));const t=document.getElementById('sec-'+id);if(t)t.classList.add('active');const n=document.querySelector('.nav-item[data-section="'+id+'"]');if(n)n.classList.add('active');}
+        navItems.forEach(item=>item.addEventListener('click',e=>{e.preventDefault();showSection(item.dataset.section);if(window.innerWidth<768)document.getElementById('sidebar').classList.remove('open');}));
+        document.querySelectorAll('[data-goto]').forEach(link=>link.addEventListener('click',e=>{e.preventDefault();showSection(link.dataset.goto);}));
+        document.getElementById('menuToggle').addEventListener('click',()=>document.getElementById('sidebar').classList.toggle('open'));
+        document.getElementById('sidebarClose').addEventListener('click',()=>document.getElementById('sidebar').classList.remove('open'));
+        document.getElementById('logoutBtn').addEventListener('click',e=>{e.preventDefault();sessionStorage.removeItem('usuarioLogueado');window.location.href='inicio-sesion.html';});
+        const sesion=JSON.parse(sessionStorage.getItem('usuarioLogueado')||'{}');
+        if(sesion.email){document.getElementById('adminName').textContent=sesion.email.split('@')[0].replace('.',' ').replace(/\b\w/g,l=>l.toUpperCase());document.getElementById('adminAvatar').textContent=sesion.email[0].toUpperCase();}
     </script>
     <script src="../scripts/session-manager.js"></script>
 </body>
