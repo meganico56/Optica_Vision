@@ -53,7 +53,7 @@ body {
 }
 
 .sidebar-header {
-  padding: 30px 20px;
+  padding: 18px 20px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -61,8 +61,15 @@ body {
 }
 
 .sidebar-logo {
-  height: 40px;
-  filter: brightness(0) invert(1) sepia(0.4) saturate(4) hue-rotate(-10deg);
+  width: 100%;
+  max-width: 200px;
+  height: auto;
+  object-fit: contain;
+  filter: drop-shadow(0 2px 8px rgba(0,0,0,0.4));
+}
+
+:root.light-mode .sidebar-logo {
+  filter: none;
 }
 
 .sidebar-nav {

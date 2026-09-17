@@ -2,17 +2,19 @@
 // Controla la animación inicial de enfoque que se ejecuta al cargar las páginas
 
 document.addEventListener('DOMContentLoaded', () => {
-    // Adaptar el fondo de la animación según el tema actual (claro/oscuro)
+    // El fondo con desenfoque y el reflejo se adaptan al tema para que
+    // la animación se vea igual de vistosa en modo claro y oscuro.
     const isLightMode = document.documentElement.classList.contains('light-mode');
-    const bgBlurColor = isLightMode ? 'rgba(250, 250, 250, 0.4)' : 'rgba(20, 20, 20, 0.4)';
-    const logoSrc = isLightMode ? '../imagenes/logos/logo-boutique.png' : '../imagenes/logos/Logo_modo_oscuro.png';
+    const bgBlurColor  = isLightMode ? 'rgba(240, 235, 220, 0.55)' : 'rgba(20, 20, 20, 0.55)';
+    const reflectColor = isLightMode ? 'rgba(180, 140, 40, 0.45)'  : 'rgba(255, 255, 255, 0.5)';
+    const logoSrc      = isLightMode ? '../imagenes/logos/logo-boutique.png' : '../imagenes/logos/Logo_modo_oscuro.png';
 
     // 1. Inyectar HTML de la animación
     const introHTML = `
         <div id="intro-container" style="position:fixed;top:0;left:0;width:100%;height:100%;z-index:99999;pointer-events:all;">
             <div id="intro-blur" style="position:absolute;top:0;left:0;width:100%;height:100%;background:${bgBlurColor};backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);"></div>
             <div id="intro-ring" style="position:absolute;transform:translate(-50%,-50%);border-radius:50%;border:1px solid rgba(204,164,59,0.7);box-shadow:0 8px 32px rgba(0,0,0,0.3),inset 0 0 20px rgba(255,255,255,0.5);background:linear-gradient(135deg,rgba(255,255,255,0.1) 0%,rgba(255,255,255,0) 50%,rgba(255,255,255,0.05) 100%);overflow:hidden;opacity:0;">
-                <div id="intro-reflection" style="position:absolute;width:200%;height:200%;background:linear-gradient(45deg, transparent 40%, rgba(255,255,255,0.5) 50%, transparent 60%);top:-50%;left:0;transform:rotate(30deg);"></div>
+                <div id="intro-reflection" style="position:absolute;width:200%;height:200%;background:linear-gradient(45deg, transparent 40%, ${reflectColor} 50%, transparent 60%);top:-50%;left:0;transform:rotate(30deg);"></div>
             </div>
             <div id="intro-logo" style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%) scale(0.8);opacity:0;">
                 <img src="${logoSrc}" alt="Logo" style="height:70px;filter:drop-shadow(0 4px 10px rgba(0,0,0,0.3));">
