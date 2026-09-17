@@ -307,40 +307,40 @@ nav ul li a:hover, nav ul li a.activo {
   transform: translateY(-2px);
 }
 
-.site-footer {
-  background-color: var(--bg);
-  border-top: 1px solid var(--border);
-  padding: 50px 5% 25px;
+footer {
+    border-top: 1px solid var(--border);
+    background: rgba(255, 255, 255, 0.75);
+    backdrop-filter: blur(6px);
 }
 
-.footer-inner {
-  max-width: 1300px;
-  margin: 0 auto;
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 32px;
+.footer-container {
+    display: grid;
+    grid-template-columns: 1.2fr 1fr 1fr 1fr 1.2fr;
+    gap: 2rem;
+    padding: 3rem 5%;
 }
 
 .footer-col h4 {
-  font-family: var(--font-title);
-  font-size: 0.95rem;
-  letter-spacing: 1px;
-  text-transform: uppercase;
-  color: var(--gold-dark);
-  margin-bottom: 16px;
+    font-family: var(--font-title);
+    color: var(--gold-dark);
+    margin-bottom: 1rem;
+    font-size: 0.9rem;
+    font-weight: 700;
 }
 
-.footer-col a, .footer-col p {
-  font-family: var(--font-body);
-  font-size: 0.85rem;
-  color: var(--text-muted);
-  margin-bottom: 10px;
-  line-height: 1.5;
-
+.footer-col ul li {
+    margin-bottom: 0.6rem;
 }
 
-.footer-col a:hover {
-  color: var(--gold-dark);
+.footer-col ul a {
+    font-family: var(--font-body);
+    color: var(--text-muted);
+    font-size: 0.85rem;
+    transition: color 0.3s ease;
+}
+
+.footer-col ul a:hover {
+    color: var(--gold-dark);
 }
 
 .payment-methods {
@@ -360,9 +360,11 @@ nav ul li a:hover, nav ul li a.activo {
   font-family: var(--font-title);
 }
 
-.footer-copy {
-  text-align: center;
-  margin-top: 40px;
-  font-size: 0.85rem;
-  color: var(--text-muted);
+.copyright {
+    background: var(--gold-dark);
+    color: #ffffff;
+    padding: 14px 5%;
+    font-size: 0.85rem;
+    text-align: center;
+    font-family: var(--font-body);
 }
