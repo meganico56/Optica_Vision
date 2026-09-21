@@ -16,6 +16,14 @@
   --font-body: 'Inter', sans-serif;
 }
 
+:root.dark-mode, body.dark-mode {
+  --text-dark: #f0f0f0;
+  --text-muted: #aaaaaa;
+  --border: #333333;
+  --bg: #121212;
+  --gold-glow: rgba(204, 164, 59, 0.15);
+}
+
 /* ============================================================
    PREVENIR CURSOR Y ENTRADA DE TEXTO AL HACER CLIC EN LA PÁGINA
    ============================================================ */
@@ -106,6 +114,38 @@ button, input, select, textarea {
   top: 0;
   z-index: 1000;
   transition: all 0.3s ease;
+}
+
+:root.dark-mode .site-header,
+:root.dark-mode .navbar,
+:root.dark-mode header,
+body.dark-mode .site-header,
+body.dark-mode .navbar,
+body.dark-mode header {
+  background: rgba(18, 18, 18, 0.95);
+}
+
+.theme-toggle-btn {
+  background: none;
+  border: 1px solid var(--border);
+  color: var(--text-dark);
+  font-size: 1.2rem;
+  cursor: pointer;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  margin-left: 10px;
+}
+
+.theme-toggle-btn:hover {
+  background: var(--gold);
+  color: white;
+  border-color: var(--gold);
+  box-shadow: 0 0 10px var(--gold-glow);
 }
 
 .logo img, .logo-icon {
