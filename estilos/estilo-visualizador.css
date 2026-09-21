@@ -8,7 +8,7 @@
   --border: #e8e8e8;
   --bg: #ffffff;
 
-  /* Helper & Mapped Tokens */
+   /* Lo mismo para los tokens auxiliares y asignados */
   --gold-light: #e5c96d;
   --gold-glow: rgba(204, 164, 59, 0.35);
   --gold-subtle: rgba(204, 164, 59, 0.12);
@@ -24,9 +24,8 @@
   --gold-glow: rgba(204, 164, 59, 0.15);
 }
 
-/* ============================================================
-   PREVENIR CURSOR Y ENTRADA DE TEXTO AL HACER CLIC EN LA PÁGINA
-   ============================================================ */
+/* Prevenir el cursor y la entrada de texto al hacer clic en la página */
+
 html, body {
   user-select: none;
   -webkit-user-select: none;
@@ -99,9 +98,8 @@ button, input, select, textarea {
   outline: none;
 }
 
-/* ==========================================
-   HEADER Y NAVBAR UNIFICADOS (Buscador Catálogo + Selección/Hover Inicio)
-   ========================================== */
+/* lo mismmo XD Solo se puede usar el cursor de texto en inputs y campos editables  */
+
 .site-header, .navbar, header {
   display: flex;
   justify-content: space-between;

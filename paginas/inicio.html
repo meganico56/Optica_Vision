@@ -1,202 +1,193 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Optix - Boutique de la Visión</title>
 
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="../estilos/inicio.css">
-</head>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Montserrat:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <link rel="stylesheet" href="../estilos/inicio.css" />
+  </head>
 
-<body>
-
-<header class="navbar">
-
-    <div class="logo">
+  <body>
+    <header class="navbar">
+      <div class="logo">
         <a href="inicio.html">
-            <img src="../imagenes/logos/logo-boutique.png" class="logo-icon" alt="Logo">
+          <img
+            src="../imagenes/logos/logo-boutique.png"
+            class="logo-icon"
+            alt="Logo"
+          />
         </a>
-    
-        <button id="theme-toggle-btn" class="theme-toggle-btn" title="Alternar Modo Oscuro" style="margin-left: 15px; z-index: 9999;">
-            <i class="fa-solid fa-moon"></i>
-        </button>
-    </div>
 
-    <!-- Buscador del catálogo -->
-    <form class="buscador" action="catalogo.html" method="get">
-        <input type="text" name="q" placeholder="Buscar productos..." class="busc">
+        <button
+          id="theme-toggle-btn"
+          class="theme-toggle-btn"
+          title="Alternar Modo Oscuro"
+          style="margin-left: 15px; z-index: 9999"
+        >
+          <i class="fa-solid fa-moon"></i>
+        </button>
+      </div>
+
+      <!-- Buscador del catálogo -->
+      <form class="buscador" action="catalogo.html" method="get">
+        <input
+          type="text"
+          name="q"
+          placeholder="Buscar productos..."
+          class="busc"
+        />
         <button type="submit" class="bot_bus">
-            <i class="fa-solid fa-magnifying-glass"></i>
+          <i class="fa-solid fa-magnifying-glass"></i>
         </button>
-    </form>
+      </form>
 
-    <input type="checkbox" id="menu-toggle" class="menu-toggle">
+      <input type="checkbox" id="menu-toggle" class="menu-toggle" />
 
-    <label for="menu-toggle" class="hamburguesa">
+      <label for="menu-toggle" class="hamburguesa">
         <span></span>
         <span></span>
         <span></span>
-    </label>
+      </label>
 
-    <nav>
+      <nav>
         <ul class="navbar-menu">
-            <li><a href="inicio.html" class="activo">INICIO</a></li>
-            <li><a href="catalogo.html">CATÁLOGO</a></li>
-            <li><a href="visualizador-producto.html">EXPLORAR</a></li>
-            <li><a href="formulario-pedido.html">AGENDAR CITA</a></li>
-            <li><a href="inicio-sesion.html">REGISTRO / LOGIN</a></li>
+          <li><a href="inicio.html" class="activo">INICIO</a></li>
+          <li><a href="catalogo.html">CATÁLOGO</a></li>
+          <li><a href="visualizador-producto.html">EXPLORAR</a></li>
+          <li><a href="formulario-pedido.html">AGENDAR CITA</a></li>
+          <li><a href="inicio-sesion.html">REGISTRO / LOGIN</a></li>
         </ul>
-    </nav>
+      </nav>
+    </header>
 
-</header>
+    <main>
+      <section class="hero">
+        <div class="hero-text fade-in-up">
+          <span class="hero-tag"> BIENVENIDO A OPTIX </span>
 
-<main>
+          <h1>BOUTIQUE DE LA VISIÓN</h1>
 
-<section class="hero">
+          <h2>"Elegancia y precisión para tus ojos"</h2>
 
-    <div class="hero-text fade-in-up">
-
-        <span class="hero-tag">
-            BIENVENIDO A OPTIX
-        </span>
-
-        <h1>BOUTIQUE DE LA VISIÓN</h1>
-
-        <h2>"Elegancia y precisión para tus ojos"</h2>
-
-        <p>
+          <p>
             Descubre una experiencia visual única con nuestras monturas
             exclusivas, lentes de alta tecnología y atención profesional.
-            Combinamos salud visual, innovación y diseño para ayudarte
-            a ver el mundo con total claridad.
-        </p>
+            Combinamos salud visual, innovación y diseño para ayudarte a ver el
+            mundo con total claridad.
+          </p>
 
-        <div class="hero-buttons">
-            <a href="#" class="btn-primary">
-                Agenda tu cita
+          <div class="hero-buttons">
+            <a href="formulario-pedido.html" class="btn-primary">
+              Agenda tu cita
             </a>
 
-            <a href="#" class="btn-secondary">
-                Ver catálogo
-            </a>
+            <a href="catalogo.html" class="btn-secondary"> Ver catálogo </a>
+          </div>
         </div>
 
-    </div>
+        <div class="hero-viewer fade-in-up delay">
+          <div class="glow"></div>
 
-    <div class="hero-viewer fade-in-up delay">
-
-        <div class="glow"></div>
-
-        <div class="viewer-container">
-
+          <div class="viewer-container">
             <img
-                src="../imagenes/productos/gafas-modelo1.png"
-                alt="Gafas Premium"
-                class="glasses-model"
-            >
+              src="../imagenes/productos/gafas-modelo1.png"
+              alt="Gafas Premium"
+              class="glasses-model"
+            />
 
             <div class="podium"></div>
-
+          </div>
         </div>
+      </section>
+    </main>
 
-    </div>
-
-</section>
-
-</main>
-
-<footer>
-
-    <div class="footer-container">
-
+    <footer>
+      <div class="footer-container">
         <div class="footer-col">
-
-            <div class="logo">
-                <img src="../imagenes/logos/logo-boutique.png" class="logo-icon" alt="Logo">
-            </div>
-
+          <div class="logo">
+            <img
+              src="../imagenes/logos/logo-boutique.png"
+              class="logo-icon"
+              alt="Logo"
+            />
+          </div>
         </div>
 
         <div class="footer-col">
+          <h4>AYUDA</h4>
 
-            <h4>AYUDA</h4>
-
-            <ul>
-                <li><a href="#">¿Cómo puedo apartar una cita?</a></li>
-                <li><a href="#">¿Cómo sé la fórmula que necesito?</a></li>
-                <li><a href="#">¿Dónde puedo recoger mis lentes?</a></li>
-                <li><a href="#">Manual del usuario</a></li>
-                <li><a href="#">PQRS</a></li>
-            </ul>
-
+          <ul>
+            <li><a href="#">¿Cómo puedo apartar una cita?</a></li>
+            <li><a href="#">¿Cómo sé la fórmula que necesito?</a></li>
+            <li><a href="#">¿Dónde puedo recoger mis lentes?</a></li>
+            <li><a href="#">Manual del usuario</a></li>
+            <li><a href="#">PQRS</a></li>
+          </ul>
         </div>
 
         <div class="footer-col">
+          <h4>NOSOTROS</h4>
 
-            <h4>NOSOTROS</h4>
-
-            <ul>
-                <li><a href="#">ÓPTICA</a></li>
-                <li><a href="#">UBICACIÓN</a></li>
-                <li><a href="#">SERVICIOS</a></li>
-                <li><a href="#">PROFESIONALES</a></li>
-            </ul>
-
+          <ul>
+            <li><a href="#">ÓPTICA</a></li>
+            <li><a href="#">UBICACIÓN</a></li>
+            <li><a href="#">SERVICIOS</a></li>
+            <li><a href="#">PROFESIONALES</a></li>
+          </ul>
         </div>
 
         <div class="footer-col">
+          <h4>CONTACTO</h4>
 
-            <h4>CONTACTO</h4>
+          <div class="contact-info">
+            <i class="fa-solid fa-location-dot"></i>
+            <span>CALLE 17 # 14-49 DUITAMA</span>
+          </div>
 
-            <div class="contact-info">
-                <i class="fa-solid fa-location-dot"></i>
-                <span>CALLE 17 # 14-49 DUITAMA</span>
-            </div>
+          <div class="contact-info">
+            <i class="fa-solid fa-phone"></i>
+            <span>318 5211416</span>
+          </div>
 
-            <div class="contact-info">
-                <i class="fa-solid fa-phone"></i>
-                <span>318 5211416</span>
-            </div>
-
-            <div class="social-icons">
-                <a href="#"><i class="fa-brands fa-facebook-f"></i></a>
-                <a href="#"><i class="fa-brands fa-twitter"></i></a>
-                <a href="#"><i class="fa-brands fa-instagram"></i></a>
-            </div>
-
+          <div class="social-icons">
+            <a href="#"><i class="fa-brands fa-facebook-f"></i></a>
+            <a href="#"><i class="fa-brands fa-twitter"></i></a>
+            <a href="#"><i class="fa-brands fa-instagram"></i></a>
+          </div>
         </div>
 
         <div class="footer-col">
+          <h4>MÉTODOS DE PAGO</h4>
 
-            <h4>MÉTODOS DE PAGO</h4>
-
-            <div class="payment-methods">
-                <span style="color:#1a1f71;">VISA</span>
-                <span style="color:#eb001b;">MC</span>
-                <span style="color:#007bc1;">AMEX</span>
-                <span style="color:#2b84c6;">PSE</span>
-                <span style="color:#58164b;">NEQUI</span>
-                <span><i class="fa-solid fa-money-bill"></i></span>
-            </div>
-
+          <div class="payment-methods">
+            <span style="color: #1a1f71">VISA</span>
+            <span style="color: #eb001b">MC</span>
+            <span style="color: #007bc1">AMEX</span>
+            <span style="color: #2b84c6">PSE</span>
+            <span style="color: #58164b">NEQUI</span>
+            <span><i class="fa-solid fa-money-bill"></i></span>
+          </div>
         </div>
+      </div>
 
-    </div>
+      <div class="copyright">Copyright© Desarrolladores ADSO 2026.</div>
+    </footer>
 
-    <div class="copyright">
-        Copyright© Desarrolladores ADSO 2026.
-    </div>
+    <script src="../scripts/inicio.js"></script>
+    <script src="../scripts/session-manager.js"></script>
+    <script src="../scripts/intro-animacion.js"></script>
 
-</footer>
-
-<script src="../scripts/inicio.js"></script>
-<script src="../scripts/session-manager.js"></script>
-<script src="../scripts/intro-animacion.js"></script>
-
-<script src="../scripts/theme-toggle.js"></script>
-</body>
+    <script src="../scripts/theme-toggle.js"></script>
+  </body>
 </html>
