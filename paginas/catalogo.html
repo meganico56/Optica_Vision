@@ -17,6 +17,7 @@
     <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/4.0.0/uicons-bold-straight/css/uicons-bold-straight.css'>
     <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/4.0.0/uicons-brands/css/uicons-brands.css'>
     <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/4.0.0/uicons-solid-rounded/css/uicons-solid-rounded.css'>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="../estilos/catalogo.css" />
     <title>Boutique de la visión Catálogo</title>
   </head>
@@ -33,6 +34,7 @@
         </button>
     </div>
 
+    <!-- Buscador del catálogo -->
     <form class="buscador" action="catalogo.html" method="get">
         <input type="text" name="q" placeholder="Buscar productos..." class="busc">
         <button type="submit" class="bot_bus">
@@ -40,10 +42,18 @@
         </button>
     </form>
 
+    <input type="checkbox" id="menu-toggle" class="menu-toggle">
+
+    <label for="menu-toggle" class="hamburguesa">
+        <span></span>
+        <span></span>
+        <span></span>
+    </label>
+
     <nav>
         <ul class="navbar-menu">
             <li><a href="inicio.html">INICIO</a></li>
-            <li><a href="catalogo.html">CATÁLOGO</a></li>
+            <li><a href="catalogo.html" class="activo">CATÁLOGO</a></li>
             <li><a href="visualizador-producto.html">EXPLORAR</a></li>
             <li><a href="formulario-pedido.html">AGENDAR CITA</a></li>
             <li><a href="inicio-sesion.html">REGISTRO / LOGIN</a></li>

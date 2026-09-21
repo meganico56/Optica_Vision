@@ -211,6 +211,31 @@ body.dark-mode header {
   transform: scale(1.05);
 }
 
+/* Logo */
+.logo {
+  display: flex;
+  align-items: center;
+}
+
+/* Menu hamburguesa responsive */
+.menu-toggle { display: none; }
+
+.hamburguesa {
+  display: none;
+  flex-direction: column;
+  gap: 5px;
+  cursor: pointer;
+}
+
+.hamburguesa span {
+  width: 25px;
+  height: 3px;
+  background: var(--gold);
+  border-radius: 5px;
+  transition: all 0.3s ease;
+}
+
+
 /* Navegación y Subrayado Animado Estilo Inicio */
 .navbar-menu, .main-nav .nav-list, nav ul, .men_nv {
   display: flex;
@@ -400,27 +425,7 @@ body.dark-mode {
   --qty-bg:          rgba(255,255,255,0.06);
 }
 
-/* Podios en Modo Oscuro */
-body.dark-mode .main-image-shell {
-  background: linear-gradient(180deg, rgba(28,27,24,0.96) 0%, rgba(20,19,17,0.94) 70%, rgba(14,13,11,0.98) 100%);
-  border-color: rgba(189,162,41,0.40);
-}
-body.dark-mode .main-image-shell::before {
-  background: radial-gradient(ellipse 80% 50% at 50% 50%, rgba(189,162,41,0.32) 0%, rgba(189,162,41,0.10) 55%, transparent 100%);
-  border-color: rgba(189,162,41,0.45);
-  box-shadow: 0 12px 28px rgba(0,0,0,0.5);
-}
-body.dark-mode .rel-card {
-  background: rgba(22,22,21,0.90);
-  border-color: rgba(189,162,41,0.25);
-}
-body.dark-mode .rel-card-img {
-  background: linear-gradient(180deg, rgba(28,27,24,0.96) 0%, rgba(20,19,17,0.94) 70%, rgba(14,13,11,0.98) 100%);
-}
-body.dark-mode .rel-card-img::before {
-  background: radial-gradient(ellipse 80% 50% at 50% 50%, rgba(189,162,41,0.28) 0%, rgba(189,162,41,0.08) 55%, transparent 100%);
-  border-color: rgba(189,162,41,0.40);
-}
+/* Podios en Modo Oscuro eliminados para heredar el estilo claro */
 
 /* ── Reset ──────────────────────────────────────────────────── */
 *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
@@ -1042,4 +1047,35 @@ footer {
   .thumbnail-row { grid-template-columns:repeat(2,1fr); }
   .model-cards-row { flex-wrap:wrap; }
   .model-card { flex:0 0 calc(50% - 5px); }
+}
+/* Responsive hamburguesa (header unificado) */
+@media (max-width: 768px) {
+  .hamburguesa { display: flex; }
+  .navbar-menu {
+    flex-direction: column;
+    width: 100%;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.4s ease;
+    gap: 0;
+    background: rgba(255, 255, 255, 0.97);
+    position: absolute;
+    top: 100%;
+    left: 0;
+    padding: 0 5%;
+    border-bottom: 1px solid var(--border);
+  }
+  :root.dark-mode .navbar-menu,
+  body.dark-mode .navbar-menu {
+    background: rgba(18, 18, 18, 0.97);
+  }
+  .menu-toggle:checked ~ nav .navbar-menu {
+    max-height: 400px;
+    padding: 1rem 5%;
+  }
+  .navbar-menu li a {
+    padding: 12px 0;
+    display: block;
+  }
+  .buscador { max-width: none; margin: 0; }
 }

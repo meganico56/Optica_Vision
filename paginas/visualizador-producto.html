@@ -11,35 +11,42 @@
     <link rel="stylesheet" href="https://cdn-uicons.flaticon.com/4.0.0/uicons-bold-rounded/css/uicons-bold-rounded.css"/>
     <link rel="stylesheet" href="https://cdn-uicons.flaticon.com/4.0.0/uicons-solid-rounded/css/uicons-solid-rounded.css"/>
     <link rel="stylesheet" href="https://cdn-uicons.flaticon.com/4.0.0/uicons-brands/css/uicons-brands.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="../estilos/estilo-visualizador.css"/>
     <title>Boutique de la Visión — Visualizador de Producto</title>
   </head>
   <body>
 
     <!-- ═══════════════ HEADER ═══════════════ -->
-    <header class="navbar" id="siteHeader">
+    <header class="navbar">
 
-      <!-- Logo -->
       <div class="logo">
-        <a href="inicio.html" class="logo-link">
+        <a href="inicio.html">
           <img src="../imagenes/logos/logo-boutique.png" class="logo-icon" alt="Logo Boutique de la Visión"/>
         </a>
       
         <button id="theme-toggle-btn" class="theme-toggle-btn" title="Alternar Modo Oscuro" style="margin-left: 15px; z-index: 9999;">
             <i class="fa-solid fa-moon"></i>
         </button>
-    </div>
+      </div>
 
       <!-- Buscador del catálogo -->
       <form class="buscador" action="catalogo.html" method="get">
-        <input type="text" name="q" placeholder="Buscar productos..." class="busc" />
+        <input type="text" name="q" placeholder="Buscar productos..." class="busc">
         <button type="submit" class="bot_bus">
-          <i class="fi fi-br-search"></i>
+          <i class="fa-solid fa-magnifying-glass"></i>
         </button>
       </form>
 
-      <!-- Nav principal -->
-      <nav class="menu_nav">
+      <input type="checkbox" id="menu-toggle" class="menu-toggle">
+
+      <label for="menu-toggle" class="hamburguesa">
+        <span></span>
+        <span></span>
+        <span></span>
+      </label>
+
+      <nav>
         <ul class="navbar-menu">
           <li><a href="inicio.html">INICIO</a></li>
           <li><a href="catalogo.html">CATÁLOGO</a></li>
