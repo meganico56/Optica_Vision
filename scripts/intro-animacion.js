@@ -1,85 +1,319 @@
-// intro-animacion.js
-// Controla la animación inicial de enfoque que se ejecuta al cargar las páginas
+﻿// intro-animacion.js — Version optimizada para rendimiento maximo
+// El ojo solo es visible dentro del circulo (overflow:hidden).
+// Optimizaciones clave:
+//   - El circulo se mueve con transform:translate (GPU, sin reflow)
+//   - La mascara del blur usa coordenadas redondeadas (menos rebuilds de string)
+//   - Getphase inlineado sin bucle
+//   - Todos los valores de posicion pre-calculados como enteros
+//   - will-change: transform en el circulo (compositor thread exclusivo)
+//   - RAF unico, dirty-checking en todos los setters
 
 document.addEventListener('DOMContentLoaded', () => {
-    // El fondo con desenfoque y el reflejo se adaptan al tema para que
-    // la animación se vea igual de vistosa en modo claro y oscuro.
-    const isLightMode = document.documentElement.classList.contains('light-mode');
-    const bgBlurColor  = isLightMode ? 'rgba(240, 235, 220, 0.55)' : 'rgba(20, 20, 20, 0.55)';
-    const reflectColor = isLightMode ? 'rgba(180, 140, 40, 0.45)'  : 'rgba(255, 255, 255, 0.5)';
-    const logoSrc      = isLightMode ? '../imagenes/logos/logo-boutique.png' : '../imagenes/logos/Logo_modo_oscuro.png';
 
-    // 1. Inyectar HTML de la animación
-    const introHTML = `
-        <div id="intro-container" style="position:fixed;top:0;left:0;width:100%;height:100%;z-index:99999;pointer-events:all;">
-            <div id="intro-blur" style="position:absolute;top:0;left:0;width:100%;height:100%;background:${bgBlurColor};backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);"></div>
-            <div id="intro-ring" style="position:absolute;transform:translate(-50%,-50%);border-radius:50%;border:1px solid rgba(204,164,59,0.7);box-shadow:0 8px 32px rgba(0,0,0,0.3),inset 0 0 20px rgba(255,255,255,0.5);background:linear-gradient(135deg,rgba(255,255,255,0.1) 0%,rgba(255,255,255,0) 50%,rgba(255,255,255,0.05) 100%);overflow:hidden;opacity:0;">
-                <div id="intro-reflection" style="position:absolute;width:200%;height:200%;background:linear-gradient(45deg, transparent 40%, ${reflectColor} 50%, transparent 60%);top:-50%;left:0;transform:rotate(30deg);"></div>
+    const isLight = document.documentElement.classList.contains('light-mode');
+    const bgColor = isLight ? 'rgba(240,235,220,0.65)' : 'rgba(15,15,15,0.70)';
+    const lidBg   = isLight ? '#f0ebdc'                : '#0c0c0c';
+    const logoSrc = isLight
+        ? '../imagenes/logos/logo-boutique.png'
+        : '../imagenes/logos/Logo_modo_oscuro.png';
+    const gold  = 'rgba(204,164,59,1)';
+    const goldG = 'rgba(204,164,59,0.35)';
+
+    // --- HTML ---
+    // El circulo usa position:absolute con left/top FIJOS en el centro de su
+    // trayectoria inicial; el movimiento se hace con transform:translate
+    // para que quede en el compositor thread (sin layout, sin paint).
+    document.body.insertAdjacentHTML('afterbegin', `
+        <div id="iv-wrap" aria-hidden="true"
+             style="position:fixed;inset:0;z-index:99999;pointer-events:all;overflow:hidden;">
+
+            <div id="iv-blur"
+                 style="position:absolute;inset:0;
+                        background:${bgColor};
+                        backdrop-filter:blur(20px);
+                        -webkit-backdrop-filter:blur(20px);
+                        will-change:mask-image,-webkit-mask-image;">
             </div>
-            <div id="intro-logo" style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%) scale(0.8);opacity:0;">
-                <img src="${logoSrc}" alt="Logo" style="height:70px;filter:drop-shadow(0 4px 10px rgba(0,0,0,0.3));">
+
+            <!-- Anclado en top:0 left:0; se mueve con transform:translate -->
+            <div id="iv-circle"
+                 style="position:absolute;top:0;left:0;
+                        border-radius:50%;overflow:hidden;
+                        border:2px solid ${gold};
+                        box-shadow:0 0 28px ${goldG},inset 0 0 18px ${goldG};
+                        will-change:transform,width,height;">
+
+                <div id="iv-lid-t"
+                     style="position:absolute;top:0;left:0;width:100%;z-index:1;
+                            background:${lidBg};will-change:height;">
+                </div>
+                <div id="iv-lid-b"
+                     style="position:absolute;bottom:0;left:0;width:100%;z-index:1;
+                            background:${lidBg};will-change:height;">
+                </div>
+
+                <div id="iv-eye"
+                     style="position:absolute;top:50%;left:50%;z-index:2;
+                            transform:translate(-50%,-50%);
+                            will-change:opacity;">
+
+                    <div id="iv-iris"
+                         style="position:absolute;inset:0;border-radius:50%;overflow:hidden;
+                                background:radial-gradient(circle at 38% 38%,
+                                    #0a2a4a 0%,#1a5a8a 30%,#0d3d6b 60%,#071e38 100%);
+                                box-shadow:0 0 0 2px ${gold},0 0 18px rgba(30,100,200,0.5);">
+
+                        <div id="iv-pupil"
+                             style="position:absolute;top:50%;left:50%;border-radius:50%;
+                                    background:radial-gradient(circle at 35% 35%,
+                                        #2a2a2a 0%,#000 60%,#111 100%);
+                                    box-shadow:0 0 10px rgba(0,0,0,0.8);
+                                    will-change:transform;">
+                        </div>
+
+                        <div style="position:absolute;border-radius:50%;
+                                    width:18%;height:18%;top:15%;left:55%;
+                                    background:radial-gradient(circle,
+                                        rgba(255,255,255,0.9) 0%,
+                                        rgba(255,255,255,0.3) 50%,
+                                        transparent 100%);
+                                    pointer-events:none;">
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <div id="iv-logo"
+                 style="position:absolute;top:50%;left:50%;
+                        transform:translate(-50%,-50%) scale(0.85);
+                        opacity:0;will-change:transform,opacity;">
+                <img src="${logoSrc}" alt="Logo Optix"
+                     style="height:72px;filter:drop-shadow(0 4px 14px rgba(0,0,0,0.4));">
             </div>
         </div>
-    `;
-    
-    document.body.insertAdjacentHTML('afterbegin', introHTML);
-    
-    // 2. Ejecutar Animación
-    const c = document.getElementById('intro-container'), b = document.getElementById('intro-blur');
-    const r = document.getElementById('intro-ring'), l = document.getElementById('intro-logo');
-    const ref = document.getElementById('intro-reflection');
-    
-    // Forzamos un pequeño retraso para asegurar que el navegador ha renderizado el HTML inicial
-    setTimeout(() => {
-        const start = performance.now(), duration = 2800; // 2.8 segundos
-        
-        // Keyframes: t = tiempo, rad = radio, x/y = posicion %, lO = logo opacity, lS = logo scale, rO = ring opacity
-        const kf = [
-            { t: 0,    rad: 0,   x: 20, y: 30, lO: 0, lS: 0.8, rO: 0 },
-            { t: 0.1,  rad: 100, x: 20, y: 30, lO: 0, lS: 0.8, rO: 1 },
-            { t: 0.35, rad: 100, x: 75, y: 65, lO: 0, lS: 0.8, rO: 1 },
-            { t: 0.55, rad: 140, x: 50, y: 50, lO: 0, lS: 0.8, rO: 1 },
-            { t: 0.65, rad: 140, x: 50, y: 50, lO: 1, lS: 1.0, rO: 1 },
-            { t: 0.8,  rad: 140, x: 50, y: 50, lO: 1, lS: 1.0, rO: 1 },
-            { t: 0.95, rad: 'MAX',x: 50, y: 50, lO: 0, lS: 1.1, rO: 0 },
-            { t: 1.0,  rad: 'MAX',x: 50, y: 50, lO: 0, lS: 1.1, rO: 0 }
-        ];
+    `);
 
-        function lerp(a, b, t) { return a + (b - a) * t; }
-        function ease(x) { return x < 0.5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2; }
+    // --- Referencias DOM ---
+    const wrap   = document.getElementById('iv-wrap');
+    const blur   = document.getElementById('iv-blur');
+    const circle = document.getElementById('iv-circle');
+    const eye    = document.getElementById('iv-eye');
+    const iris   = document.getElementById('iv-iris');
+    const pupil  = document.getElementById('iv-pupil');
+    const lidT   = document.getElementById('iv-lid-t');
+    const lidB   = document.getElementById('iv-lid-b');
+    const logo   = document.getElementById('iv-logo');
 
-        function animate(time) {
-            let p = (time - start) / duration;
-            if (p > 1) p = 1;
-            
-            let i = 0; while(i < kf.length - 2 && p >= kf[i+1].t) i++;
-            const s = kf[i], e = kf[i+1], segP = (p - s.t) / (e.t - s.t), eased = ease(segP);
-            
-            const maxR = Math.hypot(window.innerWidth, window.innerHeight);
-            const rad = lerp(s.rad === 'MAX' ? maxR : s.rad, e.rad === 'MAX' ? maxR : e.rad, eased);
-            const pxX = lerp(s.x, e.x, eased) / 100 * window.innerWidth;
-            const pxY = lerp(s.y, e.y, eased) / 100 * window.innerHeight;
-            
-            // Máscara para revelar el contenido enfocado
-            const mask = `radial-gradient(circle at ${pxX}px ${pxY}px, transparent ${rad}px, black ${rad + 1}px)`;
-            b.style.webkitMaskImage = mask; 
-            b.style.maskImage = mask;
-            
-            // Actualizar anillo
-            r.style.width = r.style.height = (rad * 2) + 'px';
-            r.style.left = pxX + 'px'; 
-            r.style.top = pxY + 'px';
-            r.style.opacity = lerp(s.rO, e.rO, eased);
-            
-            // Mover reflejo
-            ref.style.left = (p * 200 - 100) + '%';
-            
-            // Actualizar Logo
-            l.style.opacity = lerp(s.lO, e.lO, eased);
-            l.style.transform = `translate(-50%, -50%) scale(${lerp(s.lS, e.lS, eased)})`;
-            
-            if (p < 1) requestAnimationFrame(animate); else c.remove();
+    // --- Dimensiones (enteros donde sea posible, cero lecturas en el loop) ---
+    const VW      = window.innerWidth  | 0;
+    const VH      = window.innerHeight | 0;
+    const maxR    = Math.hypot(VW, VH);
+    const circleR = Math.min(VW, VH) * 0.22;
+    const circleD = circleR * 2;
+    const irisR   = circleR * 0.68;
+    const irisD   = irisR   * 2;
+    const pupilD  = irisR;              // pupilR * 2 = irisR * 0.5 * 2 = irisR
+    const lookOff = irisR * 0.45;
+
+    // Posiciones pre-calculadas como enteros (evita .toFixed en el loop)
+    const pAx = (VW * 0.22) | 0,  pAy = (VH * 0.26) | 0;
+    const pBx = (VW * 0.76) | 0,  pBy = (VH * 0.72) | 0;
+    const pCx = (VW * 0.50) | 0,  pCy = (VH * 0.50) | 0;
+
+    // Aplicar tamanos fijos una sola vez (sin tocar en el loop)
+    circle.style.width  = circleD + 'px';
+    circle.style.height = circleD + 'px';
+
+    eye.style.width  = irisD + 'px';
+    eye.style.height = irisD + 'px';
+    iris.style.width  = iris.style.height = '100%';
+
+    pupil.style.width  = pupilD + 'px';
+    pupil.style.height = pupilD + 'px';
+    pupil.style.transform = 'translate(-50%,-50%)';
+
+    // --- Easing (funciones puras, sin closures innecesarias) ---
+    function lerp(a, b, t)      { return a + (b - a) * t; }
+    function easeOutCubic(x)    { return 1 - (1-x)*(1-x)*(1-x); }
+    function easeInOutSine(x)   { return -(Math.cos(Math.PI * x) - 1) * 0.5; }
+    function easeInOutQuart(x)  {
+        return x < 0.5 ? 8*x*x*x*x : 1 - ((-2*x+2)*(-2*x+2)*(-2*x+2)*(-2*x+2)) * 0.5;
+    }
+    function easeOutElastic(x) {
+        if (x === 0 || x === 1) return x;
+        return Math.pow(2, -10*x) * Math.sin((x*10 - 0.75) * 2.0944) + 1; // 2*PI/3 pre-calc
+    }
+
+    // --- Timeline (timestamps en ms) ---
+    //  Fase 0 (0-500):    Circulo crece en posA; ojo se abre
+    //  Fase 1 (500-1050): posA->posB;  ojo mira IZQUIERDA
+    //  Fase 2 (1050-1600):posB->posC;  ojo mira DERECHA
+    //  Fase 3 (1600-2050):posC;        parpadeo suave
+    //  Fase 4 (2050-2500):ojo -> logo
+    //  Fase 5 (2500-3250):circulo se expande -> revela pagina
+
+    // --- Dirty-checking: guardamos el ultimo valor aplicado ---
+    // Usamos variables numéricas directas (mas rapido que string keys para circulos)
+    let pTX = 1e9, pTY = 1e9, pR = -1;   // posicion/radio del circulo
+    let pLid = -1, pPupil = 1e9;
+    let pEye = -1, pLogoOp = -1, pLogoSc = -1;
+    let pMaskCX = -1, pMaskCY = -1, pMaskR = -1; // mascara blur
+
+    // Mueve el circulo con transform (GPU only, sin reflow).
+    // cx/cy = centro del circulo en pantalla.
+    function applyCircle(cx, cy, r) {
+        // Redondear a 0.5px — suficiente para la animacion, mucho menos string building
+        const tx = (cx - circleR + 0.5) | 0;
+        const ty = (cy - circleR + 0.5) | 0;
+        const ri = r | 0;
+
+        if (tx === pTX && ty === pTY && ri === pR) return;
+        pTX = tx; pTY = ty; pR = ri;
+
+        // Mover con translate (compositor, no reflow)
+        circle.style.transform = 'translate(' + tx + 'px,' + ty + 'px)';
+
+        // Actualizar mascara del blur solo si la posicion o radio cambio en 1px
+        const mcx = cx | 0, mcy = cy | 0, mr = ri;
+        if (mcx !== pMaskCX || mcy !== pMaskCY || mr !== pMaskR) {
+            pMaskCX = mcx; pMaskCY = mcy; pMaskR = mr;
+            if (mr <= 1) {
+                blur.style.webkitMaskImage = '';
+                blur.style.maskImage       = '';
+            } else {
+                // Construir string una sola vez por frame de cambio real
+                blur.style.webkitMaskImage =
+                blur.style.maskImage =
+                    'radial-gradient(circle at ' + mcx + 'px ' + mcy + 'px,transparent ' + mr + 'px,black ' + (mr+1) + 'px)';
+            }
         }
-        requestAnimationFrame(animate);
-    }, 50);
+    }
+
+    function applyLids(open, r) {
+        // Redondear a 0.5px para reducir escrituras
+        const h = ((r * (1 - (open < 0 ? 0 : open > 1 ? 1 : open))) * 2 + 0.5 | 0) * 0.5;
+        if (h === pLid) return;
+        pLid = h;
+        lidT.style.height = lidB.style.height = h + 'px';
+    }
+
+    function applyPupil(offsetPx) {
+        // Redondear offset a 0.25px — precision mas que suficiente visualmente
+        const o = (offsetPx * 4 + 0.5 | 0) * 0.25;
+        if (o === pPupil) return;
+        pPupil = o;
+        // Usar translate en px (evita division/% recalculo cada vez)
+        pupil.style.transform = 'translate(calc(-50% + ' + o + 'px),-50%)';
+    }
+
+    function applyEye(op) {
+        const v = (op * 1000 + 0.5 | 0) / 1000;
+        if (v === pEye) return;
+        pEye = v;
+        eye.style.opacity = v;
+    }
+
+    function applyLogo(op, sc) {
+        const ov = (op * 1000 + 0.5 | 0) / 1000;
+        const sv = (sc * 1000 + 0.5 | 0) / 1000;
+        if (ov === pLogoOp && sv === pLogoSc) return;
+        pLogoOp = ov; pLogoSc = sv;
+        logo.style.opacity   = ov;
+        logo.style.transform = 'translate(-50%,-50%) scale(' + sv + ')';
+    }
+
+    // --- Estado inicial (sin flash) ---
+    applyCircle(pAx, pAy, 0);
+    applyLids(0, circleR);
+    applyEye(0);
+    applyLogo(0, 0.85);
+
+    // --- Loop principal ---
+    let t0 = 0, done = false;
+
+    function frame(ts) {
+        if (done) return;
+        if (!t0) { t0 = ts; requestAnimationFrame(frame); return; }
+
+        const ms = ts - t0;
+
+        // getPhase inlineado — sin bucle, sin objeto temporal
+        let phase, t;
+        if      (ms < 500)  { phase = 0; t = ms / 500; }
+        else if (ms < 1050) { phase = 1; t = (ms - 500)  / 550; }
+        else if (ms < 1600) { phase = 2; t = (ms - 1050) / 550; }
+        else if (ms < 2050) { phase = 3; t = (ms - 1600) / 450; }
+        else if (ms < 2500) { phase = 4; t = (ms - 2050) / 450; }
+        else                { phase = 5; t = (ms - 2500) / 750; if (t > 1) t = 1; }
+
+        // Variables de salida (defaults = circulo en centro, ojo abierto)
+        let cx = pCx, cy = pCy, r = circleR;
+        let open = 1, pupX = 0, eyeOp = 1, logoOp = 0, logoSc = 0.85;
+
+        if (phase === 0) {
+            cx = pAx; cy = pAy;
+            const e = easeOutCubic(t);
+            r     = circleR * e;
+            open  = e;
+            eyeOp = e > 0.2 ? easeOutCubic((e - 0.2) * 1.25) : 0;
+
+        } else if (phase === 1) {
+            const e = easeInOutSine(t);
+            cx = (pAx + (pBx - pAx) * e) | 0;
+            cy = (pAy + (pBy - pAy) * e) | 0;
+            pupX = t < 0.35 ? -lookOff * easeInOutSine(t * 2.857)
+                 : t < 0.65 ? -lookOff
+                 :            -lookOff * easeInOutSine((1 - t) * 2.857);
+
+        } else if (phase === 2) {
+            const e = easeInOutSine(t);
+            cx = (pBx + (pCx - pBx) * e) | 0;
+            cy = (pBy + (pCy - pBy) * e) | 0;
+            pupX = t < 0.35 ?  lookOff * easeInOutSine(t * 2.857)
+                 : t < 0.65 ?  lookOff
+                 :              lookOff * easeInOutSine((1 - t) * 2.857);
+
+        } else if (phase === 3) {
+            cx = pCx; cy = pCy;
+            open = t < 0.35 ? 1
+                 : t < 0.50 ? 1 - easeInOutSine((t - 0.35) * 6.667)
+                 : t < 0.65 ?     easeInOutSine((t - 0.50) * 6.667)
+                 : 1;
+            eyeOp = open;
+
+        } else if (phase === 4) {
+            cx = pCx; cy = pCy;
+            eyeOp  = 1 - easeInOutQuart(t);
+            const li = t > 0.2 ? easeOutCubic((t - 0.2) * 1.25) : 0;
+            logoOp = li;
+            logoSc = lerp(0.85, 1.02, easeOutElastic(t < 0.833 ? t * 1.2 : 1));
+
+        } else { // phase 5
+            cx = pCx; cy = pCy;
+            r      = lerp(circleR, maxR, easeInOutQuart(t));
+            open   = 1;
+            eyeOp  = 0;
+            logoOp = t < 0.6 ? 1 : 1 - easeOutCubic((t - 0.6) * 2.5);
+            logoSc = lerp(1.02, 1.12, t);
+
+            if (t >= 1) {
+                done = true;
+                wrap.style.transition = 'opacity 0.2s ease';
+                wrap.style.opacity    = '0';
+                setTimeout(function() { if (wrap.parentNode) wrap.remove(); }, 220);
+                return;
+            }
+        }
+
+        applyCircle(cx, cy, r);
+        applyLids(open, r);
+        applyPupil(pupX);
+        applyEye(eyeOp);
+        applyLogo(logoOp, logoSc);
+
+        requestAnimationFrame(frame);
+    }
+
+    setTimeout(function() { requestAnimationFrame(frame); }, 60);
 });
