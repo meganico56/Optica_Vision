@@ -7,8 +7,32 @@
 //   - Todos los valores de posicion pre-calculados como enteros
 //   - will-change: transform en el circulo (compositor thread exclusivo)
 //   - RAF unico, dirty-checking en todos los setters
+//   - En panel de administrador siempre se muestra, en otras páginas solo al recargar
 
 document.addEventListener('DOMContentLoaded', () => {
+    // Detectar si estamos en el panel de administrador (cualquier sección)
+    const currentPath = window.location.pathname;
+    const isAdminPanel = currentPath.includes('panel-admin.html') || currentPath.includes('panel-admin');
+
+    // Verificar si ya se mostró la animación en esta sesión (solo para páginas no-admin)
+    if (!isAdminPanel) {
+        const introShown = sessionStorage.getItem('introAnimationShown');
+        if (introShown) {
+            return; // No mostrar animación si ya se mostró en esta sesión
+        }
+    } else {
+        // En panel de administrador, siempre limpiar el flag para asegurar que se muestre
+        sessionStorage.removeItem('introAnimationShown');
+    }
+
+    // En panel de administrador, detectar la sección activa
+    let targetContainer = document.body;
+    if (isAdminPanel) {
+        const activeSection = document.querySelector('.section-content.active');
+        if (activeSection) {
+            targetContainer = activeSection;
+        }
+    }
 
     const isLight = document.documentElement.classList.contains('light-mode');
     const bgColor = isLight ? 'rgba(240,235,220,0.65)' : 'rgba(15,15,15,0.70)';
@@ -23,7 +47,8 @@ document.addEventListener('DOMContentLoaded', () => {
     // El circulo usa position:absolute con left/top FIJOS en el centro de su
     // trayectoria inicial; el movimiento se hace con transform:translate
     // para que quede en el compositor thread (sin layout, sin paint).
-    document.body.insertAdjacentHTML('afterbegin', `
+    // En panel de administrador, se inserta en la sección activa; en otras páginas, en el body
+    targetContainer.insertAdjacentHTML('afterbegin', `
         <div id="iv-wrap" aria-hidden="true"
              style="position:fixed;inset:0;z-index:99999;pointer-events:all;overflow:hidden;">
 
@@ -302,6 +327,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 done = true;
                 wrap.style.transition = 'opacity 0.2s ease';
                 wrap.style.opacity    = '0';
+                // Marcar que la animación se mostró en esta sesión
+                sessionStorage.setItem('introAnimationShown', 'true');
                 setTimeout(function() { if (wrap.parentNode) wrap.remove(); }, 220);
                 return;
             }

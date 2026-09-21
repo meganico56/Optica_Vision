@@ -54,10 +54,6 @@
             </div>
             
             <div class="top-bar-right">
-                <button class="theme-toggle" id="themeToggleBtn" title="Alternar modo claro/oscuro">
-                    <i class="fa-solid fa-sun"></i>
-                </button>
-                
                 <div class="notification-bell">
                     <i class="fa-regular fa-bell"></i>
                     <span class="notification-badge">5</span>
@@ -274,38 +270,6 @@
     <script>
         document.getElementById('todayDate').textContent = new Date().toLocaleDateString('es-CO',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
         
-        // Manejo del modo oscuro/claro con persistencia
-        const themeBtn=document.getElementById('themeToggleBtn'),themeIcon=themeBtn.querySelector('i');
-        const mainLogo = document.getElementById('mainLogo');
-        
-        function updateThemeUI(isLight) {
-            if(isLight) {
-                themeIcon.classList.remove('fa-sun'); themeIcon.classList.add('fa-moon');
-                if(mainLogo) mainLogo.src = '../imagenes/logos/logo-boutique.png';
-            } else {
-                themeIcon.classList.remove('fa-moon'); themeIcon.classList.add('fa-sun');
-                if(mainLogo) mainLogo.src = '../imagenes/logos/Logo_modo_oscuro.png';
-            }
-        }
-
-        if (document.documentElement.classList.contains('light-mode')) {
-            updateThemeUI(true);
-        } else {
-            updateThemeUI(false);
-        }
-
-        themeBtn.addEventListener('click',()=>{
-            document.documentElement.classList.toggle('light-mode');
-            const isLight = document.documentElement.classList.contains('light-mode');
-            localStorage.setItem('theme', isLight ? 'light' : 'dark');
-            updateThemeUI(isLight);
-        });
-
-        const navItems=document.querySelectorAll('.nav-item[data-section]'),sections=document.querySelectorAll('.section-content');
-        function showSection(id){sections.forEach(s=>s.classList.remove('active'));navItems.forEach(n=>n.classList.remove('active'));const t=document.getElementById('sec-'+id);if(t)t.classList.add('active');const n=document.querySelector('.nav-item[data-section="'+id+'"]');if(n)n.classList.add('active');}
-        
-        navItems.forEach(item=>item.addEventListener('click',e=>{e.preventDefault();showSection(item.dataset.section);if(window.innerWidth<768)document.getElementById('sidebar').classList.remove('open');}));
-        document.querySelectorAll('[data-goto]').forEach(link=>link.addEventListener('click',e=>{e.preventDefault();showSection(link.dataset.goto);}));
         document.getElementById('menuToggle').addEventListener('click',()=>document.getElementById('sidebar').classList.toggle('open'));
         document.getElementById('sidebarClose').addEventListener('click',()=>document.getElementById('sidebar').classList.remove('open'));
         document.getElementById('logoutBtn').addEventListener('click',e=>{e.preventDefault();sessionStorage.removeItem('usuarioLogueado');window.location.href='inicio-sesion.html';});
@@ -313,9 +277,8 @@
         if(sesion.email){document.getElementById('adminName').textContent=sesion.email.split('@')[0].replace('.',' ').replace(/\b\w/g,l=>l.toUpperCase());document.getElementById('adminAvatar').textContent=sesion.email[0].toUpperCase();}
     </script>
     <script src="../scripts/session-manager.js"></script>
+    <script src="../scripts/admin-navigation.js"></script>
     <script src="../scripts/intro-animacion.js"></script>
-
-<script src="../scripts/theme-toggle.js"></script>
 </body>
 </html>
 
