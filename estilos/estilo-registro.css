@@ -8,7 +8,7 @@
   --border: #e8e8e8;
   --bg: #ffffff;
 
-  /* Helper & Mapped Tokens */
+  /* Lo mismo para los tokens auxiliares y asignados */
   --gold-light: #e5c96d;
   --gold-glow: rgba(204, 164, 59, 0.35);
   --gold-subtle: rgba(204, 164, 59, 0.12);
@@ -24,9 +24,7 @@
   --gold-glow: rgba(204, 164, 59, 0.15);
 }
 
-/* ============================================================
-   PREVENIR CURSOR Y ENTRADA DE TEXTO AL HACER CLIC EN LA PÁGINA
-   ============================================================ */
+/* Prevenir el cursor y la entrada de texto al hacer clic en la página */
 html, body {
   user-select: none;
   -webkit-user-select: none;
@@ -35,7 +33,7 @@ html, body {
   caret-color: transparent !important;
 }
 
-/* Permitir cursor de texto ÚNICAMENTE en inputs y campos editables al estar enfocados */
+/* lo mismmo XD Solo se puede usar el cursor de texto en inputs y campos editables  */
 input[type="text"]:focus,
 input[type="email"]:focus,
 input[type="password"]:focus,
@@ -99,9 +97,7 @@ button, input, select, textarea {
   outline: none;
 }
 
-/* ==========================================
-   HEADER Y NAVBAR UNIFICADOS (Buscador Catálogo + Selección/Hover Inicio)
-   ========================================== */
+/* El headery el Navbar unificado Buscador catalogo mas hover de inicio x2 */
 .site-header, .navbar, header {
   display: flex;
   justify-content: space-between;
@@ -258,7 +254,7 @@ body.dark-mode header {
   width: 100% !important;
 }
 
-/* Common utilities */
+/* Servicios comunes */
 .text-gold {
   color: var(--gold) !important;
 }
@@ -307,6 +303,6 @@ body.dark-mode header {
 }
 
 
-/* === START OF SPECIFIC PAGE STYLES === */
+/* El inicio de estilos especificos uwu */
 
 @import url('estilo-auth.css');
