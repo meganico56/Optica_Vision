@@ -7,11 +7,17 @@ document.addEventListener('DOMContentLoaded', () => {
     const currentTheme = localStorage.getItem('theme') || 'light';
     if (currentTheme === 'dark') {
         document.documentElement.classList.add('dark-mode');
+        document.documentElement.classList.remove('light-mode');
         document.body.classList.add('dark-mode');
+        document.body.classList.remove('light-mode');
         if (themeToggleBtn) {
             themeToggleBtn.innerHTML = '<i class="fa-solid fa-sun"></i>';
         }
     } else {
+        document.documentElement.classList.add('light-mode');
+        document.documentElement.classList.remove('dark-mode');
+        document.body.classList.add('light-mode');
+        document.body.classList.remove('dark-mode');
         if (themeToggleBtn) {
             themeToggleBtn.innerHTML = '<i class="fa-solid fa-moon"></i>';
         }
@@ -20,7 +26,9 @@ document.addEventListener('DOMContentLoaded', () => {
     if (themeToggleBtn) {
         themeToggleBtn.addEventListener('click', () => {
             const isDark = document.documentElement.classList.toggle('dark-mode');
-            document.body.classList.toggle('dark-mode'); // Para compatibilidad con estilos antiguos
+            document.documentElement.classList.toggle('light-mode');
+            document.body.classList.toggle('dark-mode');
+            document.body.classList.toggle('light-mode');
             
             if (isDark) {
                 localStorage.setItem('theme', 'dark');
