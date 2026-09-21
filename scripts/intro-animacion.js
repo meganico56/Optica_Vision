@@ -117,8 +117,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const lookOff = irisR * 0.45;
 
     // Posiciones pre-calculadas como enteros (evita .toFixed en el loop)
-    const pAx = (VW * 0.22) | 0,  pAy = (VH * 0.26) | 0;
-    const pBx = (VW * 0.76) | 0,  pBy = (VH * 0.72) | 0;
+    // Círculo siempre en el centro de la pantalla
+    const pAx = (VW * 0.50) | 0,  pAy = (VH * 0.50) | 0;
+    const pBx = (VW * 0.50) | 0,  pBy = (VH * 0.50) | 0;
     const pCx = (VW * 0.50) | 0,  pCy = (VH * 0.50) | 0;
 
     // Aplicar tamanos fijos una sola vez (sin tocar en el loop)

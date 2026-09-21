@@ -104,9 +104,6 @@ button, input, select, textarea {
   --admin-sidebar-w: 260px;
   --admin-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
   --admin-glow: 0 0 25px rgba(204, 164, 59, 0.2);
-  --admin-aura: 0 0 60px rgba(204, 164, 59, 0.1);
-  --admin-aura-strong: 0 0 80px rgba(204, 164, 59, 0.2);
-  --admin-pulse: rgba(204, 164, 59, 0.3);
   
   --status-success: #2ea043;
   --status-warning: #f1e05a;
@@ -129,9 +126,6 @@ button, input, select, textarea {
   --admin-gold-hover: #d4a673;
   --admin-shadow: 0 12px 35px rgba(0, 0, 0, 0.08);
   --admin-glow: 0 0 30px rgba(204, 164, 59, 0.15);
-  --admin-aura: 0 0 50px rgba(204, 164, 59, 0.12);
-  --admin-aura-strong: 0 0 70px rgba(204, 164, 59, 0.18);
-  --admin-pulse: rgba(204, 164, 59, 0.25);
   
   --admin-glass: rgba(255, 255, 255, 0.85);
   --admin-glass-strong: rgba(248, 249, 250, 0.95);
@@ -148,9 +142,6 @@ button, input, select, textarea {
   --admin-gold-hover: #e8b878;
   --admin-shadow: 0 12px 35px rgba(0, 0, 0, 0.4);
   --admin-glow: 0 0 30px rgba(204, 164, 59, 0.25);
-  --admin-aura: 0 0 60px rgba(204, 164, 59, 0.15);
-  --admin-aura-strong: 0 0 80px rgba(204, 164, 59, 0.25);
-  --admin-pulse: rgba(204, 164, 59, 0.35);
   
   --admin-glass: rgba(25, 25, 30, 0.8);
   --admin-glass-strong: rgba(13, 13, 18, 0.92);
@@ -166,31 +157,6 @@ body {
   min-height: 100vh;
   position: relative;
   transition: background-color 0.3s ease, color 0.3s ease;
-}
-
-body::before {
-  content: '';
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: radial-gradient(ellipse at top, var(--admin-aura) 0%, transparent 50%);
-  pointer-events: none;
-  z-index: -1;
-  animation: aura-pulse 8s ease-in-out infinite;
-  transition: background 0.3s ease;
-}
-
-@keyframes aura-pulse {
-  0%, 100% {
-    opacity: 0.5;
-    transform: scale(1);
-  }
-  50% {
-    opacity: 0.8;
-    transform: scale(1.1);
-  }
 }
 
 /* poderoso sidebar */

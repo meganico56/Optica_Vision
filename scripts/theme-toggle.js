@@ -1,7 +1,7 @@
 // theme-toggle.js
 document.addEventListener('DOMContentLoaded', () => {
-    // Buscar o crear el botón de modo oscuro si no existe
-    let themeToggleBtn = document.getElementById('theme-toggle-btn');
+    // Buscar el botón de modo oscuro con diferentes IDs posibles
+    let themeToggleBtn = document.getElementById('theme-toggle-btn') || document.getElementById('themeToggleBtn');
     
     // Configurar estado inicial
     const currentTheme = localStorage.getItem('theme') || 'light';
