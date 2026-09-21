@@ -9,8 +9,8 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="../estilos/global.css">
     <link rel="stylesheet" href="../estilos/estilo-auth.css">
-    <title>Iniciar Sesión | Boutique de la Visión</title>
-
+    <link rel="stylesheet" href="../estilos/estilo-recuperar.css">
+    <title>Recuperar Contraseña | Boutique de la Visión</title>
 </head>
 <body>
     <div class="inicio">
@@ -21,36 +21,27 @@
         </div>
         <div class="formulario">
             <div class="titulo">                
-                <h5>Bienvenido</h5>
+                <h5>Recuperar acceso</h5>
                 <a href="javascript:history.back()" class="btn-volver"><i class="fa-solid fa-arrow-left"></i> Volver</a>
             </div>
             <div class="subtitulo">
-                <h1>Inicia sesión </h1>
-            </div>
-            <div class="input-group">
-                <input type="email" id="username" class="username" placeholder="E-mail" required>
-                <i class="fa-solid fa-envelope icon-left"></i>
-            </div>
-            <div class="input-group">
-                <input type="password" id="password" class="password" placeholder="Contraseña" required>
-                <i class="fa-solid fa-lock icon-left"></i>
-                <i class="fa-solid fa-eye toggle-password" id="togglePassword"></i>
-            </div>
-            <button class="olvidar" type="button" onclick="window.location.href='rcontraseña.html'">¿Olvidaste tu contraseña?</button>
-            <button class="iniciar" id="btnLogin" type="button">Iniciar sesión</button>
-            
-            <div class="divider">
-                <span>o iniciar con</span>
-            </div>
-            
-            <div class="social-login">
-                <button class="google" type="button"><i class="fa-brands fa-google"></i> Google</button>
-                <button class="facebook" type="button"><i class="fa-brands fa-facebook-f"></i> Facebook</button>
+                <h1>¿Olvidaste tu contraseña?</h1>
             </div>
 
+            <p class="aviso-recuperar">
+                Ingresa el correo asociado a tu cuenta y te enviaremos un enlace para restablecer tu contraseña.
+            </p>
+
+            <div class="input-group">
+                <input type="email" id="email" class="username" placeholder="E-mail" required>
+                <i class="fa-solid fa-envelope icon-left"></i>
+            </div>
+
+            <button class="iniciar" id="btnEnviar" type="button">Enviar enlace</button>
+
             <div class="registro-link">
-                <p>¿No tienes una cuenta?</p>
-                <button class="registrar" type="button" onclick="window.location.href='registro-usuario.html'">Regístrate ahora</button>
+                <p>¿Ya la recordaste?</p>
+                <button class="registrar" type="button" onclick="window.location.href='inicio-sesion.html'">Volver a iniciar sesión</button>
             </div>
         </div>
     </div>
@@ -59,6 +50,5 @@
             <p>© 2024 Todos los derechos reservados.</p>
         </div>
     </footer>
-    <script src="../scripts/autenticacion.js"></script>
 </body>
 </html>
