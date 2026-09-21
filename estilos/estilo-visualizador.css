@@ -590,25 +590,97 @@ body > * { position: relative; z-index: 1; }
 /* ══════════════════════════════════════════════════════════════
    FOOTER — Siempre oscuro (intencional)
    ══════════════════════════════════════════════════════════════ */
-.site-footer {
-  background:rgba(10,9,8,0.93);border-top:4px solid var(--gold);
-  padding:58px 64px 28px;backdrop-filter:blur(20px);position:relative;overflow:hidden;
+footer {
+    border-top: 1px solid var(--border);
+    background: rgba(255, 255, 255, 0.75);
+    backdrop-filter: blur(6px);
 }
-.site-footer::before { content:'';position:absolute;top:-60px;right:-60px;width:260px;height:260px;background:radial-gradient(circle,rgba(189,162,41,0.16) 0%,transparent 70%);pointer-events:none; }
-.footer-inner { max-width:1300px;margin:0 auto;display:grid;grid-template-columns:repeat(4,1fr);gap:38px;margin-bottom:44px; }
-.footer-col h4 { font-size:11px;font-weight:900;text-transform:uppercase;letter-spacing:2.5px;color:var(--gold);margin-bottom:20px;position:relative;padding-bottom:12px; }
-.footer-col h4::after { content:'';position:absolute;bottom:0;left:0;width:26px;height:2px;background:var(--gold);border-radius:2px; }
-.footer-col a { display:block;font-size:13px;color:rgba(255,255,255,0.48);text-decoration:none;margin-bottom:10px;line-height:1.5;transition:var(--transition); }
-.footer-col a:hover { color:var(--gold);padding-left:5px; }
-.footer-col p { display:flex;align-items:center;gap:10px;font-size:13px;color:rgba(255,255,255,0.48);margin-bottom:10px;transition:color .2s; }
-.footer-col p:hover { color:rgba(255,255,255,0.75); }
-.pin-icon { color:var(--gold);font-size:13px;flex-shrink:0; }
-.payment-methods { display:flex;flex-wrap:wrap;gap:8px; }
-.pay-chip { background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.10);border-radius:6px;padding:6px 10px;font-size:10.5px;font-weight:900;letter-spacing:.4px;display:flex;align-items:center;justify-content:center;min-width:46px;transition:var(--transition); }
-.pay-chip:hover { border-color:var(--gold); }
-.pay-chip.visa{color:#7eb0ff;} .pay-chip.mc{color:#f04e3e;} .pay-chip.amex{color:#69b4e4;} .pay-chip.pse{color:#5ab0ec;} .pay-chip.nequi{color:#c888e2;} .pay-chip.cash{color:rgba(255,255,255,0.5);}
-.footer-copy { text-align:center;font-size:11.5px;color:rgba(255,255,255,0.22);border-top:1px solid rgba(255,255,255,0.06);padding-top:22px;letter-spacing:.5px; }
 
+.footer-container {
+    display: grid;
+    grid-template-columns: 1.2fr 1fr 1fr 1fr 1.2fr;
+    gap: 2rem;
+    padding: 3rem 5%;
+}
+
+.footer-col h4 {
+    font-family: var(--font-title);
+    color: var(--gold-dark);
+    margin-bottom: 1rem;
+    font-size: 0.9rem;
+    font-weight: 700;
+}
+
+.footer-col ul li {
+    margin-bottom: 0.6rem;
+}
+
+.footer-col ul a {
+    font-family: var(--font-body);
+    color: #0e0d0b;
+    font-size: 0.85rem;
+    transition: color 0.3s ease;
+}
+
+.footer-col ul a:hover {
+    color: var(--gold-dark);
+}
+
+.contact-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 1rem;
+    font-family: var(--font-body);
+    font-size: 0.85rem;
+    color:#0e0d0b;
+}
+
+.contact-info i {
+    color: var(--gold-dark);
+}
+
+.social-icons {
+    display: flex;
+    gap: 1rem;
+}
+
+.social-icons a {
+    color: var(--gold-dark);
+    font-size: 1.2rem;
+    transition: transform 0.3s ease, color 0.3s ease;
+}
+
+.social-icons a:hover {
+    transform: translateY(-3px);
+    color: var(--gold);
+}
+
+.payment-methods {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+}
+
+.payment-methods span {
+    background: #ffffff;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 6px;
+    font-size: 0.75rem;
+    text-align: center;
+    font-weight: bold;
+    font-family: var(--font-title);
+}
+
+.copyright {
+    background: var(--gold-dark);
+    color: #ffffff;
+    padding: 14px 5%;
+    font-size: 0.85rem;
+    text-align: center;
+    font-family: var(--font-body);
+}
 /* ══════════════════════════════════════════════════════════════
    ZOOM MODAL + TOAST
    ══════════════════════════════════════════════════════════════ */
