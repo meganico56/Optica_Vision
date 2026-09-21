@@ -1,326 +1,6 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Montserrat:wght@400;500;600;700;800&display=swap');
+@import url('global.css');
 
 :root {
-  --gold: #cca43b;
-  --gold-dark: #b08c2f;
-  --text-dark: #222222;
-  --text-muted: #555555;
-  --border: #e8e8e8;
-  --bg: #ffffff;
-
-  /* Helper & Mapped Tokens */
-  --gold-light: #e5c96d;
-  --gold-glow: rgba(204, 164, 59, 0.35);
-  --gold-subtle: rgba(204, 164, 59, 0.12);
-  --font-title: 'Montserrat', sans-serif;
-  --font-body: 'Inter', sans-serif;
-}
-
-:root.dark-mode, body.dark-mode {
-  --text-dark: #f0f0f0;
-  --text-muted: #aaaaaa;
-  --border: #333333;
-  --bg: #121212;
-  --gold-glow: rgba(204, 164, 59, 0.15);
-}
-
-/* ============================================================
-   PREVENIR CURSOR Y ENTRADA DE TEXTO AL HACER CLIC EN LA PÁGINA
-   ============================================================ */
-html, body {
-  user-select: none;
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-  caret-color: transparent !important;
-}
-
-/* Permitir cursor de texto ÚNICAMENTE en inputs y campos editables al estar enfocados */
-input[type="text"]:focus,
-input[type="email"]:focus,
-input[type="password"]:focus,
-input[type="tel"]:focus,
-input[type="number"]:focus,
-input[type="search"]:focus,
-textarea:focus,
-.busc:focus,
-[contenteditable="true"]:focus {
-  caret-color: var(--text-dark) !important;
-  user-select: text !important;
-  -webkit-user-select: text !important;
-}
-
-*, *::before, *::after {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
-*:focus, *:focus-visible, *:active {
-  outline: none !important;
-}
-
-body {
-  font-family: var(--font-body);
-  color: var(--text-dark);
-  background-color: var(--bg);
-  line-height: 1.6;
-  -webkit-font-smoothing: antialiased;
-}
-
-h1, h2, h3, h4, h5, h6 {
-  font-family: var(--font-title);
-  color: var(--text-dark);
-  font-weight: 600;
-}
-
-a {
-  text-decoration: none;
-  color: inherit;
-  transition: color 0.3s ease, transform 0.3s ease;
-  outline: none;
-}
-
-ul, ol {
-  list-style: none;
-}
-
-img {
-  max-width: 100%;
-  height: auto;
-  user-select: none;
-  -webkit-user-select: none;
-  -webkit-user-drag: none;
-  outline: none;
-}
-
-button, input, select, textarea {
-  font-family: var(--font-body);
-  outline: none;
-}
-
-/* ==========================================
-   HEADER Y NAVBAR UNIFICADOS (Buscador Catálogo + Selección/Hover Inicio)
-   ========================================== */
-.site-header, .navbar, header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 1rem 5%;
-  background: rgba(255, 255, 255, 0.95);
-  backdrop-filter: blur(10px);
-  border-bottom: 1px solid var(--border);
-  position: sticky;
-  top: 0;
-  z-index: 1000;
-  transition: all 0.3s ease;
-}
-
-:root.dark-mode .site-header,
-:root.dark-mode .navbar,
-:root.dark-mode header,
-body.dark-mode .site-header,
-body.dark-mode .navbar,
-body.dark-mode header {
-  background: rgba(18, 18, 18, 0.95);
-}
-
-.theme-toggle-btn {
-  background: none;
-  border: 1px solid var(--border);
-  color: var(--text-dark);
-  font-size: 1.2rem;
-  cursor: pointer;
-  border-radius: 50%;
-  width: 40px;
-  height: 40px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.3s ease;
-  margin-left: 10px;
-}
-
-.theme-toggle-btn:hover {
-  background: var(--gold);
-  color: white;
-  border-color: var(--gold);
-  box-shadow: 0 0 10px var(--gold-glow);
-}
-
-.logo img, .logo-icon {
-  height: 55px;
-  width: auto;
-  object-fit: contain;
-  filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.9));
-  user-select: none;
-}
-
-/* Buscador Estilo Catálogo */
-.buscador {
-  display: flex;
-  align-items: center;
-  background-color: var(--bg);
-  border: 1.5px solid var(--border);
-  border-radius: 35px;
-  padding: 3px 4px 3px 14px;
-  width: 100%;
-  max-width: 380px;
-  margin: 0 1.5rem;
-  transition: all 0.3s ease;
-}
-
-.buscador:hover, .buscador:focus-within {
-  border-color: var(--gold);
-  box-shadow: 0 0 12px var(--gold-glow);
-}
-
-.busc {
-  border: none;
-  outline: none;
-  background: transparent;
-  width: 100%;
-  padding: 6px 8px;
-  font-size: 0.88rem;
-  font-family: var(--font-body);
-  color: var(--text-dark);
-}
-
-.busc::placeholder {
-  color: var(--text-muted);
-  font-size: 0.88rem;
-}
-
-.bot_bus {
-  border: none;
-  background-color: var(--gold);
-  color: #ffffff;
-  width: 34px;
-  height: 34px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  flex-shrink: 0;
-}
-
-.bot_bus:hover {
-  background-color: var(--gold-dark);
-  transform: scale(1.05);
-}
-
-/* Navegación y Subrayado Animado Estilo Inicio */
-.navbar-menu, .main-nav .nav-list, nav ul, .men_nv {
-  display: flex;
-  align-items: center;
-  gap: 1.8rem;
-  list-style: none;
-}
-
-.navbar-menu li a, .main-nav .nav-list li a, nav ul li a, .men_nv li a {
-  position: relative;
-  color: var(--text-dark);
-  font-family: var(--font-title);
-  font-size: 0.85rem;
-  font-weight: 600;
-  letter-spacing: 0.5px;
-  padding: 6px 0;
-  text-transform: uppercase;
-  transition: color 0.3s ease;
-  background: transparent !important;
-  box-shadow: none !important;
-  border-radius: 0 !important;
-}
-
-.navbar-menu li a::after, .main-nav .nav-list li a::after, nav ul li a::after, .men_nv li a::after {
-  content: '';
-  position: absolute;
-  left: 0;
-  bottom: -4px;
-  width: 0;
-  height: 2px;
-  background: var(--gold);
-  transition: width 0.3s ease;
-  border-radius: 2px;
-}
-
-.navbar-menu li a:hover, .main-nav .nav-list li a:hover, nav ul li a:hover, .men_nv li a:hover,
-.navbar-menu li a.activo, .main-nav .nav-list li a.activo, nav ul li a.activo, .men_nv li a.activo {
-  color: var(--gold) !important;
-  background: transparent !important;
-  box-shadow: none !important;
-}
-
-.navbar-menu li a:hover::after, .main-nav .nav-list li a:hover::after, nav ul li a:hover::after, .men_nv li a:hover::after,
-.navbar-menu li a.activo::after, .main-nav .nav-list li a.activo::after, nav ul li a.activo::after, .men_nv li a.activo::after {
-  width: 100% !important;
-}
-
-/* Common utilities */
-.text-gold {
-  color: var(--gold) !important;
-}
-
-.bg-gold {
-  background-color: var(--gold) !important;
-  color: #ffffff !important;
-}
-
-.btn-base {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0.75rem 1.75rem;
-  border-radius: 30px;
-  font-family: var(--font-title);
-  font-weight: 600;
-  font-size: 0.9rem;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  border: none;
-}
-
-.btn-base-primary {
-  background-color: var(--gold);
-  color: #ffffff;
-  box-shadow: 0 4px 14px var(--gold-glow);
-}
-
-.btn-base-primary:hover {
-  background-color: var(--gold-dark);
-  transform: translateY(-2px);
-  box-shadow: 0 6px 20px var(--gold-glow);
-}
-
-.btn-base-secondary {
-  background-color: transparent;
-  color: var(--gold);
-  border: 1.5px solid var(--gold);
-}
-
-.btn-base-secondary:hover {
-  background-color: var(--gold);
-  color: #ffffff;
-  transform: translateY(-2px);
-}
-
-
-/* === START OF SPECIFIC PAGE STYLES === */
-
-:root {
-  --admin-bg: #fdfaf6; /* Warm cream background */
-  --admin-card: #ffffff;
-  --admin-border: #e0d8c0;
-  --admin-text: #2c2921; /* Ink / dark warm gray */
-  --admin-text-muted: #6b6354;
-  --admin-gold: #b08c2f;
-  --admin-gold-hover: #cca43b;
-  --admin-shadow: 0 5px 15px rgba(176, 140, 47, 0.1);
-}
-
-:root.dark-mode {
   --admin-bg: #15130f; /* Dark background matching summary block */
   --admin-card: #1d1a14;
   --admin-border: rgba(232,207,130,0.15);
@@ -336,6 +16,17 @@ body.dark-mode header {
   --status-error: #c62828;
 }
 
+:root.light-mode {
+  --admin-bg: #fdfaf6; /* Warm cream background */
+  --admin-card: #ffffff;
+  --admin-border: #e0d8c0;
+  --admin-text: #2c2921; /* Ink / dark warm gray */
+  --admin-text-muted: #6b6354;
+  --admin-gold: #b08c2f;
+  --admin-gold-hover: #cca43b;
+  --admin-shadow: 0 5px 15px rgba(176, 140, 47, 0.1);
+}
+
 body {
   margin: 0;
   background-color: var(--admin-bg);
@@ -345,9 +36,7 @@ body {
   min-height: 100vh;
 }
 
-/* =========================================================
-   SIDEBAR
-   ========================================================= */
+/* poderoso sidebar */
 .sidebar {
   width: var(--admin-sidebar-w);
   background: linear-gradient(180deg, var(--admin-card) 0%, var(--admin-bg) 100%);
@@ -377,7 +66,7 @@ body {
   filter: drop-shadow(0 2px 8px rgba(0,0,0,0.4));
 }
 
-:root.dark-mode .sidebar-logo {
+:root.light-mode .sidebar-logo {
   filter: none;
 }
 
@@ -459,9 +148,7 @@ body {
   color: #ff4d4d;
 }
 
-/* =========================================================
-   MAIN CONTENT AREA
-   ========================================================= */
+/* el main content */
 .main-content {
   flex: 1;
   margin-left: var(--admin-sidebar-w);
@@ -469,9 +156,7 @@ body {
   flex-direction: column;
 }
 
-/* =========================================================
-   TOP BAR
-   ========================================================= */
+/* El top Bar */
 .top-bar {
   height: 80px;
   background: var(--admin-bg);
@@ -596,9 +281,7 @@ body {
   font-size: 1.2rem;
 }
 
-/* =========================================================
-   DASHBOARD CONTENT
-   ========================================================= */
+/* Contenido del Dashboard */
 .dashboard-container {
   padding: 40px;
 }
@@ -610,7 +293,7 @@ body {
   font-weight: 600;
 }
 
-/* KPI Cards */
+/* Las Cards XD */
 .kpi-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
@@ -743,7 +426,7 @@ body {
   color: #ffb74d;
 }
 
-/* Small List styling (for low stock) */
+/* Una lista pequena de alertas */
 .alert-list {
   list-style: none;
 }
@@ -795,15 +478,11 @@ body {
   color: var(--admin-gold);
 }
 
-/* =========================================================
-   SPA SECTIONS
-   ========================================================= */
+/* la seccion de SPA */
 .section-content { display: none; }
 .section-content.active { display: block; }
 
-/* =========================================================
-   PAGE HEADER ROW
-   ========================================================= */
+/* Pagina del header */
 .page-header {
   display: flex;
   justify-content: space-between;
@@ -819,9 +498,7 @@ body {
   margin-top: 5px;
 }
 
-/* =========================================================
-   TOPBAR LEFT AREA (menu toggle + search)
-   ========================================================= */
+/* el area izquierda del top bar el buscador y demas */
 .topbar-left {
   display: flex;
   align-items: center;
@@ -851,9 +528,7 @@ body {
 }
 .sidebar-close:hover { color: var(--admin-gold); }
 
-/* =========================================================
-   PRIMARY & GHOST BUTTONS
-   ========================================================= */
+/* botones primarios y fantasmas */
 .btn-primary {
   background: linear-gradient(135deg, var(--admin-gold) 0%, var(--admin-gold-hover) 100%);
   color: var(--admin-bg);
@@ -889,9 +564,7 @@ body {
 .btn-ghost.danger { color: #ff6b6b; }
 .btn-ghost.danger:hover { border-color: #ff6b6b; background: rgba(255,107,107,0.08); }
 
-/* =========================================================
-   KPI ICON COLOR VARIANTS
-   ========================================================= */
+/*las variantes de colores de los inconos KPI */
 .kpi-icon.gold { background: rgba(204,164,59,0.12); color: var(--admin-gold); }
 .kpi-icon.blue { background: rgba(59,130,246,0.12); color: #60a5fa; }
 .kpi-icon.green { background: rgba(34,197,94,0.12); color: #4ade80; }
@@ -912,12 +585,10 @@ body {
 .kpi-trend.down { color: #f87171; }
 .kpi-trend.neutral { color: var(--admin-text-muted); }
 
-/* Alert card */
+/* Card de alerta */
 .kpi-card.alert-card { border-color: rgba(251,146,60,0.35); }
 
-/* =========================================================
-   FILTER BUTTONS ROW
-   ========================================================= */
+/* la fila de los filtros de los botones */
 .filter-row {
   display: flex;
   gap: 0.75rem;
@@ -940,9 +611,7 @@ body {
   color: var(--admin-bg);
 }
 
-/* =========================================================
-   ROLE BADGES
-   ========================================================= */
+/*  insignias de los roles */
 .role-badge {
   padding: 4px 10px;
   border-radius: 20px;
@@ -953,9 +622,7 @@ body {
 .role-badge.vendedor { background: rgba(59,130,246,0.15); color: #60a5fa; }
 .role-badge.cliente { background: rgba(168,85,247,0.15); color: #c084fc; }
 
-/* =========================================================
-   STOCK BADGES & STATUS
-   ========================================================= */
+/* las insignias del stock y los estados */
 .stock-badge {
   padding: 3px 10px;
   border-radius: 20px;
@@ -976,9 +643,7 @@ body {
   font-weight: 600;
 }
 
-/* =========================================================
-   ACTION GROUP & DANGER BUTTON
-   ========================================================= */
+/* grupo de acciones y botones de peligro */
 .action-group { display: flex; gap: 6px; }
 .action-btn.danger { color: #ff6b6b; }
 .action-btn.danger:hover { color: #ff4d4d; }
@@ -987,9 +652,7 @@ body {
 .text-gold { color: var(--admin-gold) !important; }
 .danger-text { color: #f87171; font-weight: 600; }
 
-/* =========================================================
-   PROVEEDOR LIST
-   ========================================================= */
+/* Lista de proveedores */
 .proveedor-list { list-style: none; display: flex; flex-direction: column; gap: 16px; }
 .proveedor-item {
   display: flex;
@@ -1016,9 +679,7 @@ body {
 .proveedor-info p { margin: 0 0 3px 0; font-size: 0.8rem; color: var(--admin-text-muted); }
 .proveedor-info a { color: var(--admin-gold); text-decoration: none; }
 
-/* =========================================================
-   RECETA LIST
-   ========================================================= */
+/* la lista de recetas */
 .receta-list { list-style: none; display: flex; flex-direction: column; gap: 16px; }
 .receta-item {
   background: rgba(204,164,59,0.04);
@@ -1053,9 +714,7 @@ body {
 .receta-footer { font-size: 0.78rem; color: var(--admin-text-muted); }
 .receta-footer i { color: var(--admin-gold); margin-right: 5px; }
 
-/* =========================================================
-   CITA LIST
-   ========================================================= */
+/* Otra lista pero de citas */
 .cita-list { list-style: none; }
 .cita-item {
   display: flex;
@@ -1082,9 +741,7 @@ body {
 .cita-info p i { color: var(--admin-gold); margin-right: 4px; }
 .empty-note { font-size: 0.82rem; color: var(--admin-text-muted); text-align: center; padding: 12px 0; }
 
-/* =========================================================
-   PAGO LIST / BAR CHART
-   ========================================================= */
+/* lista de pagos we */
 .pago-list { list-style: none; display: flex; flex-direction: column; gap: 10px; margin-bottom: 16px; }
 .pago-list li { display: flex; align-items: center; gap: 10px; font-size: 0.9rem; }
 .pago-dot { width: 12px; height: 12px; border-radius: 50%; flex-shrink: 0; }
@@ -1093,9 +750,7 @@ body {
 .pago-bar-wrap { display: flex; height: 10px; border-radius: 6px; overflow: hidden; gap: 2px; }
 .pago-bar { height: 100%; border-radius: 4px; transition: width 0.4s ease; }
 
-/* =========================================================
-   PROMOCIONES GRID
-   ========================================================= */
+/* El grid de las promociones */
 .promo-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
@@ -1170,9 +825,7 @@ body {
 .promo-card.new-promo:hover { border-color: var(--admin-gold); background: rgba(204,164,59,0.04); }
 .promo-card.new-promo h3 { margin-top: 10px; }
 
-/* =========================================================
-   REPORTES GRID
-   ========================================================= */
+/* El Grid de resportes we */
 .reporte-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
@@ -1230,9 +883,7 @@ body {
   font-weight: 600;
 }
 
-/* =========================================================
-   RESPONSIVE DESIGN
-   ========================================================= */
+/* El famosisimo responsive */
 @media (max-width: 1024px) {
   .data-section { grid-template-columns: 1fr; }
 }
