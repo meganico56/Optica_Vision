@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel de Usuario - Boutique de la Visión</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <link rel="stylesheet" href="../estilos/estilo-usuario.css">
+    
+</head>
+
+<body>
+
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <img src="../imagenes/logos/logo-boutique.png" alt="Logo" class="sidebar-logo">
+            <button class="sidebar-close" id="sidebarClose"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        
+        <nav class="sidebar-nav">
+            <a href="#" class="nav-item active" data-section="dashboard"><i class="fa-solid fa-home"></i><span>Inicio</span></a>
+            <a href="#" class="nav-item" data-section="perfil"><i class="fa-solid fa-user"></i><span>Mi Perfil</span></a>
+            <a href="#" class="nav-item" data-section="pedidos"><i class="fa-solid fa-shopping-bag"></i><span>Mis Pedidos</span></a>
+            <a href="#" class="nav-item" data-section="citas"><i class="fa-solid fa-calendar-check"></i><span>Mis Citas</span></a>
+            <a href="#" class="nav-item" data-section="recetas"><i class="fa-solid fa-file-medical"></i><span>Mis Recetas</span></a>
+            <a href="#" class="nav-item" data-section="favoritos"><i class="fa-solid fa-heart"></i><span>Favoritos</span></a>
+        </nav>
+        
+        <div class="sidebar-footer">
+            <a href="inicio.html" class="store-btn"><i class="fa-solid fa-store"></i><span>Ir a la Tienda</span></a>
+            <a href="inicio-sesion.html" class="logout-btn" id="logoutBtn"><i class="fa-solid fa-right-from-bracket"></i><span>Cerrar Sesión</span></a>
+        </div>
+    </aside>
+
+    <!-- Contenido Principal -->
+    <main class="main-content">
+        
+        <!-- Top Bar -->
+        <header class="top-bar">
+            <div class="topbar-left">
+                <button class="menu-toggle" id="menuToggle"><i class="fa-solid fa-bars"></i></button>
+                <div class="user-welcome">
+                    <span>Bienvenido, </span>
+                    <span class="user-name" id="userName">Usuario</span>
+                </div>
+            </div>
+            
+            <div class="top-bar-right">
+                <a href="carrito.html" class="cart-btn">
+                    <i class="fa-solid fa-shopping-cart"></i>
+                    <span class="cart-count" id="cartCount">0</span>
+                </a>
+                
+                <div class="user-avatar" id="userAvatar">U</div>
+            </div>
+        </header>
+        
+        <!-- ============ DASHBOARD ============ -->
+        <div class="section-content active" id="sec-dashboard">
+        <div class="dashboard-container">
+            <div class="page-header">
+                <div>
+                    <h1 class="page-title">Bienvenido a tu Panel</h1>
+                    <p class="page-subtitle">Gestiona tus compras, citas y recetas ópticas</p>
+                </div>
+            </div>
+            
+            <!-- Tarjetas de Información -->
+            <div class="info-grid">
+                <div class="info-card">
+                    <div class="info-icon"><i class="fa-solid fa-shopping-bag"></i></div>
+                    <div class="info-content">
+                        <h3>Mis Pedidos</h3>
+                        <p class="info-number" id="totalPedidos">0</p>
+                        <p class="info-label">pedidos realizados</p>
+                    </div>
+                </div>
+                
+                <div class="info-card">
+                    <div class="info-icon"><i class="fa-solid fa-calendar-check"></i></div>
+                    <div class="info-content">
+                        <h3>Próxima Cita</h3>
+                        <p class="info-number" id="proximaCita">--</p>
+                        <p class="info-label">agendada</p>
+                    </div>
+                </div>
+                
+                <div class="info-card">
+                    <div class="info-icon"><i class="fa-solid fa-file-medical"></i></div>
+                    <div class="info-content">
+                        <h3>Recetas Activas</h3>
+                        <p class="info-number" id="recetasActivas">0</p>
+                        <p class="info-label">recetas vigentes</p>
+                    </div>
+                </div>
+                
+                <div class="info-card">
+                    <div class="info-icon"><i class="fa-solid fa-heart"></i></div>
+                    <div class="info-content">
+                        <h3>Favoritos</h3>
+                        <p class="info-number" id="totalFavoritos">0</p>
+                        <p class="info-label">productos guardados</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Pedidos Recientes -->
+            <div class="content-section">
+                <div class="section-header">
+                    <h2 class="section-title"><i class="fa-solid fa-receipt"></i> Pedidos Recientes</h2>
+                    <a href="#" class="view-all-btn" data-goto="pedidos">Ver todos <i class="fa-solid fa-arrow-right"></i></a>
+                </div>
+                
+                <div class="orders-list">
+                    <div class="order-item">
+                        <div class="order-info">
+                            <div class="order-id">#PED-001</div>
+                            <div class="order-date">18 Sep 2026</div>
+                        </div>
+                        <div class="order-details">
+                            <h4>Montura clásica acetato negro</h4>
+                            <p class="order-status completed">Entregado</p>
+                        </div>
+                        <div class="order-amount">$ 180.000</div>
+                    </div>
+                    
+                    <div class="order-item">
+                        <div class="order-info">
+                            <div class="order-id">#PED-002</div>
+                            <div class="order-date">20 Sep 2026</div>
+                        </div>
+                        <div class="order-details">
+                            <h4>Gafa de sol aviador</h4>
+                            <p class="order-status processing">En proceso</p>
+                        </div>
+                        <div class="order-amount">$ 350.000</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Recomendaciones -->
+            <div class="content-section">
+                <div class="section-header">
+                    <h2 class="section-title"><i class="fa-solid fa-star"></i> Recomendado para ti</h2>
+                </div>
+                
+                <div class="products-grid">
+                    <div class="product-card">
+                        <div class="product-image">
+                            <img src="../imagenes/productos/gafas-modelo1.png" alt="Producto">
+                        </div>
+                        <div class="product-info">
+                            <h4>Montura metálica redonda</h4>
+                            <p class="product-price">$ 320.000</p>
+                            <button class="btn-view">Ver Detalles</button>
+                        </div>
+                    </div>
+                    
+                    <div class="product-card">
+                        <div class="product-image">
+                            <img src="../imagenes/productos/gafas-modelo2.png" alt="Producto">
+                        </div>
+                        <div class="product-info">
+                            <h4>Gafa de sol oversized</h4>
+                            <p class="product-price">$ 250.000</p>
+                            <button class="btn-view">Ver Detalles</button>
+                        </div>
+                    </div>
+                    
+                    <div class="product-card">
+                        <div class="product-image">
+                            <img src="../imagenes/productos/gafas-modelo3.png" alt="Producto">
+                        </div>
+                        <div class="product-info">
+                            <h4>Lente oftálmico antireflejo</h4>
+                            <p class="product-price">$ 220.000</p>
+                            <button class="btn-view">Ver Detalles</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        </div>
+
+        <!-- ============ PERFIL ============ -->
+        <div class="section-content" id="sec-perfil">
+        <div class="dashboard-container">
+            <div class="page-header">
+                <div>
+                    <h1 class="page-title">Mi Perfil</h1>
+                    <p class="page-subtitle">Actualiza tu información personal</p>
+                </div>
+                <button class="btn-primary"><i class="fa-solid fa-save"></i> Guardar Cambios</button>
+            </div>
+            
+            <div class="profile-section">
+                <div class="profile-card">
+                    <div class="profile-header">
+                        <div class="profile-avatar-large" id="profileAvatarLarge">U</div>
+                        <button class="btn-change-avatar"><i class="fa-solid fa-camera"></i> Cambiar Foto</button>
+                    </div>
+                    
+                    <form class="profile-form">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Nombre</label>
+                                <input type="text" id="profileNombre" value="Usuario">
+                            </div>
+                            <div class="form-group">
+                                <label>Apellido</label>
+                                <input type="text" id="profileApellido" value="Demo">
+                            </div>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Tipo Documento</label>
+                                <select id="profileTipoDoc">
+                                    <option value="C.C.">C.C.</option>
+                                    <option value="T.I.">T.I.</option>
+                                    <option value="C.E.">C.E.</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Número Documento</label>
+                                <input type="text" id="profileDocumento" value="123456789">
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Teléfono</label>
+                            <input type="tel" id="profileTelefono" value="3001234567">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Correo Electrónico</label>
+                            <input type="email" id="profileCorreo" value="usuario@ejemplo.com">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Dirección</label>
+                            <input type="text" id="profileDireccion" value="Calle 123 # 45-67">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Fecha de Nacimiento</label>
+                            <input type="date" id="profileFechaNacimiento">
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        </div>
+
+        <!-- ============ PEDIDOS ============ -->
+        <div class="section-content" id="sec-pedidos">
+        <div class="dashboard-container">
+            <div class="page-header">
+                <div>
+                    <h1 class="page-title">Mis Pedidos</h1>
+                    <p class="page-subtitle">Historial completo de tus compras</p>
+                </div>
+            </div>
+            
+            <div class="orders-full-list">
+                <div class="order-card">
+                    <div class="order-header">
+                        <div class="order-id">#PED-001</div>
+                        <div class="order-date">18 Sep 2026</div>
+                        <span class="order-status completed">Entregado</span>
+                    </div>
+                    <div class="order-body">
+                        <div class="order-products">
+                            <div class="order-product">
+                                <img src="../imagenes/productos/gafas-modelo1.png" alt="Producto">
+                                <div class="product-details">
+                                    <h4>Montura clásica acetato negro</h4>
+                                    <p>Cantidad: 1</p>
+                                    <p class="price">$ 180.000</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="order-total">
+                            <span>Total:</span>
+                            <span class="total-amount">$ 180.000</span>
+                        </div>
+                    </div>
+                    <div class="order-footer">
+                        <button class="btn-secondary">Ver Detalles</button>
+                        <button class="btn-primary">Comprar de Nuevo</button>
+                    </div>
+                </div>
+                
+                <div class="order-card">
+                    <div class="order-header">
+                        <div class="order-id">#PED-002</div>
+                        <div class="order-date">20 Sep 2026</div>
+                        <span class="order-status processing">En proceso</span>
+                    </div>
+                    <div class="order-body">
+                        <div class="order-products">
+                            <div class="order-product">
+                                <img src="../imagenes/productos/gafas-modelo2.png" alt="Producto">
+                                <div class="product-details">
+                                    <h4>Gafa de sol aviador</h4>
+                                    <p>Cantidad: 1</p>
+                                    <p class="price">$ 350.000</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="order-total">
+                            <span>Total:</span>
+                            <span class="total-amount">$ 350.000</span>
+                        </div>
+                    </div>
+                    <div class="order-footer">
+                        <button class="btn-secondary">Seguimiento</button>
+                        <button class="btn-secondary">Cancelar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        </div>
+
+        <!-- ============ CITAS ============ -->
+        <div class="section-content" id="sec-citas">
+        <div class="dashboard-container">
+            <div class="page-header">
+                <div>
+                    <h1 class="page-title">Mis Citas</h1>
+                    <p class="page-subtitle">Gestiona tus citas ópticas</p>
+                </div>
+                <button class="btn-primary"><i class="fa-solid fa-calendar-plus"></i> Nueva Cita</button>
+            </div>
+            
+            <div class="appointments-list">
+                <div class="appointment-card">
+                    <div class="appointment-date">
+                        <div class="date-day">15</div>
+                        <div class="date-month">Sep</div>
+                        <div class="date-year">2026</div>
+                    </div>
+                    <div class="appointment-info">
+                        <h4>Examen de la Vista</h4>
+                        <p><i class="fa-solid fa-clock"></i> 10:00 AM</p>
+                        <p><i class="fa-solid fa-user-doctor"></i> Dr. María González</p>
+                        <span class="appointment-status upcoming">Próxima</span>
+                    </div>
+                    <div class="appointment-actions">
+                        <button class="btn-secondary">Reprogramar</button>
+                        <button class="btn-danger">Cancelar</button>
+                    </div>
+                </div>
+                
+                <div class="appointment-card">
+                    <div class="appointment-date">
+                        <div class="date-day">01</div>
+                        <div class="date-month">Aug</div>
+                        <div class="date-year">2026</div>
+                    </div>
+                    <div class="appointment-info">
+                        <h4>Entrega de Lentes</h4>
+                        <p><i class="fa-solid fa-clock"></i> 3:00 PM</p>
+                        <p><i class="fa-solid fa-store"></i> Boutique Central</p>
+                        <span class="appointment-status completed">Completada</span>
+                    </div>
+                    <div class="appointment-actions">
+                        <button class="btn-secondary">Ver Detalles</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        </div>
+
+        <!-- ============ RECETAS ============ -->
+        <div class="section-content" id="sec-recetas">
+        <div class="dashboard-container">
+            <div class="page-header">
+                <div>
+                    <h1 class="page-title">Mis Recetas</h1>
+                    <p class="page-subtitle">Tus recetas ópticas vigentes</p>
+                </div>
+            </div>
+            
+            <div class="prescriptions-list">
+                <div class="prescription-card">
+                    <div class="prescription-header">
+                        <div class="prescription-icon"><i class="fa-solid fa-file-medical"></i></div>
+                        <div class="prescription-info">
+                            <h4>Receta #001</h4>
+                            <p>Expedida: 01 Ago 2026</p>
+                            <p>Vence: 01 Ago 2027</p>
+                        </div>
+                        <span class="prescription-status active">Vigente</span>
+                    </div>
+                    <div class="prescription-details">
+                        <div class="eye-data">
+                            <h5>Ojo Derecho</h5>
+                            <p>Esférico: -2.50</p>
+                            <p>Cilíndrico: -0.75</p>
+                            <p>Eje: 90°</p>
+                        </div>
+                        <div class="eye-data">
+                            <h5>Ojo Izquierdo</h5>
+                            <p>Esférico: -2.75</p>
+                            <p>Cilíndrico: -0.50</p>
+                            <p>Eje: 85°</p>
+                        </div>
+                    </div>
+                    <div class="prescription-footer">
+                        <button class="btn-secondary"><i class="fa-solid fa-download"></i> Descargar</button>
+                        <button class="btn-secondary"><i class="fa-solid fa-print"></i> Imprimir</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        </div>
+
+        <!-- ============ FAVORITOS ============ -->
+        <div class="section-content" id="sec-favoritos">
+        <div class="dashboard-container">
+            <div class="page-header">
+                <div>
+                    <h1 class="page-title">Mis Favoritos</h1>
+                    <p class="page-subtitle">Productos que has guardado</p>
+                </div>
+            </div>
+            
+            <div class="favorites-grid">
+                <div class="favorite-card">
+                    <div class="favorite-image">
+                        <img src="../imagenes/productos/gafas-modelo1.png" alt="Producto">
+                        <button class="btn-remove-fav"><i class="fa-solid fa-heart"></i></button>
+                    </div>
+                    <div class="favorite-info">
+                        <h4>Montura metálica redonda</h4>
+                        <p class="favorite-price">$ 320.000</p>
+                        <button class="btn-primary">Añadir al Carrito</button>
+                    </div>
+                </div>
+                
+                <div class="favorite-card">
+                    <div class="favorite-image">
+                        <img src="../imagenes/productos/gafas-modelo2.png" alt="Producto">
+                        <button class="btn-remove-fav"><i class="fa-solid fa-heart"></i></button>
+                    </div>
+                    <div class="favorite-info">
+                        <h4>Gafa de sol oversized</h4>
+                        <p class="favorite-price">$ 250.000</p>
+                        <button class="btn-primary">Añadir al Carrito</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        </div>
+
+    </main>
+
+    <script src="../scripts/session-manager.js"></script>
+    <script src="../scripts/user-navigation.js"></script>
+    <script src="../scripts/intro-animacion.js"></script>
+    <script>
+        // Datos de ejemplo (en producción vendrían de la base de datos)
+        const userData = {
+            nombre: 'Usuario',
+            apellido: 'Demo',
+            totalPedidos: 2,
+            proximaCita: '15 Sep 2026',
+            recetasActivas: 1,
+            totalFavoritos: 2
+        };
+
+        // Cargar datos del usuario
+        document.getElementById('userName').textContent = userData.nombre;
+        document.getElementById('userAvatar').textContent = userData.nombre.charAt(0).toUpperCase();
+        document.getElementById('profileAvatarLarge').textContent = userData.nombre.charAt(0).toUpperCase();
+        
+        document.getElementById('totalPedidos').textContent = userData.totalPedidos;
+        document.getElementById('proximaCita').textContent = userData.proximaCita;
+        document.getElementById('recetasActivas').textContent = userData.recetasActivas;
+        document.getElementById('totalFavoritos').textContent = userData.totalFavoritos;
+        
+        // Cargar datos del perfil
+        document.getElementById('profileNombre').value = userData.nombre;
+        document.getElementById('profileApellido').value = userData.apellido;
+        
+        // Sidebar móvil
+        document.getElementById('menuToggle').addEventListener('click', () => {
+            document.getElementById('sidebar').classList.add('open');
+        });
+        
+        document.getElementById('sidebarClose').addEventListener('click', () => {
+            document.getElementById('sidebar').classList.remove('open');
+        });
+    </script>
+</body>
+</html>

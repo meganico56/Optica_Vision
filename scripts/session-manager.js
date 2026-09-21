@@ -29,6 +29,13 @@ document.addEventListener('DOMContentLoaded', () => {
                     li.innerHTML = '<a href="panel-admin.html" style="color: var(--gold);"><i class="fa-solid fa-chart-pie"></i> PANEL ADMIN</a>';
                     link.parentElement.insertAdjacentElement('beforebegin', li);
                 }
+                
+                // Si es cliente, agregar enlace al Panel de Usuario
+                if (userData.rol === 'cliente') {
+                    const li = document.createElement('li');
+                    li.innerHTML = '<a href="panel-usuario.html" style="color: var(--gold);"><i class="fa-solid fa-user"></i> MI PANEL</a>';
+                    link.parentElement.insertAdjacentElement('beforebegin', li);
+                }
             }
         });
 

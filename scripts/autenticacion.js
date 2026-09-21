@@ -23,7 +23,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const usuarios = [
         { email: 'admin@admin.com', pass: 'admin', rol: 'admin', url: 'panel-admin.html' },
         { email: 'empleado@empleado.com', pass: 'empleado', rol: 'empleado', url: 'inicio.html' },
-        { email: 'cliente@cliente.com', pass: 'cliente', rol: 'cliente', url: 'inicio.html' }
+        { email: 'cliente@cliente.com', pass: 'cliente', rol: 'cliente', url: 'panel-usuario.html' }
     ];
 
     if(btnLogin) {

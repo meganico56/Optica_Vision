@@ -10,18 +10,20 @@
 //   - En panel de administrador siempre se muestra, en otras páginas solo al recargar
 
 document.addEventListener('DOMContentLoaded', () => {
-    // Detectar si estamos en el panel de administrador (cualquier sección)
+    // Detectar si estamos en el panel de administrador o panel de usuario (cualquier sección)
     const currentPath = window.location.pathname;
     const isAdminPanel = currentPath.includes('panel-admin.html') || currentPath.includes('panel-admin');
+    const isUserPanel = currentPath.includes('panel-usuario.html') || currentPath.includes('panel-usuario');
+    const isPanelPage = isAdminPanel || isUserPanel;
 
-    // Verificar si ya se mostró la animación en esta sesión (solo para páginas no-admin)
-    if (!isAdminPanel) {
+    // Verificar si ya se mostró la animación en esta sesión (solo para páginas no-panel)
+    if (!isPanelPage) {
         const introShown = sessionStorage.getItem('introAnimationShown');
         if (introShown) {
             return; // No mostrar animación si ya se mostró en esta sesión
         }
     } else {
-        // En panel de administrador, siempre limpiar el flag para asegurar que se muestre
+        // En panel de administrador o usuario, siempre limpiar el flag para asegurar que se muestre
         sessionStorage.removeItem('introAnimationShown');
     }
 
