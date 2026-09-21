@@ -8,7 +8,7 @@
   --border: #e8e8e8;
   --bg: #ffffff;
 
-  /* Helper & Mapped Tokens */
+  /* Tokens auxiliares y asignados */
   --gold-light: #e5c96d;
   --gold-glow: rgba(204, 164, 59, 0.35);
   --gold-subtle: rgba(204, 164, 59, 0.12);
@@ -24,9 +24,7 @@
   --gold-glow: rgba(204, 164, 59, 0.15);
 }
 
-/* ============================================================
-   PREVENIR CURSOR Y ENTRADA DE TEXTO AL HACER CLIC EN LA PÁGINA
-   ============================================================ */
+/* Prevenir el cursor y la entrada de texto al hacer clic en la página */
 html, body {
   user-select: none;
   -webkit-user-select: none;
@@ -35,7 +33,7 @@ html, body {
   caret-color: transparent !important;
 }
 
-/* Permitir cursor de texto ÚNICAMENTE en inputs y campos editables al estar enfocados */
+/* Solo se puede usar el cursor de texto en inputs y campos editables  */
 input[type="text"]:focus,
 input[type="email"]:focus,
 input[type="password"]:focus,
@@ -99,9 +97,7 @@ button, input, select, textarea {
   outline: none;
 }
 
-/* ==========================================
-   HEADER Y NAVBAR UNIFICADOS (Buscador Catálogo + Selección/Hover Inicio)
-   ========================================== */
+/* El headery el Navbar unificado Buscador catalogo mas hover de inicio */
 .site-header, .navbar, header {
   display: flex;
   justify-content: space-between;
@@ -211,7 +207,7 @@ body.dark-mode header {
   transform: scale(1.05);
 }
 
-/* Navegación y Subrayado Animado Estilo Inicio */
+/* El estilo de animación y subrayado animado uwu */
 .navbar-menu, .main-nav .nav-list, nav ul, .men_nv {
   display: flex;
   align-items: center;
@@ -258,7 +254,7 @@ body.dark-mode header {
   width: 100% !important;
 }
 
-/* Common utilities */
+/* Los servicios comunes */
 .text-gold {
   color: var(--gold) !important;
 }
@@ -307,7 +303,7 @@ body.dark-mode header {
 }
 
 
-/* === START OF SPECIFIC PAGE STYLES === */
+/* Inicio de estilos especificos de la paginita */
 
 :root{
   --cream:      #ffffff;
@@ -360,16 +356,14 @@ button{ font-family:inherit; cursor:pointer; }
 }
 .back-link:hover{ border-color: var(--gold); color: var(--gold); }
 
-/* =========================================================
-   LAYOUT — split asimétrico
-   ========================================================= */
+/* La distribucion dividisa asimetrica */
 .checkout{
   min-height: 100vh;
   display: grid;
   grid-template-columns: 42% 58%;
 }
 
-/* ---------- panel editorial ---------- */
+/* El panel de editorial */
 .checkout-summary{
   position: relative;
   background: linear-gradient(165deg, var(--ink-black) 0%, var(--ink-black-2) 100%);
@@ -499,7 +493,7 @@ button{ font-family:inherit; cursor:pointer; }
   max-width: 380px;
 }
 
-/* ---------- formulario ---------- */
+/* El formulario de checkout */
 .checkout-form-wrap{
   padding: 110px 8vw 90px 7vw;
   max-width: 760px;
@@ -589,7 +583,7 @@ button{ font-family:inherit; cursor:pointer; }
   color: var(--gold);
 }
 
-/* ---------- opciones tipo choice ---------- */
+/* las opciones de elección */
 .choice-row{
   display:flex;
   flex-wrap: wrap;
@@ -616,7 +610,7 @@ button{ font-family:inherit; cursor:pointer; }
 }
 .choice span::before{ content:none; }
 
-/* ---------- fórmula óptica ---------- */
+/* La formula de optica */
 .prescription-block{
   border: 1px dashed rgba(201,162,39,0.4);
   border-radius: 16px;
@@ -678,7 +672,7 @@ button{ font-family:inherit; cursor:pointer; }
 
 .prescription-block[data-visible="false"]{ display:none; }
 
-/* ---------- pago / envío ---------- */
+/* pagos y envios */
 .choice-row--payment .choice{ flex: 1 1 200px; text-align:center; justify-content:center; }
 
 .terms{
@@ -718,7 +712,7 @@ button{ font-family:inherit; cursor:pointer; }
   margin-top: 30px;
 }
 
-/* ---------- confirmación ---------- */
+/* el mensaje de confirmación */
 .confirmation{
   max-width: 520px;
   padding-top: 40px;
@@ -755,9 +749,7 @@ button{ font-family:inherit; cursor:pointer; }
   color: var(--ink-soft);
 }
 
-/* =========================================================
-   RESPONSIVE
-   ========================================================= */
+/* El hermoso responsive */
 @media (max-width: 980px){
   .checkout{ grid-template-columns: 1fr; }
   .checkout-summary{ padding: 88px 32px 40px; }
