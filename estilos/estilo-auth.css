@@ -1,4 +1,97 @@
-@import url('global.css');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Montserrat:wght@400;500;600;700;800&display=swap');
+
+:root {
+  --gold: #cca43b;
+  --gold-dark: #b08c2f;
+  --text-dark: #222222;
+  --text-muted: #555555;
+  --border: #e8e8e8;
+  --bg: #ffffff;
+  --gold-light: #e5c96d;
+  --gold-glow: rgba(204, 164, 59, 0.35);
+  --gold-subtle: rgba(204, 164, 59, 0.12);
+  --font-title: 'Montserrat', sans-serif;
+  --font-body: 'Inter', sans-serif;
+}
+
+:root.dark-mode, body.dark-mode {
+  --text-dark: #f0f0f0;
+  --text-muted: #aaaaaa;
+  --border: #333333;
+  --bg: #121212;
+  --gold-glow: rgba(204, 164, 59, 0.15);
+}
+
+html, body {
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  caret-color: transparent !important;
+}
+
+input[type="text"]:focus,
+input[type="email"]:focus,
+input[type="password"]:focus,
+input[type="tel"]:focus,
+input[type="number"]:focus,
+input[type="search"]:focus,
+textarea:focus,
+.busc:focus,
+[contenteditable="true"]:focus {
+  caret-color: var(--text-dark) !important;
+  user-select: text !important;
+  -webkit-user-select: text !important;
+}
+
+*, *::before, *::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+*:focus, *:focus-visible, *:active {
+  outline: none !important;
+}
+
+body {
+  font-family: var(--font-body);
+  color: var(--text-dark);
+  background-color: var(--bg);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-title);
+  color: var(--text-dark);
+  font-weight: 600;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+  transition: color 0.3s ease, transform 0.3s ease;
+  outline: none;
+}
+
+ul, ol {
+  list-style: none;
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-user-drag: none;
+  outline: none;
+}
+
+button, input, select, textarea {
+  font-family: var(--font-body);
+  outline: none;
+}
 
 /* Apartado de autenticacion y de registro */
 
