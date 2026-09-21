@@ -123,29 +123,6 @@ body.dark-mode header {
   background: rgba(18, 18, 18, 0.95);
 }
 
-.theme-toggle-btn {
-  background: none;
-  border: 1px solid var(--border);
-  color: var(--text-dark);
-  font-size: 1.2rem;
-  cursor: pointer;
-  border-radius: 50%;
-  width: 40px;
-  height: 40px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.3s ease;
-  margin-left: 10px;
-}
-
-.theme-toggle-btn:hover {
-  background: var(--gold);
-  color: white;
-  border-color: var(--gold);
-  box-shadow: 0 0 10px var(--gold-glow);
-}
-
 .logo img, .logo-icon {
   height: 55px;
   width: auto;
