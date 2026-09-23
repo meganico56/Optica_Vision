@@ -291,13 +291,13 @@ textarea {
   width: 100%;
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
+  gap: 1.5rem;
   margin-bottom: 1.25rem;
 }
 
 .fila {
   display: flex;
-  gap: 0.75rem;
+  gap: 1.25rem;
   width: 100%;
 }
 
@@ -378,7 +378,7 @@ textarea {
   background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%);
   color: #ffffff;
   box-shadow: 0 8px 20px var(--gold-glow);
-  margin-bottom: 1rem;
+  margin-bottom: 1.5rem;
 }
 
 .iniciar:hover {
@@ -394,7 +394,7 @@ textarea {
   display: flex;
   align-items: center;
   width: 100%;
-  margin: 1.5rem 0;
+  margin: 2rem 0;
   color: var(--text-muted);
 }
 .divider::before,
@@ -412,9 +412,9 @@ textarea {
 
 .social-login {
   display: flex;
-  gap: 1rem;
+  gap: 3.5rem;
   width: 100%;
-  margin-bottom: 2rem;
+  margin-bottom: 2.5rem;
 }
 
 .google,
