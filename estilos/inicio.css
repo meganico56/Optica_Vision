@@ -102,7 +102,7 @@ button, input, select, textarea {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 1rem 5%;
+  padding: 1.2rem 5%;
   background: rgba(255, 255, 255, 0.95);
   backdrop-filter: blur(10px);
   border-bottom: 1px solid var(--border);
@@ -188,7 +188,7 @@ body.dark-mode header {
 .navbar-menu, .main-nav .nav-list, nav ul, .men_nv {
   display: flex;
   align-items: center;
-  gap: 1.8rem;
+  gap: 2rem;
   list-style: none;
 }
 
@@ -211,12 +211,17 @@ body.dark-mode header {
   content: '';
   position: absolute;
   left: 0;
-  bottom: -4px;
+  bottom: -6px;
   width: 0;
   height: 2px;
   background: var(--gold);
   transition: width 0.3s ease;
   border-radius: 2px;
+}
+
+.navbar-menu li a i, .main-nav .nav-list li a i, nav ul li a i, .men_nv li a i {
+  font-size: 1.1rem;
+  margin-right: 2px;
 }
 
 .navbar-menu li a:hover, .main-nav .nav-list li a:hover, nav ul li a:hover, .men_nv li a:hover,
@@ -307,21 +312,6 @@ body {
     min-height: 100vh;
 }
 
-/* NAVBAR */
-.navbar {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 1.2rem 5%;
-    border-bottom: 1px solid rgba(204, 164, 59, 0.3);
-    position: sticky;
-    top: 0;
-    z-index: 100;
-    background: rgba(255, 255, 255, 0.85);
-    backdrop-filter: blur(10px);
-    transition: all 0.3s ease;
-}
-
 .logo {
     display: flex;
     align-items: center;
@@ -350,40 +340,6 @@ body {
     height: 3px;
     background: var(--gold);
     border-radius: 5px;
-}
-
-.navbar-menu {
-    display: flex;
-    gap: 2rem;
-}
-
-.navbar-menu li a {
-    position: relative;
-    color: var(--text-dark);
-    font-family: var(--font-title);
-    font-size: 0.85rem;
-    font-weight: 600;
-    letter-spacing: 0.5px;
-    transition: color 0.3s ease;
-}
-
-.navbar-menu li a::after {
-    content: '';
-    position: absolute;
-    left: 0;
-    bottom: -6px;
-    width: 0;
-    height: 2px;
-    background: var(--gold);
-    transition: width 0.3s ease;
-}
-
-.navbar-menu li a:hover {
-    color: var(--gold);
-}
-
-.navbar-menu li a:hover::after {
-    width: 100%;
 }
 
 /* HERO */
@@ -514,10 +470,6 @@ body {
     z-index: 2;
     animation: rotateGlasses 12s linear infinite;
     filter: drop-shadow(0 30px 25px rgba(0,0,0,0.15));
-}
-
-.glasses-model:hover {
-    animation-play-state: paused;
 }
 
 .podium {
