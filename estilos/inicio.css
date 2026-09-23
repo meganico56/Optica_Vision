@@ -223,6 +223,11 @@ body.dark-mode header {
   border-radius: 2px;
 }
 
+.navbar-menu li a i, .main-nav .nav-list li a i, nav ul li a i, .men_nv li a i {
+  font-size: 1.1rem;
+  margin-right: 2px;
+}
+
 .navbar-menu li a:hover, .main-nav .nav-list li a:hover, nav ul li a:hover, .men_nv li a:hover,
 .navbar-menu li a.activo, .main-nav .nav-list li a.activo, nav ul li a.activo, .men_nv li a.activo {
   color: var(--gold) !important;
@@ -469,10 +474,6 @@ body {
     z-index: 2;
     animation: rotateGlasses 12s linear infinite;
     filter: drop-shadow(0 30px 25px rgba(0,0,0,0.15));
-}
-
-.glasses-model:hover {
-    animation-play-state: paused;
 }
 
 .podium {
