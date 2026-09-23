@@ -8,7 +8,7 @@
   --border: #e8e8e8;
   --bg: #ffffff;
 
-  /* Helper & Mapped Tokens */
+  /* Tokens auxiliares y asignados  */
   --gold-light: #e5c96d;
   --gold-glow: rgba(204, 164, 59, 0.35);
   --gold-subtle: rgba(204, 164, 59, 0.12);
@@ -24,9 +24,7 @@
   --gold-glow: rgba(204, 164, 59, 0.15);
 }
 
-/* ============================================================
-   PREVENIR CURSOR Y ENTRADA DE TEXTO AL HACER CLIC EN LA PÁGINA
-   ============================================================ */
+/* prevenir cursor y entrada de texto al iniciar la pagina */
 html, body {
   user-select: none;
   -webkit-user-select: none;
@@ -35,7 +33,7 @@ html, body {
   caret-color: transparent !important;
 }
 
-/* Permitir cursor de texto ÚNICAMENTE en inputs y campos editables al estar enfocados */
+/* Permitir cursor de texto solamente en inputs y campos editables */
 input[type="text"]:focus,
 input[type="email"]:focus,
 input[type="password"]:focus,
@@ -99,9 +97,7 @@ button, input, select, textarea {
   outline: none;
 }
 
-/* ==========================================
-   HEADER Y NAVBAR UNIFICADOS (Buscador Catálogo + Selección/Hover Inicio)
-   ========================================== */
+/* El header y navbar modificado buscador de catalogo y el selector de busqueda de inicio */
 .site-header, .navbar, header {
   display: flex;
   justify-content: space-between;
@@ -133,7 +129,7 @@ body.dark-mode header {
   user-select: none;
 }
 
-/* Buscador Estilo Catálogo */
+/* El buscador al estilo catalogo  */
 .buscador {
   display: flex;
   align-items: center;
@@ -235,7 +231,7 @@ body.dark-mode header {
   width: 100% !important;
 }
 
-/* Common utilities */
+/* Con carino mis servicios comunes */
 .text-gold {
   color: var(--gold) !important;
 }
@@ -284,9 +280,9 @@ body.dark-mode header {
 }
 
 
-/* === START OF SPECIFIC PAGE STYLES === */
+/* El estilo de la pagina especifica */
 
-/* VARIABLES DE PÁGINA */
+/* Las variables ajustadas */
 :root {
     --gold: #cca43b;
     --gold-dark: #b08c2f;

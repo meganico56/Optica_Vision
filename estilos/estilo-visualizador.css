@@ -8,7 +8,7 @@
   --border: #e8e8e8;
   --bg: #ffffff;
 
-   /* Lo mismo para los tokens auxiliares y asignados */
+  /* Tokens auxiliares y asignados  */
   --gold-light: #e5c96d;
   --gold-glow: rgba(204, 164, 59, 0.35);
   --gold-subtle: rgba(204, 164, 59, 0.12);
@@ -258,7 +258,7 @@ body.dark-mode header {
   width: 100% !important;
 }
 
-/* Common utilities */
+/* Servicios coumnes */
 .text-gold {
   color: var(--gold) !important;
 }
@@ -307,15 +307,11 @@ body.dark-mode header {
 }
 
 
-/* === START OF SPECIFIC PAGE STYLES === */
+/* El inicio de estilos especificos de una pagina */
 
-/* ═══════════════════════════════════════════════════════════
-   BOUTIQUE DE LA VISIÓN — Visualizador de Producto
-   Sistema de Temas: Claro (default) · Oscuro (.dark-mode)
-   Paleta: Blanco · Dorado #cca43b / #b08c2f · Negro #222222 · Gris #555555
-   ═══════════════════════════════════════════════════════════ */
+/* sistema general de temas y configuración */
 
-/* ── Variables base ───────────────────────────────────────── */
+/* Las variables base */
 :root {
   --gold:        #cca43b;
   --gold-dark:   #b08c2f;
@@ -335,7 +331,7 @@ body.dark-mode header {
   --ease:        cubic-bezier(0.4, 0, 0.2, 1);
   --transition:  all 0.35s var(--ease);
 
-  /* ── Tokens modo CLARO (default) ─────────────────────────── */
+  /* Los tokens para el modo claro por default */
   --vignette:        linear-gradient(160deg, rgba(255,253,248,0.57) 0%, rgba(255,253,248,0.45) 45%, rgba(255,253,248,0.58) 100%);
   --text-hero:       var(--ink);
   --text-body:       var(--ink-soft);
@@ -367,7 +363,7 @@ body.dark-mode header {
   --qty-bg:          rgba(255,255,255,0.85);
 }
 
-/* ── Tokens modo OSCURO ───────────────────────────────────── */
+/* Los tokens para el modo oscuro */
 body.dark-mode {
   --vignette:        linear-gradient(160deg, rgba(14,13,11,0.76) 0%, rgba(14,13,11,0.60) 45%, rgba(14,13,11,0.80) 100%);
   --text-hero:       #ffffff;
@@ -402,13 +398,11 @@ body.dark-mode {
 
 /* Podios en Modo Oscuro eliminados para heredar el estilo claro */
 
-/* ── Reset ──────────────────────────────────────────────────── */
+/* Un potente Reset */
 *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
 html { scroll-behavior: smooth; }
 
-/* ══════════════════════════════════════════════════════════════
-   BODY + FONDO (fondo-boutique.png siempre presente)
-   ══════════════════════════════════════════════════════════════ */
+/* el body y el fondo we */
 body {
   font-family: var(--font-sans);
   color: var(--ink);
@@ -426,7 +420,7 @@ body::before {
   background-attachment: fixed;
   z-index: 0;
 }
-/* Viñeta + Aura activa sutil para el fondo */
+/* Viñeta y Aura activa sutil para el fondo */
 body::after {
   content: '';
   position: fixed; inset: 0;
@@ -443,14 +437,10 @@ body::after {
 }
 body > * { position: relative; z-index: 1; }
 
-/* ══════════════════════════════════════════════════════════════
-   HEADER — Blanco glass (funciona en ambos modos)
-   ══════════════════════════════════════════════════════════════ */
+/* Header blanco que funciona para ambos modos */
 /* Header unificado gestionado por global.css */
 
-/* ══════════════════════════════════════════════════════════════
-   BREADCRUMB
-   ══════════════════════════════════════════════════════════════ */
+/* BREADCRUMB */
 .breadcrumb-bar {
   display:flex; align-items:center; gap:8px;
   padding:18px 64px; max-width:1500px; margin:0 auto;
@@ -461,15 +451,13 @@ body > * { position: relative; z-index: 1; }
 .breadcrumb-bar span { color:var(--gold); font-weight:700; }
 .sep { font-size:9px; color:var(--gold); }
 
-/* ══════════════════════════════════════════════════════════════
-   MAIN VIEWER
-   ══════════════════════════════════════════════════════════════ */
+/* El main Viewer */
 .product-viewer {
   display:grid; grid-template-columns:1.05fr 1fr;
   gap:48px; max-width:1320px; margin:0 auto; padding:0 64px 80px; align-items:start;
 }
 
-/* ─── GALERÍA ────────────────────────────────────────────────── */
+/* La galeria */
 .col-gallery { display:flex; flex-direction:column; gap:20px; position:sticky; top:90px; }
 
 /* Prevenir línea/cursor de texto al hacer clic en imágenes */
@@ -598,9 +586,7 @@ body > * { position: relative; z-index: 1; }
 }
 .activate-camera:hover { background:var(--gold); color:var(--ink); }
 
-/* ══════════════════════════════════════════════════════════════
-   VIRTUAL TRY-ON — Cámara + estados activos
-   ══════════════════════════════════════════════════════════════ */
+/* Virtual Try on de camara y de estados activos */
 .camera-feed {
   position:absolute;inset:0; width:100%;height:100%; object-fit:cover;
   border-radius:22px; opacity:0; transform:scaleX(-1) scale(1.04);
@@ -680,7 +666,7 @@ body > * { position: relative; z-index: 1; }
 }
 .model-card.active span { color:var(--gold); font-weight:900; }
 
-/* ─── COLUMNA INFO ───────────────────────────────────────────── */
+/* Columna de información */
 .col-info { display:flex;flex-direction:column;gap:26px;padding-top:6px; }
 
 .brand-chip {
@@ -770,9 +756,9 @@ body > * { position: relative; z-index: 1; }
   width:58px;height:44px;border:none;
   border-left:1.5px solid rgba(189,162,41,0.3);border-right:1.5px solid rgba(189,162,41,0.3);
   text-align:center;font-size:16px;font-weight:800;color:var(--qty-color);
-  background:transparent;outline:none;-moz-appearance:textfield;
+  background:transparent;outline:none;-moz-appearance:textfield;appearance:textfield;
 }
-.qty-input::-webkit-outer-spin-button, .qty-input::-webkit-inner-spin-button { -webkit-appearance:none; }
+.qty-input::-webkit-outer-spin-button, .qty-input::-webkit-inner-spin-button { -webkit-appearance:none; appearance:none; }
 
 /* Botones acción */
 .action-group { display:flex;gap:12px; }
@@ -793,7 +779,7 @@ body > * { position: relative; z-index: 1; }
 }
 .btn-buy:hover { transform:translateY(-3px);box-shadow:0 10px 34px var(--gold-glow);filter:brightness(1.08); }
 
-/* Features */
+/* Características */
 .features-strip {
   display:flex;border:1px solid var(--panel-border);border-radius:var(--radius-sm);
   overflow:hidden;background:var(--feature-bg);backdrop-filter:blur(8px);
@@ -808,9 +794,7 @@ body > * { position: relative; z-index: 1; }
 .feature-item i { font-size:20px;color:var(--gold); }
 .feature-item span { font-size:11px;font-weight:700;color:var(--feature-text);line-height:1.35; }
 
-/* ══════════════════════════════════════════════════════════════
-   PRODUCTOS RELACIONADOS
-   ══════════════════════════════════════════════════════════════ */
+/* Productos relacionados */
 .related-section { padding:50px 64px 80px;max-width:1500px;margin:0 auto; }
 .related-header { display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:34px; }
 .related-title {
@@ -876,9 +860,7 @@ body > * { position: relative; z-index: 1; }
 .rel-btn { width:100%;background:transparent;border:2px solid var(--ink);color:var(--ink);padding:9px 16px;border-radius:var(--radius-sm);font-size:11.5px;font-weight:900;letter-spacing:1px;text-transform:uppercase;cursor:pointer;transition:var(--transition); }
 .rel-btn:hover { background:var(--ink);color:var(--gold); }
 
-/* ══════════════════════════════════════════════════════════════
-   FOOTER — Siempre oscuro (intencional)
-   ══════════════════════════════════════════════════════════════ */
+/* Un footer siempre oscuro XD */
 footer {
     border-top: 1px solid var(--border);
     background: rgba(255, 255, 255, 0.75);
@@ -970,9 +952,7 @@ footer {
     text-align: center;
     font-family: var(--font-body);
 }
-/* ══════════════════════════════════════════════════════════════
-   ZOOM MODAL + TOAST
-   ══════════════════════════════════════════════════════════════ */
+/* El zoom modal y el toast */
 .zoom-modal { position:fixed;inset:0;z-index:9000;background:rgba(0,0,0,0.93);display:flex;align-items:center;justify-content:center;padding:32px;backdrop-filter:blur(10px);transition:opacity .3s ease,visibility .3s; }
 .zoom-modal.hidden { opacity:0;pointer-events:none;visibility:hidden; }
 .zoom-modal img { max-width:80vw;max-height:80vh;object-fit:contain;border-radius:var(--radius);box-shadow:var(--shadow-deep); }
@@ -991,9 +971,7 @@ footer {
 .toast.show { transform:translateY(0);opacity:1; }
 .toast i { color:var(--gold);font-size:17px; }
 
-/* ══════════════════════════════════════════════════════════════
-   RESPONSIVE
-   ══════════════════════════════════════════════════════════════ */
+/* El responsive */
 @media (max-width:1100px) {
   .product-viewer { grid-template-columns:1fr;gap:36px;padding:0 32px 60px; }
   .col-gallery { position:static; }
