@@ -21,7 +21,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (!form) return;
 
+    // Si viene de registrarse con éxito, mostrar mensaje de bienvenida
+    if (sessionStorage.getItem('bv_registro_ok') === '1') {
+        sessionStorage.removeItem('bv_registro_ok');
+        mensaje.textContent = '✅ ¡Cuenta creada con éxito! Ahora puedes iniciar sesión.';
+        mensaje.style.color = '#2ecc71';
+        mensaje.hidden = false;
+    }
+
     function mostrarError(texto) {
+        mensaje.style.color = '';
         mensaje.textContent = texto;
         mensaje.hidden = false;
     }
@@ -54,4 +63,4 @@ document.addEventListener('DOMContentLoaded', () => {
             btnLogin.textContent = 'Iniciar sesión';
         }
     });
-});
+});

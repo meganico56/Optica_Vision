@@ -103,6 +103,7 @@ app.post("/api/login", async (req, res) => {
 
     res.json({
       mensaje: "Inicio de sesión exitoso",
+      token: "session-" + usuario.id_usuario,   // token simple para compatibilidad con sesion.js
       usuario: {
         id: usuario.id_usuario,
         nombre: usuario.nombre,
@@ -113,6 +114,50 @@ app.post("/api/login", async (req, res) => {
   } catch (error) {
     console.error("Error en login:", error);
     res.status(500).json({ error: "Error en el servidor" });
+  }
+});
+
+// Ruta de registro de nuevo usuario (rol Cliente por defecto)
+app.post("/api/registro", async (req, res) => {
+  const { nombre, apellido, tipo_documento, num_documento, telefono, correo, direccion, fecha_nacimiento, contrasena } = req.body;
+
+  if (!nombre || !apellido || !tipo_documento || !num_documento || !telefono || !correo || !fecha_nacimiento || !contrasena) {
+    return res.status(400).json({ mensaje: "Todos los campos obligatorios deben estar completos" });
+  }
+
+  if (contrasena.length < 8) {
+    return res.status(400).json({ mensaje: "La contraseña debe tener al menos 8 caracteres" });
+  }
+
+  try {
+    // Verificar que no exista otro usuario con ese correo o documento
+    const [existentes] = await db.query(
+      "SELECT id_usuario FROM usuario WHERE correo = ? OR num_documento = ?",
+      [correo, num_documento]
+    );
+    if (existentes.length > 0) {
+      return res.status(409).json({ mensaje: "Ya existe una cuenta con ese correo o número de documento" });
+    }
+
+    // Obtener id del rol Cliente
+    const [roles] = await db.query("SELECT id_rol FROM rol WHERE nombre_rol = 'Cliente'");
+    if (roles.length === 0) {
+      return res.status(500).json({ mensaje: "No se encontró el rol de Cliente en el sistema" });
+    }
+    const id_rol = roles[0].id_rol;
+
+    const hash = await bcrypt.hash(contrasena, 10);
+
+    await db.query(
+      `INSERT INTO usuario (nombre, apellido, tipo_documento, num_documento, telefono, correo, direccion, fecha_nacimiento, contrasena, estado, id_rol)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'Activo', ?)`,
+      [nombre, apellido, tipo_documento, num_documento, telefono, correo, direccion || null, fecha_nacimiento, hash, id_rol]
+    );
+
+    res.status(201).json({ mensaje: "Cuenta creada con éxito" });
+  } catch (error) {
+    console.error("Error en /api/registro:", error);
+    res.status(500).json({ mensaje: "Error interno al crear la cuenta" });
   }
 });
 
