@@ -1,68 +1,57 @@
-// auth-local.js
-// Simulación local de autenticación con roles
+// autenticacion.js - Inicio de sesión contra la API (POST /api/login).
+// Requiere api.js y sesion.js cargados antes.
 
 document.addEventListener('DOMContentLoaded', () => {
+    const form = document.getElementById('formLogin');
+    const inputCorreo = document.getElementById('correo');
+    const inputPass = document.getElementById('contrasena');
     const btnLogin = document.getElementById('btnLogin');
-    const inputEmail = document.getElementById('username');
-    const inputPass = document.getElementById('password');
+    const mensaje = document.getElementById('mensajeError');
     const togglePassword = document.getElementById('togglePassword');
 
-    // Toggle para mostrar/ocultar contraseña
+    // Mostrar / ocultar contraseña
     if (togglePassword && inputPass) {
-        togglePassword.addEventListener('click', function (e) {
-            // Toggle type attribute
-            const type = inputPass.getAttribute('type') === 'password' ? 'text' : 'password';
-            inputPass.setAttribute('type', type);
-            // Toggle the eye icon
+        togglePassword.addEventListener('click', function () {
+            const tipo = inputPass.getAttribute('type') === 'password' ? 'text' : 'password';
+            inputPass.setAttribute('type', tipo);
             this.classList.toggle('fa-eye');
             this.classList.toggle('fa-eye-slash');
         });
     }
 
-    // Base de datos simulada
-    const usuarios = [
-        { email: 'admin@admin.com', pass: 'admin', rol: 'admin', url: 'panel-admin.html' },
-        { email: 'empleado@empleado.com', pass: 'empleado', rol: 'empleado', url: 'inicio.html' },
-        { email: 'cliente@cliente.com', pass: 'cliente', rol: 'cliente', url: 'panel-usuario.html' }
-    ];
+    if (!form) return;
 
-    if(btnLogin) {
-        const triggerEnter = (e) => {
-            if (e.key === 'Enter') {
-                e.preventDefault();
-                btnLogin.click();
-            }
-        };
-
-        if (inputEmail) inputEmail.addEventListener('keydown', triggerEnter);
-        if (inputPass) inputPass.addEventListener('keydown', triggerEnter);
-
-        btnLogin.addEventListener('click', (e) => {
-            e.preventDefault(); // Por si estuviera dentro de un formulario
-
-            const email = inputEmail.value.trim();
-            const pass = inputPass.value.trim();
-
-            if (!email || !pass) {
-                alert('Por favor ingrese su correo y contraseña.');
-                return;
-            }
-
-            // Buscar usuario
-            const usuarioValido = usuarios.find(u => u.email === email && u.pass === pass);
-
-            if (usuarioValido) {
-                // Guardar en sessionStorage para simular que está logueado
-                sessionStorage.setItem('usuarioLogueado', JSON.stringify({
-                    email: usuarioValido.email,
-                    rol: usuarioValido.rol
-                }));
-
-                // Redirigir según el rol
-                window.location.href = usuarioValido.url;
-            } else {
-                alert('Credenciales incorrectas. Inténtalo de nuevo.');
-            }
-        });
+    function mostrarError(texto) {
+        mensaje.textContent = texto;
+        mensaje.hidden = false;
     }
+
+    // Enter dentro de los campos ya envía el formulario (el botón es type="submit").
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        mensaje.hidden = true;
+
+        const correo = inputCorreo.value.trim();
+        const contrasena = inputPass.value; // la contraseña no se recorta
+
+        if (!correo || !contrasena) {
+            mostrarError('Por favor ingresa tu correo y contraseña.');
+            return;
+        }
+
+        btnLogin.disabled = true;
+        btnLogin.textContent = 'Ingresando...';
+
+        try {
+            const respuesta = await Api.post('/api/login', { correo, contrasena });
+            Sesion.iniciar(respuesta.token, respuesta.usuario);
+            // Administrador y Vendedor -> panel-admin.html, Cliente -> panel-usuario.html
+            // (o la página donde estaba si el login se pidió desde otra, como el pedido).
+            location.href = Sesion.destinoTrasLogin();
+        } catch (error) {
+            mostrarError(error.message);
+            btnLogin.disabled = false;
+            btnLogin.textContent = 'Iniciar sesión';
+        }
+    });
 });
