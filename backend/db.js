@@ -3,7 +3,7 @@ const mysql = require('mysql2');
 const pool = mysql.createPool({
   host: 'localhost',
   user: 'root',        
-  password: 'Had26Kier26', 
+  password: '123456', 
   database: 'optica_vision',
   waitForConnections: true,
   connectionLimit: 10,

@@ -1,5 +1,6 @@
 const express = require("express");
 const cors = require("cors");
+const bcrypt = require("bcrypt");
 const db = require("./db");
 
 const app = express();
@@ -64,9 +65,10 @@ app.post("/api/login", async (req, res) => {
   const { correo, contrasena } = req.body;
 
   try {
+    // 1. Buscar usuario solo por correo (la contraseña está hasheada con bcrypt)
     const [usuarios] = await db.query(
-      "SELECT u.*, r.nombre AS rol FROM usuario u LEFT JOIN rol r ON u.id_rol = r.id_rol WHERE u.correo = ? AND u.contrasena = ?",
-      [correo, contrasena],
+      "SELECT u.*, r.nombre_rol AS rol FROM usuario u LEFT JOIN rol r ON u.id_rol = r.id_rol WHERE u.correo = ?",
+      [correo],
     );
 
     if (usuarios.length === 0) {
@@ -74,6 +76,13 @@ app.post("/api/login", async (req, res) => {
     }
 
     const usuario = usuarios[0];
+
+    // 2. Verificar la contraseña con bcrypt.compare()
+    const contrasenaValida = await bcrypt.compare(contrasena, usuario.contrasena);
+    if (!contrasenaValida) {
+      return res.status(401).json({ mensaje: "Credenciales inválidas" });
+    }
+
     res.json({
       mensaje: "Inicio de sesión exitoso",
       usuario: {
