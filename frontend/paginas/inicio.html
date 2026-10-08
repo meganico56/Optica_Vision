@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Optix - Boutique de la Visión</title>
+    <title>Óptica Visión - Boutique de la Visión</title>
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -25,12 +25,12 @@
           <img
             src="../imagenes/logos/logo-boutique.png"
             class="logo-icon"
-            alt="Logo"
+            alt="Óptica Visión Logo"
           />
         </a>
       </div>
 
-      <!-- Buscador del catálogo -->
+      <!-- Buscador del catálogo (Envía el parámetro ?q= a catalogo.html) -->
       <form class="buscador" action="catalogo.html" method="get">
         <input
           type="text"
@@ -55,8 +55,11 @@
         <ul class="navbar-menu">
           <li><a href="inicio.html" class="activo">INICIO</a></li>
           <li><a href="catalogo.html">CATÁLOGO</a></li>
-          <li><a href="formulario-pedido.html">AGENDAR CITA</a></li>
-          <li><a href="carrito.html"><i class="fa-solid fa-cart-shopping"></i></a></li>
+          <!-- ENLACE CORREGIDO A AGENDAR CITA -->
+          <li><a href="agendar-cita.html">AGENDAR CITA</a></li>
+          <li>
+            <a href="carrito.html"><i class="fa-solid fa-cart-shopping"></i></a>
+          </li>
           <li><a href="inicio-sesion.html">REGISTRO / LOGIN</a></li>
         </ul>
       </nav>
@@ -65,7 +68,7 @@
     <main>
       <section class="hero">
         <div class="hero-text fade-in-up">
-          <span class="hero-tag"> BIENVENIDO A OPTIX </span>
+          <span class="hero-tag"> BIENVENIDO A ÓPTICA VISIÓN </span>
 
           <h1>BOUTIQUE DE LA VISIÓN</h1>
 
@@ -79,9 +82,8 @@
           </p>
 
           <div class="hero-buttons">
-            <a href="formulario-pedido.html" class="btn-primary">
-              Agenda tu cita
-            </a>
+            <!-- BOTÓN CORREGIDO A AGENDAR CITA -->
+            <a href="agendar-cita.html" class="btn-primary"> Agenda tu cita </a>
 
             <a href="catalogo.html" class="btn-secondary"> Ver catálogo </a>
           </div>
@@ -110,7 +112,7 @@
             <img
               src="../imagenes/logos/logo-boutique.png"
               class="logo-icon"
-              alt="Logo"
+              alt="Óptica Visión Logo"
             />
           </div>
         </div>
@@ -119,7 +121,9 @@
           <h4>AYUDA</h4>
 
           <ul>
-            <li><a href="#">¿Cómo puedo apartar una cita?</a></li>
+            <li>
+              <a href="agendar-cita.html">¿Cómo puedo apartar una cita?</a>
+            </li>
             <li><a href="#">¿Cómo sé la fórmula que necesito?</a></li>
             <li><a href="#">¿Dónde puedo recoger mis lentes?</a></li>
             <li><a href="#">Manual del usuario</a></li>
