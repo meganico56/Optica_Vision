@@ -1,4 +1,4 @@
-﻿// intro-animacion.js — Version optimizada para rendimiento maximo
+// intro-animacion.js — Version optimizada para rendimiento maximo
 // El ojo solo es visible dentro del circulo (overflow:hidden).
 // Optimizaciones clave:
 //   - El circulo se mueve con transform:translate (GPU, sin reflow)
@@ -16,15 +16,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const isUserPanel = currentPath.includes('panel-usuario.html') || currentPath.includes('panel-usuario');
     const isPanelPage = isAdminPanel || isUserPanel;
 
-    // Verificar si ya se mostró la animación en esta sesión (solo para páginas no-panel)
-    if (!isPanelPage) {
-        const introShown = sessionStorage.getItem('introAnimationShown');
-        if (introShown) {
-            return; // No mostrar animación si ya se mostró en esta sesión
-        }
-    } else {
-        // En panel de administrador o usuario, siempre limpiar el flag para asegurar que se muestre
-        sessionStorage.removeItem('introAnimationShown');
+    // Clave de almacenamiento por sesión según la sección
+    const storageKey = isPanelPage ? 'introShown_panel' : 'introShown_public';
+
+    // Verificar si ya se mostró la animación en esta sesión para esta sección
+    if (sessionStorage.getItem(storageKey)) {
+        return; // No mostrar animación si ya se mostró en esta sesión
     }
 
     // En panel de administrador, detectar la sección activa
@@ -329,8 +326,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 done = true;
                 wrap.style.transition = 'opacity 0.2s ease';
                 wrap.style.opacity    = '0';
-                // Marcar que la animación se mostró en esta sesión
-                sessionStorage.setItem('introAnimationShown', 'true');
+                // Marcar que la animación se mostró en esta sesión para la sección correspondiente
+                sessionStorage.setItem(storageKey, 'true');
                 setTimeout(function() { if (wrap.parentNode) wrap.remove(); }, 220);
                 return;
             }

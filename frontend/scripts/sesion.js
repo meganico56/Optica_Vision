@@ -41,16 +41,15 @@
         limpiar() {
             localStorage.removeItem(K_TOKEN);
             localStorage.removeItem(K_USUARIO);
+            localStorage.removeItem('usuarioLogueado');
+            sessionStorage.removeItem(K_TOKEN);
+            sessionStorage.removeItem(K_USUARIO);
+            sessionStorage.removeItem('usuarioLogueado');
         },
 
         cerrar() {
-            const estabaEnPanel = !!PROTEGIDAS[archivo];
             Sesion.limpiar();
-            if (estabaEnPanel) {
-                location.href = 'inicio.html';
-            } else {
-                location.reload();
-            }
+            location.href = 'inicio.html';
         },
 
         // Manda al login y recuerda a dónde volver (carrito, agendar cita, etc.).

@@ -2,26 +2,39 @@
 // Script para mantener y gestionar el estado de sesión en todas las páginas
 
 document.addEventListener('DOMContentLoaded', () => {
-    const usuarioLogueadoStr = localStorage.getItem('usuarioLogueado') || localStorage.getItem('bv_usuario');
+    function cerrarSesionGlobal() {
+        localStorage.removeItem('usuarioLogueado');
+        localStorage.removeItem('bv_token');
+        localStorage.removeItem('bv_usuario');
+        localStorage.removeItem('bv_volver');
+        sessionStorage.removeItem('usuarioLogueado');
+        sessionStorage.removeItem('bv_token');
+        sessionStorage.removeItem('bv_usuario');
+        sessionStorage.removeItem('bv_volver');
+        if (window.Sesion && typeof window.Sesion.limpiar === 'function') {
+            window.Sesion.limpiar();
+        }
+        window.location.href = 'inicio.html';
+    }
+
+    const usuarioLogueadoStr = localStorage.getItem('usuarioLogueado') || localStorage.getItem('bv_usuario') || sessionStorage.getItem('bv_usuario');
     const pathActual = window.location.pathname;
 
     if (usuarioLogueadoStr) {
-        const userData = JSON.parse(usuarioLogueadoStr);
-        
+        let userData = {};
+        try { userData = JSON.parse(usuarioLogueadoStr); } catch (e) {}
+
         // 1. Reemplazar "REGISTRO / LOGIN" por "CERRAR SESIÓN" en la barra de navegación
         const loginLinks = document.querySelectorAll('a[href="inicio-sesion.html"]');
         
         loginLinks.forEach(link => {
-            // Si no estamos en la página de login
             if (!pathActual.includes('inicio-sesion.html') && !pathActual.includes('registro-usuario.html')) {
                 link.innerHTML = '<i class="fa-solid fa-right-from-bracket"></i> CERRAR SESIÓN';
                 link.href = '#';
                 
                 link.addEventListener('click', (e) => {
                     e.preventDefault();
-                    localStorage.removeItem('usuarioLogueado');
-                    if (window.Sesion) window.Sesion.limpiar();
-                    window.location.reload();
+                    cerrarSesionGlobal();
                 });
                 
                 // Si es admin/empleado, agregar un enlace al Panel justo antes
@@ -40,14 +53,12 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
 
-        // 2. Interceptar botones de logout del panel de administrador
+        // 2. Interceptar botones de logout con la clase .logout-btn
         const adminLogoutBtns = document.querySelectorAll('.logout-btn');
         adminLogoutBtns.forEach(btn => {
             btn.addEventListener('click', (e) => {
                 e.preventDefault();
-                localStorage.removeItem('usuarioLogueado');
-                if (window.Sesion) window.Sesion.limpiar();
-                window.location.href = 'inicio.html';
+                cerrarSesionGlobal();
             });
         });
 
