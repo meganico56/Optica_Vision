@@ -36,6 +36,9 @@
         iniciar(token, usuario) {
             localStorage.setItem(K_TOKEN, token);
             localStorage.setItem(K_USUARIO, JSON.stringify(usuario));
+            // Asegurar que al iniciar sesión el panel siempre abra desde la pestaña principal (Dashboard / Inicio)
+            localStorage.removeItem('bv_seccion:panel-admin.html');
+            localStorage.removeItem('bv_seccion:panel-usuario.html');
         },
 
         limpiar() {
