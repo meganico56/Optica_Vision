@@ -3,23 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crear cuenta | Boutique de la Visión</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="../estilos/estilo-auth.css">
-    <title>Registro de Usuario | Boutique de la Visión</title>
-
 </head>
 <body>
     <div class="inicio">
         <div class="logo">
-            <img src="../imagenes/logos/logo-boutique.png"
-            width="200" height="150"
-            alt="Logo Boutique de la Visión">
-    </div>
-        <div class="formulario">
-            <div class="titulo">                
+            <img src="../imagenes/logos/logo-boutique.png" width="200" height="150" alt="Logo Boutique de la Visión">
+        </div>
+
+        <form class="formulario" id="formRegistro" novalidate>
+            <div class="titulo">
                 <h5>Bienvenido</h5>
                 <a href="inicio-sesion.html" class="btn-volver"><i class="fa-solid fa-arrow-left"></i> Volver</a>
             </div>
@@ -27,53 +25,68 @@
                 <h1>Crea tu cuenta</h1>
             </div>
 
-<div class="campos">
+            <div class="campos">
+                <div class="fila">
+                    <input type="text" id="nombre" name="nombre" class="username" placeholder="Nombre" maxlength="100" autocomplete="given-name" required>
+                    <input type="text" id="apellido" name="apellido" class="username" placeholder="Apellido" maxlength="100" autocomplete="family-name" required>
+                </div>
 
-    <!-- Nombre y apellido -->
-    <div class="fila">
-        <input type="text" id="username" class="username" placeholder="Nombre" required>
+                <div class="fila">
+                    <select id="tipoDocumento" name="tipoDocumento" class="username" aria-label="Tipo de documento" required>
+                        <option value="" disabled selected>Tipo de documento</option>
+                        <option value="C.C.">Cédula de ciudadanía (C.C.)</option>
+                        <option value="T.I.">Tarjeta de identidad (T.I.)</option>
+                        <option value="C.E.">Cédula de extranjería (C.E.)</option>
+                    </select>
+                    <input type="text" id="numDocumento" name="numDocumento" class="username" placeholder="Número de documento" inputmode="numeric" maxlength="20" autocomplete="off" required>
+                </div>
 
-        <input type="text" id="lastname" class="username" placeholder="Apellido" required>
+                <div class="fila">
+                    <div class="campo-fecha">
+                        <label for="fechaNacimiento" class="etiqueta-campo">Fecha de nacimiento</label>
+                        <input type="date" id="fechaNacimiento" name="fechaNacimiento" class="username" autocomplete="bday" required>
+                    </div>
+                    <input type="tel" id="telefono" name="telefono" class="username" placeholder="Teléfono" maxlength="20" autocomplete="tel" required>
+                </div>
+
+                <div class="fila">
+                    <input type="email" id="correo" name="correo" class="username" placeholder="Correo electrónico" maxlength="100" autocomplete="email" required>
+                </div>
+
+                <div class="fila">
+                    <input type="text" id="direccion" name="direccion" class="username" placeholder="Dirección" maxlength="100" autocomplete="street-address" required>
+                    <input type="text" id="ciudad" name="ciudad" class="username" placeholder="Ciudad" maxlength="40" autocomplete="address-level2" required>
+                </div>
+
+                <div class="fila">
+                    <input type="password" id="contrasena" name="contrasena" class="password" placeholder="Contraseña (mínimo 8 caracteres)" minlength="8" autocomplete="new-password" required>
+                    <input type="password" id="confirmarContrasena" name="confirmarContrasena" class="password" placeholder="Confirmar contraseña" minlength="8" autocomplete="new-password" required>
+                </div>
+
+                <label class="aceptar-datos">
+                    <input type="checkbox" id="aceptaDatos" name="aceptaDatos" required>
+                    <span>Acepto el tratamiento de mis datos personales.</span>
+                </label>
+            </div>
+
+            <p class="mensaje-error" id="mensajeError" role="alert" hidden></p>
+
+            <button class="iniciar" type="submit">Crear cuenta</button>
+
+            <button class="registrar" type="button" onclick="window.location.href='inicio-sesion.html'">
+                ¿Ya tienes cuenta? Inicia sesión
+            </button>
+        </form>
     </div>
 
-    <!-- Email y teléfono -->
-    <div class="fila">
-        <input type="email" id="email" class="username" placeholder="E-mail" required>
-
-        <input type="tel" id="phone" class="username" placeholder="Teléfono" required>
-    </div>
-
-    <!-- Dirección y ciudad -->
-    <div class="fila">
-        <input type="text" id="address" class="username" placeholder="Dirección" required>
-
-        <input type="text" id="city" class="username" placeholder="Ciudad" required>
-    </div>
-
-    <!-- Contraseña -->
-    <input type="password" id="password" class="password" placeholder="Contraseña" required>
-
-</div>
-
-<button class="iniciar" type="submit">Crear Cuenta</button>
-
-<button class="registrar" type="button"
-    onclick="window.location.href='inicio-sesion.html'">
-    ¿Ya tienes cuenta? Inicia sesión
-</button>
-
-<p>Registrarte con otra cuenta</p>
-
-<button class="google" type="submit">Google</button>
-
-<button class="facebook" type="submit">Facebook</button>
-
-        </div>
-    </div>
     <footer>
         <div class="copyright">
-            <p>© 2024 Todos los derechos reservados.</p>
+            <p>© 2026 Boutique de la Visión. Todos los derechos reservados.</p>
         </div>
     </footer>
+
+    <script src="../scripts/api.js"></script>
+    <script src="../scripts/sesion.js"></script>
+    <script src="../scripts/registro.js"></script>
 </body>
 </html>

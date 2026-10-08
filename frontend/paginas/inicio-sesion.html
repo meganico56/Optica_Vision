@@ -3,61 +3,58 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Iniciar sesión | Boutique de la Visión</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="../estilos/estilo-auth.css">
-    <title>Iniciar Sesión | Boutique de la Visión</title>
-
 </head>
 <body>
     <div class="inicio">
         <div class="logo">
-            <img src="../imagenes/logos/logo-boutique.png"
-            width="200" height="150"
-            alt="Logo Boutique de la Visión">
-    </div>
-        <div class="formulario">
-            <div class="titulo">                
+            <img src="../imagenes/logos/logo-boutique.png" width="200" height="150" alt="Logo Boutique de la Visión">
+        </div>
+
+        <form class="formulario" id="formLogin" novalidate>
+            <div class="titulo">
                 <h5>Bienvenido</h5>
-                <a href="Inicio.html" class="btn-volver"><i class="fa-solid fa-arrow-left"></i> Volver</a>
+                <a href="inicio.html" class="btn-volver"><i class="fa-solid fa-arrow-left"></i> Volver</a>
             </div>
             <div class="subtitulo">
-                <h1>Inicia sesión </h1>
+                <h1>Inicia sesión</h1>
             </div>
+
             <div class="input-group">
-                <input type="email" id="username" class="username" placeholder="E-mail" required>
+                <input type="email" id="correo" name="correo" class="username" placeholder="Correo electrónico" autocomplete="email" required>
                 <i class="fa-solid fa-envelope icon-left"></i>
             </div>
             <div class="input-group">
-                <input type="password" id="password" class="password" placeholder="Contraseña" required>
+                <input type="password" id="contrasena" name="contrasena" class="password" placeholder="Contraseña" autocomplete="current-password" required>
                 <i class="fa-solid fa-lock icon-left"></i>
                 <i class="fa-solid fa-eye toggle-password" id="togglePassword"></i>
             </div>
-            <button class="olvidar" type="button" onclick="window.location.href='rcontraseña.html'">¿Olvidaste tu contraseña?</button>
-            <button class="iniciar" id="btnLogin" type="button">Iniciar sesión</button>
-            
-            <div class="divider">
-                <span>o iniciar con</span>
-            </div>
-            
-            <div class="social-login">
-                <button class="google" type="button"><i class="fa-brands fa-google"></i> Google</button>
-                <button class="facebook" type="button"><i class="fa-brands fa-facebook-f"></i> Facebook</button>
-            </div>
+
+            <p class="mensaje-error" id="mensajeError" role="alert" hidden></p>
+
+            <button class="olvidar" type="button" onclick="window.location.href='recuperar-contrasena.html'">¿Olvidaste tu contraseña?</button>
+            <button class="iniciar" id="btnLogin" type="submit">Iniciar sesión</button>
 
             <div class="registro-link">
                 <p>¿No tienes una cuenta?</p>
                 <button class="registrar" type="button" onclick="window.location.href='registro-usuario.html'">Regístrate ahora</button>
             </div>
-        </div>
+        </form>
     </div>
+
     <footer>
         <div class="copyright">
-            <p>© 2024 Todos los derechos reservados.</p>
+            <p>© 2026 Boutique de la Visión. Todos los derechos reservados.</p>
         </div>
     </footer>
+
+    <script src="../scripts/api.js"></script>
+    <script src="../scripts/sesion.js"></script>
     <script src="../scripts/autenticacion.js"></script>
 </body>
 </html>

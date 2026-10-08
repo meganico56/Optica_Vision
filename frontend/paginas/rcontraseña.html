@@ -3,23 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recuperar contraseña | Boutique de la Visión</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="../estilos/estilo-auth.css">
-    <link rel="stylesheet" href="../estilos/estilo-recuperar.css">
-    <title>Recuperar Contraseña | Boutique de la Visión</title>
+    <link rel="stylesheet" href="../estilos/recuperar-contrasena.css">
 </head>
 <body>
     <div class="inicio">
         <div class="logo">
-            <img src="../imagenes/logos/logo-boutique.png"
-            width="200" height="150"
-            alt="Logo Boutique de la Visión">
-    </div>
-        <div class="formulario">
-            <div class="titulo">                
+            <img src="../imagenes/logos/logo-boutique.png" width="200" height="150" alt="Logo Boutique de la Visión">
+        </div>
+
+        <form class="formulario" id="formRecuperar" novalidate>
+            <div class="titulo">
                 <h5>Recuperar acceso</h5>
                 <a href="inicio-sesion.html" class="btn-volver"><i class="fa-solid fa-arrow-left"></i> Volver</a>
             </div>
@@ -28,26 +27,32 @@
             </div>
 
             <p class="aviso-recuperar">
-                Ingresa el correo asociado a tu cuenta y te enviaremos un enlace para restablecer tu contraseña.
+                Escribe el correo de tu cuenta y te enviaremos un enlace para crear una contraseña nueva.
             </p>
 
             <div class="input-group">
-                <input type="email" id="email" class="username" placeholder="E-mail" required>
+                <input type="email" id="correo" name="correo" class="username" placeholder="Correo electrónico" autocomplete="email" required>
                 <i class="fa-solid fa-envelope icon-left"></i>
             </div>
 
-            <button class="iniciar" id="btnEnviar" type="button">Enviar enlace</button>
+            <p class="mensaje-error" id="mensajeError" role="alert" hidden></p>
+
+            <button class="iniciar" id="btnEnviar" type="submit">Enviar enlace</button>
 
             <div class="registro-link">
                 <p>¿Ya la recordaste?</p>
                 <button class="registrar" type="button" onclick="window.location.href='inicio-sesion.html'">Volver a iniciar sesión</button>
             </div>
-        </div>
+        </form>
     </div>
+
     <footer>
         <div class="copyright">
-            <p>© 2024 Todos los derechos reservados.</p>
+            <p>© 2026 Boutique de la Visión. Todos los derechos reservados.</p>
         </div>
     </footer>
+
+    <script src="../scripts/api.js"></script>
+    <script src="../scripts/recuperar-contrasena.js"></script>
 </body>
 </html>

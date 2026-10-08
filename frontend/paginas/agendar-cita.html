@@ -1,4 +1,4 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
@@ -6,12 +6,10 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn-uicons.flaticon.com/4.0.0/uicons-regular-rounded/css/uicons-regular-rounded.css">
-    <link rel="stylesheet" href="https://cdn-uicons.flaticon.com/4.0.0/uicons-bold-rounded/css/uicons-bold-rounded.css">
-    <link rel="stylesheet" href="https://cdn-uicons.flaticon.com/4.0.0/uicons-solid-rounded/css/uicons-solid-rounded.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="../estilos/catalogo.css">
-    <title>Catálogo | Boutique de la Visión</title>
+    <link rel="stylesheet" href="../estilos/inicio.css">
+    <link rel="stylesheet" href="../estilos/estilo-cita.css">
+    <title>Agendar cita | Boutique de la Visión</title>
 </head>
 <body>
     <header class="navbar">
@@ -30,51 +28,71 @@
         <nav>
             <ul class="navbar-menu">
                 <li><a href="inicio.html">INICIO</a></li>
-                <li><a href="catalogo.html" class="activo">CATÁLOGO</a></li>
-                <li><a href="agendar-cita.html">AGENDAR CITA</a></li>
+                <li><a href="catalogo.html">CATÁLOGO</a></li>
+                <li><a href="agendar-cita.html" class="activo">AGENDAR CITA</a></li>
                 <li><a href="carrito.html" aria-label="Carrito"><i class="fa-solid fa-cart-shopping"></i><span class="cart-count" id="cartBadge" hidden>0</span></a></li>
                 <li><a href="inicio-sesion.html">REGISTRO / LOGIN</a></li>
             </ul>
         </nav>
     </header>
 
-    <main class="catalogo_G">
-        <img src="../imagenes/fondos/fondo-boutique.png" alt="" class="imag_fond">
+    <main class="cita-contenedor">
+        <section class="cita-intro">
+            <h1>Agenda tu cita</h1>
+            <p>Cada cita dura 30 minutos y te atiende uno de nuestros asesores.</p>
+            <p class="cita-nota">
+                El examen visual lo hace un optómetra externo. En tu cita revisamos tus resultados,
+                registramos tu fórmula y te asesoramos con la montura.
+            </p>
+        </section>
 
-        <div class="catalogo_cont">
-            <ul class="botons" id="filtros">
-                <li><a href="#" class="activo" data-filtro="todos">Todos</a></li>
-                <li><a href="#" data-filtro="genero:Mujer">Mujer</a></li>
-                <li><a href="#" data-filtro="genero:Hombre">Hombre</a></li>
-                <li><a href="#" data-filtro="genero:Infantil">Niños</a></li>
-                <li><a href="#" data-filtro="categoria:Accesorios">Accesorios</a></li>
-            </ul>
-
-            <div class="titulo-pagina">
-                <h1>Catálogo</h1>
-                <p class="resumen-busqueda" id="resumenBusqueda" hidden></p>
-            </div>
-
-            <p class="estado-lista" id="estadoLista" role="status">Cargando productos…</p>
-
-            <section class="contenedor-productos" id="listaProductos"></section>
+        <div class="cita-aviso" id="avisoLogin" hidden>
+            Para agendar necesitas una cuenta.
+            <a href="inicio-sesion.html">Inicia sesión</a> o <a href="registro-usuario.html">crea tu cuenta</a>.
         </div>
-    </main>
 
-    <template id="tplProducto">
-        <article class="producto-card">
-            <div class="producto-imagen">
-                <a class="enlace-producto" href="#"><img class="img-producto" src="" alt="" width="200" loading="lazy"></a>
-                <span class="badge-agotado" hidden>Agotado</span>
+        <form class="cita-form" id="formCita" novalidate>
+            <div class="cita-fila">
+                <div class="cita-campo">
+                    <label for="fecha">Fecha</label>
+                    <input type="date" id="fecha" name="fecha" required>
+                </div>
+                <div class="cita-campo">
+                    <label for="hora">Hora</label>
+                    <select id="hora" name="hora" required disabled>
+                        <option value="" selected>Elige primero una fecha</option>
+                    </select>
+                </div>
             </div>
-            <div class="producto-info">
-                <h3><a class="enlace-producto nombre-producto" href="#"></a></h3>
-                <p class="precio"></p>
+
+            <div class="cita-campo">
+                <label for="motivo">¿Para qué es la cita?</label>
+                <select id="motivo" name="motivo" required>
+                    <option value="" disabled selected>Selecciona un motivo</option>
+                    <option>Primera asesoría para elección de montura</option>
+                    <option>Entrega de resultados de examen visual</option>
+                    <option>Entrega de resultados de examen visual y asesoría de montura</option>
+                    <option>Control de seguimiento</option>
+                </select>
             </div>
-            <button class="btn-carrito1" type="button" data-accion="comprar">Comprar ahora <i class="fi fi-br-usd-circle"></i></button>
-            <button class="btn-carrito" type="button" data-accion="agregar">Agregar al carrito <i class="fi fi-rr-shopping-cart"></i></button>
-        </article>
-    </template>
+
+            <div class="cita-campo">
+                <label for="observaciones">Observaciones (opcional)</label>
+                <textarea id="observaciones" name="observaciones" rows="3" maxlength="255" placeholder="Cuéntanos si necesitas algo especial"></textarea>
+            </div>
+
+            <p class="mensaje-error" id="mensajeError" role="alert" hidden></p>
+
+            <button class="btn-primary" type="submit" id="btnAgendar">Agendar cita</button>
+        </form>
+
+        <section class="cita-confirmacion" id="confirmacionCita" role="status" hidden>
+            <i class="fa-solid fa-circle-check"></i>
+            <h2>Tu cita quedó agendada</h2>
+            <p id="resumenCita"></p>
+            <a href="panel-usuario.html" class="btn-primary">Ver mis citas</a>
+        </section>
+    </main>
 
     <footer>
         <div class="footer-container">
@@ -128,6 +146,6 @@
     <script src="../scripts/api.js"></script>
     <script src="../scripts/sesion.js"></script>
     <script src="../scripts/carrito.js"></script>
-    <script src="../scripts/catalogo.js"></script>
+    <script src="../scripts/agendar-cita.js"></script>
 </body>
 </html>
