@@ -3,10 +3,37 @@ const cors = require("cors");
 const bcrypt = require("bcrypt");
 const db = require("./db");
 
+const fs = require("fs");
+const path = require("path");
+
 const app = express();
 
 app.use(cors());
-app.use(express.json());
+app.use(express.json({ limit: "15mb" }));
+
+// Ruta para subir imagen de producto
+app.post("/api/upload-imagen", (req, res) => {
+  const { nombreArchivo, base64Data } = req.body;
+  if (!nombreArchivo || !base64Data) {
+    return res.status(400).json({ mensaje: "Falta el nombre de archivo o los datos de la imagen" });
+  }
+
+  try {
+    const ext = path.extname(nombreArchivo) || '.png';
+    const nombreLimpio = path.basename(nombreArchivo, ext).replace(/[^a-zA-Z0-9-_]/g, '');
+    const safeName = `${Date.now()}-${nombreLimpio}${ext}`;
+    const rutaDestino = path.join(__dirname, "..", "frontend", "imagenes", "productos", safeName);
+
+    const cleanBase64 = base64Data.replace(/^data:image\/\w+;base64,/, "");
+    const buffer = Buffer.from(cleanBase64, "base64");
+
+    fs.writeFileSync(rutaDestino, buffer);
+    res.json({ mensaje: "Imagen subida con éxito", filename: safeName });
+  } catch (error) {
+    console.error("Error al subir imagen:", error);
+    res.status(500).json({ mensaje: "Error interno al guardar la imagen" });
+  }
+});
 
 // Ruta de prueba
 app.get("/", (req, res) => {
@@ -18,29 +45,165 @@ app.get("/api/productos", async (req, res) => {
   const { q: busqueda, categoria } = req.query;
 
   try {
-    let query = "SELECT * FROM producto WHERE 1=1";
+    let query = `
+      SELECT p.*, c.nombre AS categoria_nombre, m.nombre AS marca_nombre
+      FROM producto p
+      LEFT JOIN categoria c ON p.id_categoria = c.id_categoria
+      LEFT JOIN marca m ON p.id_marca = m.id_marca
+      WHERE 1=1
+    `;
     let params = [];
 
-    // Filtro por término de búsqueda
     if (busqueda && busqueda.trim() !== "") {
-      query += " AND (nombre LIKE ? OR descripcion LIKE ?)";
+      query += " AND (p.nombre LIKE ? OR p.descripcion LIKE ?)";
       params.push(`%${busqueda}%`, `%${busqueda}%`);
     }
 
-    // Filtro por categoría
     if (categoria && categoria.trim() !== "" && categoria.toUpperCase() !== "TODOS") {
-      query += " AND LOWER(categoria) = LOWER(?)";
-      params.push(categoria);
+      query += " AND (LOWER(c.nombre) = LOWER(?) OR p.id_categoria = ?)";
+      params.push(categoria, categoria);
     }
 
     const [filas] = await db.query(query, params);
-    res.json(filas);
+    const adaptados = filas.map(p => ({
+      id: p.id_producto,
+      id_producto: p.id_producto,
+      nombre: p.nombre,
+      descripcion: p.descripcion,
+      precio: p.precio,
+      imagen: p.imagen,
+      material: p.material,
+      genero: p.genero,
+      existencia_actual: p.existencia_actual,
+      existencia_minima: p.existencia_minima,
+      stock: p.existencia_actual,
+      id_categoria: p.id_categoria,
+      id_marca: p.id_marca,
+      categoria: p.categoria_nombre || "Gafas",
+      marca: p.marca_nombre || "Óptica Visión",
+      estado: p.estado
+    }));
+    res.json(adaptados);
   } catch (error) {
     console.error("Error al consultar MySQL en /api/productos:", error);
     res.status(500).json({
       error: "Error interno del servidor",
       detalle: error.message
     });
+  }
+});
+
+// Crear un nuevo producto (POST /api/productos)
+app.post("/api/productos", async (req, res) => {
+  const { nombre, descripcion, precio, imagen, material, genero, existencia_actual, existencia_minima, id_categoria, id_marca, estado } = req.body;
+
+  if (!nombre || !precio || !imagen) {
+    return res.status(400).json({ mensaje: "Nombre, precio e imagen son obligatorios" });
+  }
+
+  try {
+    const [result] = await db.query(
+      `INSERT INTO producto (nombre, descripcion, precio, imagen, material, genero, existencia_actual, existencia_minima, id_categoria, id_marca, estado)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      [
+        nombre,
+        descripcion || '',
+        precio,
+        imagen,
+        material || 'Acetato',
+        genero || 'Unisex',
+        existencia_actual !== undefined ? existencia_actual : 10,
+        existencia_minima !== undefined ? existencia_minima : 3,
+        id_categoria || 1,
+        id_marca || 1,
+        estado || 'Activo'
+      ]
+    );
+
+    res.status(201).json({ mensaje: "Producto creado con éxito", id_producto: result.insertId });
+  } catch (error) {
+    console.error("Error al crear producto:", error);
+    res.status(500).json({ mensaje: "Error al crear el producto", detalle: error.message });
+  }
+});
+
+// Actualizar un producto (PUT /api/productos/:id)
+app.put("/api/productos/:id", async (req, res) => {
+  const { id } = req.params;
+  const { nombre, descripcion, precio, imagen, material, genero, existencia_actual, existencia_minima, id_categoria, id_marca, estado } = req.body;
+
+  try {
+    await db.query(
+      `UPDATE producto SET 
+         nombre = COALESCE(?, nombre),
+         descripcion = COALESCE(?, descripcion),
+         precio = COALESCE(?, precio),
+         imagen = COALESCE(?, imagen),
+         material = COALESCE(?, material),
+         genero = COALESCE(?, genero),
+         existencia_actual = COALESCE(?, existencia_actual),
+         existencia_minima = COALESCE(?, existencia_minima),
+         id_categoria = COALESCE(?, id_categoria),
+         id_marca = COALESCE(?, id_marca),
+         estado = COALESCE(?, estado)
+       WHERE id_producto = ?`,
+      [nombre, descripcion, precio, imagen, material, genero, existencia_actual, existencia_minima, id_categoria, id_marca, estado, id]
+    );
+
+    res.json({ mensaje: "Producto actualizado correctamente" });
+  } catch (error) {
+    console.error("Error al actualizar producto:", error);
+    res.status(500).json({ mensaje: "Error al actualizar el producto", detalle: error.message });
+  }
+});
+
+// Eliminar un producto (DELETE /api/productos/:id)
+app.delete("/api/productos/:id", async (req, res) => {
+  const { id } = req.params;
+  try {
+    await db.query("DELETE FROM producto WHERE id_producto = ?", [id]);
+    res.json({ mensaje: "Producto eliminado correctamente" });
+  } catch (error) {
+    console.error("Error al eliminar producto:", error);
+    res.status(500).json({ mensaje: "Error al eliminar el producto", detalle: error.message });
+  }
+});
+
+
+// Ruta para obtener un producto por su ID
+app.get("/api/productos/:id", async (req, res) => {
+  const { id } = req.params;
+  try {
+    const [filas] = await db.query(
+      `SELECT p.*, c.nombre AS categoria, m.nombre AS marca 
+       FROM producto p 
+       LEFT JOIN categoria c ON p.id_categoria = c.id_categoria 
+       LEFT JOIN marca m ON p.id_marca = m.id_marca 
+       WHERE p.id_producto = ?`,
+      [id]
+    );
+
+    if (filas.length === 0) {
+      return res.status(404).json({ error: "Producto no encontrado" });
+    }
+
+    const p = filas[0];
+    res.json({
+      id: p.id_producto,
+      nombre: p.nombre,
+      descripcion: p.descripcion,
+      precio: p.precio,
+      imagen: p.imagen,
+      material: p.material,
+      genero: p.genero,
+      existencia_actual: p.existencia_actual,
+      stock: p.existencia_actual,
+      categoria: p.categoria || "Gafas",
+      marca: p.marca || "Óptica Visión"
+    });
+  } catch (error) {
+    console.error("Error en GET /api/productos/:id:", error);
+    res.status(500).json({ error: "Error al consultar el producto", detalle: error.message });
   }
 });
 
