@@ -1,97 +1,6 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Montserrat:wght@400;500;600;700;800&display=swap');
 
-:root {
-  --gold: #cca43b;
-  --gold-dark: #b08c2f;
-  --text-dark: #222222;
-  --text-muted: #555555;
-  --border: #e8e8e8;
-  --bg: #ffffff;
-  --gold-light: #e5c96d;
-  --gold-glow: rgba(204, 164, 59, 0.35);
-  --gold-subtle: rgba(204, 164, 59, 0.12);
-  --font-title: 'Montserrat', sans-serif;
-  --font-body: 'Inter', sans-serif;
-}
+@import url('base.css');
 
-:root.dark-mode, body.dark-mode {
-  --text-dark: #f0f0f0;
-  --text-muted: #aaaaaa;
-  --border: #333333;
-  --bg: #121212;
-  --gold-glow: rgba(204, 164, 59, 0.15);
-}
-
-html, body {
-  user-select: none;
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-  caret-color: transparent !important;
-}
-
-input[type="text"]:focus,
-input[type="email"]:focus,
-input[type="password"]:focus,
-input[type="tel"]:focus,
-input[type="number"]:focus,
-input[type="search"]:focus,
-textarea:focus,
-.busc:focus,
-[contenteditable="true"]:focus {
-  caret-color: var(--text-dark) !important;
-  user-select: text !important;
-  -webkit-user-select: text !important;
-}
-
-*, *::before, *::after {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
-*:focus, *:focus-visible, *:active {
-  outline: none !important;
-}
-
-body {
-  font-family: var(--font-body);
-  color: var(--text-dark);
-  background-color: var(--bg);
-  line-height: 1.6;
-  -webkit-font-smoothing: antialiased;
-}
-
-h1, h2, h3, h4, h5, h6 {
-  font-family: var(--font-title);
-  color: var(--text-dark);
-  font-weight: 600;
-}
-
-a {
-  text-decoration: none;
-  color: inherit;
-  transition: color 0.3s ease, transform 0.3s ease;
-  outline: none;
-}
-
-ul, ol {
-  list-style: none;
-}
-
-img {
-  max-width: 100%;
-  height: auto;
-  user-select: none;
-  -webkit-user-select: none;
-  -webkit-user-drag: none;
-  outline: none;
-}
-
-button, input, select, textarea {
-  font-family: var(--font-body);
-  outline: none;
-}
 
 :root {
   --admin-bg: #090a0f; 
@@ -107,8 +16,6 @@ button, input, select, textarea {
   
   --status-success: #2ea043;
   --status-warning: #f1e05a;
-  --status-success: #2ea043;
-  --status-warning: #f1e05a;
   --status-error: #f85149;
   
   --admin-glass: rgba(18, 19, 28, 0.55);
@@ -122,8 +29,8 @@ button, input, select, textarea {
   --admin-border: rgba(204, 164, 59, 0.15);
   --admin-text: #1a1a1a; 
   --admin-text-muted: #495057;
-  --admin-gold: #c9a86a;
-  --admin-gold-hover: #d4a673;
+  --admin-gold: #b08c2f;
+  --admin-gold-hover: #cca43b;
   --admin-shadow: 0 12px 35px rgba(0, 0, 0, 0.08);
   --admin-glow: 0 0 30px rgba(204, 164, 59, 0.15);
   
@@ -138,8 +45,8 @@ button, input, select, textarea {
   --admin-border: rgba(204, 164, 59, 0.2);
   --admin-text: #ffffff; 
   --admin-text-muted: #c8d0d8;
-  --admin-gold: #d4a673;
-  --admin-gold-hover: #e8b878;
+  --admin-gold: #cca43b;
+  --admin-gold-hover: #e5c96d;
   --admin-shadow: 0 12px 35px rgba(0, 0, 0, 0.4);
   --admin-glow: 0 0 30px rgba(204, 164, 59, 0.25);
   
@@ -1027,3 +934,150 @@ body {
   .kpi-grid { grid-template-columns: 1fr; }
 }
 
+
+/* ============================================================
+   AÑADIDOS
+   ============================================================ */
+
+/* Los títulos siguen el tema del panel (antes tomaban el color oscuro global) */
+h1, h2, h3, h4, h5, h6 { color: var(--admin-text); }
+.kpi-info h3 { color: var(--admin-gold-hover); }
+
+/* Columnas de KPI por clase (reemplaza el style="" en línea del HTML) */
+.kpi-grid.cols-3 { grid-template-columns: repeat(3, 1fr); margin-bottom: 25px; }
+.kpi-grid.cols-4 { grid-template-columns: repeat(4, 1fr); margin-bottom: 25px; }
+
+/* Tablas anchas: scroll horizontal dentro de la tarjeta, sin romper la página */
+.data-card { overflow-x: auto; }
+.admin-table { min-width: 560px; }
+
+/* Estados extra (citas: Programada / Confirmada / Completada / Cancelada / No asistió) */
+.status-badge.neutral { background: rgba(139, 148, 158, 0.2); color: var(--admin-text-muted); }
+
+/* Promociones inactivas o vencidas */
+.promo-badge.inactive-promo,
+.promo-badge.expired-promo { background: rgba(139, 148, 158, 0.18); color: var(--admin-text-muted); }
+
+/* tipo_reporte "Existencias" (misma apariencia que .stock) */
+.reporte-icon.existencias { background: rgba(251, 146, 60, 0.12); color: #fb923c; }
+
+/* Botón secundario (Cancelar del modal) */
+.btn-secondary {
+  background: transparent;
+  border: 1px solid var(--admin-border);
+  color: var(--admin-text-muted);
+  padding: 0.65rem 1.2rem;
+  border-radius: 10px;
+  font-family: var(--font-title);
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+.btn-secondary:hover { border-color: var(--admin-gold); color: var(--admin-gold); }
+
+.btn-primary:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+/* ---------- Modal de crear / editar (<dialog class="modal">) ---------- */
+.modal {
+  width: min(600px, 92vw);
+  max-height: 90vh;
+  margin: auto;
+  padding: 28px;
+  overflow-y: auto;
+  border: 1px solid var(--admin-border);
+  border-radius: 16px;
+  background: var(--admin-bg);
+  color: var(--admin-text);
+  box-shadow: var(--admin-shadow), var(--admin-glow);
+}
+
+.modal::backdrop {
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(4px);
+}
+
+.modal h2 {
+  margin-bottom: 1.2rem;
+  font-size: 1.3rem;
+  color: var(--admin-text);
+}
+
+#modalCampos {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px 16px;
+  margin-bottom: 1rem;
+}
+
+#modalCampos label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  color: var(--admin-text-muted);
+}
+
+#modalCampos .full,
+#modalCampos .campo-completo,
+#modalCampos textarea { grid-column: 1 / -1; }
+
+.modal input,
+.modal select,
+.modal textarea {
+  width: 100%;
+  padding: 0.65rem 0.8rem;
+  border: 1px solid var(--admin-border);
+  border-radius: 8px;
+  background: var(--admin-card);
+  color: var(--admin-text);
+  font-size: 0.92rem;
+  text-transform: none;
+  letter-spacing: normal;
+  font-weight: 400;
+}
+
+.modal textarea { resize: vertical; min-height: 80px; }
+
+.modal input:focus,
+.modal select:focus,
+.modal textarea:focus {
+  outline: none;
+  border-color: var(--admin-gold);
+  box-shadow: 0 0 0 3px rgba(204, 164, 59, 0.2);
+}
+
+.modal select option { background: var(--admin-bg); color: var(--admin-text); }
+
+.modal-acciones {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 1.2rem;
+}
+
+.modal .mensaje-error { margin: 0.5rem 0 0; }
+
+/* El HTML todavía trae style="grid-template-columns:..." en los KPI: se anula en móvil */
+@media (max-width: 1024px) {
+  .kpi-grid.cols-4,
+  .kpi-grid[style] { grid-template-columns: repeat(2, 1fr) !important; }
+}
+
+@media (max-width: 768px) {
+  .kpi-grid[style] { grid-template-columns: 1fr 1fr !important; }
+  #modalCampos { grid-template-columns: 1fr; }
+  .modal { padding: 20px; }
+}
+
+@media (max-width: 480px) {
+  .kpi-grid[style] { grid-template-columns: 1fr !important; }
+}

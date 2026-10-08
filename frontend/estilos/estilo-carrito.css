@@ -1,57 +1,27 @@
-@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Montserrat:wght@400;500;600;700;800&display=swap");
 
-:root {
-  --gold: #cca43b;
-  --gold-dark: #b08c2f;
-  --text-dark: #222222;
-  --text-muted: #555555;
-  --border: #e8e8e8;
-  --bg: #ffffff;
-  --gold-light: #e5c96d;
-  --gold-glow: rgba(204, 164, 59, 0.35);
-  --gold-subtle: rgba(204, 164, 59, 0.12);
-  --font-title: "Montserrat", sans-serif;
-  --font-body: "Inter", sans-serif;
-}
+@import url('base.css');
+@import url('layout-publico.css');
 
-:root.dark-mode,
-body.dark-mode {
-  --text-dark: #f0f0f0;
-  --text-muted: #aaaaaa;
-  --border: #333333;
-  --bg: #121212;
-  --gold-glow: rgba(204, 164, 59, 0.15);
-}
 
-/* Reset específico para el carrito que no entre en conflicto con inicio.css */
-*,
-*::before,
-*::after {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
-/* Unas configuraciones de variables para el carrito  */
 :root {
   --cart-bg: #f9f9f9;
   --cart-card: #ffffff;
   --cart-border: #e0e0e0;
-  --cart-accent: var(--gold);
-  --cart-text: var(--text-dark);
+  --cart-text: #222222;
   --cart-text-light: #777777;
   --shadow-sm: 0 4px 6px rgba(0, 0, 0, 0.05);
   --shadow-lg: 0 15px 30px rgba(0, 0, 0, 0.1);
   --shadow-gold: 0 10px 20px rgba(204, 164, 59, 0.2);
   --glass-bg: rgba(255, 255, 255, 0.7);
   --glass-border: rgba(255, 255, 255, 0.5);
-
   --step-active: var(--gold);
   --step-inactive: #e0e0e0;
 }
 
+/* El HTML sigue cargando inicio.css antes que esta hoja: se anula su imagen de fondo */
 body {
   background-color: var(--cart-bg);
+  background-image: none;
 }
 
 /* El header con indicadores de pasos */
@@ -398,6 +368,50 @@ body {
   color: var(--cart-text-light);
   font-size: 1.2rem;
 }
+
+/* ---------- Carrito vacío ---------- */
+.carrito-vacio {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 12px;
+  padding: 50px 20px;
+  color: var(--cart-text-light);
+}
+
+.carrito-vacio > i {
+  font-size: 3rem;
+  color: var(--gold);
+  opacity: 0.8;
+}
+
+.carrito-vacio h2 { font-size: 1.4rem; color: var(--cart-text); }
+.carrito-vacio .btn-primary { margin-top: 10px; }
+
+/* ---------- Mensaje del código de descuento ---------- */
+.mensaje-promo {
+  margin: -15px 0 18px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--danger);
+}
+
+.mensaje-promo.ok,
+.mensaje-promo.exito { color: #27ae60; }
+
+/* ---------- Botón de continuar deshabilitado (carrito vacío) ---------- */
+.checkout-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.checkout-btn:disabled:hover i { transform: none; }
+
+.remove-btn:focus-visible,
+.qty-btn:focus-visible { outline-offset: 1px; }
 
 /* El responsive */
 @media (max-width: 992px) {

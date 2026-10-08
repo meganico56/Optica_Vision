@@ -1,0 +1,113 @@
+
+:root {
+  --gold:        #cca43b;
+  --gold-dark:   #b08c2f;
+  --gold-light:  #e5c96d;
+  --gold-glow:   rgba(204, 164, 59, 0.35);
+  --gold-subtle: rgba(204, 164, 59, 0.12);
+
+  --text-dark:   #222222;
+  --text-muted:  #555555;
+  --border:      #e8e8e8;
+  --bg:          #ffffff;
+
+  --danger:      #c0392b;
+  --success:     #2e7d32;
+
+  --font-title:  'Montserrat', sans-serif;
+  --font-body:   'Inter', sans-serif;
+}
+
+/* ---------- Reset ---------- */
+*, *::before, *::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: var(--font-body);
+  color: var(--text-dark);
+  background-color: var(--bg);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  min-height: 100vh;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-title);
+  color: var(--text-dark);
+  font-weight: 600;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+  transition: color 0.3s ease, transform 0.3s ease;
+}
+
+ul, ol { list-style: none; }
+
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+button, input, select, textarea {
+  font-family: var(--font-body);
+}
+
+button { cursor: pointer; }
+
+/* El atributo hidden SIEMPRE oculta, aunque el elemento tenga display:flex/grid */
+[hidden] { display: none !important; }
+
+/* ---------- Selección de texto ----------
+   Se puede seleccionar y copiar el texto de la página (correos, documentos,
+   direcciones...). Solo se bloquea en imágenes y botones. */
+img, button, .btn-primary, .btn-secondary {
+  -webkit-user-select: none;
+  user-select: none;
+}
+img { -webkit-user-drag: none; }
+
+/* ---------- Foco visible (teclado) ---------- */
+:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 2px;
+}
+/* Los elementos con su propio indicador de foco (borde/anillo dorado) no duplican el contorno */
+.busc:focus-visible { outline: none; }
+
+/* ---------- Mensajes de formulario (login, registro, cita, perfil, modales) ---------- */
+.mensaje-error {
+  width: 100%;
+  margin: 0.5rem 0 1rem;
+  padding: 0.7rem 1rem;
+  border-radius: 10px;
+  border: 1px solid rgba(192, 57, 43, 0.35);
+  background: rgba(192, 57, 43, 0.08);
+  color: var(--danger);
+  font-family: var(--font-body);
+  font-size: 0.88rem;
+  line-height: 1.4;
+}
+
+.mensaje-error.exito,
+.mensaje-exito {
+  border-color: rgba(46, 125, 50, 0.35);
+  background: rgba(46, 125, 50, 0.08);
+  color: var(--success);
+}
+
+/* ---------- Movimiento reducido ---------- */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

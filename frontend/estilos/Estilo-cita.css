@@ -1,0 +1,165 @@
+
+@import url('base.css');
+@import url('layout-publico.css');
+
+
+/* El HTML sigue cargando inicio.css antes que esta hoja: se anula su imagen de fondo */
+body {
+  background-color: #faf8f2;
+  background-image: none;
+}
+
+.cita-contenedor {
+  width: 100%;
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 3rem 1.25rem 4rem;
+}
+
+/* ---------- Introducción ---------- */
+.cita-intro { text-align: center; margin-bottom: 2rem; }
+
+.cita-intro h1 {
+  font-size: 2.2rem;
+  font-weight: 800;
+  color: var(--gold-dark);
+  text-transform: uppercase;
+  letter-spacing: 3px;
+  margin-bottom: 0.8rem;
+}
+
+.cita-intro p { color: var(--text-muted); }
+
+.cita-nota {
+  margin: 1rem auto 0;
+  max-width: 560px;
+  padding: 0.9rem 1.2rem;
+  border-left: 3px solid var(--gold);
+  border-radius: 0 10px 10px 0;
+  background: var(--gold-subtle);
+  font-size: 0.9rem;
+  text-align: left;
+}
+
+/* ---------- Aviso: hay que iniciar sesión ---------- */
+.cita-aviso {
+  margin-bottom: 1.5rem;
+  padding: 1rem 1.25rem;
+  border: 1px solid var(--gold);
+  border-radius: 12px;
+  background: #ffffff;
+  text-align: center;
+  font-size: 0.95rem;
+}
+
+.cita-aviso a {
+  color: var(--gold-dark);
+  font-weight: 600;
+  text-decoration: underline;
+}
+
+.cita-aviso a:hover { color: var(--gold); }
+
+/* ---------- Formulario ---------- */
+.cita-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  padding: 2rem;
+  border: 1px solid rgba(204, 164, 59, 0.22);
+  border-radius: 20px;
+  background: #ffffff;
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.07);
+}
+
+.cita-fila {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.25rem;
+}
+
+.cita-campo {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  min-width: 0;
+}
+
+.cita-campo label {
+  font-family: var(--font-title);
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.cita-campo input,
+.cita-campo select,
+.cita-campo textarea {
+  width: 100%;
+  padding: 0.8rem 1rem;
+  border: 1.5px solid var(--border);
+  border-radius: 10px;
+  background: #ffffff;
+  color: var(--text-dark);
+  font-size: 0.95rem;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.cita-campo textarea {
+  resize: vertical;
+  min-height: 90px;
+}
+
+.cita-campo input:focus,
+.cita-campo select:focus,
+.cita-campo textarea:focus {
+  outline: none;
+  border-color: var(--gold);
+  box-shadow: 0 0 0 4px var(--gold-subtle);
+}
+
+.cita-campo select:disabled {
+  background: #f4f4f4;
+  color: #999999;
+  cursor: not-allowed;
+}
+
+.cita-form .btn-primary {
+  align-self: stretch;
+  padding: 14px 28px;
+  font-size: 1rem;
+}
+
+.cita-form .mensaje-error { margin: 0; }
+
+/* ---------- Confirmación ---------- */
+.cita-confirmacion {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.8rem;
+  padding: 2.5rem 2rem;
+  border: 1px solid rgba(204, 164, 59, 0.3);
+  border-radius: 20px;
+  background: #ffffff;
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.07);
+  text-align: center;
+}
+
+.cita-confirmacion > i {
+  font-size: 3.2rem;
+  color: var(--success);
+}
+
+.cita-confirmacion h2 { font-size: 1.5rem; }
+.cita-confirmacion p { color: var(--text-muted); }
+.cita-confirmacion .btn-primary { margin-top: 0.6rem; }
+
+/* ---------- Responsive ---------- */
+@media (max-width: 600px) {
+  .cita-intro h1 { font-size: 1.7rem; letter-spacing: 2px; }
+  .cita-form { padding: 1.4rem 1.1rem; }
+  .cita-fila { grid-template-columns: 1fr; }
+}

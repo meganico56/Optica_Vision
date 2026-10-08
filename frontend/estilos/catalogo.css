@@ -1,259 +1,7 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Montserrat:wght@400;500;600;700;800&display=swap');
 
-/* ============================================================
-   VARIABLES
-   ============================================================ */
-:root {
-  --gold:        #cca43b;
-  --gold-dark:   #b08c2f;
-  --gold-light:  #e5c96d;
-  --gold-glow:   rgba(204, 164, 59, 0.35);
-  --gold-subtle: rgba(204, 164, 59, 0.12);
-  --text-dark:   #222222;
-  --text-muted:  #555555;
-  --border:      #e8e8e8;
-  --bg:          #ffffff;
-  --font-title:  'Montserrat', sans-serif;
-  --font-body:   'Inter', sans-serif;
-}
+@import url('base.css');
+@import url('layout-publico.css');
 
-:root.dark-mode, body.dark-mode {
-  --text-dark:  #f0f0f0;
-  --text-muted: #aaaaaa;
-  --border:     #333333;
-  --bg:         #121212;
-  --gold-glow:  rgba(204, 164, 59, 0.15);
-}
-
-/* ============================================================
-   RESET & BASE
-   ============================================================ */
-*, *::before, *::after {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
-html, body {
-  user-select: none;
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-  caret-color: transparent !important;
-}
-
-input[type="text"]:focus,
-input[type="email"]:focus,
-input[type="password"]:focus,
-input[type="search"]:focus,
-textarea:focus,
-.busc:focus {
-  caret-color: var(--text-dark) !important;
-  user-select: text !important;
-  -webkit-user-select: text !important;
-}
-
-*:focus, *:focus-visible, *:active {
-  outline: none !important;
-}
-
-body {
-  font-family: var(--font-body);
-  color: var(--text-dark);
-  background-color: var(--bg);
-  line-height: 1.6;
-  -webkit-font-smoothing: antialiased;
-  min-height: 100vh;
-}
-
-h1, h2, h3, h4, h5, h6 {
-  font-family: var(--font-title);
-  color: var(--text-dark);
-  font-weight: 600;
-}
-
-a {
-  text-decoration: none;
-  color: inherit;
-  transition: color 0.3s ease;
-  outline: none;
-}
-
-ul, ol { list-style: none; }
-
-img {
-  max-width: 100%;
-  height: auto;
-  user-select: none;
-  -webkit-user-select: none;
-  -webkit-user-drag: none;
-}
-
-button, input, select, textarea {
-  font-family: var(--font-body);
-  outline: none;
-}
-
-/* ============================================================
-   HEADER & NAVBAR — idéntico a inicio.css
-   ============================================================ */
-.site-header, .navbar, header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 1rem 5%;
-  background: rgba(255, 255, 255, 0.95);
-  backdrop-filter: blur(10px);
-  border-bottom: 1px solid var(--border);
-  position: sticky;
-  top: 0;
-  z-index: 1000;
-  transition: all 0.3s ease;
-}
-
-:root.dark-mode .site-header,
-:root.dark-mode .navbar,
-:root.dark-mode header,
-body.dark-mode .site-header,
-body.dark-mode .navbar,
-body.dark-mode header {
-  background: rgba(18, 18, 18, 0.95);
-}
-
-/* Logo */
-.logo {
-  display: flex;
-  align-items: center;
-}
-
-.logo img, .logo-icon {
-  height: 55px;
-  width: auto;
-  object-fit: contain;
-  filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.9));
-  user-select: none;
-  transition: all 0.3s ease;
-}
-
-/* Buscador */
-.buscador {
-  display: flex;
-  align-items: center;
-  background-color: var(--bg);
-  border: 1.5px solid var(--border);
-  border-radius: 35px;
-  padding: 3px 4px 3px 14px;
-  width: 100%;
-  max-width: 380px;
-  margin: 0 1.5rem;
-  transition: all 0.3s ease;
-}
-
-.buscador:hover, .buscador:focus-within {
-  border-color: var(--gold);
-  box-shadow: 0 0 12px var(--gold-glow);
-}
-
-.busc {
-  border: none;
-  outline: none;
-  background: transparent;
-  width: 100%;
-  padding: 6px 8px;
-  font-size: 0.88rem;
-  font-family: var(--font-body);
-  color: var(--text-dark);
-}
-
-.busc::placeholder {
-  color: var(--text-muted);
-  font-size: 0.88rem;
-}
-
-.bot_bus {
-  border: none;
-  background-color: var(--gold);
-  color: #ffffff;
-  width: 34px;
-  height: 34px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  flex-shrink: 0;
-}
-
-.bot_bus:hover {
-  background-color: var(--gold-dark);
-  transform: scale(1.05);
-}
-
-/* Menú hamburguesa */
-.menu-toggle { display: none; }
-
-.hamburguesa {
-  display: none;
-  flex-direction: column;
-  gap: 5px;
-  cursor: pointer;
-}
-
-.hamburguesa span {
-  width: 25px;
-  height: 3px;
-  background: var(--gold);
-  border-radius: 5px;
-  transition: all 0.3s ease;
-}
-
-/* Navegación con subrayado animado */
-.navbar-menu {
-  display: flex;
-  align-items: center;
-  gap: 1.8rem;
-  list-style: none;
-}
-
-.navbar-menu li a {
-  position: relative;
-  color: var(--text-dark);
-  font-family: var(--font-title);
-  font-size: 0.85rem;
-  font-weight: 600;
-  letter-spacing: 0.5px;
-  padding: 6px 0;
-  text-transform: uppercase;
-  transition: color 0.3s ease;
-  background: transparent !important;
-  box-shadow: none !important;
-  border-radius: 0 !important;
-}
-
-.navbar-menu li a::after {
-  content: '';
-  position: absolute;
-  left: 0;
-  bottom: -4px;
-  width: 0;
-  height: 2px;
-  background: var(--gold);
-  transition: width 0.3s ease;
-  border-radius: 2px;
-}
-
-.navbar-menu li a:hover,
-.navbar-menu li a.activo {
-  color: var(--gold) !important;
-  background: transparent !important;
-  box-shadow: none !important;
-}
-
-.navbar-menu li a:hover::after,
-.navbar-menu li a.activo::after {
-  width: 100% !important;
-}
 
 /* ============================================================
    CATÁLOGO — contenido principal
@@ -302,7 +50,7 @@ body.dark-mode header {
 .botons li a {
   display: block;
   text-decoration: none;
-  color: var(--text-dark);
+  color: #222222;
   text-transform: uppercase;
   font-family: var(--font-title);
   font-size: 0.82rem;
@@ -403,7 +151,7 @@ body.dark-mode header {
 .producto-info h3 a {
   font-family: var(--font-title);
   font-size: 1rem;
-  color: #222222 !important;
+  color: #222222;
   font-weight: 700;
   letter-spacing: 0.5px;
   margin-bottom: 4px;
@@ -412,37 +160,11 @@ body.dark-mode header {
 .producto-info .precio {
   font-family: var(--font-body);
   font-size: 1.15rem;
-  color: var(--gold-dark) !important;
+  color: var(--gold-dark);
   font-weight: 700;
   margin-bottom: 10px;
 }
 
-/* Modo oscuro: tarjetas de gafas siempre claras */
-:root.dark-mode .producto-card,
-body.dark-mode .producto-card {
-  background: #ffffff !important;
-  border-color: rgba(204, 164, 59, 0.4) !important;
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3), 0 0 18px rgba(204, 164, 59, 0.15) !important;
-  color: #222222 !important;
-}
-
-:root.dark-mode .producto-imagen,
-body.dark-mode .producto-imagen {
-  background: linear-gradient(180deg, #ffffff 0%, #faf8f2 100%) !important;
-  border-color: rgba(204, 164, 59, 0.25) !important;
-}
-
-:root.dark-mode .producto-info h3,
-:root.dark-mode .producto-info h3 a,
-body.dark-mode .producto-info h3,
-body.dark-mode .producto-info h3 a {
-  color: #222222 !important;
-}
-
-:root.dark-mode .producto-info .precio,
-body.dark-mode .producto-info .precio {
-  color: var(--gold-dark) !important;
-}
 
 /* Botones */
 .btn-carrito1, .btn-carrito {
@@ -486,144 +208,57 @@ body.dark-mode .producto-info .precio {
   transform: translateY(-2px);
 }
 
-/* ============================================================
-   FOOTER
-   ============================================================ */
-footer {
-  border-top: 1px solid var(--border);
-  background: rgba(255, 255, 255, 0.75);
-  backdrop-filter: blur(6px);
-}
 
-.footer-container {
-  display: grid;
-  grid-template-columns: 1.2fr 1fr 1fr 1fr 1.2fr;
-  gap: 2rem;
-  padding: 3rem 5%;
-}
-
-.footer-col h4 {
-  font-family: var(--font-title);
-  color: var(--gold-dark);
-  margin-bottom: 1rem;
-  font-size: 0.9rem;
-  font-weight: 700;
-}
-
-.footer-col ul li { margin-bottom: 0.6rem; }
-
-.footer-col ul a {
-  font-family: var(--font-body);
-  color: var(--text-muted);
-  font-size: 0.85rem;
-  transition: color 0.3s ease;
-}
-
-.footer-col ul a:hover { color: var(--gold-dark); }
-
-.contact-info {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin-bottom: 1rem;
-  font-family: var(--font-body);
-  font-size: 0.85rem;
+/* ---------- Estados que pinta catalogo.js ---------- */
+.resumen-busqueda {
+  margin-top: 0.6rem;
+  font-size: 0.95rem;
   color: var(--text-muted);
 }
 
-.contact-info i { color: var(--gold-dark); }
+.producto-imagen { position: relative; }
 
-.social-icons {
-  display: flex;
-  gap: 1rem;
-}
-
-.social-icons a {
-  color: var(--gold-dark);
-  font-size: 1.2rem;
-  transition: transform 0.3s ease, color 0.3s ease;
-}
-
-.social-icons a:hover {
-  transform: translateY(-3px);
-  color: var(--gold);
-}
-
-.payment-methods {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 8px;
-}
-
-.payment-methods span {
-  background-color: #ffffff;
-  border: 1px solid var(--border);
-  padding: 6px;
-  font-size: 0.75rem;
-  text-align: center;
-  border-radius: 4px;
-  font-weight: bold;
-  font-family: var(--font-title);
-}
-
-.copyright {
-  background: var(--gold-dark);
+.badge-agotado {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  z-index: 3;
+  padding: 4px 12px;
+  border-radius: 20px;
+  background: #222222;
   color: #ffffff;
-  padding: 14px 5%;
-  font-size: 0.85rem;
-  text-align: center;
-  font-family: var(--font-body);
+  font-family: var(--font-title);
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
 }
 
-/* ============================================================
-   RESPONSIVE
-   ============================================================ */
+/* Producto sin existencias (si catalogo.js agrega la clase .agotado a la tarjeta) */
+.producto-card.agotado .producto-imagen img {
+  filter: grayscale(1) drop-shadow(0 8px 16px rgba(0, 0, 0, 0.12));
+  opacity: 0.65;
+}
+
+.btn-carrito1:disabled,
+.btn-carrito:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+/* Mensaje de cargando / sin resultados / error ocupa todo el ancho de la cuadrícula */
+.estado-lista { margin-bottom: 1.5rem; }
+
+/* ---------- Responsive ---------- */
 @media (max-width: 768px) {
-  .hamburguesa { display: flex; }
-
-  .navbar-menu {
-    flex-direction: column;
-    width: 100%;
-    max-height: 0;
-    overflow: hidden;
-    transition: max-height 0.4s ease;
-    gap: 0;
-    background: rgba(255, 255, 255, 0.97);
-    position: absolute;
-    top: 100%;
-    left: 0;
-    padding: 0 5%;
-    border-bottom: 1px solid var(--border);
-  }
-
-  :root.dark-mode .navbar-menu,
-  body.dark-mode .navbar-menu {
-    background: rgba(18, 18, 18, 0.97);
-  }
-
-  .menu-toggle:checked ~ nav .navbar-menu {
-    max-height: 400px;
-    padding: 1rem 5%;
-  }
-
-  .navbar-menu li a {
-    padding: 12px 0;
-    display: block;
-  }
-
-  .buscador { max-width: none; margin: 0; }
-
   .catalogo_cont { padding: 20px 16px; }
+
+  .titulo-pagina h1 { font-size: 1.8rem; letter-spacing: 2px; }
 
   .contenedor-productos {
     grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
     gap: 20px;
   }
-
-  .footer-container {
-    grid-template-columns: 1fr;
-    text-align: center;
-  }
-
-  .contact-info, .social-icons { justify-content: center; }
 }

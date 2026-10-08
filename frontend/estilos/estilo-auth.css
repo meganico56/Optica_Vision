@@ -1,122 +1,13 @@
-@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Montserrat:wght@400;500;600;700;800&display=swap");
 
-:root {
-  --gold: #cca43b;
-  --gold-dark: #b08c2f;
-  --text-dark: #222222;
-  --text-muted: #555555;
-  --border: #e8e8e8;
-  --bg: #ffffff;
-  --gold-light: #e5c96d;
-  --gold-glow: rgba(204, 164, 59, 0.35);
-  --gold-subtle: rgba(204, 164, 59, 0.12);
-  --font-title: "Montserrat", sans-serif;
-  --font-body: "Inter", sans-serif;
-}
+@import url('base.css');
 
-:root.dark-mode,
-body.dark-mode {
-  --text-dark: #f0f0f0;
-  --text-muted: #aaaaaa;
-  --border: #333333;
-  --bg: #121212;
-  --gold-glow: rgba(204, 164, 59, 0.15);
-}
-
-html,
-body {
-  user-select: none;
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-  caret-color: transparent !important;
-}
-
-input[type="text"]:focus,
-input[type="email"]:focus,
-input[type="password"]:focus,
-input[type="tel"]:focus,
-input[type="number"]:focus,
-input[type="search"]:focus,
-textarea:focus,
-.busc:focus,
-[contenteditable="true"]:focus {
-  caret-color: var(--text-dark) !important;
-  user-select: text !important;
-  -webkit-user-select: text !important;
-}
-
-*,
-*::before,
-*::after {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
-*:focus,
-*:focus-visible,
-*:active {
-  outline: none !important;
-}
-
-body {
-  font-family: var(--font-body);
-  color: var(--text-dark);
-  background-color: var(--bg);
-  line-height: 1.6;
-  -webkit-font-smoothing: antialiased;
-}
-
-h1,
-h2,
-h3,
-h4,
-h5,
-h6 {
-  font-family: var(--font-title);
-  color: var(--text-dark);
-  font-weight: 600;
-}
-
-a {
-  text-decoration: none;
-  color: inherit;
-  transition:
-    color 0.3s ease,
-    transform 0.3s ease;
-  outline: none;
-}
-
-ul,
-ol {
-  list-style: none;
-}
-
-img {
-  max-width: 100%;
-  height: auto;
-  user-select: none;
-  -webkit-user-select: none;
-  -webkit-user-drag: none;
-  outline: none;
-}
-
-button,
-input,
-select,
-textarea {
-  font-family: var(--font-body);
-  outline: none;
-}
-
-/* Apartado de autenticacion y de registro */
 
 .inicio {
   display: flex;
   justify-content: space-around;
   align-items: center;
   flex-direction: row;
+  gap: 2rem;
   min-height: 100vh;
   padding: 2.5rem 1rem;
   background-image: url("../imagenes/fondos/fondo-boutique.png");
@@ -126,18 +17,12 @@ textarea {
   background-attachment: fixed;
   position: relative;
 }
+
 .inicio::before {
   content: "";
   position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: linear-gradient(
-    135deg,
-    rgba(204, 164, 59, 0.15) 0%,
-    rgba(0, 0, 0, 0.65) 100%
-  );
+  inset: 0;
+  background: linear-gradient(135deg, rgba(204, 164, 59, 0.15) 0%, rgba(0, 0, 0, 0.65) 100%);
   z-index: 1;
 }
 
@@ -150,15 +35,8 @@ textarea {
 }
 
 @keyframes float {
-  0% {
-    transform: translateY(0px);
-  }
-  50% {
-    transform: translateY(-15px);
-  }
-  100% {
-    transform: translateY(0px);
-  }
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-15px); }
 }
 
 .inicio .logo img {
@@ -167,36 +45,27 @@ textarea {
   filter: drop-shadow(0 15px 25px rgba(0, 0, 0, 0.6));
 }
 
+/* ---------- Tarjeta del formulario ---------- */
 .formulario {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  background: rgba(255, 255, 255, 0.85);
+  background: rgba(255, 255, 255, 0.88);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
   padding: 3rem 2.5rem;
   border-radius: 1.5rem;
   width: 100%;
   max-width: 480px;
-  height: auto;
-  box-shadow:
-    0 25px 50px rgba(0, 0, 0, 0.25),
-    0 0 0 1px rgba(255, 255, 255, 0.5) inset;
+  margin: 1rem 0;
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(255, 255, 255, 0.5) inset;
   border: 1px solid rgba(255, 255, 255, 0.4);
-  margin-top: 1rem;
-  margin-bottom: 1rem;
   z-index: 2;
-  transition:
-    transform 0.4s ease,
-    box-shadow 0.4s ease;
 }
-.formulario:hover {
-  transform: translateY(-5px);
-  box-shadow:
-    0 35px 65px rgba(0, 0, 0, 0.3),
-    0 0 0 1px rgba(255, 255, 255, 0.6) inset;
-}
+
+/* El registro tiene más campos: tarjeta más ancha */
+.formulario:has(.campos) { max-width: 640px; }
 
 .titulo {
   display: flex;
@@ -206,62 +75,6 @@ textarea {
   position: relative;
 }
 
-.btn-volver {
-  position: absolute;
-  top: -10px;
-  right: 0;
-  color: var(--text-muted);
-  font-family: var(--font-body);
-  font-size: 0.85rem;
-  text-decoration: none;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  transition: all 0.3s ease;
-  padding: 0.4rem 0.8rem;
-  border-radius: 20px;
-  background: rgba(0, 0, 0, 0.04);
-}
-
-.btn-volver:hover {
-  color: var(--gold-dark);
-  background: var(--gold-subtle);
-  transform: translateX(-4px);
-}
-
-.input-group {
-  width: 100%;
-  position: relative;
-  margin-bottom: 1.25rem;
-}
-.input-group i.icon-left {
-  position: absolute;
-  left: 1.2rem;
-  top: 50%;
-  transform: translateY(-50%);
-  color: var(--text-muted);
-  transition: color 0.3s ease;
-  pointer-events: none;
-}
-.input-group input:focus ~ i.icon-left,
-.input-group input:not(:placeholder-shown) ~ i.icon-left {
-  color: var(--gold);
-}
-
-.toggle-password {
-  position: absolute;
-  right: 1.2rem;
-  top: 50%;
-  transform: translateY(-50%);
-  color: var(--text-muted);
-  cursor: pointer;
-  transition: color 0.3s ease;
-  z-index: 10;
-}
-.toggle-password:hover {
-  color: var(--gold-dark);
-}
-
 .titulo h5 {
   font-family: var(--font-title);
   color: var(--gold-dark);
@@ -269,6 +82,27 @@ textarea {
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 1.5px;
+}
+
+.btn-volver {
+  position: absolute;
+  top: -10px;
+  right: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.4rem 0.8rem;
+  border-radius: 20px;
+  background: rgba(0, 0, 0, 0.04);
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  transition: all 0.3s ease;
+}
+
+.btn-volver:hover {
+  color: var(--gold-dark);
+  background: var(--gold-subtle);
+  transform: translateX(-4px);
 }
 
 .subtitulo {
@@ -281,72 +115,161 @@ textarea {
 .subtitulo h1 {
   font-family: var(--font-title);
   font-size: 2rem;
-  color: var(--text-dark);
   font-weight: 700;
   margin-top: 0.25rem;
 }
 
-/* Grilla de Campos de Registro */
+/* ---------- Campos ---------- */
+.input-group {
+  width: 100%;
+  position: relative;
+  margin-bottom: 1.25rem;
+}
+
+.input-group i.icon-left {
+  position: absolute;
+  left: 1.2rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-muted);
+  transition: color 0.3s ease;
+  pointer-events: none;
+}
+
+/* El ícono se pinta dorado con el foco o cuando hay texto (el input va ANTES del ícono) */
+.input-group input:focus ~ i.icon-left,
+.input-group input:not(:placeholder-shown) ~ i.icon-left { color: var(--gold); }
+
+.toggle-password {
+  position: absolute;
+  right: 1.2rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: color 0.3s ease;
+  z-index: 10;
+}
+
+.toggle-password:hover { color: var(--gold-dark); }
+
+/* Registro: bloque de campos en filas de 2 columnas */
 .campos {
   width: 100%;
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
+  gap: 1rem;
   margin-bottom: 1.25rem;
 }
 
 .fila {
   display: flex;
-  gap: 1.25rem;
+  gap: 1rem;
   width: 100%;
 }
 
-.fila .username,
-.fila input {
+.fila > * {
   flex: 1;
   min-width: 0;
 }
 
+/* Inputs, selects y fechas comparten la misma apariencia */
 .formulario input[type="text"],
 .formulario input[type="email"],
 .formulario input[type="password"],
 .formulario input[type="tel"],
-.username,
-.password {
+.formulario input[type="date"],
+.formulario select {
   width: 100%;
-  padding: 0.9rem 1rem 0.9rem 3rem;
-  margin-bottom: 0;
+  padding: 0.9rem 1rem;
   border: 2px solid transparent;
   border-radius: 12px;
+  background-color: rgba(255, 255, 255, 0.75);
+  color: var(--text-dark);
   font-family: var(--font-body);
   font-size: 0.95rem;
-  color: var(--text-dark);
-  background-color: rgba(255, 255, 255, 0.7);
-  transition: all 0.3s ease;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.03) inset;
+  transition: all 0.3s ease;
 }
 
+/* Con ícono a la izquierda (login y recuperar) */
+.input-group input[type="text"],
+.input-group input[type="email"],
+.input-group input[type="password"] { padding-left: 3rem; }
+
+/* La contraseña del login tiene el ojito a la derecha */
+.input-group input[type="password"] { padding-right: 3rem; }
+
+.formulario input::placeholder { color: var(--text-muted); }
+
 .formulario input:focus,
-.username:focus,
-.password:focus {
+.formulario select:focus {
   outline: none;
   border-color: var(--gold);
   background-color: #ffffff;
-  box-shadow:
-    0 0 0 4px var(--gold-subtle),
-    0 4px 10px rgba(0, 0, 0, 0.03) inset;
+  box-shadow: 0 0 0 4px var(--gold-subtle), 0 4px 10px rgba(0, 0, 0, 0.03) inset;
 }
 
-.olvidar {
-  background-color: transparent;
-  border: none;
+/* Select con flecha propia */
+.formulario select {
+  appearance: none;
+  -webkit-appearance: none;
+  cursor: pointer;
+  padding-right: 2.5rem;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'><path d='M1 1l5 5 5-5' stroke='%23b08c2f' stroke-width='2' fill='none' stroke-linecap='round' stroke-linejoin='round'/></svg>");
+  background-repeat: no-repeat;
+  background-position: right 1rem center;
+}
+
+/* El texto "Tipo de documento" (opción vacía) se ve como un placeholder */
+.formulario select:invalid { color: var(--text-muted); }
+.formulario select option { color: var(--text-dark); }
+
+/* Fecha de nacimiento: etiqueta pequeña encima del campo */
+.campo-fecha {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.etiqueta-campo {
+  padding-left: 0.25rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--text-muted);
+}
+
+.formulario input[type="date"]::-webkit-calendar-picker-indicator { cursor: pointer; }
+
+/* Aceptar tratamiento de datos */
+.aceptar-datos {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.6rem;
+  width: 100%;
+  font-size: 0.85rem;
+  line-height: 1.4;
   color: var(--text-muted);
   cursor: pointer;
-  font-family: var(--font-body);
+}
+
+.aceptar-datos input {
+  width: 1.05rem;
+  height: 1.05rem;
+  margin-top: 0.15rem;
+  flex-shrink: 0;
+  accent-color: var(--gold);
+}
+
+/* ---------- Botones ---------- */
+.olvidar {
+  align-self: flex-end;
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
   font-size: 0.875rem;
   margin-bottom: 1rem;
   transition: color 0.3s ease;
-  align-self: flex-end;
 }
 
 .olvidar:hover {
@@ -355,9 +278,7 @@ textarea {
 }
 
 .iniciar,
-.registrar,
-.google,
-.facebook {
+.registrar {
   width: 100%;
   padding: 0.9rem 1.5rem;
   font-family: var(--font-title);
@@ -365,13 +286,11 @@ textarea {
   font-size: 1rem;
   border: none;
   border-radius: 12px;
-  cursor: pointer;
-  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
   display: flex;
   justify-content: center;
   align-items: center;
   gap: 0.8rem;
-  margin-bottom: 0;
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
 }
 
 .iniciar {
@@ -382,70 +301,30 @@ textarea {
 }
 
 .iniciar:hover {
-  transform: translateY(-3px) scale(1.02);
+  transform: translateY(-3px);
   box-shadow: 0 12px 25px var(--gold-glow);
 }
 
-.iniciar:active {
-  transform: translateY(1px);
+.iniciar:active { transform: translateY(1px); }
+
+.iniciar:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
 }
 
-.divider {
-  display: flex;
-  align-items: center;
-  width: 100%;
-  margin: 2rem 0;
-  color: var(--text-muted);
-}
-.divider::before,
-.divider::after {
-  content: "";
-  flex: 1;
-  border-bottom: 1px solid var(--border);
-}
-.divider span {
-  padding: 0 1rem;
-  font-size: 0.9rem;
-  font-family: var(--font-body);
-  font-weight: 500;
+.registrar {
+  background: transparent;
+  color: var(--gold-dark);
+  border: 2px solid var(--gold);
 }
 
-.social-login {
-  display: flex;
-  gap: 3.5rem;
-  width: 100%;
-  margin-bottom: 2.5rem;
-}
-
-.google,
-.facebook {
-  flex: 1;
-}
-
-.google {
-  background-color: #ffffff;
-  color: #444444;
-  border: 1px solid var(--border);
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
-}
-
-.google:hover {
-  background-color: #fcfcfc;
-  border-color: #dcdcdc;
-  transform: translateY(-2px);
-  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.08);
-}
-
-.facebook {
-  background-color: #1877f2;
+.registrar:hover {
+  background: var(--gold);
   color: #ffffff;
-  box-shadow: 0 4px 10px rgba(24, 119, 242, 0.2);
-}
-
-.facebook:hover {
-  background-color: #166fe5;
   transform: translateY(-2px);
-  box-shadow: 0 6px 15px rgba(24, 119, 242, 0.3);
+  box-shadow: 0 8px 20px var(--gold-glow);
 }
 
 .registro-link {
@@ -459,26 +338,12 @@ textarea {
 }
 
 .registro-link p {
-  font-family: var(--font-body);
   font-size: 0.9rem;
   color: var(--text-muted);
-  margin: 0;
   text-align: center;
 }
 
-.registrar {
-  background-color: transparent;
-  color: var(--gold-dark);
-  border: 2px solid var(--gold);
-}
-
-.registrar:hover {
-  background-color: var(--gold);
-  color: #ffffff;
-  transform: translateY(-2px);
-  box-shadow: 0 8px 20px var(--gold-glow);
-}
-
+/* ---------- Footer de las pantallas de acceso ---------- */
 footer .copyright {
   background: var(--gold-dark);
   color: #ffffff;
@@ -487,17 +352,19 @@ footer .copyright {
   font-size: 0.85rem;
 }
 
-@media (max-width: 576px) {
+/* ---------- Responsive ---------- */
+@media (max-width: 768px) {
   .inicio {
     flex-direction: column;
     justify-content: center;
-    gap: 2rem;
   }
 
-  .formulario {
-    width: 100%;
-    padding: 1.5rem;
-  }
+  .inicio .logo img { max-width: 160px; }
+}
+
+@media (max-width: 576px) {
+  .formulario { padding: 2rem 1.25rem; }
+  .subtitulo h1 { font-size: 1.6rem; }
 
   .fila {
     flex-direction: column;
