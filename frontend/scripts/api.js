@@ -28,7 +28,7 @@
 
     async function request(metodo, ruta, cuerpo) {
         const headers = { Accept: 'application/json' };
-        const token = sessionStorage.getItem(CLAVE_TOKEN);
+        const token = localStorage.getItem(CLAVE_TOKEN);
         if (token) headers.Authorization = 'Bearer ' + token;
 
         const opciones = { method: metodo, headers };

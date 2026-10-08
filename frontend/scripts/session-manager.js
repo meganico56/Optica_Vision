@@ -2,7 +2,7 @@
 // Script para mantener y gestionar el estado de sesión en todas las páginas
 
 document.addEventListener('DOMContentLoaded', () => {
-    const usuarioLogueadoStr = sessionStorage.getItem('usuarioLogueado');
+    const usuarioLogueadoStr = localStorage.getItem('usuarioLogueado') || localStorage.getItem('bv_usuario');
     const pathActual = window.location.pathname;
 
     if (usuarioLogueadoStr) {
@@ -19,19 +19,20 @@ document.addEventListener('DOMContentLoaded', () => {
                 
                 link.addEventListener('click', (e) => {
                     e.preventDefault();
-                    sessionStorage.removeItem('usuarioLogueado');
+                    localStorage.removeItem('usuarioLogueado');
+                    if (window.Sesion) window.Sesion.limpiar();
                     window.location.reload();
                 });
                 
                 // Si es admin/empleado, agregar un enlace al Panel justo antes
-                if (userData.rol === 'admin' || userData.rol === 'empleado') {
+                if (userData.rol === 'admin' || userData.rol === 'empleado' || userData.rol === 'Administrador' || userData.rol === 'Vendedor') {
                     const li = document.createElement('li');
                     li.innerHTML = '<a href="panel-admin.html" style="color: var(--gold);"><i class="fa-solid fa-chart-pie"></i> PANEL ADMIN</a>';
                     link.parentElement.insertAdjacentElement('beforebegin', li);
                 }
                 
                 // Si es cliente, agregar enlace al Panel de Usuario
-                if (userData.rol === 'cliente') {
+                if (userData.rol === 'cliente' || userData.rol === 'Cliente') {
                     const li = document.createElement('li');
                     li.innerHTML = '<a href="panel-usuario.html" style="color: var(--gold);"><i class="fa-solid fa-user"></i> MI PANEL</a>';
                     link.parentElement.insertAdjacentElement('beforebegin', li);
@@ -44,7 +45,8 @@ document.addEventListener('DOMContentLoaded', () => {
         adminLogoutBtns.forEach(btn => {
             btn.addEventListener('click', (e) => {
                 e.preventDefault();
-                sessionStorage.removeItem('usuarioLogueado');
+                localStorage.removeItem('usuarioLogueado');
+                if (window.Sesion) window.Sesion.limpiar();
                 window.location.href = 'inicio.html';
             });
         });

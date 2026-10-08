@@ -16,7 +16,7 @@
     };
 
     function leerUsuario() {
-        try { return JSON.parse(sessionStorage.getItem(K_USUARIO)); } catch (e) { return null; }
+        try { return JSON.parse(localStorage.getItem(K_USUARIO)); } catch (e) { return null; }
     }
 
     function panelDe(rol) {
@@ -26,21 +26,21 @@
     }
 
     const Sesion = {
-        token: () => sessionStorage.getItem(K_TOKEN),
+        token: () => localStorage.getItem(K_TOKEN),
         usuario: leerUsuario,
         rol: () => { const u = leerUsuario(); return u ? u.rol : null; },
-        estaLogueado: () => !!sessionStorage.getItem(K_TOKEN) && !!leerUsuario(),
+        estaLogueado: () => !!localStorage.getItem(K_TOKEN) && !!leerUsuario(),
         esStaff: () => STAFF.indexOf(Sesion.rol()) !== -1,
         panelDe,
 
         iniciar(token, usuario) {
-            sessionStorage.setItem(K_TOKEN, token);
-            sessionStorage.setItem(K_USUARIO, JSON.stringify(usuario));
+            localStorage.setItem(K_TOKEN, token);
+            localStorage.setItem(K_USUARIO, JSON.stringify(usuario));
         },
 
         limpiar() {
-            sessionStorage.removeItem(K_TOKEN);
-            sessionStorage.removeItem(K_USUARIO);
+            localStorage.removeItem(K_TOKEN);
+            localStorage.removeItem(K_USUARIO);
         },
 
         cerrar() {
