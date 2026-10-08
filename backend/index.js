@@ -13,30 +13,44 @@ app.get("/", (req, res) => {
   res.send("API de Óptica Visión funcionando correctamente");
 });
 
-// Ruta para obtener productos (soporta búsqueda por query ?q=)
+// Ruta para obtener productos (soporta filtro por categoria ?categoria= y búsqueda ?q=)
 app.get("/api/productos", async (req, res) => {
-  const busqueda = req.query.q;
+  const { q: busqueda, categoria } = req.query;
 
   try {
-    let query = "SELECT * FROM producto";
+    let query = "SELECT * FROM producto WHERE 1=1";
     let params = [];
 
-    if (busqueda) {
-      query += " WHERE nombre LIKE ? OR descripcion LIKE ?";
-      params = [`%${busqueda}%`, `%${busqueda}%`];
+    // Filtro por término de búsqueda
+    if (busqueda && busqueda.trim() !== "") {
+      query += " AND (nombre LIKE ? OR descripcion LIKE ?)";
+      params.push(`%${busqueda}%`, `%${busqueda}%`);
+    }
+
+    // Filtro por categoría
+    if (categoria && categoria.trim() !== "" && categoria.toUpperCase() !== "TODOS") {
+      query += " AND LOWER(categoria) = LOWER(?)";
+      params.push(categoria);
     }
 
     const [filas] = await db.query(query, params);
     res.json(filas);
   } catch (error) {
-    console.error("Error al consultar MySQL:", error);
-    res.status(500).json({ error: "Error interno del servidor" });
+    console.error("Error al consultar MySQL en /api/productos:", error);
+    res.status(500).json({
+      error: "Error interno del servidor",
+      detalle: error.message
+    });
   }
 });
 
 // Ruta para agendar cita (Tabla cita)
 app.post("/api/citas", async (req, res) => {
   const { id_usuario, fecha_cita, hora_cita, motivo, estado } = req.body;
+
+  if (!fecha_cita || !hora_cita) {
+    return res.status(400).json({ error: "La fecha y la hora de la cita son obligatorias" });
+  }
 
   try {
     const [resultado] = await db.query(
@@ -47,7 +61,7 @@ app.post("/api/citas", async (req, res) => {
         hora_cita,
         motivo || "Examen visual",
         estado || "Pendiente",
-      ],
+      ]
     );
 
     res.status(201).json({
@@ -63,6 +77,10 @@ app.post("/api/citas", async (req, res) => {
 // Ruta de autenticación / Login
 app.post("/api/login", async (req, res) => {
   const { correo, contrasena } = req.body;
+
+  if (!correo || !contrasena) {
+    return res.status(400).json({ mensaje: "Por favor ingresa correo y contraseña" });
+  }
 
   try {
     // 1. Buscar usuario solo por correo (la contraseña está hasheada con bcrypt)
