@@ -116,7 +116,76 @@ body {
     box-shadow: 0 15px 40px rgba(0,0,0,0.12), 0 0 35px var(--gold-glow);
     z-index: 1;
 }
-
+.nosotros {
+    position: relative;
+    display: flex;
+    padding: 4rem 5%;
+    text-align: center;
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+}
+.nosotros-container {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 2rem;
+    width: 100%;
+    max-width: 1000px;
+    margin-top: 1rem;
+}
+.nosotros h2 {
+    font-family: var(--font-title);
+    color: var(--gold);
+    font-size: 2.5rem;
+    font-weight: 800;
+    letter-spacing: 1px;
+    margin-bottom: 0.5rem;
+    line-height: 1.15;
+}
+.nosotros h3 {
+    font-family: var(--font-title);
+    color: var(--text-dark);
+    font-size: 1.5rem;
+    font-weight: 500;
+    margin-bottom: 1.5rem;
+}
+.nosotros p {
+    font-family: var(--font-body);
+    line-height: 1.8;
+    color: var(--text-muted);
+    margin-bottom: 2rem;
+    font-size: 1.05rem;
+}
+.nosotros-mision {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    background: rgb(255, 255, 255);
+    border-radius: 20px;
+    border-color: var(--gold);
+    border-width: 3px;
+    border-style: solid;
+    padding: 2rem;
+    box-sizing: border-box;
+    min-height: 22rem;
+}
+.nosotros-vision {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    background: rgb(255, 255, 255);
+    border-radius: 20px;
+    border-color: var(--gold);
+    border-width: 3px;
+    border-style: solid;
+    padding: 2rem;
+    box-sizing: border-box;
+    min-height: 22rem;
+}
 @keyframes rotateGlasses {
     0% { transform: rotateY(0deg); }
     50% { transform: rotateY(180deg) translateY(-10px); }
@@ -154,4 +223,6 @@ body {
     .glow { width: 300px; height: 300px; }
     .glasses-model { width: 260px; }
     .podium { width: 220px; height: 50px; bottom: 40px; }
+    .nosotros-container { grid-template-columns: 1fr; max-width: 480px; }
+    .nosotros-mision, .nosotros-vision { min-height: 0; }
 }
