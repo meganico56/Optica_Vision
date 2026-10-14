@@ -1340,6 +1340,10 @@ textarea.input-admin {
   background: var(--admin-glass-strong);
 }
 
+.modal .mensaje-error[hidden] {
+  display: none;
+}
+
 .modal .mensaje-error {
   margin: 0 28px 12px;
   padding: 10px 14px;

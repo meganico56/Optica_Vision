@@ -1,4 +1,4 @@
-// panel-admin.js - Lógica del Panel de Administrador: Productos, Categorías, Marcas y Dashboard.
+// panel-admin.js - Lógica del Panel de Administrador: Usuarios, Productos, Categorías, Marcas y Dashboard.
 // Requiere api.js, sesion.js y panel-navegacion.js cargados antes.
 
 (function () {
@@ -10,6 +10,7 @@
     const tbProductos = document.getElementById('tbProductos');
     const tbMarcas = document.getElementById('tbMarcas');
     const tbCategorias = document.getElementById('tbCategorias');
+    const tbUsuarios = document.getElementById('tbUsuarios');
 
     const kpiIngresos = document.getElementById('kpiIngresos');
     const kpiVentas = document.getElementById('kpiVentas');
@@ -26,12 +27,15 @@
     const modalCampos = document.getElementById('modalCampos');
     const modalError = document.getElementById('modalError');
     const modalCancelar = document.getElementById('modalCancelar');
+    const modalGuardar = document.getElementById('modalGuardar');
 
     let productosMemoria = [];
     let marcasMemoria = [];
     let categoriasMemoria = [];
+    let usuariosMemoria = [];
+    let rolesMemoria = [];
     let editandoId = null;
-    let tipoModal = null; // 'producto', 'marca', 'categoria'
+    let tipoModal = null; // 'producto', 'marca', 'categoria', 'usuario'
     let nuevaImagenBase64 = null;
     let nombreNuevaImagen = null;
     let tabActual = 'productos';
@@ -173,6 +177,190 @@
                 tbCategorias.innerHTML = '<tr><td colspan="5" style="text-align:center;color:var(--red);">Error al cargar categorías.</td></tr>';
             }
         }
+    }
+
+    const CLASE_ROL = { Administrador: 'admin', Vendedor: 'vendedor', Cliente: 'cliente' };
+
+    // Cargar Lista de Usuarios
+    async function cargarUsuarios() {
+        try {
+            const usuarios = await Api.get('/api/usuarios');
+            usuariosMemoria = usuarios;
+
+            if (kpiClientes) {
+                kpiClientes.textContent = usuarios.filter(u => u.rol === 'Cliente').length;
+            }
+
+            if (!tbUsuarios) return;
+            tbUsuarios.innerHTML = '';
+
+            if (usuarios.length === 0) {
+                tbUsuarios.innerHTML = '<tr><td colspan="8" style="text-align:center;">No hay usuarios registrados.</td></tr>';
+                return;
+            }
+
+            usuarios.forEach((u) => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>#${u.id_usuario}</td>
+                    <td><strong>${BV.escapar(u.nombre)} ${BV.escapar(u.apellido)}</strong></td>
+                    <td>${BV.escapar(u.tipo_documento)} ${BV.escapar(u.num_documento)}</td>
+                    <td>${BV.escapar(u.telefono)}</td>
+                    <td>${BV.escapar(u.correo || '—')}</td>
+                    <td><span class="role-badge ${CLASE_ROL[u.rol] || ''}">${BV.escapar(u.rol || 'Sin rol')}</span></td>
+                    <td><span class="badge ${u.estado === 'Activo' ? 'green' : 'red'}">${BV.escapar(u.estado)}</span></td>
+                    <td>
+                        <div style="display:flex;gap:6px;">
+                            <button type="button" class="btn-ghost" data-editar-usuario="${u.id_usuario}" title="Editar"><i class="fa-solid fa-pen-to-square"></i></button>
+                            <button type="button" class="btn-ghost" data-eliminar-usuario="${u.id_usuario}" title="Eliminar" style="color:var(--red);"><i class="fa-solid fa-trash"></i></button>
+                        </div>
+                    </td>
+                `;
+                tbUsuarios.appendChild(tr);
+            });
+        } catch (error) {
+            console.error('Error al cargar usuarios:', error);
+            if (tbUsuarios) {
+                tbUsuarios.innerHTML = '<tr><td colspan="8" style="text-align:center;color:var(--red);">Error al cargar usuarios del servidor.</td></tr>';
+            }
+        }
+    }
+
+    async function cargarRoles() {
+        if (!tbUsuarios) return;
+        try {
+            rolesMemoria = await Api.get('/api/roles');
+        } catch (error) {
+            console.error('Error al cargar roles:', error);
+        }
+    }
+
+    // Abrir Modal de Usuario (Nuevo o Editar)
+    function abrirModalUsuario(usuario = null) {
+        tipoModal = 'usuario';
+        editandoId = usuario ? usuario.id_usuario : null;
+
+        if (modalTitulo) {
+            modalTitulo.innerHTML = usuario
+                ? `<i class="fa-solid fa-user-pen"></i> <span>Editar usuario #${usuario.id_usuario}</span>`
+                : `<i class="fa-solid fa-user-plus"></i> <span>Nuevo usuario</span>`;
+        }
+        if (modalError) modalError.hidden = true;
+
+        const u = usuario || {};
+        const roles = rolesMemoria.length > 0 ? rolesMemoria : [
+            { id_rol: 1, nombre_rol: 'Administrador' },
+            { id_rol: 2, nombre_rol: 'Vendedor' },
+            { id_rol: 3, nombre_rol: 'Cliente' }
+        ];
+        const rolSeleccionado = u.id_rol || (roles.find(r => r.nombre_rol === 'Cliente') || roles[0]).id_rol;
+        const fechaNac = u.fecha_nacimiento ? String(u.fecha_nacimiento).slice(0, 10) : '';
+
+        modalCampos.innerHTML = `
+            <div class="form-section-group">
+                <div class="form-section-title">
+                    <i class="fa-solid fa-id-card"></i> Datos personales
+                </div>
+                <div class="form-grid-2">
+                    <div class="form-field">
+                        <label for="mUsrNombre">Nombre <span class="req">*</span></label>
+                        <div class="input-icon-wrapper">
+                            <i class="fa-solid fa-user prefix-icon"></i>
+                            <input type="text" id="mUsrNombre" class="input-admin" value="${BV.escapar(u.nombre || '')}" required>
+                        </div>
+                    </div>
+                    <div class="form-field">
+                        <label for="mUsrApellido">Apellido <span class="req">*</span></label>
+                        <div class="input-icon-wrapper">
+                            <i class="fa-solid fa-user prefix-icon"></i>
+                            <input type="text" id="mUsrApellido" class="input-admin" value="${BV.escapar(u.apellido || '')}" required>
+                        </div>
+                    </div>
+                    <div class="form-field">
+                        <label for="mUsrTipoDoc">Tipo de documento <span class="req">*</span></label>
+                        <div class="input-icon-wrapper">
+                            <i class="fa-solid fa-id-card prefix-icon"></i>
+                            <select id="mUsrTipoDoc" class="input-admin">
+                                ${['C.C.', 'T.I.', 'C.E.'].map(t => `<option value="${t}" ${u.tipo_documento === t ? 'selected' : ''}>${t}</option>`).join('')}
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-field">
+                        <label for="mUsrDocumento">Número de documento <span class="req">*</span></label>
+                        <div class="input-icon-wrapper">
+                            <i class="fa-solid fa-hashtag prefix-icon"></i>
+                            <input type="text" id="mUsrDocumento" class="input-admin" value="${BV.escapar(u.num_documento || '')}" required>
+                        </div>
+                    </div>
+                    <div class="form-field">
+                        <label for="mUsrTelefono">Teléfono <span class="req">*</span></label>
+                        <div class="input-icon-wrapper">
+                            <i class="fa-solid fa-phone prefix-icon"></i>
+                            <input type="tel" id="mUsrTelefono" class="input-admin" value="${BV.escapar(u.telefono || '')}" required>
+                        </div>
+                    </div>
+                    <div class="form-field">
+                        <label for="mUsrFechaNac">Fecha de nacimiento</label>
+                        <div class="input-icon-wrapper">
+                            <i class="fa-solid fa-cake-candles prefix-icon"></i>
+                            <input type="date" id="mUsrFechaNac" class="input-admin" value="${BV.escapar(fechaNac)}">
+                        </div>
+                    </div>
+                    <div class="form-field">
+                        <label for="mUsrCorreo">Correo</label>
+                        <div class="input-icon-wrapper">
+                            <i class="fa-solid fa-envelope prefix-icon"></i>
+                            <input type="email" id="mUsrCorreo" class="input-admin" value="${BV.escapar(u.correo || '')}">
+                        </div>
+                    </div>
+                    <div class="form-field">
+                        <label for="mUsrDireccion">Dirección</label>
+                        <div class="input-icon-wrapper">
+                            <i class="fa-solid fa-location-dot prefix-icon"></i>
+                            <input type="text" id="mUsrDireccion" class="input-admin" value="${BV.escapar(u.direccion || '')}">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="form-section-group">
+                <div class="form-section-title">
+                    <i class="fa-solid fa-user-shield"></i> Acceso al sistema
+                </div>
+                <div class="form-grid-3">
+                    <div class="form-field">
+                        <label for="mUsrRol">Rol <span class="req">*</span></label>
+                        <div class="input-icon-wrapper">
+                            <i class="fa-solid fa-user-shield prefix-icon"></i>
+                            <select id="mUsrRol" class="input-admin">
+                                ${roles.map(r => `<option value="${r.id_rol}" ${String(rolSeleccionado) === String(r.id_rol) ? 'selected' : ''}>${BV.escapar(r.nombre_rol)}</option>`).join('')}
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-field">
+                        <label for="mUsrEstado">Estado</label>
+                        <div class="input-icon-wrapper">
+                            <i class="fa-solid fa-toggle-on prefix-icon"></i>
+                            <select id="mUsrEstado" class="input-admin">
+                                <option value="Activo" ${u.estado !== 'Inactivo' ? 'selected' : ''}>Activo</option>
+                                <option value="Inactivo" ${u.estado === 'Inactivo' ? 'selected' : ''}>Inactivo</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-field">
+                        <label for="mUsrContrasena">${usuario ? 'Nueva contraseña' : 'Contraseña'}</label>
+                        <div class="input-icon-wrapper">
+                            <i class="fa-solid fa-lock prefix-icon"></i>
+                            <input type="password" id="mUsrContrasena" class="input-admin" minlength="8" autocomplete="new-password" placeholder="${usuario ? 'Dejar vacío para no cambiar' : 'Mínimo 8 caracteres'}">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+
+        if (modalGuardar) modalGuardar.innerHTML = '<i class="fa-solid fa-floppy-disk"></i> Guardar usuario';
+
+        if (typeof modal.showModal === 'function') modal.showModal();
+        else modal.setAttribute('open', '');
     }
 
     // Abrir Modal de Producto (Nuevo o Editar)
@@ -364,6 +552,8 @@
             });
         }
 
+        if (modalGuardar) modalGuardar.innerHTML = '<i class="fa-solid fa-floppy-disk"></i> Guardar producto';
+
         if (typeof modal.showModal === 'function') {
             modal.showModal();
         } else {
@@ -414,6 +604,8 @@
             </div>
         `;
 
+        if (modalGuardar) modalGuardar.innerHTML = '<i class="fa-solid fa-floppy-disk"></i> Guardar categoría';
+
         if (typeof modal.showModal === 'function') modal.showModal();
         else modal.setAttribute('open', '');
     }
@@ -463,6 +655,8 @@
                 </div>
             </div>
         `;
+
+        if (modalGuardar) modalGuardar.innerHTML = '<i class="fa-solid fa-floppy-disk"></i> Guardar marca';
 
         if (typeof modal.showModal === 'function') modal.showModal();
         else modal.setAttribute('open', '');
@@ -586,6 +780,51 @@
                         modalError.hidden = false;
                     }
                 }
+            } else if (tipoModal === 'usuario') {
+                const valor = (id) => document.getElementById(id).value.trim();
+                const datos = {
+                    nombre: valor('mUsrNombre'),
+                    apellido: valor('mUsrApellido'),
+                    tipo_documento: valor('mUsrTipoDoc'),
+                    num_documento: valor('mUsrDocumento'),
+                    telefono: valor('mUsrTelefono'),
+                    correo: valor('mUsrCorreo'),
+                    direccion: valor('mUsrDireccion'),
+                    fecha_nacimiento: valor('mUsrFechaNac'),
+                    id_rol: parseInt(valor('mUsrRol'), 10),
+                    estado: valor('mUsrEstado')
+                };
+                const contrasena = document.getElementById('mUsrContrasena').value;
+                if (contrasena) datos.contrasena = contrasena;
+
+                let errorValidacion = null;
+                if (!datos.nombre || !datos.apellido || !datos.num_documento || !datos.telefono) {
+                    errorValidacion = 'Por favor completa todos los campos obligatorios.';
+                } else if (contrasena && contrasena.length < 8) {
+                    errorValidacion = 'La contraseña debe tener al menos 8 caracteres.';
+                }
+                if (errorValidacion) {
+                    if (modalError) {
+                        modalError.textContent = errorValidacion;
+                        modalError.hidden = false;
+                    }
+                    return;
+                }
+
+                try {
+                    if (editandoId) {
+                        await Api.put('/api/usuarios/' + editandoId, datos);
+                    } else {
+                        await Api.post('/api/usuarios', datos);
+                    }
+                    modal.close();
+                    cargarUsuarios();
+                } catch (err) {
+                    if (modalError) {
+                        modalError.textContent = err.message || 'Error al guardar el usuario.';
+                        modalError.hidden = false;
+                    }
+                }
             } else {
                 modal.close();
             }
@@ -643,6 +882,40 @@
         if (tabBtn) {
             e.preventDefault();
             cambiarTabInventario(tabBtn.dataset.invTab);
+            return;
+        }
+
+        // Nuevo Usuario
+        const btnNuevoUsuario = e.target.closest('[data-nuevo="usuario"]');
+        if (btnNuevoUsuario) {
+            e.preventDefault();
+            abrirModalUsuario();
+            return;
+        }
+
+        // Editar Usuario
+        const btnEditUsuario = e.target.closest('[data-editar-usuario]');
+        if (btnEditUsuario) {
+            e.preventDefault();
+            const id = btnEditUsuario.dataset.editarUsuario;
+            const usuario = usuariosMemoria.find(u => String(u.id_usuario) === String(id));
+            if (usuario) abrirModalUsuario(usuario);
+            return;
+        }
+
+        // Eliminar Usuario
+        const btnDelUsuario = e.target.closest('[data-eliminar-usuario]');
+        if (btnDelUsuario) {
+            e.preventDefault();
+            const id = btnDelUsuario.dataset.eliminarUsuario;
+            if (confirm('¿Estás seguro de que deseas eliminar este usuario?')) {
+                try {
+                    await Api.del('/api/usuarios/' + id);
+                    cargarUsuarios();
+                } catch (err) {
+                    alert('Error al eliminar el usuario: ' + err.message);
+                }
+            }
             return;
         }
 
@@ -751,7 +1024,7 @@
 
     // Cargar todos los datos del inventario
     async function inicializarInventario() {
-        await Promise.all([cargarProductos(), cargarMarcas(), cargarCategorias()]);
+        await Promise.all([cargarProductos(), cargarMarcas(), cargarCategorias(), cargarUsuarios(), cargarRoles()]);
     }
 
     // Iniciar carga al estar listo el DOM
