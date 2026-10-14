@@ -11,6 +11,9 @@ const app = express();
 app.use(cors());
 app.use(express.json({ limit: "15mb" }));
 
+// Sirve el frontend para que el panel pueda abrirse desde el mismo puerto de la API
+app.use(express.static(path.join(__dirname, "../frontend")));
+
 // Ruta para subir imagen de producto
 app.post("/api/upload-imagen", (req, res) => {
   const { nombreArchivo, base64Data } = req.body;
