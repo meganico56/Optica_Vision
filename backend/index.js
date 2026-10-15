@@ -453,7 +453,7 @@ app.get("/api/roles", async (req, res) => {
 app.get("/api/usuarios", async (req, res) => {
   try {
     const [usuarios] = await db.query({
-      sql: `SELECT ${CAMPOS_USUARIO} FROM usuario u LEFT JOIN rol r ON u.id_rol = r.id_rol ORDER BY u.id_usuario ASC`,
+      sql: `SELECT ${CAMPOS_USUARIO} FROM usuario u LEFT JOIN rol r ON u.id_rol = r.id_rol ORDER BY u.id_usuario DESC`,
       dateStrings: true
     });
     res.json(usuarios);

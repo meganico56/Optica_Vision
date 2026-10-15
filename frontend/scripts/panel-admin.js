@@ -185,6 +185,8 @@
     async function cargarUsuarios() {
         try {
             const usuarios = await Api.get('/api/usuarios');
+            // Ordenar del más reciente al más antiguo (ID descendente)
+            usuarios.sort((a, b) => (b.id_usuario || 0) - (a.id_usuario || 0));
             usuariosMemoria = usuarios;
 
             if (kpiClientes) {
