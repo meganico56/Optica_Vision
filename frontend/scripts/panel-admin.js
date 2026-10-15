@@ -19,6 +19,9 @@
     const tbRecetas = document.getElementById('tbRecetas');
     const gridPromos = document.getElementById('gridPromos');
     const gridReportes = document.getElementById('gridReportes');
+    const tbUltimasVentas = document.getElementById('tbUltimasVentas');
+    const listaAlertas = document.getElementById('listaAlertas');
+    const todayDate = document.getElementById('todayDate');
 
     const kpiIngresos = document.getElementById('kpiIngresos');
     const kpiVentas = document.getElementById('kpiVentas');
@@ -48,8 +51,11 @@
     let usuariosMemoria = [];
     let proveedoresMemoria = [];
     let rolesMemoria = [];
+    let citasMemoria = [];
+    let comprasMemoria = [];
+    let recetasMemoria = [];
     let editandoId = null;
-    let tipoModal = null; // 'producto', 'marca', 'categoria', 'usuario'
+    let tipoModal = null; // 'producto', 'marca', 'categoria', 'usuario', 'compra', 'venta', 'cita', 'receta', 'devolucion', 'reporte'
     let nuevaImagenBase64 = null;
     let nombreNuevaImagen = null;
     let tabActual = 'productos';
@@ -103,10 +109,27 @@
                 });
             }
 
-            // Actualizar KPIs
+            // Actualizar KPIs y alertas de inventario
             if (kpiProductos) kpiProductos.textContent = productos.length;
             if (kpiBajoMinimo) kpiBajoMinimo.textContent = bajoMinimoCount;
             if (kpiBajoMinimo2) kpiBajoMinimo2.textContent = bajoMinimoCount;
+
+            if (listaAlertas) {
+                const bajoMinProds = productos.filter(p => (p.existencia_actual || p.stock || 0) <= (p.existencia_minima || 5));
+                if (bajoMinProds.length === 0) {
+                    listaAlertas.innerHTML = '<li class="alert-item" style="color:var(--admin-text-muted);"><i class="fa-solid fa-circle-check" style="color:var(--green);margin-right:10px;"></i> No hay alertas de stock bajo.</li>';
+                } else {
+                    listaAlertas.innerHTML = bajoMinProds.slice(0, 5).map(p => `
+                        <li class="alert-item">
+                            <div class="alert-icon"><i class="fa-solid fa-box-open"></i></div>
+                            <div class="alert-details">
+                                <h4>${BV.escapar(p.nombre)}</h4>
+                                <p>Stock actual: <strong style="color:var(--orange);">${p.stock || p.existencia_actual || 0}</strong> / Mínimo: ${p.existencia_minima || 5}</p>
+                            </div>
+                        </li>
+                    `).join('');
+                }
+            }
 
         } catch (error) {
             console.error('Error al cargar productos en panel admin:', error);
@@ -798,6 +821,352 @@
         else modal.setAttribute('open', '');
     }
 
+    // ── Abrir Modal de Compra ─────────────────────────────────────
+    function abrirModalCompra() {
+        tipoModal = 'compra';
+        editandoId = null;
+        if (modalTitulo) modalTitulo.innerHTML = '<i class="fa-solid fa-file-invoice-dollar"></i> <span>Nueva orden de compra</span>';
+        if (modalError) modalError.hidden = true;
+
+        const opcProveedores = proveedoresMemoria.map(p =>
+            `<option value="${p.codigo_proveedor}">${BV.escapar(p.nombre)}</option>`
+        ).join('');
+
+        modalCampos.innerHTML = `
+            <div class="form-section-group">
+                <div class="form-section-title"><i class="fa-solid fa-file-invoice-dollar"></i> Datos de la orden</div>
+                <div class="form-grid-2">
+                    <div class="form-field">
+                        <label for="mCompraComprobante">N° Comprobante <span class="req">*</span></label>
+                        <input type="text" id="mCompraComprobante" class="input-admin" placeholder="Ej. FAC-001" required>
+                    </div>
+                    <div class="form-field">
+                        <label for="mCompraProveedor">Proveedor <span class="req">*</span></label>
+                        <select id="mCompraProveedor" class="input-admin">
+                            <option value="">-- Seleccionar --</option>
+                            ${opcProveedores}
+                        </select>
+                    </div>
+                </div>
+                <div class="form-grid-2">
+                    <div class="form-field">
+                        <label for="mCompraTotal">Total <span class="req">*</span></label>
+                        <input type="number" id="mCompraTotal" class="input-admin" placeholder="0.00" min="0" step="0.01" required>
+                    </div>
+                    <div class="form-field">
+                        <label for="mCompraEstado">Estado</label>
+                        <select id="mCompraEstado" class="input-admin">
+                            <option value="Confirmada">Confirmada</option>
+                            <option value="Pendiente">Pendiente</option>
+                            <option value="Cancelada">Cancelada</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-field form-grid-full">
+                    <label for="mCompraObs">Observaciones</label>
+                    <textarea id="mCompraObs" class="input-admin" rows="2" placeholder="Notas adicionales..."></textarea>
+                </div>
+            </div>
+        `;
+        if (modalGuardar) modalGuardar.innerHTML = '<i class="fa-solid fa-floppy-disk"></i> Guardar compra';
+        if (typeof modal.showModal === 'function') modal.showModal();
+        else modal.setAttribute('open', '');
+    }
+
+    // ── Abrir Modal de Venta ─────────────────────────────────────
+    function abrirModalVenta() {
+        tipoModal = 'venta';
+        editandoId = null;
+        if (modalTitulo) modalTitulo.innerHTML = '<i class="fa-solid fa-cash-register"></i> <span>Nueva venta</span>';
+        if (modalError) modalError.hidden = true;
+
+        const clientes = usuariosMemoria.filter(u => u.rol === 'Cliente');
+        const opcClientes = clientes.map(u =>
+            `<option value="${u.id_usuario}">${BV.escapar(u.nombre + ' ' + u.apellido)}</option>`
+        ).join('');
+
+        const opcPromociones = promosMemoria.filter(p => p.estado === 'Activo').map(p =>
+            `<option value="${p.codigo_promocion}">${BV.escapar(p.nombre)} (${p.tipo_descuento === 'porcentaje' ? p.valor_descuento + '%' : BV.moneda(p.valor_descuento)})</option>`
+        ).join('');
+
+        modalCampos.innerHTML = `
+            <div class="form-section-group">
+                <div class="form-section-title"><i class="fa-solid fa-cash-register"></i> Datos de la venta</div>
+                <div class="form-grid-2">
+                    <div class="form-field">
+                        <label for="mVentaCliente">Cliente <span class="req">*</span></label>
+                        <select id="mVentaCliente" class="input-admin">
+                            <option value="">-- Seleccionar --</option>
+                            ${opcClientes}
+                        </select>
+                    </div>
+                    <div class="form-field">
+                        <label for="mVentaTotal">Total <span class="req">*</span></label>
+                        <input type="number" id="mVentaTotal" class="input-admin" placeholder="0.00" min="0" step="0.01" required>
+                    </div>
+                </div>
+                <div class="form-grid-2">
+                    <div class="form-field">
+                        <label for="mVentaEstado">Estado</label>
+                        <select id="mVentaEstado" class="input-admin">
+                            <option value="Completada">Completada</option>
+                            <option value="Pendiente">Pendiente</option>
+                        </select>
+                    </div>
+                    <div class="form-field">
+                        <label for="mVentaEsCotiz">¿Es cotización?</label>
+                        <select id="mVentaEsCotiz" class="input-admin">
+                            <option value="0">No</option>
+                            <option value="1">Sí</option>
+                        </select>
+                    </div>
+                </div>
+                ${opcPromociones ? `
+                <div class="form-field form-grid-full">
+                    <label for="mVentaPromo">Promoción (opcional)</label>
+                    <select id="mVentaPromo" class="input-admin">
+                        <option value="">Sin promoción</option>
+                        ${opcPromociones}
+                    </select>
+                </div>` : ''}
+            </div>
+        `;
+        if (modalGuardar) modalGuardar.innerHTML = '<i class="fa-solid fa-floppy-disk"></i> Registrar venta';
+        if (typeof modal.showModal === 'function') modal.showModal();
+        else modal.setAttribute('open', '');
+    }
+
+    // ── Abrir Modal de Cita ─────────────────────────────────────
+    function abrirModalCita(cita = null) {
+        tipoModal = 'cita';
+        editandoId = cita ? cita.id_cita : null;
+        if (modalTitulo) modalTitulo.innerHTML = cita
+            ? `<i class="fa-solid fa-calendar-check"></i> <span>Editar cita #${cita.id_cita}</span>`
+            : '<i class="fa-solid fa-calendar-plus"></i> <span>Nueva cita</span>';
+        if (modalError) modalError.hidden = true;
+
+        const clientes = usuariosMemoria.filter(u => u.rol === 'Cliente');
+        const staff = usuariosMemoria.filter(u => u.rol === 'Administrador' || u.rol === 'Vendedor');
+        const opcClientes = clientes.map(u =>
+            `<option value="${u.id_usuario}" ${cita && cita.id_cliente == u.id_usuario ? 'selected' : ''}>${BV.escapar(u.nombre + ' ' + u.apellido)}</option>`
+        ).join('');
+        const opcStaff = staff.map(u =>
+            `<option value="${u.id_usuario}" ${cita && cita.id_usuario_atiende == u.id_usuario ? 'selected' : ''}>${BV.escapar(u.nombre + ' ' + u.apellido)}</option>`
+        ).join('');
+
+        const c = cita || {};
+        const fechaHoraVal = c.fecha_hora ? c.fecha_hora.replace(' ', 'T').substring(0, 16) : '';
+
+        modalCampos.innerHTML = `
+            <div class="form-section-group">
+                <div class="form-section-title"><i class="fa-solid fa-calendar-check"></i> Datos de la cita</div>
+                <div class="form-grid-2">
+                    <div class="form-field">
+                        <label for="mCitaCliente">Cliente <span class="req">*</span></label>
+                        <select id="mCitaCliente" class="input-admin">
+                            <option value="">-- Seleccionar --</option>
+                            ${opcClientes}
+                        </select>
+                    </div>
+                    <div class="form-field">
+                        <label for="mCitaAtiende">Atendido por</label>
+                        <select id="mCitaAtiende" class="input-admin">
+                            <option value="">-- Seleccionar --</option>
+                            ${opcStaff}
+                        </select>
+                    </div>
+                </div>
+                <div class="form-grid-2">
+                    <div class="form-field">
+                        <label for="mCitaFechaHora">Fecha y hora <span class="req">*</span></label>
+                        <input type="datetime-local" id="mCitaFechaHora" class="input-admin" value="${fechaHoraVal}" required>
+                    </div>
+                    <div class="form-field">
+                        <label for="mCitaEstado">Estado</label>
+                        <select id="mCitaEstado" class="input-admin">
+                            <option value="Programada" ${(!c.estado || c.estado === 'Programada') ? 'selected' : ''}>Programada</option>
+                            <option value="Confirmada" ${c.estado === 'Confirmada' ? 'selected' : ''}>Confirmada</option>
+                            <option value="Completada" ${c.estado === 'Completada' ? 'selected' : ''}>Completada</option>
+                            <option value="Cancelada" ${c.estado === 'Cancelada' ? 'selected' : ''}>Cancelada</option>
+                            <option value="No asistio" ${c.estado === 'No asistio' ? 'selected' : ''}>No asistió</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-field form-grid-full">
+                    <label for="mCitaMotivo">Motivo <span class="req">*</span></label>
+                    <input type="text" id="mCitaMotivo" class="input-admin" value="${BV.escapar(c.motivo || '')}" placeholder="Ej. Examen visual" required>
+                </div>
+                <div class="form-field form-grid-full">
+                    <label for="mCitaObs">Observaciones</label>
+                    <textarea id="mCitaObs" class="input-admin" rows="2">${BV.escapar(c.observaciones || '')}</textarea>
+                </div>
+            </div>
+        `;
+        if (modalGuardar) modalGuardar.innerHTML = '<i class="fa-solid fa-floppy-disk"></i> Guardar cita';
+        if (typeof modal.showModal === 'function') modal.showModal();
+        else modal.setAttribute('open', '');
+    }
+
+    // ── Abrir Modal de Receta ─────────────────────────────────────
+    function abrirModalReceta() {
+        tipoModal = 'receta';
+        editandoId = null;
+        if (modalTitulo) modalTitulo.innerHTML = '<i class="fa-solid fa-file-medical"></i> <span>Nueva receta óptica</span>';
+        if (modalError) modalError.hidden = true;
+
+        const clientes = usuariosMemoria.filter(u => u.rol === 'Cliente');
+        const opcClientes = clientes.map(u =>
+            `<option value="${u.id_usuario}">${BV.escapar(u.nombre + ' ' + u.apellido)}</option>`
+        ).join('');
+
+        const hoy = new Date().toISOString().split('T')[0];
+        const d = new Date(); d.setFullYear(d.getFullYear() + 1);
+        const unAnio = d.toISOString().split('T')[0];
+
+        modalCampos.innerHTML = `
+            <div class="form-section-group">
+                <div class="form-section-title"><i class="fa-solid fa-file-medical"></i> Datos de la receta</div>
+                <div class="form-grid-2">
+                    <div class="form-field">
+                        <label for="mRecetaCliente">Cliente <span class="req">*</span></label>
+                        <select id="mRecetaCliente" class="input-admin">
+                            <option value="">-- Seleccionar --</option>
+                            ${opcClientes}
+                        </select>
+                    </div>
+                    <div class="form-field">
+                        <label for="mRecetaDiagnostico">Diagnóstico</label>
+                        <input type="text" id="mRecetaDiagnostico" class="input-admin" placeholder="Ej. Miopía moderada">
+                    </div>
+                </div>
+                <div class="form-grid-2">
+                    <div class="form-field">
+                        <label for="mRecetaEmision">Fecha emisión <span class="req">*</span></label>
+                        <input type="date" id="mRecetaEmision" class="input-admin" value="${hoy}" required>
+                    </div>
+                    <div class="form-field">
+                        <label for="mRecetaVencimiento">Fecha vencimiento <span class="req">*</span></label>
+                        <input type="date" id="mRecetaVencimiento" class="input-admin" value="${unAnio}" required>
+                    </div>
+                </div>
+                <div class="form-section-title" style="margin-top:10px;"><i class="fa-solid fa-eye"></i> Ojo derecho (OD)</div>
+                <div class="form-grid-2">
+                    <div class="form-field">
+                        <label for="mOdEsfera">Esfera</label>
+                        <input type="number" id="mOdEsfera" class="input-admin" placeholder="0.00" step="0.25">
+                    </div>
+                    <div class="form-field">
+                        <label for="mOdCilindro">Cilindro</label>
+                        <input type="number" id="mOdCilindro" class="input-admin" placeholder="0.00" step="0.25">
+                    </div>
+                </div>
+                <div class="form-section-title" style="margin-top:10px;"><i class="fa-solid fa-eye"></i> Ojo izquierdo (OI)</div>
+                <div class="form-grid-2">
+                    <div class="form-field">
+                        <label for="mOiEsfera">Esfera</label>
+                        <input type="number" id="mOiEsfera" class="input-admin" placeholder="0.00" step="0.25">
+                    </div>
+                    <div class="form-field">
+                        <label for="mOiCilindro">Cilindro</label>
+                        <input type="number" id="mOiCilindro" class="input-admin" placeholder="0.00" step="0.25">
+                    </div>
+                </div>
+                <div class="form-grid-2">
+                    <div class="form-field">
+                        <label for="mRecetaEntidad">Entidad examinadora</label>
+                        <input type="text" id="mRecetaEntidad" class="input-admin" value="Óptica Boutique de la Visión">
+                    </div>
+                    <div class="form-field">
+                        <label for="mRecetaOptometra">Optómetra</label>
+                        <input type="text" id="mRecetaOptometra" class="input-admin" value="Dr. Optómetra">
+                    </div>
+                </div>
+            </div>
+        `;
+        if (modalGuardar) modalGuardar.innerHTML = '<i class="fa-solid fa-floppy-disk"></i> Guardar receta';
+        if (typeof modal.showModal === 'function') modal.showModal();
+        else modal.setAttribute('open', '');
+    }
+
+    // ── Abrir Modal de Devolución ─────────────────────────────────
+    function abrirModalDevolucion() {
+        tipoModal = 'devolucion';
+        editandoId = null;
+        if (modalTitulo) modalTitulo.innerHTML = '<i class="fa-solid fa-rotate-left"></i> <span>Registrar devolución</span>';
+        if (modalError) modalError.hidden = true;
+
+        modalCampos.innerHTML = `
+            <div class="form-section-group">
+                <div class="form-section-title"><i class="fa-solid fa-rotate-left"></i> Datos de la devolución</div>
+                <div class="form-grid-2">
+                    <div class="form-field">
+                        <label for="mDevMotivo">Motivo <span class="req">*</span></label>
+                        <select id="mDevMotivo" class="input-admin">
+                            <option value="Producto defectuoso">Producto defectuoso</option>
+                            <option value="Cambio de formula">Cambio de fórmula</option>
+                            <option value="Ajuste o talla incorrecta">Ajuste o talla incorrecta</option>
+                            <option value="Cliente se arrepintio">Cliente se arrepintió</option>
+                            <option value="Otro">Otro</option>
+                        </select>
+                    </div>
+                    <div class="form-field">
+                        <label for="mDevCantidad">Cantidad <span class="req">*</span></label>
+                        <input type="number" id="mDevCantidad" class="input-admin" placeholder="1" min="1" value="1" required>
+                    </div>
+                </div>
+                <div class="form-field form-grid-full">
+                    <label for="mDevVenta">Código de venta (opcional)</label>
+                    <input type="number" id="mDevVenta" class="input-admin" placeholder="Ej. 5">
+                </div>
+                <div class="form-field form-grid-full">
+                    <label for="mDevObs">Observaciones</label>
+                    <textarea id="mDevObs" class="input-admin" rows="3" placeholder="Descripción adicional..."></textarea>
+                </div>
+            </div>
+        `;
+        if (modalGuardar) modalGuardar.innerHTML = '<i class="fa-solid fa-floppy-disk"></i> Registrar devolución';
+        if (typeof modal.showModal === 'function') modal.showModal();
+        else modal.setAttribute('open', '');
+    }
+
+    // ── Abrir Modal de Reporte ────────────────────────────────────
+    function abrirModalReporte() {
+        tipoModal = 'reporte';
+        editandoId = null;
+        if (modalTitulo) modalTitulo.innerHTML = '<i class="fa-solid fa-file-circle-plus"></i> <span>Generar reporte</span>';
+        if (modalError) modalError.hidden = true;
+
+        modalCampos.innerHTML = `
+            <div class="form-section-group">
+                <div class="form-section-title"><i class="fa-solid fa-file-circle-plus"></i> Datos del reporte</div>
+                <div class="form-grid-2">
+                    <div class="form-field">
+                        <label for="mRepTitulo">Título <span class="req">*</span></label>
+                        <input type="text" id="mRepTitulo" class="input-admin" placeholder="Ej. Reporte de ventas Octubre" required>
+                    </div>
+                    <div class="form-field">
+                        <label for="mRepTipo">Tipo <span class="req">*</span></label>
+                        <select id="mRepTipo" class="input-admin">
+                            <option value="General">General</option>
+                            <option value="Ventas">Ventas</option>
+                            <option value="Existencias">Existencias</option>
+                            <option value="Clientes">Clientes</option>
+                            <option value="Recetas">Recetas</option>
+                            <option value="Citas">Citas</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-field form-grid-full">
+                    <label for="mRepDesc">Descripción</label>
+                    <textarea id="mRepDesc" class="input-admin" rows="3" placeholder="Descripción del reporte (el contenido se genera automáticamente según el tipo)"></textarea>
+                </div>
+            </div>
+        `;
+        if (modalGuardar) modalGuardar.innerHTML = '<i class="fa-solid fa-file-circle-plus"></i> Generar reporte';
+        if (typeof modal.showModal === 'function') modal.showModal();
+        else modal.setAttribute('open', '');
+    }
+
     // Guardar cambios del Formulario del Modal
     if (formModal) {
         formModal.addEventListener('submit', async (e) => {
@@ -1023,6 +1392,123 @@
                         modalError.textContent = err.message || 'Error al guardar la promoción.';
                         modalError.hidden = false;
                     }
+                }
+            } else if (tipoModal === 'compra') {
+                const comprobante = document.getElementById('mCompraComprobante').value.trim();
+                const id_proveedor = document.getElementById('mCompraProveedor').value;
+                const total = parseFloat(document.getElementById('mCompraTotal').value);
+                const estado = document.getElementById('mCompraEstado').value;
+                const observaciones = document.getElementById('mCompraObs').value.trim();
+
+                if (!comprobante || isNaN(total)) {
+                    if (modalError) { modalError.textContent = 'Comprobante y total son obligatorios.'; modalError.hidden = false; }
+                    return;
+                }
+                try {
+                    await Api.post('/api/compras', { comprobante, id_proveedor: id_proveedor || null, total, estado, observaciones });
+                    modal.close();
+                    cargarCompras();
+                } catch (err) {
+                    if (modalError) { modalError.textContent = err.message || 'Error al guardar la compra.'; modalError.hidden = false; }
+                }
+            } else if (tipoModal === 'venta') {
+                const id_usuario = document.getElementById('mVentaCliente').value;
+                const total = parseFloat(document.getElementById('mVentaTotal').value);
+                const estado = document.getElementById('mVentaEstado').value;
+                const es_cotizacion = parseInt(document.getElementById('mVentaEsCotiz').value, 10);
+                const promoEl = document.getElementById('mVentaPromo');
+                const codigo_promocion = promoEl && promoEl.value ? promoEl.value : null;
+
+                if (!id_usuario || isNaN(total)) {
+                    if (modalError) { modalError.textContent = 'Cliente y total son obligatorios.'; modalError.hidden = false; }
+                    return;
+                }
+                try {
+                    await Api.post('/api/ventas', { id_usuario, total, estado, es_cotizacion, codigo_promocion });
+                    modal.close();
+                    cargarVentas();
+                } catch (err) {
+                    if (modalError) { modalError.textContent = err.message || 'Error al registrar la venta.'; modalError.hidden = false; }
+                }
+            } else if (tipoModal === 'cita') {
+                const id_cliente = document.getElementById('mCitaCliente').value;
+                const id_usuario_atiende = document.getElementById('mCitaAtiende').value;
+                const fecha_hora = document.getElementById('mCitaFechaHora').value;
+                const estado = document.getElementById('mCitaEstado').value;
+                const motivo = document.getElementById('mCitaMotivo').value.trim();
+                const observaciones = document.getElementById('mCitaObs').value.trim();
+
+                if (!id_cliente || !fecha_hora || !motivo) {
+                    if (modalError) { modalError.textContent = 'Cliente, fecha/hora y motivo son obligatorios.'; modalError.hidden = false; }
+                    return;
+                }
+                try {
+                    const datos = { id_cliente, id_usuario_atiende: id_usuario_atiende || null, fecha_hora, estado, motivo, observaciones };
+                    if (editandoId) {
+                        await Api.put('/api/citas/' + editandoId, datos);
+                    } else {
+                        await Api.post('/api/citas-admin', datos);
+                    }
+                    modal.close();
+                    cargarCitas();
+                } catch (err) {
+                    if (modalError) { modalError.textContent = err.message || 'Error al guardar la cita.'; modalError.hidden = false; }
+                }
+            } else if (tipoModal === 'receta') {
+                const id_usuario = document.getElementById('mRecetaCliente').value;
+                const diagnostico = document.getElementById('mRecetaDiagnostico').value.trim();
+                const fecha_emision = document.getElementById('mRecetaEmision').value;
+                const fecha_vencimiento = document.getElementById('mRecetaVencimiento').value;
+                const od_esfera = document.getElementById('mOdEsfera').value || null;
+                const od_cilindro = document.getElementById('mOdCilindro').value || null;
+                const oi_esfera = document.getElementById('mOiEsfera').value || null;
+                const oi_cilindro = document.getElementById('mOiCilindro').value || null;
+                const entidad_examinadora = document.getElementById('mRecetaEntidad').value.trim();
+                const optometra = document.getElementById('mRecetaOptometra').value.trim();
+
+                if (!id_usuario || !fecha_emision || !fecha_vencimiento) {
+                    if (modalError) { modalError.textContent = 'Cliente y fechas son obligatorios.'; modalError.hidden = false; }
+                    return;
+                }
+                try {
+                    await Api.post('/api/recetas', { id_usuario, diagnostico, fecha_emision, fecha_vencimiento, od_esfera, od_cilindro, oi_esfera, oi_cilindro, entidad_examinadora, optometra });
+                    modal.close();
+                    cargarRecetas();
+                } catch (err) {
+                    if (modalError) { modalError.textContent = err.message || 'Error al guardar la receta.'; modalError.hidden = false; }
+                }
+            } else if (tipoModal === 'devolucion') {
+                const motivo = document.getElementById('mDevMotivo').value;
+                const cantidad = parseInt(document.getElementById('mDevCantidad').value, 10);
+                const id_venta = document.getElementById('mDevVenta').value;
+                const observaciones = document.getElementById('mDevObs').value.trim();
+
+                if (!motivo || isNaN(cantidad) || cantidad < 1) {
+                    if (modalError) { modalError.textContent = 'Motivo y cantidad son obligatorios.'; modalError.hidden = false; }
+                    return;
+                }
+                try {
+                    await Api.post('/api/devoluciones', { motivo, cantidad, id_venta: id_venta || null, observaciones });
+                    modal.close();
+                    cargarDevoluciones();
+                } catch (err) {
+                    if (modalError) { modalError.textContent = err.message || 'Error al registrar la devolución.'; modalError.hidden = false; }
+                }
+            } else if (tipoModal === 'reporte') {
+                const titulo = document.getElementById('mRepTitulo').value.trim();
+                const tipo = document.getElementById('mRepTipo').value;
+                const descripcion = document.getElementById('mRepDesc').value.trim();
+
+                if (!titulo) {
+                    if (modalError) { modalError.textContent = 'El título es obligatorio.'; modalError.hidden = false; }
+                    return;
+                }
+                try {
+                    await Api.post('/api/reportes', { titulo, tipo, descripcion });
+                    modal.close();
+                    cargarReportes();
+                } catch (err) {
+                    if (modalError) { modalError.textContent = err.message || 'Error al generar el reporte.'; modalError.hidden = false; }
                 }
             } else {
                 modal.close();
@@ -1253,6 +1739,30 @@
             }
             return;
         }
+
+        // Nueva Compra
+        const btnNuevaCompra = e.target.closest('[data-nuevo="compra"]');
+        if (btnNuevaCompra) { e.preventDefault(); abrirModalCompra(); return; }
+
+        // Nueva Venta
+        const btnNuevaVenta = e.target.closest('[data-nuevo="venta"]');
+        if (btnNuevaVenta) { e.preventDefault(); abrirModalVenta(); return; }
+
+        // Nueva Cita
+        const btnNuevaCita = e.target.closest('[data-nuevo="cita"]');
+        if (btnNuevaCita) { e.preventDefault(); abrirModalCita(); return; }
+
+        // Nueva Receta
+        const btnNuevaReceta = e.target.closest('[data-nuevo="receta"]');
+        if (btnNuevaReceta) { e.preventDefault(); abrirModalReceta(); return; }
+
+        // Nueva Devolución
+        const btnNuevaDevol = e.target.closest('[data-nuevo="devolucion"]');
+        if (btnNuevaDevol) { e.preventDefault(); abrirModalDevolucion(); return; }
+
+        // Nuevo Reporte
+        const btnNuevoRep = e.target.closest('[data-nuevo="reporte"]');
+        if (btnNuevoRep) { e.preventDefault(); abrirModalReporte(); return; }
     });
 
     // Delegación secundaria para ventas, citas, recetas y promociones
@@ -1328,6 +1838,49 @@
             }
             return;
         }
+
+        // Editar Cita
+        const btnEditCita = e.target.closest('[data-editar-cita]');
+        if (btnEditCita) {
+            e.preventDefault();
+            const id = btnEditCita.dataset.editarCita;
+            const cita = citasMemoria ? citasMemoria.find(c => String(c.id_cita) === String(id)) : null;
+            if (cita) abrirModalCita(cita);
+            return;
+        }
+
+        // Eliminar Compra
+        const btnDelCompra = e.target.closest('[data-eliminar-compra]');
+        if (btnDelCompra) {
+            e.preventDefault();
+            if (confirm('¿Eliminar esta orden de compra?')) {
+                try { await Api.del('/api/compras/' + btnDelCompra.dataset.eliminarCompra); cargarCompras(); }
+                catch (err) { alert('Error: ' + err.message); }
+            }
+            return;
+        }
+
+        // Eliminar Devolución
+        const btnDelDevol = e.target.closest('[data-eliminar-devolucion]');
+        if (btnDelDevol) {
+            e.preventDefault();
+            if (confirm('¿Eliminar esta devolución?')) {
+                try { await Api.del('/api/devoluciones/' + btnDelDevol.dataset.eliminarDevolucion); cargarDevoluciones(); }
+                catch (err) { alert('Error: ' + err.message); }
+            }
+            return;
+        }
+
+        // Eliminar Reporte
+        const btnDelRep = e.target.closest('[data-eliminar-reporte]');
+        if (btnDelRep) {
+            e.preventDefault();
+            if (confirm('¿Eliminar este reporte?')) {
+                try { await Api.del('/api/reportes/' + btnDelRep.dataset.eliminarReporte); cargarReportes(); }
+                catch (err) { alert('Error: ' + err.message); }
+            }
+            return;
+        }
     });
 
     // ── Ventas ──────────────────────────────────────────────────
@@ -1374,6 +1927,39 @@
             // Actualizar KPIs del dashboard
             if (kpiIngresos) kpiIngresos.textContent = BV.moneda(ingresos);
             if (kpiVentas) kpiVentas.textContent = completadas;
+
+            // Renderizar Últimas ventas en el Dashboard
+            if (tbUltimasVentas) {
+                tbUltimasVentas.innerHTML = '';
+                const ultimas = ventas.slice(0, 5);
+                if (ultimas.length === 0) {
+                    tbUltimasVentas.innerHTML = '<tr><td colspan="6" style="text-align:center;">No hay ventas registradas.</td></tr>';
+                } else {
+                    ultimas.forEach(v => {
+                        const tr = document.createElement('tr');
+                        const esCotiz = v.es_cotizacion == 1;
+                        const estadoDisplay = esCotiz ? 'Cotización' : v.estado;
+                        const clase = ESTADO_VENTA_CLASE[estadoDisplay] || 'blue';
+                        tr.innerHTML = `
+                            <td><strong>#${v.codigo_venta}</strong></td>
+                            <td>${BV.escapar(v.cliente || '—')}</td>
+                            <td><strong>${BV.moneda(v.total)}</strong></td>
+                            <td>${v.fecha ? v.fecha.split(' ')[0] : '—'}</td>
+                            <td><span class="badge ${clase}">${BV.escapar(estadoDisplay)}</span></td>
+                            <td>
+                                <button type="button" class="btn-ghost" data-cambiar-venta="${v.codigo_venta}" title="Cambiar estado"><i class="fa-solid fa-pen-to-square"></i></button>
+                            </td>
+                        `;
+                        tbUltimasVentas.appendChild(tr);
+                    });
+                }
+            }
+
+            if (todayDate) {
+                const hoy = new Date();
+                const opciones = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+                todayDate.textContent = hoy.toLocaleDateString('es-CO', opciones);
+            }
         } catch (e) {
             console.error('Error al cargar ventas:', e);
             if (tbVentas) tbVentas.innerHTML = '<tr><td colspan="9" style="text-align:center;color:var(--red);">Error al cargar ventas del servidor.</td></tr>';
@@ -1388,7 +1974,7 @@
             if (kpiDevoluciones) kpiDevoluciones.textContent = devs.length;
             tbDevoluciones.innerHTML = '';
             if (devs.length === 0) {
-                tbDevoluciones.innerHTML = '<tr><td colspan="6" style="text-align:center;">No hay devoluciones registradas.</td></tr>';
+                tbDevoluciones.innerHTML = '<tr><td colspan="7" style="text-align:center;">No hay devoluciones registradas.</td></tr>';
                 return;
             }
             devs.forEach(d => {
@@ -1400,12 +1986,15 @@
                     <td>${BV.escapar(d.observaciones || '—')}</td>
                     <td>${d.codigo_venta ? '#' + d.codigo_venta : '—'}</td>
                     <td>${BV.escapar(d.registrado_por || '—')}</td>
+                    <td>
+                        <button type="button" class="btn-ghost" data-eliminar-devolucion="${d.id_devolucion}" title="Eliminar" style="color:var(--red);"><i class="fa-solid fa-trash"></i></button>
+                    </td>
                 `;
                 tbDevoluciones.appendChild(tr);
             });
         } catch (e) {
             console.error('Error al cargar devoluciones:', e);
-            if (tbDevoluciones) tbDevoluciones.innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--red);">Error al cargar devoluciones.</td></tr>';
+            if (tbDevoluciones) tbDevoluciones.innerHTML = '<tr><td colspan="7" style="text-align:center;color:var(--red);">Error al cargar devoluciones.</td></tr>';
         }
     }
 
@@ -1414,6 +2003,7 @@
         if (!tbCompras) return;
         try {
             const compras = await Api.get('/api/compras');
+            comprasMemoria = compras;
             tbCompras.innerHTML = '';
             if (compras.length === 0) {
                 tbCompras.innerHTML = '<tr><td colspan="7" style="text-align:center;">No hay órdenes de compra registradas.</td></tr>';
@@ -1429,7 +2019,9 @@
                     <td>${c.fecha ? c.fecha.split(' ')[0] : '—'}</td>
                     <td><strong>${BV.moneda(c.total)}</strong></td>
                     <td><span class="badge ${estadoClase}">${BV.escapar(c.estado || '—')}</span></td>
-                    <td>—</td>
+                    <td>
+                        <button type="button" class="btn-ghost" data-eliminar-compra="${c.numero_compra}" title="Eliminar" style="color:var(--red);"><i class="fa-solid fa-trash"></i></button>
+                    </td>
                 `;
                 tbCompras.appendChild(tr);
             });
@@ -1446,6 +2038,7 @@
         if (!tbCitas) return;
         try {
             const citas = await Api.get('/api/citas');
+            citasMemoria = citas;
             if (kpiCitas) kpiCitas.textContent = citas.filter(c => c.estado === 'Programada').length;
             tbCitas.innerHTML = '';
             if (citas.length === 0) {
@@ -1463,7 +2056,10 @@
                     <td>${BV.escapar(c.atiende || '—')}</td>
                     <td><span class="badge ${clase}">${BV.escapar(c.estado)}</span></td>
                     <td>
-                        <button type="button" class="btn-ghost" data-eliminar-cita="${c.id_cita}" title="Eliminar" style="color:var(--red);"><i class="fa-solid fa-trash"></i></button>
+                        <div style="display:flex;gap:6px;">
+                            <button type="button" class="btn-ghost" data-editar-cita="${c.id_cita}" title="Editar"><i class="fa-solid fa-pen-to-square"></i></button>
+                            <button type="button" class="btn-ghost" data-eliminar-cita="${c.id_cita}" title="Eliminar" style="color:var(--red);"><i class="fa-solid fa-trash"></i></button>
+                        </div>
                     </td>
                 `;
                 tbCitas.appendChild(tr);
@@ -1479,6 +2075,7 @@
         if (!tbRecetas) return;
         try {
             const recetas = await Api.get('/api/recetas');
+            recetasMemoria = recetas;
             if (kpiRecetas) kpiRecetas.textContent = recetas.length;
             tbRecetas.innerHTML = '';
             if (recetas.length === 0) {
@@ -1609,7 +2206,17 @@
     }
 
     // ── Reportes ─────────────────────────────────────────────────
-    const TIPO_REPORTE_CLASE = { Ventas: 'green', Inventario: 'blue', Clientes: 'purple', Compras: 'orange', General: 'teal' };
+    const TIPO_REPORTE_CLASE = { Ventas: 'green', Inventario: 'blue', Existencias: 'blue', Clientes: 'purple', Compras: 'orange', Recetas: 'teal', Citas: 'gold', General: 'teal' };
+    const TIPO_REPORTE_ICON = {
+        Ventas: 'fa-solid fa-cash-register',
+        Inventario: 'fa-solid fa-boxes-stacked',
+        Existencias: 'fa-solid fa-boxes-stacked',
+        Clientes: 'fa-solid fa-users',
+        Compras: 'fa-solid fa-truck-fast',
+        Recetas: 'fa-solid fa-file-medical',
+        Citas: 'fa-solid fa-calendar-check',
+        General: 'fa-solid fa-chart-pie'
+    };
 
     async function cargarReportes() {
         if (!gridReportes) return;
@@ -1621,19 +2228,26 @@
                 return;
             }
             reportes.forEach(r => {
-                const clase = TIPO_REPORTE_CLASE[r.tipo_reporte] || 'blue';
+                const tipo = r.tipo_reporte || 'General';
+                const clase = TIPO_REPORTE_CLASE[tipo] || 'teal';
+                const icon = TIPO_REPORTE_ICON[tipo] || 'fa-solid fa-file-invoice';
                 const card = document.createElement('div');
                 card.className = 'reporte-card';
                 card.innerHTML = `
                     <div class="reporte-header">
-                        <span class="badge ${clase}">${BV.escapar(r.tipo_reporte || 'General')}</span>
-                        <span style="font-size:0.75rem;color:var(--admin-text-muted);">${r.fecha_generacion ? r.fecha_generacion.split(' ')[0] : '—'}</span>
+                        <span class="badge ${clase}"><i class="${icon}"></i> ${BV.escapar(tipo)}</span>
+                        <div style="display:flex;align-items:center;gap:10px;">
+                            <span style="font-size:0.75rem;color:var(--admin-text-muted);"><i class="fa-regular fa-calendar"></i> ${r.fecha_generacion ? r.fecha_generacion.split(' ')[0] : '—'}</span>
+                            <button type="button" class="btn-ghost" data-eliminar-reporte="${r.id_reporte}" title="Eliminar reporte" style="color:var(--red);border:none;padding:4px 6px;cursor:pointer;"><i class="fa-solid fa-trash"></i></button>
+                        </div>
                     </div>
-                    <h3 class="reporte-titulo">${BV.escapar(r.titulo)}</h3>
-                    <p class="reporte-desc">${BV.escapar(r.descripcion || '—')}</p>
-                    <p style="font-size:0.78rem;color:var(--admin-text-muted);margin-top:8px;">
-                        <i class="fa-solid fa-user"></i> ${BV.escapar(r.generado_por || '—')}
-                    </p>
+                    <h3 class="reporte-titulo">${BV.escapar(r.titulo || 'Reporte del sistema')}</h3>
+                    <p class="reporte-desc">${BV.escapar(r.descripcion || 'Sin descripción.')}</p>
+                    ${r.contenido ? `<div class="reporte-content"><i class="fa-solid fa-chart-simple"></i> <span>${BV.escapar(r.contenido)}</span></div>` : ''}
+                    <div class="reporte-footer">
+                        <span><i class="fa-solid fa-user-tie"></i> ${BV.escapar(r.generado_por || 'Administrador')}</span>
+                        <span class="id-badge">#${r.id_reporte}</span>
+                    </div>
                 `;
                 gridReportes.appendChild(card);
             });

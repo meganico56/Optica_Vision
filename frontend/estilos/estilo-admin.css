@@ -1424,167 +1424,277 @@ textarea.input-admin {
 }
 
 /* --- Promociones & Reportes Cards --- */
-.promo-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 1.5rem;
-  margin-top: 1rem;
-}
-
-.promo-card {
-  background: #ffffff;
-  border-radius: 12px;
-  border: 1px solid #e2e8f0;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
-  padding: 1.25rem;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-
-.promo-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.08);
-}
-
-.promo-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  margin-bottom: 0.75rem;
-}
-
-.promo-header h4 {
-  margin: 0;
-  font-size: 1.1rem;
-  color: #1e293b;
-}
-
-.promo-badge {
-  font-size: 0.75rem;
-  font-weight: 600;
-  padding: 0.25rem 0.5rem;
-  border-radius: 9999px;
-}
-
-.promo-badge.activa {
-  background-color: #dcfce7;
-  color: #166534;
-}
-
-.promo-badge.inactiva {
-  background-color: #f1f5f9;
-  color: #64748b;
-}
-
-.promo-body p {
-  color: #64748b;
-  font-size: 0.875rem;
-  margin: 0.25rem 0;
-}
-
-.promo-val {
-  font-size: 1.25rem;
-  font-weight: 700;
-  color: #0284c7;
-  margin: 0.5rem 0 !important;
-}
-
-.promo-fechas {
-  font-size: 0.75rem;
-  color: #94a3b8;
-}
-
-.promo-actions {
-  display: flex;
-  gap: 0.5rem;
-  margin-top: 1rem;
-  border-top: 1px solid #f1f5f9;
-  padding-top: 0.75rem;
-  justify-content: flex-end;
-}
-
+.promo-grid,
+.reporte-grid,
 .reportes-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-  gap: 1.5rem;
-  margin-top: 1rem;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 22px;
+  margin-top: 1.25rem;
 }
 
+.promo-card,
 .reporte-card {
-  background: #ffffff;
-  border-radius: 12px;
-  border: 1px solid #e2e8f0;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
-  padding: 1.5rem;
+  background: var(--admin-card);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--admin-border);
+  border-radius: 16px;
+  padding: 22px;
+  box-shadow: var(--admin-shadow);
   display: flex;
   flex-direction: column;
+  justify-content: space-between;
+  color: var(--admin-text);
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1),
+              border-color 0.25s ease,
+              box-shadow 0.25s ease;
+  position: relative;
+  overflow: hidden;
 }
 
+.promo-card:hover,
+.reporte-card:hover {
+  transform: translateY(-4px);
+  border-color: var(--admin-gold);
+  box-shadow: 0 14px 28px rgba(0, 0, 0, 0.4), var(--admin-glow);
+}
+
+:root.light-mode .promo-card,
+:root.light-mode .reporte-card {
+  background: #ffffff;
+  border: 1px solid rgba(204, 164, 59, 0.2);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.05);
+}
+
+:root.light-mode .promo-card:hover,
+:root.light-mode .reporte-card:hover {
+  border-color: var(--admin-gold);
+  box-shadow: 0 10px 22px rgba(204, 164, 59, 0.18);
+}
+
+/* Encabezados de Cards */
+.promo-header,
 .reporte-header {
   display: flex;
+  justify-content: space-between;
   align-items: center;
-  gap: 0.75rem;
-  margin-bottom: 0.5rem;
+  margin-bottom: 12px;
+  gap: 10px;
 }
 
-.reporte-icon {
-  width: 40px;
-  height: 40px;
-  border-radius: 8px;
-  background: #e0f2fe;
-  color: #0284c7;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1.2rem;
-}
-
-.reporte-title {
-  margin: 0;
+.promo-nombre,
+.reporte-titulo,
+.reporte-title,
+.promo-header h4 {
+  margin: 0 0 8px 0;
   font-size: 1.1rem;
-  color: #1e293b;
+  font-weight: 700;
+  color: var(--admin-text);
+  line-height: 1.35;
 }
 
+.promo-desc,
 .reporte-desc {
-  font-size: 0.875rem;
-  color: #64748b;
-  margin-bottom: 1rem;
+  font-size: 0.88rem;
+  color: var(--admin-text-muted);
+  line-height: 1.5;
+  margin: 0 0 14px 0;
   flex-grow: 1;
 }
 
-.badge-estado {
-  display: inline-block;
-  padding: 0.25rem 0.6rem;
-  border-radius: 9999px;
-  font-size: 0.75rem;
-  font-weight: 600;
-  text-align: center;
+.promo-descuento {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--admin-gold);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
 }
 
-.badge-estado.green {
-  background-color: #dcfce7;
-  color: #166534;
+.promo-fechas {
+  font-size: 0.8rem;
+  color: var(--admin-text-muted);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding-top: 10px;
+  border-top: 1px solid var(--admin-border);
 }
 
-.badge-estado.orange {
-  background-color: #fef3c7;
-  color: #92400e;
+.promo-fechas i {
+  color: var(--admin-gold);
 }
 
-.badge-estado.red {
-  background-color: #fee2e2;
-  color: #991b1b;
+.reporte-content {
+  font-size: 0.82rem;
+  color: var(--admin-text);
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--admin-border);
+  border-radius: 10px;
+  padding: 10px 14px;
+  line-height: 1.5;
+  margin-bottom: 14px;
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
 }
 
+:root.light-mode .reporte-content {
+  background: #f8fafc;
+  border-color: #e2e8f0;
+  color: #334155;
+}
+
+.reporte-content i {
+  color: var(--admin-gold);
+  margin-top: 2px;
+  flex-shrink: 0;
+}
+
+.reporte-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: auto;
+  padding-top: 12px;
+  border-top: 1px solid var(--admin-border);
+  font-size: 0.78rem;
+  color: var(--admin-text-muted);
+}
+
+/* Badges unificados para todo el panel (Modo Oscuro & Modo Claro) */
+.badge,
+.badge-estado,
+.promo-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 0.74rem;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+  text-transform: uppercase;
+  border: 1px solid transparent;
+  white-space: nowrap;
+}
+
+/* Variantes de color en Modo Oscuro */
+.badge.green,
+.badge-estado.green,
+.promo-badge.green,
+.promo-badge.activa {
+  background: rgba(34, 197, 94, 0.15);
+  color: #4ade80;
+  border-color: rgba(34, 197, 94, 0.3);
+}
+
+.badge.red,
+.badge-estado.red,
+.promo-badge.red,
+.promo-badge.inactiva {
+  background: rgba(239, 68, 68, 0.15);
+  color: #f87171;
+  border-color: rgba(239, 68, 68, 0.3);
+}
+
+.badge.blue,
 .badge-estado.blue {
-  background-color: #e0f2fe;
-  color: #0369a1;
+  background: rgba(59, 130, 246, 0.15);
+  color: #60a5fa;
+  border-color: rgba(59, 130, 246, 0.3);
 }
 
+.badge.orange,
+.badge-estado.orange {
+  background: rgba(249, 115, 22, 0.15);
+  color: #fb923c;
+  border-color: rgba(249, 115, 22, 0.3);
+}
+
+.badge.purple {
+  background: rgba(168, 85, 247, 0.15);
+  color: #c084fc;
+  border-color: rgba(168, 85, 247, 0.3);
+}
+
+.badge.teal {
+  background: rgba(20, 184, 166, 0.15);
+  color: #2dd4bf;
+  border-color: rgba(20, 184, 166, 0.3);
+}
+
+.badge.gold {
+  background: rgba(204, 164, 59, 0.15);
+  color: var(--admin-gold);
+  border-color: rgba(204, 164, 59, 0.35);
+}
+
+.badge.gray,
 .badge-estado.gray {
-  background-color: #f1f5f9;
+  background: rgba(148, 163, 184, 0.15);
+  color: #cbd5e1;
+  border-color: rgba(148, 163, 184, 0.3);
+}
+
+/* Variantes de color en Modo Claro */
+:root.light-mode .badge.green,
+:root.light-mode .badge-estado.green,
+:root.light-mode .promo-badge.green,
+:root.light-mode .promo-badge.activa {
+  background: #dcfce7;
+  color: #15803d;
+  border-color: #bbf7d0;
+}
+
+:root.light-mode .badge.red,
+:root.light-mode .badge-estado.red,
+:root.light-mode .promo-badge.red,
+:root.light-mode .promo-badge.inactiva {
+  background: #fee2e2;
+  color: #b91c1c;
+  border-color: #fecaca;
+}
+
+:root.light-mode .badge.blue,
+:root.light-mode .badge-estado.blue {
+  background: #dbeafe;
+  color: #1d4ed8;
+  border-color: #bfdbfe;
+}
+
+:root.light-mode .badge.orange,
+:root.light-mode .badge-estado.orange {
+  background: #ffedd5;
+  color: #c2410c;
+  border-color: #fed7aa;
+}
+
+:root.light-mode .badge.purple {
+  background: #f3e8ff;
+  color: #7e22ce;
+  border-color: #e9d5ff;
+}
+
+:root.light-mode .badge.teal {
+  background: #ccfbf1;
+  color: #0f766e;
+  border-color: #99f6e4;
+}
+
+:root.light-mode .badge.gold {
+  background: #fef9c3;
+  color: #854d0e;
+  border-color: #fde047;
+}
+
+:root.light-mode .badge.gray,
+:root.light-mode .badge-estado.gray {
+  background: #f1f5f9;
   color: #475569;
+  border-color: #e2e8f0;
 }
 

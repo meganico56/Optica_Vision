@@ -616,29 +616,48 @@ app.delete("/api/proveedores/:id", async (req, res) => {
 
 // ─────────────────────── VENTAS ───────────────────────
 app.get("/api/ventas", async (req, res) => {
+  const { id_cliente } = req.query;
   try {
-    const [rows] = await db.query({
-      sql: `SELECT v.codigo_venta, v.fecha, v.total, v.estado, v.es_cotizacion,
+    let sql = `SELECT v.codigo_venta, v.fecha, v.total, v.estado, v.es_cotizacion,
                v.codigo_promocion, v.id_receta,
                CONCAT(u.nombre,' ',u.apellido) AS cliente,
                v.id_cliente
             FROM venta v
-            LEFT JOIN usuario u ON v.id_cliente = u.id_usuario
-            ORDER BY v.codigo_venta DESC`,
-      dateStrings: true
-    });
+            LEFT JOIN usuario u ON v.id_cliente = u.id_usuario`;
+    const params = [];
+    if (id_cliente) {
+      sql += ` WHERE v.id_cliente = ?`;
+      params.push(id_cliente);
+    }
+    sql += ` ORDER BY v.codigo_venta DESC`;
+    const [rows] = await db.query({ sql, values: params, dateStrings: true });
+    res.json(rows);
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+app.get("/api/ventas/:id/detalles", async (req, res) => {
+  try {
+    const [rows] = await db.query(
+      `SELECT dv.*, p.nombre, p.imagen, p.descripcion, c.nombre AS categoria_nombre
+       FROM detalle_venta dv
+       LEFT JOIN producto p ON dv.id_producto = p.id_producto
+       LEFT JOIN categoria c ON p.id_categoria = c.id_categoria
+       WHERE dv.codigo_venta = ?`,
+      [req.params.id]
+    );
     res.json(rows);
   } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
 app.post("/api/ventas", async (req, res) => {
-  const { id_cliente, total, estado, es_cotizacion, codigo_promocion, id_receta } = req.body;
-  if (!id_cliente || !total) return res.status(400).json({ mensaje: "Cliente y total son obligatorios" });
+  const clienteId = req.body.id_cliente || req.body.id_usuario;
+  const { total, estado, es_cotizacion, codigo_promocion, id_receta } = req.body;
+  if (!clienteId || !total) return res.status(400).json({ mensaje: "Cliente y total son obligatorios" });
   try {
     const [r] = await db.query(
       `INSERT INTO venta (fecha, total, estado, es_cotizacion, id_cliente, codigo_promocion, id_receta, id_usuario)
        VALUES (NOW(), ?, ?, ?, ?, ?, ?, ?)`,
-      [total, estado || "Pendiente", es_cotizacion || 0, id_cliente, codigo_promocion || null, id_receta || null, id_cliente]
+      [total, estado || "Pendiente", es_cotizacion || 0, clienteId, codigo_promocion || null, id_receta || null, clienteId]
     );
     res.status(201).json({ mensaje: "Venta registrada", codigo_venta: r.insertId });
   } catch (e) { res.status(500).json({ error: e.message }); }
@@ -685,7 +704,7 @@ app.get("/api/compras", async (req, res) => {
   try {
     const [rows] = await db.query({
       sql: `SELECT c.numero_compra, c.fecha, c.numero_comprobante, c.total, c.estado,
-               p.nombre AS proveedor
+               p.nombre AS proveedor, c.codigo_proveedor, c.sub_total, c.impuesto, c.observaciones
             FROM compra c
             LEFT JOIN proveedor p ON c.codigo_proveedor = p.codigo_proveedor
             ORDER BY c.numero_compra DESC`,
@@ -695,30 +714,87 @@ app.get("/api/compras", async (req, res) => {
   } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
+app.post("/api/compras", async (req, res) => {
+  const numComprobante = req.body.numero_comprobante || req.body.comprobante;
+  const codProveedor = req.body.codigo_proveedor || req.body.id_proveedor;
+  const { id_usuario, sub_total, impuesto, total, estado, observaciones } = req.body;
+  if (!numComprobante || !codProveedor || total === undefined) {
+    return res.status(400).json({ mensaje: "Comprobante, proveedor y total son obligatorios" });
+  }
+  try {
+    const sub = sub_total !== undefined ? sub_total : total;
+    const imp = impuesto !== undefined ? impuesto : 0;
+    const [r] = await db.query(
+      `INSERT INTO compra (fecha, numero_comprobante, sub_total, impuesto, total, estado, observaciones, codigo_proveedor, id_usuario)
+       VALUES (NOW(), ?, ?, ?, ?, ?, ?, ?, ?)`,
+      [numComprobante, sub, imp, total, estado || "Confirmada", observaciones || null, codProveedor, id_usuario || 1]
+    );
+    res.status(201).json({ mensaje: "Compra registrada", numero_compra: r.insertId });
+  } catch (e) {
+    if (e.code === "ER_DUP_ENTRY") {
+      return res.status(409).json({ mensaje: "Ya existe una compra con ese comprobante para este proveedor" });
+    }
+    res.status(500).json({ error: e.message });
+  }
+});
+
+app.delete("/api/compras/:id", async (req, res) => {
+  try {
+    await db.query("DELETE FROM compra WHERE numero_compra=?", [req.params.id]);
+    res.json({ mensaje: "Compra eliminada" });
+  } catch (e) { res.status(500).json({ mensaje: "No se puede eliminar la compra si tiene detalles asociados." }); }
+});
+
 // ─────────────────────── CITAS ───────────────────────
 app.get("/api/citas", async (req, res) => {
+  const { id_cliente } = req.query;
   try {
-    const [rows] = await db.query({
-      sql: `SELECT c.id_cita, c.fecha_hora, c.motivo, c.estado, c.observaciones,
+    let sql = `SELECT c.id_cita, c.fecha_hora, c.motivo, c.estado, c.observaciones,
                CONCAT(cl.nombre,' ',cl.apellido) AS cliente,
-               CONCAT(at.nombre,' ',at.apellido) AS atiende
+               CONCAT(at.nombre,' ',at.apellido) AS atiende,
+               c.id_cliente, c.id_usuario_atiende
             FROM cita c
             LEFT JOIN usuario cl ON c.id_cliente = cl.id_usuario
-            LEFT JOIN usuario at ON c.id_usuario_atiende = at.id_usuario
-            ORDER BY c.fecha_hora DESC`,
-      dateStrings: true
-    });
+            LEFT JOIN usuario at ON c.id_usuario_atiende = at.id_usuario`;
+    const params = [];
+    if (id_cliente) {
+      sql += ` WHERE c.id_cliente = ?`;
+      params.push(id_cliente);
+    }
+    sql += ` ORDER BY c.fecha_hora DESC`;
+    const [rows] = await db.query({ sql, values: params, dateStrings: true });
     res.json(rows);
   } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
+app.post("/api/citas-admin", async (req, res) => {
+  const { id_cliente, fecha_hora, motivo, id_usuario_atiende, estado, observaciones, duracion_minutos } = req.body;
+  if (!id_cliente || !fecha_hora || !motivo) {
+    return res.status(400).json({ mensaje: "Cliente, fecha/hora y motivo son obligatorios" });
+  }
+  try {
+    const atiende = id_usuario_atiende || id_cliente;
+    const [r] = await db.query(
+      `INSERT INTO cita (fecha_hora, duracion_minutos, motivo, estado, observaciones, id_cliente, id_usuario_atiende)
+       VALUES (?, ?, ?, ?, ?, ?, ?)`,
+      [fecha_hora, duracion_minutos || 30, motivo, estado || "Programada", observaciones || null, id_cliente, atiende]
+    );
+    res.status(201).json({ mensaje: "Cita programada con éxito", id_cita: r.insertId });
+  } catch (e) {
+    if (e.code === "ER_DUP_ENTRY") {
+      return res.status(409).json({ mensaje: "El cliente ya tiene una cita asignada en ese horario exacto" });
+    }
+    res.status(500).json({ error: e.message });
+  }
+});
+
 app.put("/api/citas/:id", async (req, res) => {
   const { id } = req.params;
-  const { estado, observaciones } = req.body;
+  const { estado, observaciones, fecha_hora, motivo } = req.body;
   try {
     await db.query(
-      "UPDATE cita SET estado=COALESCE(?,estado), observaciones=COALESCE(?,observaciones) WHERE id_cita=?",
-      [estado, observaciones, id]
+      "UPDATE cita SET estado=COALESCE(?,estado), observaciones=COALESCE(?,observaciones), fecha_hora=COALESCE(?,fecha_hora), motivo=COALESCE(?,motivo) WHERE id_cita=?",
+      [estado, observaciones, fecha_hora, motivo, id]
     );
     res.json({ mensaje: "Cita actualizada" });
   } catch (e) { res.status(500).json({ error: e.message }); }
@@ -733,17 +809,84 @@ app.delete("/api/citas/:id", async (req, res) => {
 
 // ─────────────────────── RECETAS ───────────────────────
 app.get("/api/recetas", async (req, res) => {
+  const { id_cliente } = req.query;
   try {
-    const [rows] = await db.query({
-      sql: `SELECT r.id_receta, r.fecha_emision, r.fecha_vencimiento, r.diagnostico,
+    let sql = `SELECT r.*,
                CONCAT(u.nombre,' ',u.apellido) AS cliente
             FROM receta_optica r
-            LEFT JOIN usuario u ON r.id_cliente = u.id_usuario
-            ORDER BY r.id_receta DESC`,
-      dateStrings: true
-    });
+            LEFT JOIN usuario u ON r.id_cliente = u.id_usuario`;
+    const params = [];
+    if (id_cliente) {
+      sql += ` WHERE r.id_cliente = ?`;
+      params.push(id_cliente);
+    }
+    sql += ` ORDER BY r.id_receta DESC`;
+    const [rows] = await db.query({ sql, values: params, dateStrings: true });
     res.json(rows);
   } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+app.post("/api/recetas", async (req, res) => {
+  const clienteId = req.body.id_cliente || req.body.id_usuario;
+  const optometraFinal = req.body.nombre_optometra_externo || req.body.optometra;
+  const {
+    fecha_emision, fecha_vencimiento, diagnostico, entidad_examinadora,
+    observaciones, id_cita, id_usuario_registra,
+    od_esfera, od_cilindro, od_eje, od_adicion,
+    oi_esfera, oi_cilindro, oi_eje, oi_adicion, distancia_pupilar
+  } = req.body;
+
+  if (!fecha_emision || !fecha_vencimiento || !clienteId) {
+    return res.status(400).json({ mensaje: "Fechas de emisión, vencimiento y cliente son obligatorios" });
+  }
+
+  try {
+    // Si no se proporcionó id_cita o la cita ya tiene receta, buscar o crear una cita representativa
+    let citaIdFinal = id_cita;
+    if (!citaIdFinal) {
+      const [citasDisp] = await db.query(
+        `SELECT c.id_cita FROM cita c
+         LEFT JOIN receta_optica ro ON c.id_cita = ro.id_cita
+         WHERE c.id_cliente = ? AND ro.id_receta IS NULL
+         ORDER BY c.fecha_hora DESC LIMIT 1`,
+        [clienteId]
+      );
+      if (citasDisp.length > 0) {
+        citaIdFinal = citasDisp[0].id_cita;
+      } else {
+        const [nuevaCita] = await db.query(
+          `INSERT INTO cita (fecha_hora, duracion_minutos, motivo, estado, id_cliente, id_usuario_atiende)
+           VALUES (NOW(), 30, 'Examen de optometría (receta)', 'Completada', ?, ?)`,
+          [clienteId, id_usuario_registra || clienteId]
+        );
+        citaIdFinal = nuevaCita.insertId;
+      }
+    }
+
+    const [r] = await db.query(
+      `INSERT INTO receta_optica (
+        fecha_emision, fecha_vencimiento, diagnostico, entidad_examinadora,
+        nombre_optometra_externo, observaciones, id_cliente, id_cita, id_usuario_registra,
+        od_esfera, od_cilindro, od_eje, od_adicion,
+        oi_esfera, oi_cilindro, oi_eje, oi_adicion, distancia_pupilar
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      [
+        fecha_emision, fecha_vencimiento, diagnostico || "Evaluación visual",
+        entidad_examinadora || "Óptica Boutique de la Visión",
+        optometraFinal || "Dr. Optómetra",
+        observaciones || null, clienteId, citaIdFinal, id_usuario_registra || 1,
+        od_esfera || null, od_cilindro || null, od_eje || null, od_adicion || null,
+        oi_esfera || null, oi_cilindro || null, oi_eje || null, oi_adicion || null,
+        distancia_pupilar || null
+      ]
+    );
+    res.status(201).json({ mensaje: "Receta registrada", id_receta: r.insertId });
+  } catch (e) {
+    if (e.code === "ER_DUP_ENTRY") {
+      return res.status(409).json({ mensaje: "Esta cita ya tiene una receta asociada" });
+    }
+    res.status(500).json({ error: e.message });
+  }
 });
 
 app.delete("/api/recetas/:id", async (req, res) => {
@@ -751,6 +894,56 @@ app.delete("/api/recetas/:id", async (req, res) => {
     await db.query("DELETE FROM receta_optica WHERE id_receta=?", [req.params.id]);
     res.json({ mensaje: "Receta eliminada" });
   } catch (e) { res.status(500).json({ mensaje: "No se puede eliminar la receta." }); }
+});
+
+// ─────────────────────── DEVOLUCIONES (POST / DELETE) ───────────────────────
+app.post("/api/devoluciones", async (req, res) => {
+  const { motivo, cantidad, observaciones, codigo_detalle_venta, codigo_venta, id_usuario } = req.body;
+  if (!motivo || !cantidad) {
+    return res.status(400).json({ mensaje: "Motivo y cantidad son obligatorios" });
+  }
+
+  try {
+    let detalleIdFinal = codigo_detalle_venta;
+    if (!detalleIdFinal) {
+      if (codigo_venta) {
+        const [detalles] = await db.query(
+          "SELECT codigo_detalle_venta FROM detalle_venta WHERE codigo_venta=? LIMIT 1",
+          [codigo_venta]
+        );
+        if (detalles.length > 0) {
+          detalleIdFinal = detalles[0].codigo_detalle_venta;
+        }
+      }
+      if (!detalleIdFinal) {
+        // Seleccionar cualquier detalle de venta existente
+        const [cualquierDetalle] = await db.query(
+          "SELECT codigo_detalle_venta FROM detalle_venta ORDER BY codigo_detalle_venta DESC LIMIT 1"
+        );
+        if (cualquierDetalle.length > 0) {
+          detalleIdFinal = cualquierDetalle[0].codigo_detalle_venta;
+        }
+      }
+    }
+
+    if (!detalleIdFinal) {
+      return res.status(400).json({ mensaje: "Debe existir al menos un detalle de venta para registrar la devolución" });
+    }
+
+    const [r] = await db.query(
+      `INSERT INTO devolucion (fecha, motivo, cantidad, observaciones, codigo_detalle_venta, id_usuario)
+       VALUES (NOW(), ?, ?, ?, ?, ?)`,
+      [motivo, cantidad, observaciones || null, detalleIdFinal, id_usuario || 1]
+    );
+    res.status(201).json({ mensaje: "Devolución registrada", id_devolucion: r.insertId });
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+app.delete("/api/devoluciones/:id", async (req, res) => {
+  try {
+    await db.query("DELETE FROM devolucion WHERE id_devolucion=?", [req.params.id]);
+    res.json({ mensaje: "Devolución eliminada" });
+  } catch (e) { res.status(500).json({ mensaje: "No se puede eliminar la devolución." }); }
 });
 
 // ─────────────────────── PROMOCIONES ───────────────────────
@@ -807,7 +1000,7 @@ app.get("/api/reportes", async (req, res) => {
   try {
     const [rows] = await db.query({
       sql: `SELECT r.id_reporte, r.titulo, r.tipo_reporte, r.fecha_generacion,
-               r.descripcion, CONCAT(u.nombre,' ',u.apellido) AS generado_por
+               r.descripcion, r.contenido, CONCAT(u.nombre,' ',u.apellido) AS generado_por
             FROM reporte r
             LEFT JOIN usuario u ON r.id_usuario_genera = u.id_usuario
             ORDER BY r.fecha_generacion DESC`,
@@ -815,6 +1008,46 @@ app.get("/api/reportes", async (req, res) => {
     });
     res.json(rows);
   } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+app.post("/api/reportes", async (req, res) => {
+  const tipoFinal = req.body.tipo_reporte || req.body.tipo;
+  const { titulo, descripcion, contenido, id_usuario_genera } = req.body;
+  if (!titulo || !tipoFinal) {
+    return res.status(400).json({ mensaje: "Título y tipo de reporte son obligatorios" });
+  }
+
+  try {
+    let contenidoGenerado = contenido;
+    if (!contenidoGenerado) {
+      if (tipoFinal === "Ventas") {
+        const [v] = await db.query("SELECT COUNT(*) AS total, COALESCE(SUM(total),0) AS ingresos FROM venta WHERE estado='Completada'");
+        contenidoGenerado = `Ventas completadas: ${v[0].total} | Ingresos totales: $${v[0].ingresos}`;
+      } else if (tipoFinal === "Existencias") {
+        const [p] = await db.query("SELECT COUNT(*) AS bajo FROM producto WHERE existencia_actual <= existencia_minima");
+        contenidoGenerado = `Productos en alerta baja: ${p[0].bajo}`;
+      } else if (tipoFinal === "Clientes") {
+        const [c] = await db.query("SELECT COUNT(*) AS clientes FROM usuario u JOIN rol r ON u.id_rol = r.id_rol WHERE r.nombre_rol = 'Cliente'");
+        contenidoGenerado = `Total de clientes registrados: ${c[0].clientes}`;
+      } else {
+        contenidoGenerado = descripcion || "Reporte generado por el administrador";
+      }
+    }
+
+    const [r] = await db.query(
+      `INSERT INTO reporte (titulo, tipo_reporte, fecha_generacion, id_usuario_genera, descripcion, contenido)
+       VALUES (?, ?, NOW(), ?, ?, ?)`,
+      [titulo, tipoFinal, id_usuario_genera || 1, descripcion || "", contenidoGenerado]
+    );
+    res.status(201).json({ mensaje: "Reporte generado con éxito", id_reporte: r.insertId });
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+app.delete("/api/reportes/:id", async (req, res) => {
+  try {
+    await db.query("DELETE FROM reporte WHERE id_reporte=?", [req.params.id]);
+    res.json({ mensaje: "Reporte eliminado" });
+  } catch (e) { res.status(500).json({ mensaje: "No se puede eliminar el reporte." }); }
 });
 
 const PORT = 3000;
