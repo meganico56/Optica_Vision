@@ -11,6 +11,14 @@
     const tbMarcas = document.getElementById('tbMarcas');
     const tbCategorias = document.getElementById('tbCategorias');
     const tbUsuarios = document.getElementById('tbUsuarios');
+    const listaProveedores = document.getElementById('listaProveedores');
+    const tbVentas = document.getElementById('tbVentas');
+    const tbDevoluciones = document.getElementById('tbDevoluciones');
+    const tbCompras = document.getElementById('tbCompras');
+    const tbCitas = document.getElementById('tbCitas');
+    const tbRecetas = document.getElementById('tbRecetas');
+    const gridPromos = document.getElementById('gridPromos');
+    const gridReportes = document.getElementById('gridReportes');
 
     const kpiIngresos = document.getElementById('kpiIngresos');
     const kpiVentas = document.getElementById('kpiVentas');
@@ -20,6 +28,11 @@
     const kpiProductos = document.getElementById('kpiProductos');
     const kpiBajoMinimo2 = document.getElementById('kpiBajoMinimo2');
     const kpiCategorias = document.getElementById('kpiCategorias');
+    const kpiTotalIngresos = document.getElementById('kpiTotalIngresos');
+    const kpiVentasCompletadas = document.getElementById('kpiVentasCompletadas');
+    const kpiCotizaciones = document.getElementById('kpiCotizaciones');
+    const kpiDevoluciones = document.getElementById('kpiDevoluciones');
+    const kpiRecetas = document.getElementById('kpiRecetas');
 
     const modal = document.getElementById('modal');
     const formModal = document.getElementById('formModal');
@@ -33,6 +46,7 @@
     let marcasMemoria = [];
     let categoriasMemoria = [];
     let usuariosMemoria = [];
+    let proveedoresMemoria = [];
     let rolesMemoria = [];
     let editandoId = null;
     let tipoModal = null; // 'producto', 'marca', 'categoria', 'usuario'
@@ -235,6 +249,126 @@
         } catch (error) {
             console.error('Error al cargar roles:', error);
         }
+    }
+
+    // Cargar Lista de Proveedores
+    async function cargarProveedores() {
+        if (!listaProveedores) return;
+        try {
+            const proveedores = await Api.get('/api/proveedores');
+            proveedoresMemoria = proveedores;
+            listaProveedores.innerHTML = '';
+
+            if (proveedores.length === 0) {
+                listaProveedores.innerHTML = '<li style="text-align:center;color:var(--admin-text-muted);padding:15px;">No hay proveedores registrados.</li>';
+                return;
+            }
+
+            proveedores.forEach((prov) => {
+                const li = document.createElement('li');
+                li.className = 'proveedor-item';
+                const iniciales = (prov.nombre || 'PR').substring(0, 2).toUpperCase();
+                li.innerHTML = `
+                    <div class="proveedor-avatar">${BV.escapar(iniciales)}</div>
+                    <div class="proveedor-info" style="flex:1;">
+                        <h4>${BV.escapar(prov.nombre)}</h4>
+                        <p><i class="fa-solid fa-id-card"></i> <strong>NIT:</strong> ${BV.escapar(prov.nit)}</p>
+                        <p><i class="fa-solid fa-phone"></i> ${BV.escapar(prov.telefono)} | <i class="fa-solid fa-envelope"></i> <a href="mailto:${BV.escapar(prov.correo)}">${BV.escapar(prov.correo)}</a></p>
+                        ${prov.direccion ? `<p><i class="fa-solid fa-location-dot"></i> ${BV.escapar(prov.direccion)}</p>` : ''}
+                        <p><span class="badge ${prov.estado === 'Activo' ? 'green' : 'red'}">${BV.escapar(prov.estado || 'Activo')}</span></p>
+                    </div>
+                    <div style="display:flex;gap:6px;align-items:center;">
+                        <button type="button" class="btn-ghost" data-editar-prov="${prov.codigo_proveedor}" title="Editar proveedor"><i class="fa-solid fa-pen-to-square"></i></button>
+                        <button type="button" class="btn-ghost" data-eliminar-prov="${prov.codigo_proveedor}" title="Eliminar proveedor" style="color:var(--red);"><i class="fa-solid fa-trash"></i></button>
+                    </div>
+                `;
+                listaProveedores.appendChild(li);
+            });
+        } catch (error) {
+            console.error('Error al cargar proveedores:', error);
+            if (listaProveedores) {
+                listaProveedores.innerHTML = '<li style="text-align:center;color:var(--red);padding:15px;">Error al cargar proveedores del servidor.</li>';
+            }
+        }
+    }
+
+    // Abrir Modal de Proveedor (Nuevo o Editar)
+    function abrirModalProveedor(proveedor = null) {
+        tipoModal = 'proveedor';
+        editandoId = proveedor ? proveedor.codigo_proveedor : null;
+
+        if (modalTitulo) {
+            modalTitulo.innerHTML = proveedor
+                ? `<i class="fa-solid fa-building-circle-check"></i> <span>Editar proveedor #${proveedor.codigo_proveedor}</span>`
+                : `<i class="fa-solid fa-building"></i> <span>Nuevo proveedor</span>`;
+        }
+        if (modalError) modalError.hidden = true;
+
+        const p = proveedor || {};
+
+        modalCampos.innerHTML = `
+            <div class="form-section-group">
+                <div class="form-section-title">
+                    <i class="fa-solid fa-building"></i> Información de la empresa
+                </div>
+                <div class="form-grid-2">
+                    <div class="form-field">
+                        <label for="mProvNombre">Nombre / Razón Social <span class="req">*</span></label>
+                        <div class="input-icon-wrapper">
+                            <i class="fa-solid fa-building prefix-icon"></i>
+                            <input type="text" id="mProvNombre" class="input-admin" placeholder="Ej. Ópticas Unidas S.A.S." value="${BV.escapar(p.nombre || '')}" required>
+                        </div>
+                    </div>
+                    <div class="form-field">
+                        <label for="mProvNit">NIT <span class="req">*</span></label>
+                        <div class="input-icon-wrapper">
+                            <i class="fa-solid fa-id-card prefix-icon"></i>
+                            <input type="text" id="mProvNit" class="input-admin" placeholder="Ej. 900123456-1" value="${BV.escapar(p.nit || '')}" required>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-grid-2">
+                    <div class="form-field">
+                        <label for="mProvTelefono">Teléfono <span class="req">*</span></label>
+                        <div class="input-icon-wrapper">
+                            <i class="fa-solid fa-phone prefix-icon"></i>
+                            <input type="tel" id="mProvTelefono" class="input-admin" placeholder="Ej. 6012345678" value="${BV.escapar(p.telefono || '')}" required>
+                        </div>
+                    </div>
+                    <div class="form-field">
+                        <label for="mProvCorreo">Correo electrónico <span class="req">*</span></label>
+                        <div class="input-icon-wrapper">
+                            <i class="fa-solid fa-envelope prefix-icon"></i>
+                            <input type="email" id="mProvCorreo" class="input-admin" placeholder="proveedor@empresa.com" value="${BV.escapar(p.correo || '')}" required>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-grid-2">
+                    <div class="form-field">
+                        <label for="mProvDireccion">Dirección</label>
+                        <div class="input-icon-wrapper">
+                            <i class="fa-solid fa-location-dot prefix-icon"></i>
+                            <input type="text" id="mProvDireccion" class="input-admin" placeholder="Ej. Cra 15 #93-42, Bogotá" value="${BV.escapar(p.direccion || '')}">
+                        </div>
+                    </div>
+                    <div class="form-field">
+                        <label for="mProvEstado">Estado</label>
+                        <div class="input-icon-wrapper">
+                            <i class="fa-solid fa-toggle-on prefix-icon"></i>
+                            <select id="mProvEstado" class="input-admin">
+                                <option value="Activo" ${p.estado !== 'Inactivo' ? 'selected' : ''}>Activo</option>
+                                <option value="Inactivo" ${p.estado === 'Inactivo' ? 'selected' : ''}>Inactivo</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+
+        if (modalGuardar) modalGuardar.innerHTML = '<i class="fa-solid fa-floppy-disk"></i> Guardar proveedor';
+
+        if (typeof modal.showModal === 'function') modal.showModal();
+        else modal.setAttribute('open', '');
     }
 
     // Abrir Modal de Usuario (Nuevo o Editar)
@@ -827,6 +961,69 @@
                         modalError.hidden = false;
                     }
                 }
+            } else if (tipoModal === 'proveedor') {
+                const nombre = document.getElementById('mProvNombre').value.trim();
+                const nit = document.getElementById('mProvNit').value.trim();
+                const telefono = document.getElementById('mProvTelefono').value.trim();
+                const correo = document.getElementById('mProvCorreo').value.trim();
+                const direccion = document.getElementById('mProvDireccion').value.trim();
+                const estado = document.getElementById('mProvEstado').value;
+
+                if (!nombre || !nit || !telefono || !correo) {
+                    if (modalError) {
+                        modalError.textContent = 'Nombre, NIT, teléfono y correo son obligatorios.';
+                        modalError.hidden = false;
+                    }
+                    return;
+                }
+
+                try {
+                    const datos = { nombre, nit, telefono, correo, direccion, estado };
+                    if (editandoId) {
+                        await Api.put('/api/proveedores/' + editandoId, datos);
+                    } else {
+                        await Api.post('/api/proveedores', datos);
+                    }
+                    modal.close();
+                    cargarProveedores();
+                } catch (err) {
+                    if (modalError) {
+                        modalError.textContent = err.message || 'Error al guardar el proveedor.';
+                        modalError.hidden = false;
+                    }
+                }
+            } else if (tipoModal === 'promocion') {
+                const nombre = document.getElementById('mPromoNombre').value.trim();
+                const descripcion = document.getElementById('mPromoDesc').value.trim();
+                const tipo_descuento = document.getElementById('mPromoTipo').value;
+                const valor_descuento = parseFloat(document.getElementById('mPromoValor').value);
+                const fecha_inicio = document.getElementById('mPromoInicio').value || null;
+                const fecha_fin = document.getElementById('mPromoFin').value || null;
+                const estado = document.getElementById('mPromoEstado').value;
+
+                if (!nombre || isNaN(valor_descuento)) {
+                    if (modalError) {
+                        modalError.textContent = 'Nombre y valor del descuento son obligatorios.';
+                        modalError.hidden = false;
+                    }
+                    return;
+                }
+
+                try {
+                    const datos = { nombre, descripcion, tipo_descuento, valor_descuento, fecha_inicio, fecha_fin, estado };
+                    if (editandoId) {
+                        await Api.put('/api/promociones/' + editandoId, datos);
+                    } else {
+                        await Api.post('/api/promociones', datos);
+                    }
+                    modal.close();
+                    cargarPromociones();
+                } catch (err) {
+                    if (modalError) {
+                        modalError.textContent = err.message || 'Error al guardar la promoción.';
+                        modalError.hidden = false;
+                    }
+                }
             } else {
                 modal.close();
             }
@@ -1022,11 +1219,460 @@
             }
             return;
         }
+
+        // Nuevo Proveedor
+        const btnNuevoProv = e.target.closest('[data-nuevo="proveedor"]');
+        if (btnNuevoProv) {
+            e.preventDefault();
+            abrirModalProveedor();
+            return;
+        }
+
+        // Editar Proveedor
+        const btnEditProv = e.target.closest('[data-editar-prov]');
+        if (btnEditProv) {
+            e.preventDefault();
+            const id = btnEditProv.dataset.editarProv;
+            const prov = proveedoresMemoria.find(p => String(p.codigo_proveedor) === String(id));
+            if (prov) abrirModalProveedor(prov);
+            return;
+        }
+
+        // Eliminar Proveedor
+        const btnDelProv = e.target.closest('[data-eliminar-prov]');
+        if (btnDelProv) {
+            e.preventDefault();
+            const id = btnDelProv.dataset.eliminarProv;
+            if (confirm('¿Estás seguro de que deseas eliminar este proveedor?')) {
+                try {
+                    await Api.del('/api/proveedores/' + id);
+                    cargarProveedores();
+                } catch (err) {
+                    alert('Error al eliminar el proveedor: ' + err.message);
+                }
+            }
+            return;
+        }
     });
 
-    // Cargar todos los datos del inventario
+    // Delegación secundaria para ventas, citas, recetas y promociones
+    document.addEventListener('click', async (e) => {
+        // Nuevo promo
+        const btnNuevoPromo = e.target.closest('[data-nuevo="promocion"]');
+        if (btnNuevoPromo) { e.preventDefault(); abrirModalPromocion(); return; }
+
+        // Editar promo
+        const btnEditPromo = e.target.closest('[data-editar-promo]');
+        if (btnEditPromo) {
+            e.preventDefault();
+            const promo = promosMemoria.find(p => String(p.codigo_promocion) === String(btnEditPromo.dataset.editarPromo));
+            if (promo) abrirModalPromocion(promo);
+            return;
+        }
+
+        // Eliminar promo
+        const btnDelPromo = e.target.closest('[data-eliminar-promo]');
+        if (btnDelPromo) {
+            e.preventDefault();
+            if (confirm('¿Eliminar esta promoción?')) {
+                try { await Api.del('/api/promociones/' + btnDelPromo.dataset.eliminarPromo); cargarPromociones(); }
+                catch (err) { alert('Error: ' + err.message); }
+            }
+            return;
+        }
+
+        // Eliminar venta
+        const btnDelVenta = e.target.closest('[data-eliminar-venta]');
+        if (btnDelVenta) {
+            e.preventDefault();
+            if (confirm('¿Eliminar esta venta?')) {
+                try { await Api.del('/api/ventas/' + btnDelVenta.dataset.eliminarVenta); cargarVentas(); }
+                catch (err) { alert('Error: ' + err.message); }
+            }
+            return;
+        }
+
+        // Cambiar estado venta
+        const btnCambiarVenta = e.target.closest('[data-cambiar-venta]');
+        if (btnCambiarVenta) {
+            e.preventDefault();
+            const estados = ['Pendiente', 'Completada', 'Cancelada'];
+            const nuevoEstado = prompt('Cambiar estado de la venta a:\n1. Pendiente\n2. Completada\n3. Cancelada\n(escribe el nombre exacto)');
+            if (nuevoEstado && estados.includes(nuevoEstado)) {
+                try {
+                    await Api.put('/api/ventas/' + btnCambiarVenta.dataset.cambiarVenta, { estado: nuevoEstado });
+                    cargarVentas();
+                } catch (err) { alert('Error: ' + err.message); }
+            }
+            return;
+        }
+
+        // Eliminar cita
+        const btnDelCita = e.target.closest('[data-eliminar-cita]');
+        if (btnDelCita) {
+            e.preventDefault();
+            if (confirm('¿Eliminar esta cita?')) {
+                try { await Api.del('/api/citas/' + btnDelCita.dataset.eliminarCita); cargarCitas(); }
+                catch (err) { alert('Error: ' + err.message); }
+            }
+            return;
+        }
+
+        // Eliminar receta
+        const btnDelReceta = e.target.closest('[data-eliminar-receta]');
+        if (btnDelReceta) {
+            e.preventDefault();
+            if (confirm('¿Eliminar esta receta óptica?')) {
+                try { await Api.del('/api/recetas/' + btnDelReceta.dataset.eliminarReceta); cargarRecetas(); }
+                catch (err) { alert('Error: ' + err.message); }
+            }
+            return;
+        }
+    });
+
+    // ── Ventas ──────────────────────────────────────────────────
+    const ESTADO_VENTA_CLASE = { Completada: 'green', Pendiente: 'orange', Cancelada: 'red', Cotización: 'blue' };
+
+    async function cargarVentas() {
+        if (!tbVentas) return;
+        try {
+            const ventas = await Api.get('/api/ventas');
+            let ingresos = 0, completadas = 0, cotizaciones = 0;
+            tbVentas.innerHTML = '';
+            if (ventas.length === 0) {
+                tbVentas.innerHTML = '<tr><td colspan="9" style="text-align:center;">No hay ventas registradas.</td></tr>';
+            } else {
+                ventas.forEach(v => {
+                    const esCotiz = v.es_cotizacion == 1;
+                    if (!esCotiz && v.estado === 'Completada') { ingresos += parseFloat(v.total || 0); completadas++; }
+                    if (esCotiz) cotizaciones++;
+                    const estadoDisplay = esCotiz ? 'Cotización' : v.estado;
+                    const clase = ESTADO_VENTA_CLASE[estadoDisplay] || 'blue';
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td><strong>#${v.codigo_venta}</strong></td>
+                        <td>${BV.escapar(v.cliente || '—')}</td>
+                        <td>${v.fecha ? v.fecha.split(' ')[0] : '—'}</td>
+                        <td><strong>${BV.moneda(v.total)}</strong></td>
+                        <td>${v.es_cotizacion ? '<span class="badge blue">Sí</span>' : '<span class="badge" style="background:rgba(100,100,100,0.15)">No</span>'}</td>
+                        <td>${v.codigo_promocion ? `<span class="badge purple">#${v.codigo_promocion}</span>` : '—'}</td>
+                        <td>${v.id_receta ? `<span class="badge teal">#${v.id_receta}</span>` : '—'}</td>
+                        <td><span class="badge ${clase}">${BV.escapar(estadoDisplay)}</span></td>
+                        <td>
+                            <div style="display:flex;gap:6px;">
+                                <button type="button" class="btn-ghost" data-cambiar-venta="${v.codigo_venta}" title="Cambiar estado"><i class="fa-solid fa-pen-to-square"></i></button>
+                                <button type="button" class="btn-ghost" data-eliminar-venta="${v.codigo_venta}" title="Eliminar" style="color:var(--red);"><i class="fa-solid fa-trash"></i></button>
+                            </div>
+                        </td>
+                    `;
+                    tbVentas.appendChild(tr);
+                });
+            }
+            if (kpiTotalIngresos) kpiTotalIngresos.textContent = BV.moneda(ingresos);
+            if (kpiVentasCompletadas) kpiVentasCompletadas.textContent = completadas;
+            if (kpiCotizaciones) kpiCotizaciones.textContent = cotizaciones;
+            // Actualizar KPIs del dashboard
+            if (kpiIngresos) kpiIngresos.textContent = BV.moneda(ingresos);
+            if (kpiVentas) kpiVentas.textContent = completadas;
+        } catch (e) {
+            console.error('Error al cargar ventas:', e);
+            if (tbVentas) tbVentas.innerHTML = '<tr><td colspan="9" style="text-align:center;color:var(--red);">Error al cargar ventas del servidor.</td></tr>';
+        }
+    }
+
+    // ── Devoluciones ─────────────────────────────────────────────
+    async function cargarDevoluciones() {
+        if (!tbDevoluciones) return;
+        try {
+            const devs = await Api.get('/api/devoluciones');
+            if (kpiDevoluciones) kpiDevoluciones.textContent = devs.length;
+            tbDevoluciones.innerHTML = '';
+            if (devs.length === 0) {
+                tbDevoluciones.innerHTML = '<tr><td colspan="6" style="text-align:center;">No hay devoluciones registradas.</td></tr>';
+                return;
+            }
+            devs.forEach(d => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td><strong>#${d.id_devolucion}</strong></td>
+                    <td>${BV.escapar(d.motivo || '—')}</td>
+                    <td>${d.cantidad}</td>
+                    <td>${BV.escapar(d.observaciones || '—')}</td>
+                    <td>${d.codigo_venta ? '#' + d.codigo_venta : '—'}</td>
+                    <td>${BV.escapar(d.registrado_por || '—')}</td>
+                `;
+                tbDevoluciones.appendChild(tr);
+            });
+        } catch (e) {
+            console.error('Error al cargar devoluciones:', e);
+            if (tbDevoluciones) tbDevoluciones.innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--red);">Error al cargar devoluciones.</td></tr>';
+        }
+    }
+
+    // ── Compras ──────────────────────────────────────────────────
+    async function cargarCompras() {
+        if (!tbCompras) return;
+        try {
+            const compras = await Api.get('/api/compras');
+            tbCompras.innerHTML = '';
+            if (compras.length === 0) {
+                tbCompras.innerHTML = '<tr><td colspan="7" style="text-align:center;">No hay órdenes de compra registradas.</td></tr>';
+                return;
+            }
+            compras.forEach(c => {
+                const estadoClase = { Recibida: 'green', Pendiente: 'orange', Cancelada: 'red', 'En tránsito': 'blue' }[c.estado] || 'blue';
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td><strong>#${c.numero_compra}</strong></td>
+                    <td>${BV.escapar(c.numero_comprobante || '—')}</td>
+                    <td>${BV.escapar(c.proveedor || '—')}</td>
+                    <td>${c.fecha ? c.fecha.split(' ')[0] : '—'}</td>
+                    <td><strong>${BV.moneda(c.total)}</strong></td>
+                    <td><span class="badge ${estadoClase}">${BV.escapar(c.estado || '—')}</span></td>
+                    <td>—</td>
+                `;
+                tbCompras.appendChild(tr);
+            });
+        } catch (e) {
+            console.error('Error al cargar compras:', e);
+            if (tbCompras) tbCompras.innerHTML = '<tr><td colspan="7" style="text-align:center;color:var(--red);">Error al cargar compras.</td></tr>';
+        }
+    }
+
+    // ── Citas ────────────────────────────────────────────────────
+    const ESTADO_CITA_CLASE = { Programada: 'blue', Atendida: 'green', Cancelada: 'red', 'No asistió': 'orange' };
+
+    async function cargarCitas() {
+        if (!tbCitas) return;
+        try {
+            const citas = await Api.get('/api/citas');
+            if (kpiCitas) kpiCitas.textContent = citas.filter(c => c.estado === 'Programada').length;
+            tbCitas.innerHTML = '';
+            if (citas.length === 0) {
+                tbCitas.innerHTML = '<tr><td colspan="7" style="text-align:center;">No hay citas registradas.</td></tr>';
+                return;
+            }
+            citas.forEach(c => {
+                const clase = ESTADO_CITA_CLASE[c.estado] || 'blue';
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td><strong>#${c.id_cita}</strong></td>
+                    <td>${BV.escapar(c.cliente || '—')}</td>
+                    <td>${c.fecha_hora ? c.fecha_hora.replace('T', ' ').substring(0, 16) : '—'}</td>
+                    <td>${BV.escapar(c.motivo || '—')}</td>
+                    <td>${BV.escapar(c.atiende || '—')}</td>
+                    <td><span class="badge ${clase}">${BV.escapar(c.estado)}</span></td>
+                    <td>
+                        <button type="button" class="btn-ghost" data-eliminar-cita="${c.id_cita}" title="Eliminar" style="color:var(--red);"><i class="fa-solid fa-trash"></i></button>
+                    </td>
+                `;
+                tbCitas.appendChild(tr);
+            });
+        } catch (e) {
+            console.error('Error al cargar citas:', e);
+            if (tbCitas) tbCitas.innerHTML = '<tr><td colspan="7" style="text-align:center;color:var(--red);">Error al cargar citas.</td></tr>';
+        }
+    }
+
+    // ── Recetas ──────────────────────────────────────────────────
+    async function cargarRecetas() {
+        if (!tbRecetas) return;
+        try {
+            const recetas = await Api.get('/api/recetas');
+            if (kpiRecetas) kpiRecetas.textContent = recetas.length;
+            tbRecetas.innerHTML = '';
+            if (recetas.length === 0) {
+                tbRecetas.innerHTML = '<tr><td colspan="7" style="text-align:center;">No hay recetas registradas.</td></tr>';
+                return;
+            }
+            const hoy = new Date();
+            recetas.forEach(r => {
+                const vence = r.fecha_vencimiento ? new Date(r.fecha_vencimiento) : null;
+                const vigente = vence ? vence >= hoy : true;
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td><strong>#${r.id_receta}</strong></td>
+                    <td>${BV.escapar(r.cliente || '—')}</td>
+                    <td>${r.fecha_emision || '—'}</td>
+                    <td>${r.fecha_vencimiento || '—'}</td>
+                    <td>${BV.escapar(r.diagnostico || '—')}</td>
+                    <td><span class="badge ${vigente ? 'green' : 'red'}">${vigente ? 'Vigente' : 'Vencida'}</span></td>
+                    <td>
+                        <button type="button" class="btn-ghost" data-eliminar-receta="${r.id_receta}" title="Eliminar" style="color:var(--red);"><i class="fa-solid fa-trash"></i></button>
+                    </td>
+                `;
+                tbRecetas.appendChild(tr);
+            });
+        } catch (e) {
+            console.error('Error al cargar recetas:', e);
+            if (tbRecetas) tbRecetas.innerHTML = '<tr><td colspan="7" style="text-align:center;color:var(--red);">Error al cargar recetas.</td></tr>';
+        }
+    }
+
+    // ── Promociones ──────────────────────────────────────────────
+    let promosMemoria = [];
+
+    async function cargarPromociones() {
+        if (!gridPromos) return;
+        try {
+            const promos = await Api.get('/api/promociones');
+            promosMemoria = promos;
+            gridPromos.innerHTML = '';
+            if (promos.length === 0) {
+                gridPromos.innerHTML = '<p style="grid-column:1/-1;text-align:center;color:var(--admin-text-muted);">No hay promociones registradas.</p>';
+                return;
+            }
+            promos.forEach(p => {
+                const activa = p.estado === 'Activo';
+                const descuento = p.tipo_descuento === 'porcentaje' ? `${p.valor_descuento}%` : BV.moneda(p.valor_descuento);
+                const card = document.createElement('div');
+                card.className = 'promo-card';
+                card.innerHTML = `
+                    <div class="promo-header">
+                        <span class="promo-badge ${activa ? 'green' : 'red'}">${activa ? 'Activa' : 'Inactiva'}</span>
+                        <div style="display:flex;gap:6px;">
+                            <button type="button" class="btn-ghost" data-editar-promo="${p.codigo_promocion}" title="Editar"><i class="fa-solid fa-pen-to-square"></i></button>
+                            <button type="button" class="btn-ghost" data-eliminar-promo="${p.codigo_promocion}" title="Eliminar" style="color:var(--red);"><i class="fa-solid fa-trash"></i></button>
+                        </div>
+                    </div>
+                    <h3 class="promo-nombre">${BV.escapar(p.nombre)}</h3>
+                    <p class="promo-desc">${BV.escapar(p.descripcion || '—')}</p>
+                    <div class="promo-descuento"><i class="fa-solid fa-percent"></i> ${descuento} de descuento</div>
+                    <div class="promo-fechas">
+                        <span><i class="fa-regular fa-calendar"></i> ${p.fecha_inicio || '—'} → ${p.fecha_fin || '—'}</span>
+                    </div>
+                `;
+                gridPromos.appendChild(card);
+            });
+        } catch (e) {
+            console.error('Error al cargar promociones:', e);
+            if (gridPromos) gridPromos.innerHTML = '<p style="text-align:center;color:var(--red);">Error al cargar promociones.</p>';
+        }
+    }
+
+    function abrirModalPromocion(promo = null) {
+        tipoModal = 'promocion';
+        editandoId = promo ? promo.codigo_promocion : null;
+        if (modalTitulo) modalTitulo.innerHTML = promo
+            ? `<i class="fa-solid fa-tags"></i> <span>Editar promoción #${promo.codigo_promocion}</span>`
+            : `<i class="fa-solid fa-tags"></i> <span>Nueva promoción</span>`;
+        if (modalError) modalError.hidden = true;
+        const p = promo || {};
+        modalCampos.innerHTML = `
+            <div class="form-section-group">
+                <div class="form-section-title"><i class="fa-solid fa-tags"></i> Datos de la promoción</div>
+                <div class="form-grid-2">
+                    <div class="form-field">
+                        <label for="mPromoNombre">Nombre <span class="req">*</span></label>
+                        <input type="text" id="mPromoNombre" class="input-admin" value="${BV.escapar(p.nombre || '')}" required>
+                    </div>
+                    <div class="form-field">
+                        <label for="mPromoEstado">Estado</label>
+                        <select id="mPromoEstado" class="input-admin">
+                            <option value="Activo" ${p.estado !== 'Inactivo' ? 'selected' : ''}>Activo</option>
+                            <option value="Inactivo" ${p.estado === 'Inactivo' ? 'selected' : ''}>Inactivo</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-field form-grid-full">
+                    <label for="mPromoDesc">Descripción</label>
+                    <textarea id="mPromoDesc" class="input-admin" rows="2">${BV.escapar(p.descripcion || '')}</textarea>
+                </div>
+                <div class="form-grid-2">
+                    <div class="form-field">
+                        <label for="mPromoTipo">Tipo descuento <span class="req">*</span></label>
+                        <select id="mPromoTipo" class="input-admin">
+                            <option value="porcentaje" ${p.tipo_descuento === 'porcentaje' ? 'selected' : ''}>Porcentaje (%)</option>
+                            <option value="valor" ${p.tipo_descuento === 'valor' ? 'selected' : ''}>Valor fijo ($)</option>
+                        </select>
+                    </div>
+                    <div class="form-field">
+                        <label for="mPromoValor">Valor descuento <span class="req">*</span></label>
+                        <input type="number" id="mPromoValor" class="input-admin" value="${p.valor_descuento || ''}" min="0" step="0.01" required>
+                    </div>
+                </div>
+                <div class="form-grid-2">
+                    <div class="form-field">
+                        <label for="mPromoInicio">Fecha inicio</label>
+                        <input type="date" id="mPromoInicio" class="input-admin" value="${p.fecha_inicio || ''}">
+                    </div>
+                    <div class="form-field">
+                        <label for="mPromoFin">Fecha fin</label>
+                        <input type="date" id="mPromoFin" class="input-admin" value="${p.fecha_fin || ''}">
+                    </div>
+                </div>
+            </div>
+        `;
+        if (modalGuardar) modalGuardar.innerHTML = '<i class="fa-solid fa-floppy-disk"></i> Guardar promoción';
+        if (typeof modal.showModal === 'function') modal.showModal();
+        else modal.setAttribute('open', '');
+    }
+
+    // ── Reportes ─────────────────────────────────────────────────
+    const TIPO_REPORTE_CLASE = { Ventas: 'green', Inventario: 'blue', Clientes: 'purple', Compras: 'orange', General: 'teal' };
+
+    async function cargarReportes() {
+        if (!gridReportes) return;
+        try {
+            const reportes = await Api.get('/api/reportes');
+            gridReportes.innerHTML = '';
+            if (reportes.length === 0) {
+                gridReportes.innerHTML = '<p style="grid-column:1/-1;text-align:center;color:var(--admin-text-muted);">No hay reportes generados.</p>';
+                return;
+            }
+            reportes.forEach(r => {
+                const clase = TIPO_REPORTE_CLASE[r.tipo_reporte] || 'blue';
+                const card = document.createElement('div');
+                card.className = 'reporte-card';
+                card.innerHTML = `
+                    <div class="reporte-header">
+                        <span class="badge ${clase}">${BV.escapar(r.tipo_reporte || 'General')}</span>
+                        <span style="font-size:0.75rem;color:var(--admin-text-muted);">${r.fecha_generacion ? r.fecha_generacion.split(' ')[0] : '—'}</span>
+                    </div>
+                    <h3 class="reporte-titulo">${BV.escapar(r.titulo)}</h3>
+                    <p class="reporte-desc">${BV.escapar(r.descripcion || '—')}</p>
+                    <p style="font-size:0.78rem;color:var(--admin-text-muted);margin-top:8px;">
+                        <i class="fa-solid fa-user"></i> ${BV.escapar(r.generado_por || '—')}
+                    </p>
+                `;
+                gridReportes.appendChild(card);
+            });
+        } catch (e) {
+            console.error('Error al cargar reportes:', e);
+            if (gridReportes) gridReportes.innerHTML = '<p style="text-align:center;color:var(--red);">Error al cargar reportes.</p>';
+        }
+    }
+
+    // Cargar todos los datos del inventario y administración
     async function inicializarInventario() {
-        await Promise.all([cargarProductos(), cargarMarcas(), cargarCategorias(), cargarUsuarios(), cargarRoles()]);
+        await Promise.all([
+            cargarProductos(),
+            cargarMarcas(),
+            cargarCategorias(),
+            cargarUsuarios(),
+            cargarRoles(),
+            cargarProveedores(),
+            cargarVentas(),
+            cargarDevoluciones(),
+            cargarCompras(),
+            cargarCitas(),
+            cargarRecetas(),
+            cargarPromociones(),
+            cargarReportes()
+        ]);
+    }
+
+    // Recargar la sección correspondiente cuando el usuario cambia de pestaña
+    if (window.PanelNav && typeof window.PanelNav.alCambiar === 'function') {
+        window.PanelNav.alCambiar((seccion) => {
+            if (seccion === 'ventas') { cargarVentas(); cargarDevoluciones(); }
+            else if (seccion === 'compras') { cargarCompras(); cargarProveedores(); }
+            else if (seccion === 'citas') { cargarCitas(); cargarRecetas(); }
+            else if (seccion === 'promociones') { cargarPromociones(); }
+            else if (seccion === 'reportes') { cargarReportes(); }
+            else if (seccion === 'catalogo') { cargarProductos(); cargarMarcas(); cargarCategorias(); }
+            else if (seccion === 'usuarios') { cargarUsuarios(); cargarRoles(); }
+        });
     }
 
     // Iniciar carga al estar listo el DOM
