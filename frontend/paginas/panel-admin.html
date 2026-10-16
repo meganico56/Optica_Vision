@@ -73,17 +73,82 @@
 </div>
 <div class="section-content" id="sec-inventario" data-roles="Administrador">
 <div class="dashboard-container">
-<div class="page-header"><div><h1 class="page-title">Catálogo e inventario</h1><p class="page-subtitle">Productos, marcas, categorías y existencias</p></div><button class="btn-primary" type="button" data-nuevo="producto"><i class="fa-solid fa-plus"></i> Nuevo producto</button></div>
-<div class="kpi-grid" style="grid-template-columns:repeat(3,1fr);margin-bottom:25px">
-<div class="kpi-card"><div class="kpi-info"><p>Total productos</p><h3 id="kpiProductos">–</h3></div><div class="kpi-icon gold"><i class="fa-solid fa-glasses"></i></div></div>
-<div class="kpi-card"><div class="kpi-info"><p>Bajo mínimo</p><h3 id="kpiBajoMinimo2">–</h3></div><div class="kpi-icon orange"><i class="fa-solid fa-box-open"></i></div></div>
-<div class="kpi-card"><div class="kpi-info"><p>Categorías activas</p><h3 id="kpiCategorias">–</h3></div><div class="kpi-icon teal"><i class="fa-solid fa-tag"></i></div></div>
-</div>
-<div class="data-card"><table class="admin-table"><thead><tr><th>ID</th><th>Producto</th><th>Categoría</th><th>Marca</th><th>Precio</th><th>Stock</th><th>Mín</th><th>Estado</th><th>Acc.</th></tr></thead><tbody id="tbProductos"></tbody></table></div>
-<div class="data-section">
-<div class="data-card"><div class="data-card-header"><h2 class="data-card-title"><i class="fa-solid fa-copyright"></i> Marcas</h2><button class="btn-ghost" type="button" data-nuevo="marca"><i class="fa-solid fa-plus"></i> Añadir</button></div><table class="admin-table"><thead><tr><th>ID</th><th>Nombre</th><th>País</th><th>Estado</th><th>Acc.</th></tr></thead><tbody id="tbMarcas"></tbody></table></div>
-<div class="data-card"><div class="data-card-header"><h2 class="data-card-title"><i class="fa-solid fa-tag"></i> Categorías</h2><button class="btn-ghost" type="button" data-nuevo="categoria"><i class="fa-solid fa-plus"></i> Añadir</button></div><table class="admin-table"><thead><tr><th>ID</th><th>Nombre</th><th>Descripción</th><th>Estado</th><th>Acc.</th></tr></thead><tbody id="tbCategorias"></tbody></table></div>
-</div>
+
+  <!-- Cabecera con KPIs -->
+  <div class="page-header">
+    <div>
+      <h1 class="page-title">Catálogo e inventario</h1>
+      <p class="page-subtitle">Productos, marcas, categorías y existencias</p>
+    </div>
+    <div style="display:flex;gap:10px;align-items:center;">
+      <button class="btn-primary" type="button" id="btnNuevoInventario" data-nuevo="producto">
+        <i class="fa-solid fa-plus"></i> Nuevo producto
+      </button>
+    </div>
+  </div>
+
+  <!-- KPIs -->
+  <div class="kpi-grid" style="grid-template-columns:repeat(3,1fr);margin-bottom:28px">
+    <div class="kpi-card"><div class="kpi-info"><p>Total productos</p><h3 id="kpiProductos">–</h3></div><div class="kpi-icon gold"><i class="fa-solid fa-glasses"></i></div></div>
+    <div class="kpi-card"><div class="kpi-info"><p>Bajo mínimo</p><h3 id="kpiBajoMinimo2">–</h3></div><div class="kpi-icon orange"><i class="fa-solid fa-box-open"></i></div></div>
+    <div class="kpi-card"><div class="kpi-info"><p>Categorías activas</p><h3 id="kpiCategorias">–</h3></div><div class="kpi-icon teal"><i class="fa-solid fa-tag"></i></div></div>
+  </div>
+
+  <!-- Pestañas de navegación -->
+  <div class="inv-tab-bar">
+    <button class="inv-tab active" data-inv-tab="productos">
+      <i class="fa-solid fa-glasses"></i> Productos
+    </button>
+    <button class="inv-tab" data-inv-tab="marcas">
+      <i class="fa-solid fa-copyright"></i> Marcas
+    </button>
+    <button class="inv-tab" data-inv-tab="categorias">
+      <i class="fa-solid fa-tag"></i> Categorías
+    </button>
+  </div>
+
+  <!-- Panel: Productos -->
+  <div class="inv-panel active" id="invPanel-productos">
+    <div class="data-card">
+      <div class="data-card-header">
+        <h2 class="data-card-title"><i class="fa-solid fa-glasses"></i> Listado de productos</h2>
+        <button class="btn-ghost" type="button" data-nuevo="producto"><i class="fa-solid fa-plus"></i> Añadir</button>
+      </div>
+      <table class="admin-table">
+        <thead><tr><th>ID</th><th>Producto</th><th>Categoría</th><th>Marca</th><th>Precio</th><th>Stock</th><th>Mín</th><th>Estado</th><th>Acc.</th></tr></thead>
+        <tbody id="tbProductos"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Panel: Marcas -->
+  <div class="inv-panel" id="invPanel-marcas">
+    <div class="data-card">
+      <div class="data-card-header">
+        <h2 class="data-card-title"><i class="fa-solid fa-copyright"></i> Marcas registradas</h2>
+        <button class="btn-ghost" type="button" data-nuevo="marca"><i class="fa-solid fa-plus"></i> Añadir marca</button>
+      </div>
+      <table class="admin-table">
+        <thead><tr><th>ID</th><th>Nombre</th><th>País</th><th>Estado</th><th>Acciones</th></tr></thead>
+        <tbody id="tbMarcas"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Panel: Categorías -->
+  <div class="inv-panel" id="invPanel-categorias">
+    <div class="data-card">
+      <div class="data-card-header">
+        <h2 class="data-card-title"><i class="fa-solid fa-tag"></i> Categorías de productos</h2>
+        <button class="btn-ghost" type="button" data-nuevo="categoria"><i class="fa-solid fa-plus"></i> Añadir categoría</button>
+      </div>
+      <table class="admin-table">
+        <thead><tr><th>ID</th><th>Nombre</th><th>Descripción</th><th>Estado</th><th>Acciones</th></tr></thead>
+        <tbody id="tbCategorias"></tbody>
+      </table>
+    </div>
+  </div>
+
 </div>
 </div>
 <div class="section-content" id="sec-compras" data-roles="Administrador">
@@ -101,7 +166,7 @@
 <div class="kpi-card"><div class="kpi-info"><p>Devoluciones</p><h3 id="kpiDevoluciones">–</h3></div><div class="kpi-icon orange"><i class="fa-solid fa-rotate-left"></i></div></div>
 </div>
 <div class="data-card"><div class="data-card-header"><h2 class="data-card-title"><i class="fa-solid fa-cash-register"></i> Registro de ventas</h2></div><table class="admin-table"><thead><tr><th>Cód.</th><th>Cliente</th><th>Fecha</th><th>Total</th><th>Cotiz.</th><th>Promo</th><th>Receta</th><th>Estado</th><th>Acc.</th></tr></thead><tbody id="tbVentas"></tbody></table></div>
-<div class="data-card"><div class="data-card-header"><h2 class="data-card-title"><i class="fa-solid fa-rotate-left"></i> Devoluciones registradas</h2><button class="btn-ghost" type="button" data-nuevo="devolucion"><i class="fa-solid fa-plus"></i> Registrar devolución</button></div><table class="admin-table"><thead><tr><th>ID</th><th>Motivo</th><th>Cantidad</th><th>Observaciones</th><th>Venta</th><th>Registrado por</th></tr></thead><tbody id="tbDevoluciones"></tbody></table></div>
+<div class="data-card"><div class="data-card-header"><h2 class="data-card-title"><i class="fa-solid fa-rotate-left"></i> Devoluciones registradas</h2><button class="btn-ghost" type="button" data-nuevo="devolucion"><i class="fa-solid fa-plus"></i> Registrar devolución</button></div><table class="admin-table"><thead><tr><th>ID</th><th>Motivo</th><th>Cantidad</th><th>Observaciones</th><th>Venta</th><th>Registrado por</th><th>Acc.</th></tr></thead><tbody id="tbDevoluciones"></tbody></table></div>
 </div>
 </div>
 <div class="section-content" id="sec-citas" data-roles="Administrador,Vendedor">
@@ -123,12 +188,15 @@
 
 <dialog id="modal" class="modal">
 <form id="formModal" novalidate>
-<h2 id="modalTitulo"></h2>
+<div class="modal-header-bar">
+  <h2 id="modalTitulo"><i class="fa-solid fa-box"></i> <span>Producto</span></h2>
+  <button type="button" class="modal-close-btn" id="modalCloseBtn" aria-label="Cerrar ventana"><i class="fa-solid fa-xmark"></i></button>
+</div>
 <div id="modalCampos"></div>
 <p class="mensaje-error" id="modalError" role="alert" hidden></p>
-<div class="modal-acciones">
-<button type="button" class="btn-secondary" id="modalCancelar">Cancelar</button>
-<button type="submit" class="btn-primary">Guardar</button>
+<div class="modal-footer-bar">
+  <button type="button" class="btn-secondary" id="modalCancelar"><i class="fa-solid fa-xmark"></i> Cancelar</button>
+  <button type="submit" class="btn-primary" id="modalGuardar"><i class="fa-solid fa-floppy-disk"></i> Guardar producto</button>
 </div>
 </form>
 </dialog>
