@@ -43,6 +43,16 @@ app.get("/", (req, res) => {
   res.send("API de Óptica Visión funcionando correctamente");
 });
 
+app.get("/api/health", async (req, res) => {
+  try {
+    await db.query("SELECT 1");
+    res.json({ api: "ok", database: "ok" });
+  } catch (error) {
+    console.error("La base de datos no está disponible:", error);
+    res.status(503).json({ api: "ok", database: "unavailable" });
+  }
+});
+
 // Ruta para obtener productos (soporta filtro por categoria ?categoria= y búsqueda ?q=)
 app.get("/api/productos", async (req, res) => {
   const { q: busqueda, categoria } = req.query;
@@ -1050,7 +1060,7 @@ app.delete("/api/reportes/:id", async (req, res) => {
   } catch (e) { res.status(500).json({ mensaje: "No se puede eliminar el reporte." }); }
 });
 
-const PORT = 3000;
+const PORT = Number(process.env.PORT) || 3000;
 app.listen(PORT, () => {
-  console.log(`Servidor escuchando en http://localhost:${PORT}`);
+  console.log(`Servidor escuchando en el puerto ${PORT}`);
 });

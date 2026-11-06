@@ -1,9 +1,10 @@
 
 (function () {
     'use strict';
+    const esLocal = ['localhost', '127.0.0.1', '::1'].includes(location.hostname);
     const BASE = window.API_BASE !== undefined
         ? window.API_BASE
-        : (location.port === '3000' ? '' : 'http://localhost:3000');
+        : (location.port === '3000' || !esLocal ? '' : 'http://localhost:3000');
 
     const CLAVE_TOKEN = 'bv_token';
 
