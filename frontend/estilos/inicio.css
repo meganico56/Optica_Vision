@@ -1,4 +1,3 @@
-
 @import url('base.css');
 @import url('layout-publico.css');
 
@@ -10,6 +9,10 @@ body {
     background-repeat: no-repeat;
     background-attachment: fixed;
 }
+
+/* Scroll suave al ir a #nosotros / #servicios (con espacio para el navbar fijo) */
+html { scroll-behavior: smooth; }
+.nosotros, .servicios { scroll-margin-top: 90px; }
 
 /* HERO */
 .hero {
@@ -116,6 +119,139 @@ body {
     box-shadow: 0 15px 40px rgba(0,0,0,0.12), 0 0 35px var(--gold-glow);
     z-index: 1;
 }
+
+/* VENTAJAS */
+.ventajas {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 1.5rem;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 5% 4rem;
+}
+
+.ventaja {
+    background: #ffffff;
+    border: 1.5px solid var(--border);
+    border-radius: 16px;
+    padding: 1.5rem 1rem;
+    text-align: center;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.ventaja:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 12px 30px var(--gold-glow);
+}
+
+.ventaja i {
+    font-size: 1.8rem;
+    color: var(--gold);
+    margin-bottom: 0.8rem;
+}
+
+.ventaja h3 {
+    font-family: var(--font-title);
+    font-size: 1rem;
+    color: var(--text-dark);
+    margin-bottom: 0.4rem;
+}
+
+.ventaja p {
+    font-family: var(--font-body);
+    font-size: 0.88rem;
+    line-height: 1.6;
+    color: var(--text-muted);
+}
+
+/* SERVICIOS + CARRUSEL (solo CSS) */
+.servicios {
+    padding: 2rem 5% 4rem;
+    text-align: center;
+}
+
+.carrusel {
+    position: relative;
+    max-width: 800px;
+    margin: 1.5rem auto 0;
+}
+
+.carrusel input {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.carrusel-ventana {
+    overflow: hidden;
+    background: #ffffff;
+    border: 3px solid var(--gold);
+    border-radius: 20px;
+}
+
+.carrusel-pista {
+    display: flex;
+    transition: transform 0.6s ease;
+}
+
+.slide {
+    flex: 0 0 100%;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.8rem;
+    padding: 3rem 2rem;
+}
+
+.slide i {
+    font-size: 2.5rem;
+    color: var(--gold);
+}
+
+.slide h3 {
+    font-family: var(--font-title);
+    font-size: 1.5rem;
+    font-weight: 500;
+    color: var(--text-dark);
+}
+
+.slide p {
+    font-family: var(--font-body);
+    max-width: 520px;
+    line-height: 1.8;
+    color: var(--text-muted);
+}
+
+#slide1:checked ~ .carrusel-ventana .carrusel-pista { transform: translateX(0); }
+#slide2:checked ~ .carrusel-ventana .carrusel-pista { transform: translateX(-100%); }
+#slide3:checked ~ .carrusel-ventana .carrusel-pista { transform: translateX(-200%); }
+
+.carrusel-puntos {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 1.2rem;
+}
+
+.carrusel-puntos label {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: var(--border);
+    cursor: pointer;
+    transition: transform 0.3s ease, background 0.3s ease;
+}
+
+.carrusel-puntos label:hover { transform: scale(1.3); }
+
+#slide1:checked ~ .carrusel-puntos label:nth-child(1),
+#slide2:checked ~ .carrusel-puntos label:nth-child(2),
+#slide3:checked ~ .carrusel-puntos label:nth-child(3) {
+    background: var(--gold);
+}
+
+/* NOSOTROS */
 .nosotros {
     position: relative;
     display: flex;
@@ -125,6 +261,7 @@ body {
     flex-direction: column;
     align-items: center;
 }
+
 .nosotros-container {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -133,7 +270,9 @@ body {
     max-width: 1000px;
     margin-top: 1rem;
 }
-.nosotros h2 {
+
+.nosotros h2,
+.servicios h2 {
     font-family: var(--font-title);
     color: var(--gold);
     font-size: 2.5rem;
@@ -142,6 +281,7 @@ body {
     margin-bottom: 0.5rem;
     line-height: 1.15;
 }
+
 .nosotros h3 {
     font-family: var(--font-title);
     color: var(--text-dark);
@@ -149,6 +289,7 @@ body {
     font-weight: 500;
     margin-bottom: 1.5rem;
 }
+
 .nosotros p {
     font-family: var(--font-body);
     line-height: 1.8;
@@ -156,36 +297,34 @@ body {
     margin-bottom: 2rem;
     font-size: 1.05rem;
 }
-.nosotros-mision {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 0.5rem;
-    background: rgb(255, 255, 255);
-    border-radius: 20px;
-    border-color: var(--gold);
-    border-width: 3px;
-    border-style: solid;
-    padding: 2rem;
-    box-sizing: border-box;
-    min-height: 22rem;
-}
+
+.nosotros-mision,
 .nosotros-vision {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     gap: 0.5rem;
-    background: rgb(255, 255, 255);
+    background: #ffffff;
+    border: 3px solid var(--gold);
     border-radius: 20px;
-    border-color: var(--gold);
-    border-width: 3px;
-    border-style: solid;
     padding: 2rem;
     box-sizing: border-box;
-    min-height: 22rem;
+    min-height: 18rem;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
+
+.nosotros-mision:hover,
+.nosotros-vision:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 12px 30px var(--gold-glow);
+}
+
+.nosotros-mision p,
+.nosotros-vision p {
+    margin-bottom: 0;
+}
+
 @keyframes rotateGlasses {
     0% { transform: rotateY(0deg); }
     50% { transform: rotateY(180deg) translateY(-10px); }
@@ -213,6 +352,12 @@ body {
     .fade-in-up { opacity: 1; transform: none; }
 }
 
+/* Respeta a quien desactiva las animaciones */
+@media (prefers-reduced-motion: reduce) {
+    .glasses-model { animation: none; }
+    .carrusel-pista { transition: none; }
+}
+
 /* RESPONSIVE */
 @media (max-width: 768px) {
     .hero { flex-direction: column; text-align: center; padding: 2.5rem 5%; gap: 2rem; }
@@ -223,6 +368,8 @@ body {
     .glow { width: 300px; height: 300px; }
     .glasses-model { width: 260px; }
     .podium { width: 220px; height: 50px; bottom: 40px; }
+    .ventajas { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .slide { padding: 2rem 1rem; }
     .nosotros-container { grid-template-columns: 1fr; max-width: 480px; }
     .nosotros-mision, .nosotros-vision { min-height: 0; }
 }
