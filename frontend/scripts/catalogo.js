@@ -1,6 +1,3 @@
-// catalogo.js - Catálogo que consume GET /api/productos.
-// Requiere api.js, sesion.js y carrito.js cargados antes.
-// El menú hamburguesa de la barra lo maneja el CSS (checkbox #menu-toggle), aquí no hace falta JS.
 
 (function () {
     'use strict';
@@ -63,6 +60,7 @@
             tarjeta.querySelector('.precio').textContent = BV.moneda(p.precio);
 
             const agotado = p.stock <= 0;
+            tarjeta.classList.toggle('agotado', agotado);
             tarjeta.querySelector('.badge-agotado').hidden = !agotado;
             tarjeta.querySelectorAll('button[data-accion]').forEach((b) => { b.disabled = agotado; });
 
