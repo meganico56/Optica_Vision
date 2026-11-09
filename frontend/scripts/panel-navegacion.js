@@ -36,7 +36,7 @@
     // Manejo de tema Claro / Oscuro
     const CLAVE_TEMA = 'bv_admin_theme';
     const LOGO_OSCURO = '../imagenes/logos/Logo_modo_oscuro.png';
-    const LOGO_CLARO = '../imagenes/logos/logo-boutique.png';
+    const LOGO_CLARO = '../imagenes/logos/Logo_modo_claro.png';
 
     function aplicarTema(tema) {
         const raiz = document.documentElement;
