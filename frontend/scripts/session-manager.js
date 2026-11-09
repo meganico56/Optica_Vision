@@ -81,13 +81,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // 2. Alternar los logotipos al cargar el DOM
     document.addEventListener('DOMContentLoaded', () => {
-        const logoSrc = isLightMode ? '../imagenes/logos/logo-boutique.png' : '../imagenes/logos/Logo_modo_oscuro.png';
+        const logoSrc = isLightMode ? '../imagenes/logos/Logo_modo_claro.png' : '../imagenes/logos/Logo_modo_oscuro.png';
         
         // Encontrar todas las imágenes que contengan "logo-boutique" o "Logo_modo_oscuro"
         const logos = document.querySelectorAll('img');
         logos.forEach(img => {
             const src = img.getAttribute('src') || '';
-            if (src.includes('logo-boutique.png') || src.includes('Logo_modo_oscuro.png')) {
+            if (src.includes('Logo_modo_claro.png') || src.includes('Logo_modo_oscuro.png')) {
                 // Exceptuar si tienen ids específicos que ya son manejados por el panel admin de otra forma, 
                 // aunque reemplazar su src aquí asegura que cargue bien al inicio.
                 img.setAttribute('src', logoSrc);
