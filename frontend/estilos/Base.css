@@ -10,12 +10,26 @@
   --text-muted:  #555555;
   --border:      #e8e8e8;
   --bg:          #ffffff;
+  --bg-card:     #ffffff;
+  --navbar-bg:   rgba(255, 255, 255, 0.95);
+  --navbar-menu-bg: rgba(255, 255, 255, 0.97);
 
   --danger:      #c0392b;
   --success:     #2e7d32;
 
   --font-title:  'Montserrat', sans-serif;
   --font-body:   'Inter', sans-serif;
+}
+
+/* ===== MODO OSCURO (páginas públicas) ===== */
+:root.dark-mode {
+  --text-dark:   #f0ead8;
+  --text-muted:  #aaaaaa;
+  --border:      #333333;
+  --bg:          #111111;
+  --bg-card:     #1a1a1a;
+  --navbar-bg:   rgba(15, 15, 15, 0.97);
+  --navbar-menu-bg: rgba(18, 18, 18, 0.99);
 }
 
 /* ---------- Reset ---------- */

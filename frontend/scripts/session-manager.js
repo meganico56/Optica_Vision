@@ -71,29 +71,68 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 
-// --- Manejo Global del Tema y Logotipos (Solo para páginas con soporte de modo oscuro/admin) ---
+// --- Manejo Global del Tema y Logotipos ---
 (function() {
-    // Si la página es pública como inicio, catalogo, etc. que tienen fondo claro fijo, no forzar modo oscuro
     const esPaginaAdmin = window.location.pathname.includes('panel-admin.html');
-    
-    // Por defecto las páginas públicas usan modo claro
-    const savedTheme = localStorage.getItem('theme');
-    const isLightMode = esPaginaAdmin ? (savedTheme === 'light') : (savedTheme !== 'dark');
+    const savedTheme = localStorage.getItem('pub_theme'); // clave separada del panel admin
+    // Por defecto modo claro; solo oscuro si el usuario lo eligió explícitamente
+    const isDark = savedTheme === 'dark';
 
-    if (isLightMode) {
-        document.documentElement.classList.add('light-mode');
-    }
-
-    // Alternar los logotipos al cargar el DOM
-    document.addEventListener('DOMContentLoaded', () => {
-        const logoSrc = isLightMode ? '../imagenes/logos/Logo_modo_claro.png' : '../imagenes/logos/Logo_modo_oscuro.png';
-        
-        const logos = document.querySelectorAll('img');
-        logos.forEach(img => {
+    function aplicarTemaPublico(dark) {
+        const root = document.documentElement;
+        if (dark) {
+            root.classList.add('dark-mode');
+            root.classList.remove('light-mode');
+        } else {
+            root.classList.remove('dark-mode');
+            root.classList.add('light-mode');
+        }
+        // Actualizar logo
+        const logoSrc = dark
+            ? '../imagenes/logos/Logo_modo_oscuro.png'
+            : '../imagenes/logos/Logo_modo_claro.png';
+        document.querySelectorAll('img').forEach(img => {
             const src = img.getAttribute('src') || '';
             if (src.includes('Logo_modo_claro.png') || src.includes('Logo_modo_oscuro.png')) {
                 img.setAttribute('src', logoSrc);
             }
         });
+        // Actualizar texto e icono del botón
+        const btn = document.getElementById('btnTemaPublico');
+        if (btn) {
+            const icon = btn.querySelector('i');
+            const txt  = btn.querySelector('span');
+            if (dark) {
+                if (icon) icon.className = 'fa-solid fa-sun';
+                if (txt)  txt.textContent = 'Modo claro';
+            } else {
+                if (icon) icon.className = 'fa-solid fa-moon';
+                if (txt)  txt.textContent = 'Modo oscuro';
+            }
+        }
+    }
+
+    // Aplicar de inmediato (antes del DOMContentLoaded) para evitar parpadeos
+    if (!esPaginaAdmin) {
+        if (isDark) document.documentElement.classList.add('dark-mode');
+        else        document.documentElement.classList.add('light-mode');
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        if (esPaginaAdmin) return; // El panel admin tiene su propio toggle
+
+        // Aplicar tema inicial completo (logos + botón)
+        aplicarTemaPublico(isDark);
+
+        // Conectar el botón
+        const btn = document.getElementById('btnTemaPublico');
+        if (btn) {
+            btn.addEventListener('click', () => {
+                const ahoraOscuro = document.documentElement.classList.contains('dark-mode');
+                const nuevoOscuro = !ahoraOscuro;
+                localStorage.setItem('pub_theme', nuevoOscuro ? 'dark' : 'light');
+                aplicarTemaPublico(nuevoOscuro);
+            });
+        }
     });
 })();
