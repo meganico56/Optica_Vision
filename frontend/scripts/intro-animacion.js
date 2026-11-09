@@ -37,7 +37,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const bgColor = isLight ? 'rgba(240,235,220,0.65)' : 'rgba(15,15,15,0.70)';
     const lidBg   = isLight ? '#f0ebdc'                : '#0c0c0c';
     const logoSrc = isLight
-        ? '../imagenes/logos/logo-boutique.png'
+        ? '../imagenes/logos/Logo_modo_claro.png'
         : '../imagenes/logos/Logo_modo_oscuro.png';
     const gold  = 'rgba(204,164,59,1)';
     const goldG = 'rgba(204,164,59,0.35)';
