@@ -1,151 +1,212 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="../estilos/inicio.css">
-    <link rel="stylesheet" href="../estilos/estilo-cita.css">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Montserrat:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <link rel="stylesheet" href="../estilos/inicio.css" />
+    <link rel="stylesheet" href="../estilos/estilo-cita.css" />
     <title>Agendar cita | Boutique de la Visión</title>
-</head>
-<body>
+  </head>
+  <body>
     <header class="navbar">
-        <div class="logo">
-            <a href="inicio.html"><img src="../imagenes/logos/logo-boutique.png" class="logo-icon" alt="Boutique de la Visión"></a>
-        </div>
+      <div class="logo">
+        <a href="inicio.html"
+          ><img
+            src="../imagenes/logos/Logo_modo_claro.png"
+            class="logo-icon"
+            alt="Boutique de la Visión"
+        /></a>
+      </div>
 
-        <form class="buscador" action="catalogo.html" method="get" role="search">
-            <input type="text" name="q" placeholder="Buscar productos..." class="busc" aria-label="Buscar productos">
-            <button type="submit" class="bot_bus" aria-label="Buscar"><i class="fa-solid fa-magnifying-glass"></i></button>
-        </form>
+      <form class="buscador" action="catalogo.html" method="get" role="search">
+        <input
+          type="text"
+          name="q"
+          placeholder="Buscar productos..."
+          class="busc"
+          aria-label="Buscar productos"
+        />
+        <button type="submit" class="bot_bus" aria-label="Buscar">
+          <i class="fa-solid fa-magnifying-glass"></i>
+        </button>
+      </form>
 
-        <input type="checkbox" id="menu-toggle" class="menu-toggle">
-        <label for="menu-toggle" class="hamburguesa" aria-label="Abrir menú"><span></span><span></span><span></span></label>
+      <input type="checkbox" id="menu-toggle" class="menu-toggle" />
+      <label for="menu-toggle" class="hamburguesa" aria-label="Abrir menú"
+        ><span></span><span></span><span></span
+      ></label>
 
-        <nav>
-            <ul class="navbar-menu">
-                <li><a href="inicio.html">INICIO</a></li>
-                <li><a href="catalogo.html">CATÁLOGO</a></li>
-                <li><a href="agendar-cita.html" class="activo">AGENDAR CITA</a></li>
-                <li><a href="carrito.html" aria-label="Carrito"><i class="fa-solid fa-cart-shopping"></i><span class="cart-count" id="cartBadge" hidden>0</span></a></li>
-                <li><a href="inicio-sesion.html">REGISTRO / LOGIN</a></li>
-            </ul>
-        </nav>
+      <nav>
+        <ul class="navbar-menu">
+          <li><a href="inicio.html">INICIO</a></li>
+          <li><a href="catalogo.html">CATÁLOGO</a></li>
+          <li><a href="agendar-cita.html" class="activo">AGENDAR CITA</a></li>
+          <li>
+            <a href="carrito.html" aria-label="Carrito"
+              ><i class="fa-solid fa-cart-shopping"></i
+              ><span class="cart-count" id="cartBadge" hidden>0</span></a
+            >
+          </li>
+          <li><a href="inicio-sesion.html">INICIAR SESIÓN</a></li>
+        </ul>
+      </nav>
     </header>
 
     <main class="cita-contenedor">
-        <section class="cita-intro">
-            <h1>Agenda tu cita</h1>
-            <p>Cada cita dura 30 minutos y te atiende uno de nuestros asesores.</p>
-            <p class="cita-nota">
-                El examen visual lo hace un optómetra externo. En tu cita revisamos tus resultados,
-                registramos tu fórmula y te asesoramos con la montura.
-            </p>
-        </section>
+      <section class="cita-intro">
+        <h1>Agenda tu cita</h1>
+        <p>Cada cita dura 30 minutos y te atiende uno de nuestros asesores.</p>
+        <p class="cita-nota">
+          El examen visual lo hace un optómetra externo. En tu cita revisamos
+          tus resultados, registramos tu fórmula y te asesoramos con la montura.
+        </p>
+      </section>
 
-        <div class="cita-aviso" id="avisoLogin" hidden>
-            Para agendar necesitas una cuenta.
-            <a href="inicio-sesion.html">Inicia sesión</a> o <a href="registro-usuario.html">crea tu cuenta</a>.
+      <div class="cita-aviso" id="avisoLogin" hidden>
+        Para agendar necesitas una cuenta.
+        <a href="inicio-sesion.html">Inicia sesión</a> o
+        <a href="registro-usuario.html">crea tu cuenta</a>.
+      </div>
+
+      <form class="cita-form" id="formCita" novalidate>
+        <div class="cita-fila">
+          <div class="cita-campo">
+            <label for="fecha">Fecha</label>
+            <input type="date" id="fecha" name="fecha" required />
+          </div>
+          <div class="cita-campo">
+            <label for="hora">Hora</label>
+            <select id="hora" name="hora" required disabled>
+              <option value="" selected>Elige primero una fecha</option>
+            </select>
+          </div>
         </div>
 
-        <form class="cita-form" id="formCita" novalidate>
-            <div class="cita-fila">
-                <div class="cita-campo">
-                    <label for="fecha">Fecha</label>
-                    <input type="date" id="fecha" name="fecha" required>
-                </div>
-                <div class="cita-campo">
-                    <label for="hora">Hora</label>
-                    <select id="hora" name="hora" required disabled>
-                        <option value="" selected>Elige primero una fecha</option>
-                    </select>
-                </div>
-            </div>
+        <div class="cita-campo">
+          <label for="motivo">¿Para qué es la cita?</label>
+          <select id="motivo" name="motivo" required>
+            <option value="" disabled selected>Selecciona un motivo</option>
+            <option>Primera asesoría para elección de montura</option>
+            <option>Entrega de resultados de examen visual</option>
+            <option>
+              Entrega de resultados de examen visual y asesoría de montura
+            </option>
+            <option>Control de seguimiento</option>
+          </select>
+        </div>
 
-            <div class="cita-campo">
-                <label for="motivo">¿Para qué es la cita?</label>
-                <select id="motivo" name="motivo" required>
-                    <option value="" disabled selected>Selecciona un motivo</option>
-                    <option>Primera asesoría para elección de montura</option>
-                    <option>Entrega de resultados de examen visual</option>
-                    <option>Entrega de resultados de examen visual y asesoría de montura</option>
-                    <option>Control de seguimiento</option>
-                </select>
-            </div>
+        <div class="cita-campo">
+          <label for="observaciones">Observaciones (opcional)</label>
+          <textarea
+            id="observaciones"
+            name="observaciones"
+            rows="3"
+            maxlength="255"
+            placeholder="Cuéntanos si necesitas algo especial"
+          ></textarea>
+        </div>
 
-            <div class="cita-campo">
-                <label for="observaciones">Observaciones (opcional)</label>
-                <textarea id="observaciones" name="observaciones" rows="3" maxlength="255" placeholder="Cuéntanos si necesitas algo especial"></textarea>
-            </div>
+        <p class="mensaje-error" id="mensajeError" role="alert" hidden></p>
 
-            <p class="mensaje-error" id="mensajeError" role="alert" hidden></p>
+        <button class="btn-primary" type="submit" id="btnAgendar">
+          Agendar cita
+        </button>
+      </form>
 
-            <button class="btn-primary" type="submit" id="btnAgendar">Agendar cita</button>
-        </form>
-
-        <section class="cita-confirmacion" id="confirmacionCita" role="status" hidden>
-            <i class="fa-solid fa-circle-check"></i>
-            <h2>Tu cita quedó agendada</h2>
-            <p id="resumenCita"></p>
-            <a href="panel-usuario.html" class="btn-primary">Ver mis citas</a>
-        </section>
+      <section
+        class="cita-confirmacion"
+        id="confirmacionCita"
+        role="status"
+        hidden
+      >
+        <i class="fa-solid fa-circle-check"></i>
+        <h2>Tu cita quedó agendada</h2>
+        <p id="resumenCita"></p>
+        <a href="panel-usuario.html" class="btn-primary">Ver mis citas</a>
+      </section>
     </main>
 
     <footer>
-        <div class="footer-container">
-            <div class="footer-col">
-                <div class="logo"><img src="../imagenes/logos/logo-boutique.png" class="logo-icon" alt="Boutique de la Visión"></div>
-            </div>
-            <div class="footer-col">
-                <h4>AYUDA</h4>
-                <ul>
-                    <li><a href="agendar-cita.html">¿Cómo puedo apartar una cita?</a></li>
-                    <li><a href="#">¿Cómo sé la fórmula que necesito?</a></li>
-                    <li><a href="#">¿Dónde puedo recoger mis lentes?</a></li>
-                    <li><a href="#">Manual del usuario</a></li>
-                    <li><a href="#">PQRS</a></li>
-                </ul>
-            </div>
-            <div class="footer-col">
-                <h4>NOSOTROS</h4>
-                <ul>
-                    <li><a href="#">ÓPTICA</a></li>
-                    <li><a href="#">UBICACIÓN</a></li>
-                    <li><a href="#">SERVICIOS</a></li>
-                    <li><a href="#">PROFESIONALES</a></li>
-                </ul>
-            </div>
-            <div class="footer-col">
-                <h4>CONTACTO</h4>
-                <div class="contact-info"><i class="fa-solid fa-location-dot"></i><span>CALLE 17 # 14-49 DUITAMA</span></div>
-                <div class="contact-info"><i class="fa-solid fa-phone"></i><span>318 5211416</span></div>
-                <div class="social-icons">
-                    <a href="#" aria-label="Facebook"><i class="fa-brands fa-facebook-f"></i></a>
-                    <a href="#" aria-label="Twitter"><i class="fa-brands fa-twitter"></i></a>
-                    <a href="#" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
-                </div>
-            </div>
-            <div class="footer-col">
-                <h4>MÉTODOS DE PAGO</h4>
-                <div class="payment-methods">
-                    <span style="color:#1a1f71;">VISA</span>
-                    <span style="color:#eb001b;">MC</span>
-                    <span style="color:#007bc1;">AMEX</span>
-                    <span style="color:#2b84c6;">PSE</span>
-                    <span style="color:#58164b;">NEQUI</span>
-                    <span><i class="fa-solid fa-money-bill"></i></span>
-                </div>
-            </div>
+      <div class="footer-container">
+        <div class="footer-col">
+          <div class="logo">
+            <img
+              src="../imagenes/logos/Logo_modo_claro.png"
+              class="logo-icon"
+              alt="Boutique de la Visión"
+            />
+          </div>
         </div>
-        <div class="copyright">Copyright© Desarrolladores ADSO 2026.</div>
+        <div class="footer-col">
+          <h4>AYUDA</h4>
+          <ul>
+            <li>
+              <a href="agendar-cita.html">¿Cómo puedo apartar una cita?</a>
+            </li>
+            <li><a href="#">¿Cómo sé la fórmula que necesito?</a></li>
+            <li><a href="#">¿Dónde puedo recoger mis lentes?</a></li>
+            <li><a href="#">Manual del usuario</a></li>
+            <li><a href="#">PQRS</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>NOSOTROS</h4>
+          <ul>
+            <li><a href="#">ÓPTICA</a></li>
+            <li><a href="#">UBICACIÓN</a></li>
+            <li><a href="#">SERVICIOS</a></li>
+            <li><a href="#">PROFESIONALES</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>CONTACTO</h4>
+          <div class="contact-info">
+            <i class="fa-solid fa-location-dot"></i
+            ><span>CALLE 17 # 14-49 DUITAMA</span>
+          </div>
+          <div class="contact-info">
+            <i class="fa-solid fa-phone"></i><span>318 5211416</span>
+          </div>
+          <div class="social-icons">
+            <a href="#" aria-label="Facebook"
+              ><i class="fa-brands fa-facebook-f"></i
+            ></a>
+            <a href="#" aria-label="Twitter"
+              ><i class="fa-brands fa-twitter"></i
+            ></a>
+            <a href="#" aria-label="Instagram"
+              ><i class="fa-brands fa-instagram"></i
+            ></a>
+          </div>
+        </div>
+        <div class="footer-col">
+          <h4>MÉTODOS DE PAGO</h4>
+          <div class="payment-methods">
+            <span style="color: #1a1f71">VISA</span>
+            <span style="color: #eb001b">MC</span>
+            <span style="color: #007bc1">AMEX</span>
+            <span style="color: #2b84c6">PSE</span>
+            <span style="color: #58164b">NEQUI</span>
+            <span><i class="fa-solid fa-money-bill"></i></span>
+          </div>
+        </div>
+      </div>
+      <div class="copyright">Copyright© Desarrolladores ADSO 2026.</div>
     </footer>
 
     <script src="../scripts/api.js"></script>
     <script src="../scripts/sesion.js"></script>
     <script src="../scripts/carrito.js"></script>
     <script src="../scripts/agendar-cita.js"></script>
-</body>
+  </body>
 </html>

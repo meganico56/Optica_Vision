@@ -184,9 +184,10 @@ html { scroll-behavior: smooth; }
 
 .carrusel-ventana {
     overflow: hidden;
-    background: #ffffff;
+    background: #fdfaf3;
     border: 3px solid var(--gold);
     border-radius: 20px;
+    box-shadow: 0 10px 25px rgba(204, 164, 59, 0.15);
 }
 
 .carrusel-pista {
@@ -315,7 +316,7 @@ html { scroll-behavior: smooth; }
     align-items: center;
     justify-content: center;
     gap: 0.5rem;
-    background: #ffffff;
+    background: #fdfaf3;
     border: 3px solid var(--gold);
     border-radius: 20px;
     padding: 2rem;
