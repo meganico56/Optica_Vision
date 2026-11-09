@@ -54,8 +54,6 @@
 
             const img = tarjeta.querySelector('.img-producto');
             img.src = RUTA_IMAGENES + p.imagen;
-            img.alt = p.nombre;
-
             tarjeta.querySelector('.nombre-producto').textContent = p.nombre;
             tarjeta.querySelector('.precio').textContent = BV.moneda(p.precio);
 

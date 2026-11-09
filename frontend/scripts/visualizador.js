@@ -73,7 +73,6 @@
 
             if (mainImage) {
                 mainImage.src = RUTA_IMAGENES + (producto.imagen || 'montura-clasica-negro.png');
-                mainImage.alt = producto.nombre || '';
             }
 
             if (marca) marca.textContent = producto.marca || 'Óptica Visión';
