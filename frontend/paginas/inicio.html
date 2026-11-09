@@ -200,79 +200,189 @@
       </section>
     </main>
 
-    <footer>
-      <div class="footer-container">
+<footer>
+
+    <div class="footer-container">
+
+        <!-- LOGO -->
         <div class="footer-col">
-          <div class="logo">
-            <img
-              src="../imagenes/logos/logo-boutique.png"
-              class="logo-icon"
-              alt="Óptica Visión Logo"
-            />
-          </div>
+            <div class="logo">
+                <img
+                    src="../imagenes/logos/logo-boutique.png"
+                    class="logo-icon"
+                    alt="Óptica Visión Logo"
+                />
+            </div>
         </div>
 
+        <!-- AYUDA -->
         <div class="footer-col">
-          <h4>AYUDA</h4>
+            <h4>AYUDA</h4>
 
-          <ul>
-            <li>
-              <a href="agendar-cita.html">¿Cómo puedo apartar una cita?</a>
-            </li>
-            <li><a href="#">¿Cómo sé la fórmula que necesito?</a></li>
-            <li><a href="#">¿Dónde puedo recoger mis lentes?</a></li>
-            <li><a href="#">Manual del usuario</a></li>
-            <li><a href="#">PQRS</a></li>
-          </ul>
+            <ul class="ayuda-lista">
+                <li>
+                    <button class="ayuda-link" data-modal="modal-cita">
+                        ¿Cómo puedo apartar una cita?
+                    </button>
+                </li>
+
+                <li>
+                    <button class="ayuda-link" data-modal="modal-formula">
+                        ¿Cómo sé la fórmula que necesito?
+                    </button>
+                </li>
+
+                <li>
+                    <button class="ayuda-link" data-modal="modal-recoger">
+                        ¿Dónde puedo recoger mis lentes?
+                    </button>
+                </li>
+
+                <li>
+                    <button class="ayuda-link" data-modal="modal-manual">
+                        Manual del usuario
+                    </button>
+                </li>
+
+                <li>
+                    <button class="ayuda-link" data-modal="modal-pqrs">
+                        PQRS
+                    </button>
+                </li>
+            </ul>
         </div>
 
+        <!-- NOSOTROS -->
         <div class="footer-col">
-          <h4>NOSOTROS</h4>
+            <h4>NOSOTROS</h4>
 
-          <ul>
-            <li><a href="#nosotros">ÓPTICA</a></li>
-            <li><a href="https://maps.app.goo.gl/RSkMM3P37Prztmwy8" target="_blank">UBICACIÓN</a></li>
-            <li><a href="#servicios">SERVICIOS</a></li>
-            <li><a href="#">PROFESIONALES</a></li>
-          </ul>
+            <ul>
+                <li><a href="#nosotros">ÓPTICA</a></li>
+                <li>
+                    <a href="https://maps.app.goo.gl/RSkMM3P37Prztmwy8"
+                       target="_blank">
+                        UBICACIÓN
+                    </a>
+                </li>
+                <li><a href="#servicios">SERVICIOS</a></li>
+                <li><a href="#">PROFESIONALES</a></li>
+            </ul>
         </div>
 
+        <!-- CONTACTO -->
         <div class="footer-col">
-          <h4>CONTACTO</h4>
+            <h4>CONTACTO</h4>
 
-          <div class="contact-info">
-            <i class="fa-solid fa-location-dot"></i>
-            <span>CALLE 17 # 14-49 DUITAMA</span>
-          </div>
+            <div class="contact-info">
+                <i class="fa-solid fa-location-dot"></i>
+                <span>CALLE 17 # 14-49 DUITAMA</span>
+            </div>
 
-          <div class="contact-info">
-            <i class="fa-solid fa-phone"></i>
-            <span>318 5211416</span>
-          </div>
+            <div class="contact-info">
+                <i class="fa-solid fa-phone"></i>
+                <span>318 5211416</span>
+            </div>
 
-          <div class="social-icons">
-            <a href="#"><i class="fa-brands fa-facebook-f"></i></a>
-            <a href="#"><i class="fa-brands fa-twitter"></i></a>
-            <a href="#"><i class="fa-brands fa-instagram"></i></a>
-          </div>
+            <div class="social-icons">
+                <a href="#"><i class="fa-brands fa-facebook-f"></i></a>
+                <a href="#"><i class="fa-brands fa-twitter"></i></a>
+                <a href="#"><i class="fa-brands fa-instagram"></i></a>
+            </div>
         </div>
 
+        <!-- MÉTODOS DE PAGO -->
         <div class="footer-col">
-          <h4>MÉTODOS DE PAGO</h4>
+            <h4>MÉTODOS DE PAGO</h4>
 
-          <div class="payment-methods">
-            <span style="color: #1a1f71">VISA</span>
-            <span style="color: #eb001b">MC</span>
-            <span style="color: #007bc1">AMEX</span>
-            <span style="color: #2b84c6">PSE</span>
-            <span style="color: #58164b">NEQUI</span>
-            <span><i class="fa-solid fa-money-bill"></i></span>
-          </div>
+            <div class="payment-methods">
+                <span style="color: #1a1f71">VISA</span>
+                <span style="color: #eb001b">MC</span>
+                <span style="color: #007bc1">AMEX</span>
+                <span style="color: #2b84c6">PSE</span>
+                <span style="color: #58164b">NEQUI</span>
+                <span><i class="fa-solid fa-money-bill"></i></span>
+            </div>
         </div>
-      </div>
 
-      <div class="copyright">Copyright© Desarrolladores ADSO 2026.</div>
-    </footer>
+    </div>
+
+    <!-- COPYRIGHT -->
+    <div class="copyright">
+        Copyright© Desarrolladores ADSO 2026.
+    </div>
+
+</footer>
+    <!-- MODALES DE AYUDA -->
+
+    <div class="ayuda-modal" id="modal-cita">
+        <div class="ayuda-modal-contenido">
+            <button class="ayuda-cerrar" aria-label="Cerrar">&times;</button>
+            <i class="fa-solid fa-calendar-check ayuda-icono"></i>
+            <h2>¿Cómo puedo apartar una cita?</h2>
+            <p>
+                Para apartar una cita en Óptica Visión, ingresa a la
+                sección Agendar cita de nuestra página web. Allí podrás
+                seleccionar la fecha y hora disponibles y completar los
+                datos solicitados para realizar tu reserva.
+            </p>
+        </div>
+    </div>
+
+    <div class="ayuda-modal" id="modal-formula">
+        <div class="ayuda-modal-contenido">
+            <button class="ayuda-cerrar" aria-label="Cerrar">&times;</button>
+            <i class="fa-solid fa-eye ayuda-icono"></i>
+            <h2>¿Cómo sé la fórmula que necesito?</h2>
+            <p>
+                Para conocer la fórmula que necesitas para tus lentes,
+                debes realizar un examen visual con un profesional de
+                la salud visual. Durante el examen se evaluará tu visión
+                y se determinará la prescripción adecuada.
+            </p>
+        </div>
+    </div>
+
+    <div class="ayuda-modal" id="modal-recoger">
+        <div class="ayuda-modal-contenido">
+            <button class="ayuda-cerrar" aria-label="Cerrar">&times;</button>
+            <i class="fa-solid fa-glasses ayuda-icono"></i>
+            <h2>¿Dónde puedo recoger mis lentes?</h2>
+            <p>
+                Puedes recoger tus lentes directamente en nuestra óptica,
+                ubicada en la Calle 17 # 14-49 de Duitama. Para consultar
+                el estado de tu pedido puedes comunicarte con nuestro
+                equipo de atención.
+            </p>
+        </div>
+    </div>
+
+    <div class="ayuda-modal" id="modal-manual">
+        <div class="ayuda-modal-contenido">
+            <button class="ayuda-cerrar" aria-label="Cerrar">&times;</button>
+            <i class="fa-solid fa-book-open ayuda-icono"></i>
+            <h2>Manual del usuario</h2>
+            <p>
+                Explora nuestro catálogo de productos, consulta los
+                servicios disponibles, agenda tus citas y realiza
+                compras en línea. Utiliza el menú de navegación para
+                acceder a las diferentes secciones de nuestra página.
+            </p>
+        </div>
+    </div>
+
+    <div class="ayuda-modal" id="modal-pqrs">
+        <div class="ayuda-modal-contenido">
+            <button class="ayuda-cerrar" aria-label="Cerrar">&times;</button>
+            <i class="fa-solid fa-comments ayuda-icono"></i>
+            <h2>Peticiones, quejas, reclamos y sugerencias</h2>
+            <p>
+                En Óptica Visión valoramos tu opinión. Si tienes alguna
+                petición, queja, reclamo o sugerencia sobre nuestros
+                productos o servicios, puedes comunicarte con nuestro
+                equipo de atención al cliente.
+            </p>
+        </div>
+    </div>
 
     <script src="../scripts/inicio.js"></script>
     <script src="../scripts/session-manager.js"></script>
