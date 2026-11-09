@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Óptica Visión - Boutique de la Visión</title>
+    <title>Boutique de la Visión | Inicio</title>
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -30,7 +30,7 @@
         </a>
       </div>
 
-      <!-- Buscador del catálogo (Envía el parámetro ?q= a catalogo.html) -->
+      <!-- Buscador del catálogo  -->
       <form class="buscador" action="catalogo.html" method="get">
         <input
           type="text"
@@ -60,7 +60,7 @@
           <li>
             <a href="carrito.html"><i class="fa-solid fa-cart-shopping"></i></a>
           </li>
-          <li><a href="inicio-sesion.html">REGISTRO / LOGIN</a></li>
+          <li><a href="inicio-sesion.html">INICIAR SESIÓN</a></li>
         </ul>
       </nav>
     </header>
@@ -103,26 +103,103 @@
           </div>
         </div>
       </section>
+
+      <!-- VENTAJAS -->
+      <section class="ventajas">
+        <div class="ventaja">
+          <i class="fa-solid fa-user-doctor"></i>
+          <h3>Atención personalizada</h3>
+          <p>Te acompañamos en cada paso para encontrar lo que necesitas.</p>
+        </div>
+        <div class="ventaja">
+          <i class="fa-solid fa-gem"></i>
+          <h3>Productos de calidad</h3>
+          <p>Monturas exclusivas y lentes seleccionados con cuidado.</p>
+        </div>
+        <div class="ventaja">
+          <i class="fa-solid fa-microscope"></i>
+          <h3>Tecnología en lentes</h3>
+          <p>Lentes de alta tecnología para ver con total claridad.</p>
+        </div>
+        <div class="ventaja">
+          <i class="fa-solid fa-heart-pulse"></i>
+          <h3>Salud visual</h3>
+          <p>Tu bienestar visual es el centro de todo lo que hacemos.</p>
+        </div>
+      </section>
+
+      <!-- SERVICIOS (carrusel solo CSS) -->
+      <section class="servicios" id="servicios">
+        <h2>Nuestros servicios</h2>
+
+        <div class="carrusel">
+          <input type="radio" name="slide" id="slide1" checked />
+          <input type="radio" name="slide" id="slide2" />
+          <input type="radio" name="slide" id="slide3" />
+
+          <div class="carrusel-ventana">
+            <div class="carrusel-pista">
+              <article class="slide">
+                <i class="fa-solid fa-eye"></i>
+                <h3>Examen visual</h3>
+                <p>
+                  Evaluamos tu salud visual para recomendarte la fórmula que
+                  realmente necesitas.
+                </p>
+              </article>
+              <article class="slide">
+                <i class="fa-solid fa-glasses"></i>
+                <h3>Monturas y lentes</h3>
+                <p>
+                  Diseños exclusivos y lentes de alta tecnología para cada
+                  estilo.
+                </p>
+              </article>
+              <article class="slide">
+                <i class="fa-solid fa-user-doctor"></i>
+                <h3>Atención profesional</h3>
+                <p>
+                  Un equipo que te asesora con calidez y precisión, antes y
+                  después de tu compra.
+                </p>
+              </article>
+            </div>
+          </div>
+
+          <div class="carrusel-puntos">
+            <label for="slide1"></label>
+            <label for="slide2"></label>
+            <label for="slide3"></label>
+          </div>
+        </div>
+      </section>
+
+      <!-- NOSOTROS -->
+      <section class="nosotros" id="nosotros">
+        <h2>¿Quiénes somos?</h2>
+        <div class="nosotros-container">
+          <div class="nosotros-mision">
+            <h3>Misión</h3>
+            <p>
+              En Óptica Visión nuestra misión es brindar a nuestros clientes una
+              experiencia visual excepcional, ofreciendo productos de alta
+              calidad y servicios personalizados que mejoren su salud visual y
+              estilo de vida.
+            </p>
+          </div>
+          <div class="nosotros-vision">
+            <h3>Visión</h3>
+            <p>
+              Nuestra visión es ser reconocidos como la óptica de referencia en
+              la región, destacándonos por nuestra excelencia en atención al
+              cliente, innovación en productos y compromiso con la salud visual
+              de nuestra comunidad.
+            </p>
+          </div>
+        </div>
+      </section>
     </main>
 
-    <section class="nosotros">
-      <h2>¿Quiénes somos?</h2>
-      <div class="nosotros-container">
-        <div class="nosotros-mision">
-          <h3>mision</h3>
-          <p>
-            En optica vision nuestra mision es brindar a nuestros clientes una experiencia visual excepcional, ofreciendo productos de alta calidad y servicios personalizados que mejoren su salud visual y estilo de vida.
-          </p>
-        </div>
-        <div class="nosotros-vision">
-          <h3>vision</h3>
-          <p>
-            Nuestra vision es ser reconocidos como la optica de referencia en la region, destacandonos por nuestra excelencia en atencion al cliente, innovacion en productos y compromiso con la salud visual de nuestra comunidad.
-          </p>
-        </div>
-
-      </div>
-    </section>
     <footer>
       <div class="footer-container">
         <div class="footer-col">
@@ -153,9 +230,15 @@
           <h4>NOSOTROS</h4>
 
           <ul>
-            <li><a href="#">ÓPTICA</a></li>
-            <li><a href="https://maps.app.goo.gl/RSkMM3P37Prztmwy8" target="_blank">UBICACIÓN</a></li>
-            <li><a href="#">SERVICIOS</a></li>
+            <li><a href="#nosotros">ÓPTICA</a></li>
+            <li>
+              <a
+                href="https://maps.app.goo.gl/RSkMM3P37Prztmwy8"
+                target="_blank"
+                >UBICACIÓN</a
+              >
+            </li>
+            <li><a href="#servicios">SERVICIOS</a></li>
             <li><a href="#">PROFESIONALES</a></li>
           </ul>
         </div>
