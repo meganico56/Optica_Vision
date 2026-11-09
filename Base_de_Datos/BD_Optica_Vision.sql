@@ -65,7 +65,7 @@ create table consentimiento_datos (
 );
 
 
-create table recup_contraseña (
+create table token_recuperacion (
     id_token int auto_increment primary key,
     token_hash varchar(100) not null,
     fecha_creacion datetime not null default current_timestamp,
