@@ -2257,6 +2257,107 @@
         }
     }
 
+    // ── Reporte: ventas por producto ─────────────────────────────
+    // GET /api/reportes/ventas-productos?desde=YYYY-MM-DD&hasta=YYYY-MM-DD
+    // Cada fila: id_producto, nombre, maneja_inventario, unidades, ingresos, stock_actual, existencia_minima, bajo_minimo (0/1)
+    const repVpDesde = document.getElementById('repVpDesde');
+    const repVpHasta = document.getElementById('repVpHasta');
+    const repVpConsultar = document.getElementById('repVpConsultar');
+    const repVpError = document.getElementById('repVpError');
+    const tbVentasProducto = document.getElementById('tbVentasProducto');
+    const repVpUnidades = document.getElementById('repVpUnidades');
+    const repVpIngresos = document.getElementById('repVpIngresos');
+    const repVpProductos = document.getElementById('repVpProductos');
+    const repVpBajoMinimo = document.getElementById('repVpBajoMinimo');
+    let repVpConsultaId = 0;
+
+    // Fecha local (toISOString usaría UTC y en la noche de Colombia saltaría al día siguiente)
+    function fechaLocalISO(d) {
+        return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+    }
+
+    if (repVpDesde && repVpHasta && !repVpDesde.value && !repVpHasta.value) {
+        const hoy = new Date();
+        repVpDesde.value = fechaLocalISO(new Date(hoy.getFullYear(), hoy.getMonth(), 1));
+        repVpHasta.value = fechaLocalISO(hoy);
+    }
+
+    function errorVentasProducto(msg) {
+        if (!repVpError) return;
+        repVpError.textContent = msg;
+        repVpError.hidden = !msg;
+    }
+
+    function resumenVentasProducto(unidades, ingresos, productos, bajoMinimo) {
+        if (repVpUnidades) repVpUnidades.textContent = unidades;
+        if (repVpIngresos) repVpIngresos.textContent = typeof ingresos === 'number' ? BV.moneda(ingresos) : ingresos;
+        if (repVpProductos) repVpProductos.textContent = productos;
+        if (repVpBajoMinimo) repVpBajoMinimo.textContent = bajoMinimo;
+    }
+
+    async function cargarVentasProducto() {
+        if (!tbVentasProducto || !repVpDesde || !repVpHasta) return;
+        const desde = repVpDesde.value;
+        const hasta = repVpHasta.value;
+        errorVentasProducto('');
+        if (!desde || !hasta) { errorVentasProducto('Selecciona la fecha inicial y la final.'); return; }
+        if (desde > hasta) { errorVentasProducto('La fecha inicial no puede ser posterior a la final.'); return; }
+
+        const consulta = ++repVpConsultaId; // descarta respuestas viejas si se consulta dos veces seguidas
+        tbVentasProducto.innerHTML = '<tr><td colspan="6" style="text-align:center;">Cargando…</td></tr>';
+        try {
+            const crudo = await Api.get('/api/reportes/ventas-productos', { desde, hasta });
+            if (consulta !== repVpConsultaId) return;
+
+            const filas = (Array.isArray(crudo) ? crudo : []).map(f => ({
+                nombre: f.nombre,
+                unidades: Number(f.unidades),
+                ingresos: Number(f.ingresos),
+                controla: Number(f.maneja_inventario) === 1,
+                stock: Number(f.stock_actual),
+                minimo: Number(f.existencia_minima),
+                bajo: Number(f.bajo_minimo) === 1
+            }));
+
+            tbVentasProducto.innerHTML = '';
+            if (filas.length === 0) {
+                tbVentasProducto.innerHTML = '<tr><td colspan="6" style="text-align:center;">No hay ventas pagadas en este rango de fechas.</td></tr>';
+                resumenVentasProducto(0, 0, 0, 0);
+                return;
+            }
+
+            let totalUnidades = 0, totalIngresos = 0, bajoMinimo = 0;
+            filas.forEach(f => {
+                totalUnidades += f.unidades;
+                totalIngresos += f.ingresos;
+                if (f.bajo) bajoMinimo++;
+                const tr = document.createElement('tr');
+                if (f.bajo) tr.className = 'rep-bajo-minimo';
+                tr.innerHTML = `
+                    <td><strong>${BV.escapar(f.nombre)}</strong></td>
+                    <td class="rep-num">${f.unidades}</td>
+                    <td class="rep-num"><strong>${BV.moneda(f.ingresos)}</strong></td>
+                    <td class="rep-num">${f.controla ? `<span class="badge ${f.bajo ? 'orange' : 'green'}">${f.stock}</span>` : '—'}</td>
+                    <td class="rep-num">${f.controla ? f.minimo : '—'}</td>
+                    <td>${!f.controla ? '<span class="badge">Sin control</span>' : (f.bajo ? '<span class="badge orange"><i class="fa-solid fa-triangle-exclamation"></i> Bajo mínimo</span>' : '<span class="badge green">OK</span>')}</td>
+                `;
+                tbVentasProducto.appendChild(tr);
+            });
+            resumenVentasProducto(totalUnidades, totalIngresos, filas.length, bajoMinimo);
+        } catch (e) {
+            if (consulta !== repVpConsultaId) return;
+            console.error('Error al cargar ventas por producto:', e);
+            tbVentasProducto.innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--red);">No se pudo cargar el reporte.</td></tr>';
+            resumenVentasProducto('–', '–', '–', '–');
+            errorVentasProducto((e && e.message) || 'Error al consultar el reporte.');
+        }
+    }
+
+    if (repVpConsultar) repVpConsultar.addEventListener('click', cargarVentasProducto);
+    [repVpDesde, repVpHasta].forEach(el => {
+        if (el) el.addEventListener('keydown', (ev) => { if (ev.key === 'Enter') { ev.preventDefault(); cargarVentasProducto(); } });
+    });
+
     // Cargar todos los datos del inventario y administración
     async function inicializarInventario() {
         await Promise.all([
@@ -2272,7 +2373,8 @@
             cargarCitas(),
             cargarRecetas(),
             cargarPromociones(),
-            cargarReportes()
+            cargarReportes(),
+            cargarVentasProducto()
         ]);
     }
 
@@ -2283,7 +2385,7 @@
             else if (seccion === 'compras') { cargarCompras(); cargarProveedores(); }
             else if (seccion === 'citas') { cargarCitas(); cargarRecetas(); }
             else if (seccion === 'promociones') { cargarPromociones(); }
-            else if (seccion === 'reportes') { cargarReportes(); }
+            else if (seccion === 'reportes') { cargarReportes(); cargarVentasProducto(); }
             else if (seccion === 'catalogo') { cargarProductos(); cargarMarcas(); cargarCategorias(); }
             else if (seccion === 'usuarios') { cargarUsuarios(); cargarRoles(); }
         });

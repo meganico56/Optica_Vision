@@ -1336,6 +1336,54 @@ app.get("/api/reportes", async (req, res) => {
   } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
+// Ventas por producto en un rango de fechas (solo ventas Pagadas).
+// GET /api/reportes/ventas-productos?desde=AAAA-MM-DD&hasta=AAAA-MM-DD
+// Cuenta cada venta por su fecha de registro (venta.fecha), incluyendo todo el día "hasta".
+// Ingresos = cantidad x precio_unitario de las líneas (antes de descuentos de la venta y sin restar devoluciones).
+app.get("/api/reportes/ventas-productos", async (req, res) => {
+  const { desde, hasta } = req.query;
+  const esFecha = (s) => {
+    if (typeof s !== "string" || !/^\d{4}-\d{2}-\d{2}$/.test(s)) return false;
+    const d = new Date(s + "T00:00:00Z");
+    return !Number.isNaN(d.getTime()) && d.toISOString().slice(0, 10) === s;
+  };
+  if (!esFecha(desde) || !esFecha(hasta)) {
+    return res.status(400).json({ mensaje: "Envía desde y hasta con formato AAAA-MM-DD" });
+  }
+  if (desde > hasta) {
+    return res.status(400).json({ mensaje: "La fecha inicial no puede ser posterior a la final" });
+  }
+
+  try {
+    const [rows] = await db.query(
+      `SELECT p.id_producto, p.nombre, p.maneja_inventario,
+              SUM(dv.cantidad) AS unidades,
+              SUM(dv.subtotal) AS ingresos,
+              p.existencia_actual AS stock_actual,
+              p.existencia_minima,
+              (p.maneja_inventario AND p.existencia_actual <= p.existencia_minima) AS bajo_minimo
+       FROM detalle_venta dv
+       JOIN venta v ON v.codigo_venta = dv.codigo_venta
+       JOIN producto p ON p.id_producto = dv.id_producto
+       WHERE v.estado = 'Pagada'
+         AND v.fecha >= ? AND v.fecha < DATE_ADD(?, INTERVAL 1 DAY)
+       GROUP BY p.id_producto, p.nombre, p.maneja_inventario, p.existencia_actual, p.existencia_minima
+       ORDER BY unidades DESC, p.nombre`,
+      [desde, hasta]
+    );
+    res.json(rows.map((r) => ({
+      id_producto: r.id_producto,
+      nombre: r.nombre,
+      maneja_inventario: Number(r.maneja_inventario),
+      unidades: Number(r.unidades),
+      ingresos: Number(r.ingresos),
+      stock_actual: Number(r.stock_actual),
+      existencia_minima: Number(r.existencia_minima),
+      bajo_minimo: Number(r.bajo_minimo)
+    })));
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
 app.post("/api/reportes", async (req, res) => {
   const tipoFinal = req.body.tipo_reporte || req.body.tipo;
   const { titulo, descripcion, contenido, id_usuario_genera } = req.body;
