@@ -32,15 +32,30 @@ html { scroll-behavior: smooth; }
     z-index: 1;
 }
 
+/* Aura blanca detrás de todo el bloque de texto */
+.hero-text::before {
+    content: "";
+    position: absolute;
+    inset: -18% -12%;
+    background: radial-gradient(ellipse at center, #ffffff 0%, rgba(255, 255, 255, 0.92) 45%, rgba(255, 255, 255, 0.6) 62%, transparent 75%);
+    filter: blur(18px);
+    z-index: -1;
+    pointer-events: none;
+}
+
 .hero-text .hero-tag,
 .hero-text h1,
 .hero-text h2,
 .hero-text p {
     text-shadow:
-        0 0 4px #ffffff,
-        0 0 12px rgba(255, 255, 255, 1),
-        0 0 28px rgba(255, 255, 255, 0.98),
-        0 4px 42px rgba(255, 255, 255, 0.9);
+        0 0 2px #ffffff,
+        0 0 6px #ffffff,
+        0 0 12px #ffffff,
+        0 0 20px #ffffff,
+        0 0 32px #ffffff,
+        0 0 48px #ffffff,
+        0 0 70px rgba(255, 255, 255, 0.95),
+        0 0 100px rgba(255, 255, 255, 0.85);
 }
 
 .hero-tag {
