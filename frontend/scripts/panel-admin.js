@@ -59,6 +59,58 @@
     let nuevaImagenBase64 = null;
     let nombreNuevaImagen = null;
     let tabActual = 'productos';
+    let suspensionesMemoria = new Set();
+    let suspensionesCargadas = false;
+    let suspensionesDisponibles = false;
+    let suspensionesPromise = null;
+    const suspensionWarning = document.getElementById('suspensionWarning');
+
+    function claveSuspension(tipo, id) {
+        return `${tipo}:${id}`;
+    }
+
+    function estaSuspendido(tipo, id) {
+        return suspensionesMemoria.has(claveSuspension(tipo, id));
+    }
+
+    function insigniaSuspension(suspendido) {
+        return suspendido
+            ? '<span class="badge suspended"><i class="fa-solid fa-pause"></i> Suspendido</span>'
+            : '';
+    }
+
+    function botonSuspension(tipo, id, suspendido) {
+        const accion = suspendido ? 'Reactivar' : 'Suspender';
+        const icono = suspendido ? 'fa-play' : 'fa-pause';
+        const estado = suspensionesDisponibles ? '' : 'disabled';
+        const titulo = suspensionesDisponibles ? accion : 'Suspensiones no disponibles';
+        return `<button type="button" class="btn-ghost" data-suspender="${BV.escapar(id)}" data-tipo-suspension="${tipo}" data-suspendido="${suspendido}" title="${titulo}" aria-label="${titulo}" ${estado}><i class="fa-solid ${icono}"></i></button>`;
+    }
+
+    async function cargarSuspensiones() {
+        if (suspensionesCargadas) return;
+        if (!suspensionesPromise) {
+            suspensionesPromise = Api.get('/api/suspensiones')
+                .then(registros => {
+                    suspensionesMemoria = new Set(registros.map(r => claveSuspension(r.tipo, r.id_registro)));
+                    suspensionesDisponibles = true;
+                    if (suspensionWarning) suspensionWarning.hidden = true;
+                })
+                .catch(error => {
+                    console.error('Error al cargar suspensiones:', error);
+                    suspensionesDisponibles = false;
+                    if (suspensionWarning) {
+                        suspensionWarning.textContent = `No se pudo consultar el estado de suspensión (${error.message}). Los datos de las secciones seguirán visibles, pero suspender o reactivar no estará disponible. Reinicia el servidor backend y verifica que su usuario de base de datos pueda crear la tabla panel_suspensiones; después, recarga esta página.`;
+                        suspensionWarning.hidden = false;
+                    }
+                })
+                .finally(() => {
+                    suspensionesCargadas = true;
+                    suspensionesPromise = null;
+                });
+        }
+        await suspensionesPromise;
+    }
 
     const IMAGENES_DISPONIBLES = [
         'gafas-modelo1.png',
@@ -73,6 +125,7 @@
         if (!tbProductos) return;
         try {
             const productos = await Api.get('/api/productos');
+            await cargarSuspensiones();
             productosMemoria = productos;
 
             let bajoMinimoCount = 0;
@@ -82,10 +135,12 @@
                 tbProductos.innerHTML = '<tr><td colspan="9" style="text-align:center;">No hay productos registrados.</td></tr>';
             } else {
                 productos.forEach((p) => {
+                    const suspendido = estaSuspendido('producto', p.id);
                     const esBajoMin = (p.existencia_actual || p.stock || 0) <= (p.existencia_minima || 5);
                     if (esBajoMin) bajoMinimoCount++;
 
                     const tr = document.createElement('tr');
+                    tr.classList.toggle('fila-suspendida', suspendido);
                     tr.innerHTML = `
                         <td>#${p.id}</td>
                         <td style="display:flex;align-items:center;gap:10px;">
@@ -97,11 +152,11 @@
                         <td><strong>${BV.moneda(p.precio)}</strong></td>
                         <td><span class="badge ${esBajoMin ? 'orange' : 'green'}">${p.stock || p.existencia_actual || 0}</span></td>
                         <td>${p.existencia_minima || 5}</td>
-                        <td><span class="badge ${p.estado === 'Activo' ? 'green' : 'red'}">${p.estado || 'Activo'}</span></td>
+                        <td><span class="badge ${p.estado === 'Activo' ? 'green' : 'red'}">${p.estado || 'Activo'}</span> ${insigniaSuspension(suspendido)}</td>
                         <td>
                             <div style="display:flex;gap:6px;">
                                 <button type="button" class="btn-ghost" data-editar-prod="${p.id}" title="Editar"><i class="fa-solid fa-pen-to-square"></i></button>
-                                <button type="button" class="btn-ghost" data-eliminar-prod="${p.id}" title="Eliminar" style="color:var(--red);"><i class="fa-solid fa-trash"></i></button>
+                                ${botonSuspension('producto', p.id, suspendido)}
                             </div>
                         </td>
                     `;
@@ -144,6 +199,7 @@
         if (!tbMarcas) return;
         try {
             const marcas = await Api.get('/api/marcas');
+            await cargarSuspensiones();
             marcasMemoria = marcas;
             tbMarcas.innerHTML = '';
 
@@ -151,16 +207,18 @@
                 tbMarcas.innerHTML = '<tr><td colspan="5" style="text-align:center;">No hay marcas registradas.</td></tr>';
             } else {
                 marcas.forEach((m) => {
+                    const suspendido = estaSuspendido('marca', m.id_marca);
                     const tr = document.createElement('tr');
+                    tr.classList.toggle('fila-suspendida', suspendido);
                     tr.innerHTML = `
                         <td>#${m.id_marca}</td>
                         <td><strong>${BV.escapar(m.nombre)}</strong></td>
                         <td>${BV.escapar(m.pais_origen || 'No especificado')}</td>
-                        <td><span class="badge ${m.estado === 'Activo' ? 'green' : 'red'}">${m.estado || 'Activo'}</span></td>
+                        <td><span class="badge ${m.estado === 'Activo' ? 'green' : 'red'}">${m.estado || 'Activo'}</span> ${insigniaSuspension(suspendido)}</td>
                         <td>
                             <div style="display:flex;gap:6px;">
                                 <button type="button" class="btn-ghost" data-editar-marca="${m.id_marca}" title="Editar"><i class="fa-solid fa-pen-to-square"></i></button>
-                                <button type="button" class="btn-ghost" data-eliminar-marca="${m.id_marca}" title="Eliminar" style="color:var(--red);"><i class="fa-solid fa-trash"></i></button>
+                                ${botonSuspension('marca', m.id_marca, suspendido)}
                             </div>
                         </td>
                     `;
@@ -180,6 +238,7 @@
         if (!tbCategorias) return;
         try {
             const categorias = await Api.get('/api/categorias');
+            await cargarSuspensiones();
             categoriasMemoria = categorias;
             tbCategorias.innerHTML = '';
 
@@ -187,16 +246,18 @@
                 tbCategorias.innerHTML = '<tr><td colspan="5" style="text-align:center;">No hay categorías registradas.</td></tr>';
             } else {
                 categorias.forEach((c) => {
+                    const suspendido = estaSuspendido('categoria', c.id_categoria);
                     const tr = document.createElement('tr');
+                    tr.classList.toggle('fila-suspendida', suspendido);
                     tr.innerHTML = `
                         <td>#${c.id_categoria}</td>
                         <td><strong>${BV.escapar(c.nombre)}</strong></td>
                         <td>${BV.escapar(c.descripcion || 'Sin descripción')}</td>
-                        <td><span class="badge ${c.estado === 'Activo' ? 'green' : 'red'}">${c.estado || 'Activo'}</span></td>
+                        <td><span class="badge ${c.estado === 'Activo' ? 'green' : 'red'}">${c.estado || 'Activo'}</span> ${insigniaSuspension(suspendido)}</td>
                         <td>
                             <div style="display:flex;gap:6px;">
                                 <button type="button" class="btn-ghost" data-editar-cat="${c.id_categoria}" title="Editar"><i class="fa-solid fa-pen-to-square"></i></button>
-                                <button type="button" class="btn-ghost" data-eliminar-cat="${c.id_categoria}" title="Eliminar" style="color:var(--red);"><i class="fa-solid fa-trash"></i></button>
+                                ${botonSuspension('categoria', c.id_categoria, suspendido)}
                             </div>
                         </td>
                     `;
@@ -222,6 +283,7 @@
     async function cargarUsuarios() {
         try {
             const usuarios = await Api.get('/api/usuarios');
+            await cargarSuspensiones();
             // Ordenar del más reciente al más antiguo (ID descendente)
             usuarios.sort((a, b) => (b.id_usuario || 0) - (a.id_usuario || 0));
             usuariosMemoria = usuarios;
@@ -239,7 +301,9 @@
             }
 
             usuarios.forEach((u) => {
+                const suspendido = estaSuspendido('usuario', u.id_usuario);
                 const tr = document.createElement('tr');
+                tr.classList.toggle('fila-suspendida', suspendido);
                 tr.innerHTML = `
                     <td>#${u.id_usuario}</td>
                     <td><strong>${BV.escapar(u.nombre)} ${BV.escapar(u.apellido)}</strong></td>
@@ -247,11 +311,11 @@
                     <td>${BV.escapar(u.telefono)}</td>
                     <td>${BV.escapar(u.correo || '—')}</td>
                     <td><span class="role-badge ${CLASE_ROL[u.rol] || ''}">${BV.escapar(u.rol || 'Sin rol')}</span></td>
-                    <td><span class="badge ${u.estado === 'Activo' ? 'green' : 'red'}">${BV.escapar(u.estado)}</span></td>
+                    <td><span class="badge ${u.estado === 'Activo' ? 'green' : 'red'}">${BV.escapar(u.estado)}</span> ${insigniaSuspension(suspendido)}</td>
                     <td>
                         <div style="display:flex;gap:6px;">
                             <button type="button" class="btn-ghost" data-editar-usuario="${u.id_usuario}" title="Editar"><i class="fa-solid fa-pen-to-square"></i></button>
-                            <button type="button" class="btn-ghost" data-eliminar-usuario="${u.id_usuario}" title="Eliminar" style="color:var(--red);"><i class="fa-solid fa-trash"></i></button>
+                            ${botonSuspension('usuario', u.id_usuario, suspendido)}
                         </div>
                     </td>
                 `;
@@ -279,6 +343,7 @@
         if (!listaProveedores) return;
         try {
             const proveedores = await Api.get('/api/proveedores');
+            await cargarSuspensiones();
             proveedoresMemoria = proveedores;
             listaProveedores.innerHTML = '';
 
@@ -288,8 +353,9 @@
             }
 
             proveedores.forEach((prov) => {
+                const suspendido = estaSuspendido('proveedor', prov.codigo_proveedor);
                 const li = document.createElement('li');
-                li.className = 'proveedor-item';
+                li.className = `proveedor-item${suspendido ? ' fila-suspendida' : ''}`;
                 const iniciales = (prov.nombre || 'PR').substring(0, 2).toUpperCase();
                 li.innerHTML = `
                     <div class="proveedor-avatar">${BV.escapar(iniciales)}</div>
@@ -298,11 +364,11 @@
                         <p><i class="fa-solid fa-id-card"></i> <strong>NIT:</strong> ${BV.escapar(prov.nit)}</p>
                         <p><i class="fa-solid fa-phone"></i> ${BV.escapar(prov.telefono)} | <i class="fa-solid fa-envelope"></i> <a href="mailto:${BV.escapar(prov.correo)}">${BV.escapar(prov.correo)}</a></p>
                         ${prov.direccion ? `<p><i class="fa-solid fa-location-dot"></i> ${BV.escapar(prov.direccion)}</p>` : ''}
-                        <p><span class="badge ${prov.estado === 'Activo' ? 'green' : 'red'}">${BV.escapar(prov.estado || 'Activo')}</span></p>
+                        <p><span class="badge ${prov.estado === 'Activo' ? 'green' : 'red'}">${BV.escapar(prov.estado || 'Activo')}</span> ${insigniaSuspension(suspendido)}</p>
                     </div>
                     <div style="display:flex;gap:6px;align-items:center;">
                         <button type="button" class="btn-ghost" data-editar-prov="${prov.codigo_proveedor}" title="Editar proveedor"><i class="fa-solid fa-pen-to-square"></i></button>
-                        <button type="button" class="btn-ghost" data-eliminar-prov="${prov.codigo_proveedor}" title="Eliminar proveedor" style="color:var(--red);"><i class="fa-solid fa-trash"></i></button>
+                        ${botonSuspension('proveedor', prov.codigo_proveedor, suspendido)}
                     </div>
                 `;
                 listaProveedores.appendChild(li);
@@ -1562,6 +1628,43 @@
 
     // Delegación de eventos para clicks en botones, tabs y tablas
     document.addEventListener('click', async (e) => {
+        const btnSuspender = e.target.closest('[data-suspender]');
+        if (btnSuspender) {
+            e.preventDefault();
+            const tipo = btnSuspender.dataset.tipoSuspension;
+            const id = btnSuspender.dataset.suspender;
+            const suspendido = btnSuspender.dataset.suspendido !== 'true';
+            const accion = suspendido ? 'suspender' : 'reactivar';
+            const recargar = {
+                producto: cargarProductos,
+                marca: cargarMarcas,
+                categoria: cargarCategorias,
+                usuario: cargarUsuarios,
+                proveedor: cargarProveedores,
+                venta: cargarVentas,
+                devolucion: cargarDevoluciones,
+                compra: cargarCompras,
+                cita: cargarCitas,
+                receta: cargarRecetas,
+                promocion: cargarPromociones,
+                reporte: cargarReportes
+            }[tipo];
+
+            if (!recargar) return;
+            if (confirm(`¿Deseas ${accion} este registro? ${suspendido ? 'Podrás reactivarlo después.' : ''}`)) {
+                try {
+                    await Api.put('/api/suspensiones', { tipo, id, suspendido });
+                    const clave = claveSuspension(tipo, id);
+                    if (suspendido) suspensionesMemoria.add(clave);
+                    else suspensionesMemoria.delete(clave);
+                    await recargar();
+                } catch (err) {
+                    alert(`No se pudo ${accion} el registro: ${err.message}`);
+                }
+            }
+            return;
+        }
+
         // Clic en pestaña de inventario
         const tabBtn = e.target.closest('.inv-tab');
         if (tabBtn) {
@@ -1585,22 +1688,6 @@
             const id = btnEditUsuario.dataset.editarUsuario;
             const usuario = usuariosMemoria.find(u => String(u.id_usuario) === String(id));
             if (usuario) abrirModalUsuario(usuario);
-            return;
-        }
-
-        // Eliminar Usuario
-        const btnDelUsuario = e.target.closest('[data-eliminar-usuario]');
-        if (btnDelUsuario) {
-            e.preventDefault();
-            const id = btnDelUsuario.dataset.eliminarUsuario;
-            if (confirm('¿Estás seguro de que deseas eliminar este usuario?')) {
-                try {
-                    await Api.del('/api/usuarios/' + id);
-                    cargarUsuarios();
-                } catch (err) {
-                    alert('Error al eliminar el usuario: ' + err.message);
-                }
-            }
             return;
         }
 
@@ -1638,22 +1725,6 @@
             return;
         }
 
-        // Eliminar Producto
-        const btnDelProd = e.target.closest('[data-eliminar-prod]');
-        if (btnDelProd) {
-            e.preventDefault();
-            const id = btnDelProd.dataset.eliminarProd;
-            if (confirm('¿Estás seguro de que deseas eliminar este producto?')) {
-                try {
-                    await Api.del('/api/productos/' + id);
-                    cargarProductos();
-                } catch (err) {
-                    alert('Error al eliminar el producto: ' + err.message);
-                }
-            }
-            return;
-        }
-
         // Editar Categoría
         const btnEditCat = e.target.closest('[data-editar-cat]');
         if (btnEditCat) {
@@ -1664,22 +1735,6 @@
             return;
         }
 
-        // Eliminar Categoría
-        const btnDelCat = e.target.closest('[data-eliminar-cat]');
-        if (btnDelCat) {
-            e.preventDefault();
-            const id = btnDelCat.dataset.eliminarCat;
-            if (confirm('¿Estás seguro de que deseas eliminar esta categoría?')) {
-                try {
-                    await Api.del('/api/categorias/' + id);
-                    cargarCategorias();
-                } catch (err) {
-                    alert('Error al eliminar la categoría: ' + err.message);
-                }
-            }
-            return;
-        }
-
         // Editar Marca
         const btnEditMarca = e.target.closest('[data-editar-marca]');
         if (btnEditMarca) {
@@ -1687,22 +1742,6 @@
             const id = btnEditMarca.dataset.editarMarca;
             const marca = marcasMemoria.find(m => String(m.id_marca) === String(id));
             if (marca) abrirModalMarca(marca);
-            return;
-        }
-
-        // Eliminar Marca
-        const btnDelMarca = e.target.closest('[data-eliminar-marca]');
-        if (btnDelMarca) {
-            e.preventDefault();
-            const id = btnDelMarca.dataset.eliminarMarca;
-            if (confirm('¿Estás seguro de que deseas eliminar esta marca?')) {
-                try {
-                    await Api.del('/api/marcas/' + id);
-                    cargarMarcas();
-                } catch (err) {
-                    alert('Error al eliminar la marca: ' + err.message);
-                }
-            }
             return;
         }
 
@@ -1721,22 +1760,6 @@
             const id = btnEditProv.dataset.editarProv;
             const prov = proveedoresMemoria.find(p => String(p.codigo_proveedor) === String(id));
             if (prov) abrirModalProveedor(prov);
-            return;
-        }
-
-        // Eliminar Proveedor
-        const btnDelProv = e.target.closest('[data-eliminar-prov]');
-        if (btnDelProv) {
-            e.preventDefault();
-            const id = btnDelProv.dataset.eliminarProv;
-            if (confirm('¿Estás seguro de que deseas eliminar este proveedor?')) {
-                try {
-                    await Api.del('/api/proveedores/' + id);
-                    cargarProveedores();
-                } catch (err) {
-                    alert('Error al eliminar el proveedor: ' + err.message);
-                }
-            }
             return;
         }
 
@@ -1780,28 +1803,6 @@
             return;
         }
 
-        // Eliminar promo
-        const btnDelPromo = e.target.closest('[data-eliminar-promo]');
-        if (btnDelPromo) {
-            e.preventDefault();
-            if (confirm('¿Eliminar esta promoción?')) {
-                try { await Api.del('/api/promociones/' + btnDelPromo.dataset.eliminarPromo); cargarPromociones(); }
-                catch (err) { alert('Error: ' + err.message); }
-            }
-            return;
-        }
-
-        // Eliminar venta
-        const btnDelVenta = e.target.closest('[data-eliminar-venta]');
-        if (btnDelVenta) {
-            e.preventDefault();
-            if (confirm('¿Eliminar esta venta?')) {
-                try { await Api.del('/api/ventas/' + btnDelVenta.dataset.eliminarVenta); cargarVentas(); }
-                catch (err) { alert('Error: ' + err.message); }
-            }
-            return;
-        }
-
         // Cambiar estado venta
         const btnCambiarVenta = e.target.closest('[data-cambiar-venta]');
         if (btnCambiarVenta) {
@@ -1817,28 +1818,6 @@
             return;
         }
 
-        // Eliminar cita
-        const btnDelCita = e.target.closest('[data-eliminar-cita]');
-        if (btnDelCita) {
-            e.preventDefault();
-            if (confirm('¿Eliminar esta cita?')) {
-                try { await Api.del('/api/citas/' + btnDelCita.dataset.eliminarCita); cargarCitas(); }
-                catch (err) { alert('Error: ' + err.message); }
-            }
-            return;
-        }
-
-        // Eliminar receta
-        const btnDelReceta = e.target.closest('[data-eliminar-receta]');
-        if (btnDelReceta) {
-            e.preventDefault();
-            if (confirm('¿Eliminar esta receta óptica?')) {
-                try { await Api.del('/api/recetas/' + btnDelReceta.dataset.eliminarReceta); cargarRecetas(); }
-                catch (err) { alert('Error: ' + err.message); }
-            }
-            return;
-        }
-
         // Editar Cita
         const btnEditCita = e.target.closest('[data-editar-cita]');
         if (btnEditCita) {
@@ -1849,38 +1828,6 @@
             return;
         }
 
-        // Eliminar Compra
-        const btnDelCompra = e.target.closest('[data-eliminar-compra]');
-        if (btnDelCompra) {
-            e.preventDefault();
-            if (confirm('¿Eliminar esta orden de compra?')) {
-                try { await Api.del('/api/compras/' + btnDelCompra.dataset.eliminarCompra); cargarCompras(); }
-                catch (err) { alert('Error: ' + err.message); }
-            }
-            return;
-        }
-
-        // Eliminar Devolución
-        const btnDelDevol = e.target.closest('[data-eliminar-devolucion]');
-        if (btnDelDevol) {
-            e.preventDefault();
-            if (confirm('¿Eliminar esta devolución?')) {
-                try { await Api.del('/api/devoluciones/' + btnDelDevol.dataset.eliminarDevolucion); cargarDevoluciones(); }
-                catch (err) { alert('Error: ' + err.message); }
-            }
-            return;
-        }
-
-        // Eliminar Reporte
-        const btnDelRep = e.target.closest('[data-eliminar-reporte]');
-        if (btnDelRep) {
-            e.preventDefault();
-            if (confirm('¿Eliminar este reporte?')) {
-                try { await Api.del('/api/reportes/' + btnDelRep.dataset.eliminarReporte); cargarReportes(); }
-                catch (err) { alert('Error: ' + err.message); }
-            }
-            return;
-        }
     });
 
     // ── Ventas ──────────────────────────────────────────────────
@@ -1890,18 +1837,21 @@
         if (!tbVentas) return;
         try {
             const ventas = await Api.get('/api/ventas');
+            await cargarSuspensiones();
             let ingresos = 0, completadas = 0, cotizaciones = 0;
             tbVentas.innerHTML = '';
             if (ventas.length === 0) {
                 tbVentas.innerHTML = '<tr><td colspan="9" style="text-align:center;">No hay ventas registradas.</td></tr>';
             } else {
                 ventas.forEach(v => {
+                    const suspendido = estaSuspendido('venta', v.codigo_venta);
                     const esCotiz = v.es_cotizacion == 1;
                     if (!esCotiz && v.estado === 'Completada') { ingresos += parseFloat(v.total || 0); completadas++; }
                     if (esCotiz) cotizaciones++;
                     const estadoDisplay = esCotiz ? 'Cotización' : v.estado;
                     const clase = ESTADO_VENTA_CLASE[estadoDisplay] || 'blue';
                     const tr = document.createElement('tr');
+                    tr.classList.toggle('fila-suspendida', suspendido);
                     tr.innerHTML = `
                         <td><strong>#${v.codigo_venta}</strong></td>
                         <td>${BV.escapar(v.cliente || '—')}</td>
@@ -1910,11 +1860,11 @@
                         <td>${v.es_cotizacion ? '<span class="badge blue">Sí</span>' : '<span class="badge" style="background:rgba(100,100,100,0.15)">No</span>'}</td>
                         <td>${v.codigo_promocion ? `<span class="badge purple">#${v.codigo_promocion}</span>` : '—'}</td>
                         <td>${v.id_receta ? `<span class="badge teal">#${v.id_receta}</span>` : '—'}</td>
-                        <td><span class="badge ${clase}">${BV.escapar(estadoDisplay)}</span></td>
+                        <td><span class="badge ${clase}">${BV.escapar(estadoDisplay)}</span> ${insigniaSuspension(suspendido)}</td>
                         <td>
                             <div style="display:flex;gap:6px;">
                                 <button type="button" class="btn-ghost" data-cambiar-venta="${v.codigo_venta}" title="Cambiar estado"><i class="fa-solid fa-pen-to-square"></i></button>
-                                <button type="button" class="btn-ghost" data-eliminar-venta="${v.codigo_venta}" title="Eliminar" style="color:var(--red);"><i class="fa-solid fa-trash"></i></button>
+                                ${botonSuspension('venta', v.codigo_venta, suspendido)}
                             </div>
                         </td>
                     `;
@@ -1937,6 +1887,8 @@
                 } else {
                     ultimas.forEach(v => {
                         const tr = document.createElement('tr');
+                        const suspendido = estaSuspendido('venta', v.codigo_venta);
+                        tr.classList.toggle('fila-suspendida', suspendido);
                         const esCotiz = v.es_cotizacion == 1;
                         const estadoDisplay = esCotiz ? 'Cotización' : v.estado;
                         const clase = ESTADO_VENTA_CLASE[estadoDisplay] || 'blue';
@@ -1945,7 +1897,7 @@
                             <td>${BV.escapar(v.cliente || '—')}</td>
                             <td><strong>${BV.moneda(v.total)}</strong></td>
                             <td>${v.fecha ? v.fecha.split(' ')[0] : '—'}</td>
-                            <td><span class="badge ${clase}">${BV.escapar(estadoDisplay)}</span></td>
+                            <td><span class="badge ${clase}">${BV.escapar(estadoDisplay)}</span> ${insigniaSuspension(suspendido)}</td>
                             <td>
                                 <button type="button" class="btn-ghost" data-cambiar-venta="${v.codigo_venta}" title="Cambiar estado"><i class="fa-solid fa-pen-to-square"></i></button>
                             </td>
@@ -1971,6 +1923,7 @@
         if (!tbDevoluciones) return;
         try {
             const devs = await Api.get('/api/devoluciones');
+            await cargarSuspensiones();
             if (kpiDevoluciones) kpiDevoluciones.textContent = devs.length;
             tbDevoluciones.innerHTML = '';
             if (devs.length === 0) {
@@ -1978,16 +1931,18 @@
                 return;
             }
             devs.forEach(d => {
+                const suspendido = estaSuspendido('devolucion', d.id_devolucion);
                 const tr = document.createElement('tr');
+                tr.classList.toggle('fila-suspendida', suspendido);
                 tr.innerHTML = `
-                    <td><strong>#${d.id_devolucion}</strong></td>
+                    <td><strong>#${d.id_devolucion}</strong> ${insigniaSuspension(suspendido)}</td>
                     <td>${BV.escapar(d.motivo || '—')}</td>
                     <td>${d.cantidad}</td>
                     <td>${BV.escapar(d.observaciones || '—')}</td>
                     <td>${d.codigo_venta ? '#' + d.codigo_venta : '—'}</td>
                     <td>${BV.escapar(d.registrado_por || '—')}</td>
                     <td>
-                        <button type="button" class="btn-ghost" data-eliminar-devolucion="${d.id_devolucion}" title="Eliminar" style="color:var(--red);"><i class="fa-solid fa-trash"></i></button>
+                        ${botonSuspension('devolucion', d.id_devolucion, suspendido)}
                     </td>
                 `;
                 tbDevoluciones.appendChild(tr);
@@ -2003,6 +1958,7 @@
         if (!tbCompras) return;
         try {
             const compras = await Api.get('/api/compras');
+            await cargarSuspensiones();
             comprasMemoria = compras;
             tbCompras.innerHTML = '';
             if (compras.length === 0) {
@@ -2010,17 +1966,19 @@
                 return;
             }
             compras.forEach(c => {
+                const suspendido = estaSuspendido('compra', c.numero_compra);
                 const estadoClase = { Recibida: 'green', Pendiente: 'orange', Cancelada: 'red', 'En tránsito': 'blue' }[c.estado] || 'blue';
                 const tr = document.createElement('tr');
+                tr.classList.toggle('fila-suspendida', suspendido);
                 tr.innerHTML = `
                     <td><strong>#${c.numero_compra}</strong></td>
                     <td>${BV.escapar(c.numero_comprobante || '—')}</td>
                     <td>${BV.escapar(c.proveedor || '—')}</td>
                     <td>${c.fecha ? c.fecha.split(' ')[0] : '—'}</td>
                     <td><strong>${BV.moneda(c.total)}</strong></td>
-                    <td><span class="badge ${estadoClase}">${BV.escapar(c.estado || '—')}</span></td>
+                    <td><span class="badge ${estadoClase}">${BV.escapar(c.estado || '—')}</span> ${insigniaSuspension(suspendido)}</td>
                     <td>
-                        <button type="button" class="btn-ghost" data-eliminar-compra="${c.numero_compra}" title="Eliminar" style="color:var(--red);"><i class="fa-solid fa-trash"></i></button>
+                        ${botonSuspension('compra', c.numero_compra, suspendido)}
                     </td>
                 `;
                 tbCompras.appendChild(tr);
@@ -2038,6 +1996,7 @@
         if (!tbCitas) return;
         try {
             const citas = await Api.get('/api/citas');
+            await cargarSuspensiones();
             citasMemoria = citas;
             if (kpiCitas) kpiCitas.textContent = citas.filter(c => c.estado === 'Programada').length;
             tbCitas.innerHTML = '';
@@ -2046,19 +2005,21 @@
                 return;
             }
             citas.forEach(c => {
+                const suspendido = estaSuspendido('cita', c.id_cita);
                 const clase = ESTADO_CITA_CLASE[c.estado] || 'blue';
                 const tr = document.createElement('tr');
+                tr.classList.toggle('fila-suspendida', suspendido);
                 tr.innerHTML = `
                     <td><strong>#${c.id_cita}</strong></td>
                     <td>${BV.escapar(c.cliente || '—')}</td>
                     <td>${c.fecha_hora ? c.fecha_hora.replace('T', ' ').substring(0, 16) : '—'}</td>
                     <td>${BV.escapar(c.motivo || '—')}</td>
                     <td>${BV.escapar(c.atiende || '—')}</td>
-                    <td><span class="badge ${clase}">${BV.escapar(c.estado)}</span></td>
+                    <td><span class="badge ${clase}">${BV.escapar(c.estado)}</span> ${insigniaSuspension(suspendido)}</td>
                     <td>
                         <div style="display:flex;gap:6px;">
                             <button type="button" class="btn-ghost" data-editar-cita="${c.id_cita}" title="Editar"><i class="fa-solid fa-pen-to-square"></i></button>
-                            <button type="button" class="btn-ghost" data-eliminar-cita="${c.id_cita}" title="Eliminar" style="color:var(--red);"><i class="fa-solid fa-trash"></i></button>
+                            ${botonSuspension('cita', c.id_cita, suspendido)}
                         </div>
                     </td>
                 `;
@@ -2075,6 +2036,7 @@
         if (!tbRecetas) return;
         try {
             const recetas = await Api.get('/api/recetas');
+            await cargarSuspensiones();
             recetasMemoria = recetas;
             if (kpiRecetas) kpiRecetas.textContent = recetas.length;
             tbRecetas.innerHTML = '';
@@ -2084,18 +2046,20 @@
             }
             const hoy = new Date();
             recetas.forEach(r => {
+                const suspendido = estaSuspendido('receta', r.id_receta);
                 const vence = r.fecha_vencimiento ? new Date(r.fecha_vencimiento) : null;
                 const vigente = vence ? vence >= hoy : true;
                 const tr = document.createElement('tr');
+                tr.classList.toggle('fila-suspendida', suspendido);
                 tr.innerHTML = `
                     <td><strong>#${r.id_receta}</strong></td>
                     <td>${BV.escapar(r.cliente || '—')}</td>
                     <td>${r.fecha_emision || '—'}</td>
                     <td>${r.fecha_vencimiento || '—'}</td>
                     <td>${BV.escapar(r.diagnostico || '—')}</td>
-                    <td><span class="badge ${vigente ? 'green' : 'red'}">${vigente ? 'Vigente' : 'Vencida'}</span></td>
+                    <td><span class="badge ${vigente ? 'green' : 'red'}">${vigente ? 'Vigente' : 'Vencida'}</span> ${insigniaSuspension(suspendido)}</td>
                     <td>
-                        <button type="button" class="btn-ghost" data-eliminar-receta="${r.id_receta}" title="Eliminar" style="color:var(--red);"><i class="fa-solid fa-trash"></i></button>
+                        ${botonSuspension('receta', r.id_receta, suspendido)}
                     </td>
                 `;
                 tbRecetas.appendChild(tr);
@@ -2113,6 +2077,7 @@
         if (!gridPromos) return;
         try {
             const promos = await Api.get('/api/promociones');
+            await cargarSuspensiones();
             promosMemoria = promos;
             gridPromos.innerHTML = '';
             if (promos.length === 0) {
@@ -2120,16 +2085,17 @@
                 return;
             }
             promos.forEach(p => {
+                const suspendido = estaSuspendido('promocion', p.codigo_promocion);
                 const activa = p.estado === 'Activo';
                 const descuento = p.tipo_descuento === 'porcentaje' ? `${p.valor_descuento}%` : BV.moneda(p.valor_descuento);
                 const card = document.createElement('div');
-                card.className = 'promo-card';
+                card.className = `promo-card${suspendido ? ' elemento-suspendido' : ''}`;
                 card.innerHTML = `
                     <div class="promo-header">
-                        <span class="promo-badge ${activa ? 'green' : 'red'}">${activa ? 'Activa' : 'Inactiva'}</span>
+                        <div style="display:flex;gap:6px;align-items:center;"><span class="promo-badge ${activa ? 'green' : 'red'}">${activa ? 'Activa' : 'Inactiva'}</span> ${insigniaSuspension(suspendido)}</div>
                         <div style="display:flex;gap:6px;">
                             <button type="button" class="btn-ghost" data-editar-promo="${p.codigo_promocion}" title="Editar"><i class="fa-solid fa-pen-to-square"></i></button>
-                            <button type="button" class="btn-ghost" data-eliminar-promo="${p.codigo_promocion}" title="Eliminar" style="color:var(--red);"><i class="fa-solid fa-trash"></i></button>
+                            ${botonSuspension('promocion', p.codigo_promocion, suspendido)}
                         </div>
                     </div>
                     <h3 class="promo-nombre">${BV.escapar(p.nombre)}</h3>
@@ -2222,23 +2188,25 @@
         if (!gridReportes) return;
         try {
             const reportes = await Api.get('/api/reportes');
+            await cargarSuspensiones();
             gridReportes.innerHTML = '';
             if (reportes.length === 0) {
                 gridReportes.innerHTML = '<p style="grid-column:1/-1;text-align:center;color:var(--admin-text-muted);">No hay reportes generados.</p>';
                 return;
             }
             reportes.forEach(r => {
+                const suspendido = estaSuspendido('reporte', r.id_reporte);
                 const tipo = r.tipo_reporte || 'General';
                 const clase = TIPO_REPORTE_CLASE[tipo] || 'teal';
                 const icon = TIPO_REPORTE_ICON[tipo] || 'fa-solid fa-file-invoice';
                 const card = document.createElement('div');
-                card.className = 'reporte-card';
+                card.className = `reporte-card${suspendido ? ' elemento-suspendido' : ''}`;
                 card.innerHTML = `
                     <div class="reporte-header">
-                        <span class="badge ${clase}"><i class="${icon}"></i> ${BV.escapar(tipo)}</span>
+                        <div style="display:flex;gap:6px;align-items:center;"><span class="badge ${clase}"><i class="${icon}"></i> ${BV.escapar(tipo)}</span> ${insigniaSuspension(suspendido)}</div>
                         <div style="display:flex;align-items:center;gap:10px;">
                             <span style="font-size:0.75rem;color:var(--admin-text-muted);"><i class="fa-regular fa-calendar"></i> ${r.fecha_generacion ? r.fecha_generacion.split(' ')[0] : '—'}</span>
-                            <button type="button" class="btn-ghost" data-eliminar-reporte="${r.id_reporte}" title="Eliminar reporte" style="color:var(--red);border:none;padding:4px 6px;cursor:pointer;"><i class="fa-solid fa-trash"></i></button>
+                            ${botonSuspension('reporte', r.id_reporte, suspendido)}
                         </div>
                     </div>
                     <h3 class="reporte-titulo">${BV.escapar(r.titulo || 'Reporte del sistema')}</h3>

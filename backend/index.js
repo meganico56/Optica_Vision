@@ -1426,6 +1426,7 @@ app.delete("/api/reportes/:id", async (req, res) => {
 
 // Rutas del panel del cliente: perfil y estado de pedidos (backend/rutas-panel.js)
 app.use("/api", require("./rutas-panel"));
+app.use("/api", require("./rutas-suspension"));
 
 const PORT = Number(process.env.PORT) || 3000;
 app.listen(PORT, () => {
