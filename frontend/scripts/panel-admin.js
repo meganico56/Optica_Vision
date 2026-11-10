@@ -89,7 +89,7 @@
                     tr.innerHTML = `
                         <td>#${p.id}</td>
                         <td style="display:flex;align-items:center;gap:10px;">
-                            <img src="${RUTA_IMAGENES + BV.escapar(p.imagen || 'gafas-modelo1.png')}" alt="${BV.escapar(p.nombre)}" onerror="this.onerror=null;this.src='../imagenes/productos/gafas-modelo1.png'" style="width:42px;height:42px;object-fit:contain;border-radius:6px;background:rgba(255,255,255,0.05);padding:2px;border:1px solid var(--border-color);">
+                            <img src="${RUTA_IMAGENES + BV.escapar(p.imagen || 'gafas-modelo1.png')}" onerror="this.onerror=null;this.src='../imagenes/productos/gafas-modelo1.png'" style="width:42px;height:42px;object-fit:contain;border-radius:6px;background:rgba(255,255,255,0.05);padding:2px;border:1px solid var(--border-color);">
                             <strong>${BV.escapar(p.nombre)}</strong>
                         </td>
                         <td><span class="badge blue">${BV.escapar(p.categoria || 'Gafas')}</span></td>
@@ -566,7 +566,7 @@
                 </div>
                 <div class="product-image-uploader">
                     <div class="image-preview-box">
-                        <img id="mPreviewImg" src="${RUTA_IMAGENES + imagenInicial}" alt="Vista previa del producto">
+                        <img id="mPreviewImg" src="${RUTA_IMAGENES + imagenInicial}">
                     </div>
                     <div class="image-upload-controls">
                         <div>

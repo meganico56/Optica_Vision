@@ -13,7 +13,7 @@
 <body>
     <header class="navbar">
         <div class="logo">
-            <a href="inicio.html"><img src="../imagenes/logos/Logo_modo_claro.png" class="logo-icon" alt="Boutique de la Visión"></a>
+            <a href="inicio.html"><img src="../imagenes/logos/Logo_modo_claro.png" class="logo-icon"></a>
         </div>
 
         <form class="buscador" action="catalogo.html" method="get" role="search">
@@ -31,12 +31,13 @@
                 <li><a href="agendar-cita.html">AGENDAR CITA</a></li>
                 <li><a href="carrito.html" aria-label="Carrito"><i class="fa-solid fa-cart-shopping"></i><span class="cart-count" id="cartBadge" hidden>0</span></a></li>
                 <li><a href="inicio-sesion.html">INICIAR SESIÓN</a></li>
-            </ul>
+                            <li><button class="btn-tema" id="btnTemaPublico" type="button" aria-label="Alternar modo oscuro"><i class="fa-solid fa-moon"></i><span>Modo oscuro</span></button></li>
+</ul>
         </nav>
     </header>
 
     <main class="catalogo_G">
-        <img src="../imagenes/fondos/fondo-boutique.png" alt="" class="imag_fond">
+        <img src="../imagenes/fondos/fondo-boutique.png" class="imag_fond">
 
         <div class="catalogo_cont">
             <ul class="botons" id="filtros">
@@ -61,7 +62,7 @@
     <template id="tplProducto">
         <article class="producto-card">
             <div class="producto-imagen">
-                <a class="enlace-producto" href="#"><img class="img-producto" src="" alt="" width="200" loading="lazy"></a>
+                <a class="enlace-producto" href="#"><img class="img-producto" src="" width="200" loading="lazy"></a>
                 <span class="badge-agotado" hidden>Agotado</span>
             </div>
             <div class="producto-info">
@@ -76,7 +77,7 @@
     <footer>
         <div class="footer-container">
             <div class="footer-col">
-                <div class="logo"><img src="../imagenes/logos/Logo_modo_claro.png" class="logo-icon" alt="Boutique de la Visión"></div>
+                <div class="logo"><img src="../imagenes/logos/Logo_modo_claro.png" class="logo-icon"></div>
             </div>
             <div class="footer-col">
                 <h4>AYUDA</h4>

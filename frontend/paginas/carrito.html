@@ -14,7 +14,7 @@
 <body>
     <header class="navbar">
         <div class="logo">
-            <a href="inicio.html"><img src="../imagenes/logos/Logo_modo_claro.png" class="logo-icon" alt="Boutique de la Visión"></a>
+            <a href="inicio.html"><img src="../imagenes/logos/Logo_modo_claro.png" class="logo-icon"></a>
         </div>
 
         <form class="buscador" action="catalogo.html" method="get" role="search">
@@ -32,7 +32,8 @@
                 <li><a href="agendar-cita.html">AGENDAR CITA</a></li>
                 <li><a href="carrito.html" class="activo" aria-label="Carrito"><i class="fa-solid fa-cart-shopping"></i><span class="cart-count" id="cartBadge" hidden>0</span></a></li>
                 <li><a href="inicio-sesion.html">REGISTRO / LOGIN</a></li>
-            </ul>
+                            <li><button class="btn-tema" id="btnTemaPublico" type="button" aria-label="Alternar modo oscuro"><i class="fa-solid fa-moon"></i><span>Modo oscuro</span></button></li>
+</ul>
         </nav>
     </header>
 
@@ -93,7 +94,7 @@
     <template id="tplItemCarrito">
         <div class="cart-item">
             <div class="item-details">
-                <div class="item-image-wrapper"><img src="" alt=""></div>
+                <div class="item-image-wrapper"><img src=""></div>
                 <div class="item-info">
                     <h3></h3>
                     <p class="item-marca"></p>

@@ -5,14 +5,14 @@
   justify-content: space-between;
   align-items: center;
   padding: 1rem 5%;
-  background: rgba(255, 255, 255, 0.95);
+  background: var(--navbar-bg);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
   border-bottom: 1px solid var(--border);
   position: sticky;
   top: 0;
   z-index: 1000;
-  transition: padding 0.3s ease, box-shadow 0.3s ease;
+  transition: padding 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
 }
 
 /* inicio.js agrega .scrolled al bajar */
@@ -318,7 +318,7 @@ footer {
     max-height: 0;
     overflow: hidden;
     gap: 0;
-    background: rgba(255, 255, 255, 0.97);
+    background: var(--navbar-menu-bg);
     position: absolute;
     top: 100%;
     left: 0;
@@ -347,3 +347,124 @@ footer {
   .contact-info,
   .social-icons { justify-content: center; }
 }
+
+/* ========================================
+   BOTÓN ALTERNAR TEMA (modo oscuro / claro)
+   ======================================== */
+.btn-tema {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  background: var(--gold-subtle);
+  border: 1.5px solid var(--gold);
+  border-radius: 20px;
+  padding: 5px 13px;
+  font-family: var(--font-title);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  color: var(--gold-dark);
+  cursor: pointer;
+  transition: background 0.3s ease, color 0.3s ease, border-color 0.3s ease, transform 0.2s ease;
+  white-space: nowrap;
+  user-select: none;
+}
+
+.btn-tema i {
+  font-size: 0.85rem;
+  transition: transform 0.4s ease;
+}
+
+.btn-tema:hover {
+  background: var(--gold);
+  color: #ffffff;
+  transform: scale(1.05);
+}
+
+.btn-tema:hover i { transform: rotate(20deg); }
+
+/* ==========================================
+   MODO OSCURO — Páginas públicas
+   ========================================== */
+:root.dark-mode body {
+  background-color: var(--bg);
+  color: var(--text-dark);
+}
+
+:root.dark-mode .navbar {
+  border-bottom-color: var(--border);
+}
+
+:root.dark-mode .navbar-menu li a {
+  color: var(--text-dark);
+}
+
+:root.dark-mode .busc {
+  color: var(--text-dark);
+}
+
+:root.dark-mode .busc::placeholder {
+  color: var(--text-muted);
+}
+
+:root.dark-mode .buscador {
+  background-color: var(--bg-card);
+  border-color: var(--border);
+}
+
+:root.dark-mode .hamburguesa span {
+  background: var(--gold);
+}
+
+:root.dark-mode footer {
+  background: rgba(10, 10, 10, 0.92);
+  border-top-color: var(--border);
+  color: var(--text-dark);
+}
+
+:root.dark-mode .footer-col ul a {
+  color: var(--text-muted);
+}
+
+:root.dark-mode .payment-methods span {
+  background-color: var(--bg-card);
+  border-color: var(--border);
+  color: var(--text-dark);
+}
+
+:root.dark-mode .btn-tema {
+  color: var(--gold-light);
+  border-color: var(--gold);
+}
+
+/* ========== BOTÓN TEMA FLOTANTE (páginas sin navbar) ========== */
+.btn-tema-flotante {
+    position: fixed;
+    bottom: 1.5rem;
+    right: 1.5rem;
+    z-index: 9999;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: var(--gold);
+    border: none;
+    border-radius: 30px;
+    padding: 10px 18px;
+    font-family: var(--font-title);
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: #ffffff;
+    cursor: pointer;
+    box-shadow: 0 4px 16px var(--gold-glow);
+    transition: background 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+}
+
+.btn-tema-flotante i { font-size: 0.9rem; transition: transform 0.4s ease; }
+
+.btn-tema-flotante:hover {
+    background: var(--gold-dark);
+    transform: scale(1.07);
+    box-shadow: 0 6px 20px var(--gold-glow);
+}
+
+.btn-tema-flotante:hover i { transform: rotate(20deg); }

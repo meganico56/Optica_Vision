@@ -13,7 +13,7 @@
 <body>
 <aside class="sidebar" id="sidebar">
 <div class="sidebar-header">
-<img src="../imagenes/logos/Logo_modo_claro.png" alt="Boutique de la Visión" class="sidebar-logo" id="mainLogo">
+<img src="../imagenes/logos/Logo_modo_claro.png" class="sidebar-logo" id="mainLogo">
 <button class="sidebar-close" id="sidebarClose" type="button" aria-label="Cerrar menú"><i class="fa-solid fa-xmark"></i></button>
 </div>
 <nav class="sidebar-nav">
@@ -37,6 +37,7 @@
 </div>
 <div class="top-bar-right">
 <a href="carrito.html" class="cart-btn" aria-label="Carrito"><i class="fa-solid fa-shopping-cart"></i><span class="cart-count" id="cartCount">0</span></a>
+<button class="btn-tema" id="btnTemaPublico" type="button" aria-label="Alternar modo oscuro"><i class="fa-solid fa-moon"></i><span>Modo oscuro</span></button>
 <div class="user-avatar" id="userAvatar"></div>
 </div>
 </header>
@@ -131,6 +132,7 @@
 </template>
 
 <script src="../scripts/api.js"></script>
+<script src="../scripts/session-manager.js"></script>
 <script src="../scripts/sesion.js"></script>
 <script src="../scripts/carrito.js"></script>
 <script src="../scripts/panel-navegacion.js"></script>

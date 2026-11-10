@@ -112,7 +112,7 @@ document.addEventListener('DOMContentLoaded', () => {
                  style="position:absolute;top:50%;left:50%;
                         transform:translate(-50%,-50%) scale(0.85);
                         opacity:0;will-change:transform,opacity;">
-                <img src="${logoSrc}" alt="Logo Optix"
+                <img src="${logoSrc}"
                      style="height:72px;filter:drop-shadow(0 4px 14px rgba(0,0,0,0.4));">
             </div>
         </div>

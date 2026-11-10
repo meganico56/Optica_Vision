@@ -41,7 +41,6 @@ document.addEventListener('DOMContentLoaded', function () {
     const imagen = document.getElementById('summaryImage');
     if (imagen && items[0].imagen) {
         imagen.src = items[0].imagen;
-        imagen.alt = items[0].nombre;
     }
 
     // ---------- Fórmula óptica ----------
