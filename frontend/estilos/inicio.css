@@ -1190,6 +1190,24 @@ footer .copyright {
 
 :root.dark-mode .hero-text h2 { color: var(--text-muted); }
 
+/* En oscuro el aura del hero es negra con borde dorado */
+:root.dark-mode .hero-text::before {
+    background: radial-gradient(ellipse at center, rgba(8, 8, 8, 0.95) 0%, rgba(12, 12, 12, 0.88) 45%, rgba(204, 164, 59, 0.35) 64%, transparent 76%);
+}
+
+:root.dark-mode .hero-text .hero-tag,
+:root.dark-mode .hero-text h1,
+:root.dark-mode .hero-text h2,
+:root.dark-mode .hero-text p {
+    text-shadow:
+        0 0 2px #000000,
+        0 0 6px #000000,
+        0 0 12px rgba(0, 0, 0, 0.95),
+        0 0 22px rgba(0, 0, 0, 0.9),
+        0 0 40px rgba(204, 164, 59, 0.55),
+        0 0 70px rgba(204, 164, 59, 0.4);
+}
+
 :root.dark-mode .podium-tapa {
     background: radial-gradient(ellipse at 50% 35%, #3a3a3a 0%, #262626 50%, #161616 100%);
     border-color: var(--gold);
