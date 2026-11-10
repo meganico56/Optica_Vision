@@ -12,6 +12,7 @@
     // Páginas que exigen sesión y los roles que pueden verlas.
     const PROTEGIDAS = {
         'panel-admin.html': STAFF,
+        'panel-empleado.html': ['Vendedor'],
         'panel-usuario.html': ['Cliente']
     };
 
@@ -21,6 +22,7 @@
 
     function panelDe(rol) {
         if (STAFF.indexOf(rol) !== -1) return 'panel-admin.html';
+        if (rol === 'Vendedor') return 'panel-empleado.html';
         if (rol === 'Cliente') return 'panel-usuario.html';
         return 'inicio.html';
     }
@@ -39,6 +41,7 @@
             // Asegurar que al iniciar sesión el panel siempre abra desde la pestaña principal (Dashboard / Inicio)
             localStorage.removeItem('bv_seccion:panel-admin.html');
             localStorage.removeItem('bv_seccion:panel-usuario.html');
+            localStorage.removeItem('bv_seccion:panel-empleado.html');
         },
 
         limpiar() {
@@ -132,7 +135,8 @@
             const li = document.createElement('li');
             li.innerHTML = esStaff
                 ? '<a href="panel-admin.html" style="color: var(--gold);"><i class="fa-solid fa-chart-pie"></i> PANEL</a>'
-                : '<a href="panel-usuario.html" style="color: var(--gold);"><i class="fa-solid fa-user"></i> MI PANEL</a>';
+                : '<a href="panel-usuario.html" style="color: var(--gold);"><i class="fa-solid fa-user"></i> MI PANEL</a>'
+                - '<a href="panel-empleado.html" style="color: var(--gold);"><i class="fa-solid fa-user"></i>panel empleado</a>'
             enlace.parentElement.insertAdjacentElement('beforebegin', li);
 
             enlace.innerHTML = '<i class="fa-solid fa-right-from-bracket"></i> CERRAR SESIÓN';
