@@ -62,12 +62,16 @@
       </nav>
     </header>
 
-    <main>
+        <main>
+      <!-- HERO -->
       <section class="hero">
         <div class="hero-text fade-in-up">
-          <span class="hero-tag"> BIENVENIDO A ÓPTICA VISIÓN </span>
+          <span class="hero-tag">BIENVENIDO A ÓPTICA VISIÓN</span>
 
-          <h1>BOUTIQUE DE LA VISIÓN</h1>
+          <h1>
+            <span class="hero-h1-dark">BOUTIQUE DE LA</span><br>
+            <span class="hero-h1-gold">VISIÓN</span>
+          </h1>
 
           <h2>"Elegancia y precisión para tus ojos"</h2>
 
@@ -79,22 +83,15 @@
           </p>
 
           <div class="hero-buttons">
-            <!-- BOTÓN CORREGIDO A AGENDAR CITA -->
-            <a href="agendar-cita.html" class="btn-primary"> Agenda tu cita </a>
-
-            <a href="catalogo.html" class="btn-secondary"> Ver catálogo </a>
+            <a href="agendar-cita.html" class="btn-arrow btn-arrow-primary">Agenda tu cita <i class="fa-solid fa-chevron-right"></i></a>
+            <a href="catalogo.html" class="btn-arrow btn-arrow-secondary">Ver catálogo <i class="fa-solid fa-chevron-right"></i></a>
           </div>
         </div>
 
         <div class="hero-viewer fade-in-up delay">
           <div class="glow"></div>
-
           <div class="viewer-container">
-            <img
-              src="../imagenes/productos/gafas-modelo1.png"
-              class="glasses-model"
-            />
-
+            <img src="../imagenes/productos/gafas-modelo1.png" class="glasses-model" alt="Gafas Premium" />
             <div class="podium"></div>
           </div>
         </div>
@@ -124,73 +121,103 @@
         </div>
       </section>
 
-      <!-- SERVICIOS (carrusel solo CSS) -->
+      <!-- SERVICIOS renovados -->
       <section class="servicios" id="servicios">
-        <h2>Nuestros servicios</h2>
+        <input type="radio" name="slide" id="slide1" checked />
+        <input type="radio" name="slide" id="slide2" />
+        <input type="radio" name="slide" id="slide3" />
 
-        <div class="carrusel">
-          <input type="radio" name="slide" id="slide1" checked />
-          <input type="radio" name="slide" id="slide2" />
-          <input type="radio" name="slide" id="slide3" />
+        <div class="servicios-contenedor">
+          <button class="servicio-flecha prev" id="servicioPrev" type="button" aria-label="Servicio anterior">
+            <i class="fa-solid fa-chevron-left"></i>
+          </button>
 
-          <div class="carrusel-ventana">
-            <div class="carrusel-pista">
-              <article class="slide">
-                <i class="fa-solid fa-eye"></i>
+          <div class="servicios-track">
+            <article class="servicio-card">
+              <div class="servicio-arco"></div>
+              <div class="servicio-body">
+                <i class="fa-solid fa-eye servicio-icon"></i>
+                <span class="servicio-label">NUESTROS SERVICIOS</span>
                 <h3>Examen visual</h3>
-                <p>
-                  Evaluamos tu salud visual para recomendarte la fórmula que
-                  realmente necesitas.
-                </p>
-              </article>
-              <article class="slide">
-                <i class="fa-solid fa-glasses"></i>
+                <p>Evaluamos tu salud visual para recomendarte la fórmula que realmente necesitas.</p>
+                <a href="agendar-cita.html" class="btn-arrow btn-arrow-primary">Agenda tu cita <i class="fa-solid fa-chevron-right"></i></a>
+              </div>
+              <span class="servicio-numero">01</span>
+            </article>
+
+            <article class="servicio-card">
+              <div class="servicio-arco"></div>
+              <div class="servicio-body">
+                <i class="fa-solid fa-glasses servicio-icon"></i>
+                <span class="servicio-label">NUESTROS SERVICIOS</span>
                 <h3>Monturas y lentes</h3>
-                <p>
-                  Diseños exclusivos y lentes de alta tecnología para cada
-                  estilo.
-                </p>
-              </article>
-              <article class="slide">
-                <i class="fa-solid fa-user-doctor"></i>
+                <p>Diseños exclusivos y lentes de alta tecnología para cada estilo y necesidad.</p>
+                <a href="catalogo.html" class="btn-arrow btn-arrow-primary">Ver catálogo <i class="fa-solid fa-chevron-right"></i></a>
+              </div>
+              <span class="servicio-numero">02</span>
+            </article>
+
+            <article class="servicio-card">
+              <div class="servicio-arco"></div>
+              <div class="servicio-body">
+                <i class="fa-solid fa-user-doctor servicio-icon"></i>
+                <span class="servicio-label">NUESTROS SERVICIOS</span>
                 <h3>Atención profesional</h3>
-                <p>
-                  Un equipo que te asesora con calidez y precisión, antes y
-                  después de tu compra.
-                </p>
-              </article>
-            </div>
+                <p>Un equipo que te asesora con calidez y precisión, antes y después de tu compra.</p>
+                <a href="agendar-cita.html" class="btn-arrow btn-arrow-primary">Contáctanos <i class="fa-solid fa-chevron-right"></i></a>
+              </div>
+              <span class="servicio-numero">03</span>
+            </article>
           </div>
 
-          <div class="carrusel-puntos">
-            <label for="slide1"></label>
-            <label for="slide2"></label>
-            <label for="slide3"></label>
-          </div>
+          <button class="servicio-flecha next" id="servicioNext" type="button" aria-label="Siguiente servicio">
+            <i class="fa-solid fa-chevron-right"></i>
+          </button>
+        </div>
+
+        <div class="carrusel-puntos">
+          <label for="slide1"></label>
+          <label for="slide2"></label>
+          <label for="slide3"></label>
         </div>
       </section>
 
-      <!-- NOSOTROS -->
+      <!-- NOSOTROS renovado -->
       <section class="nosotros" id="nosotros">
-        <h2>¿Quiénes somos?</h2>
-        <div class="nosotros-container">
-          <div class="nosotros-mision">
-            <h3>Misión</h3>
+        <div class="nosotros-intro">
+          <div class="nosotros-intro-texto">
+            <h2>
+              <span class="nosotros-h2-dark">¿Quiénes</span>
+              <span class="nosotros-h2-gold"> somos?</span>
+            </h2>
             <p>
               En Óptica Visión nuestra misión es brindar a nuestros clientes una
               experiencia visual excepcional, ofreciendo productos de alta
               calidad y servicios personalizados que mejoren su salud visual y
               estilo de vida.
             </p>
+            <a href="agendar-cita.html" class="btn-arrow btn-arrow-outline">Conoce más <i class="fa-solid fa-chevron-right"></i></a>
           </div>
-          <div class="nosotros-vision">
-            <h3>Visión</h3>
-            <p>
-              Nuestra visión es ser reconocidos como la óptica de referencia en
-              la región, destacándonos por nuestra excelencia en atención al
-              cliente, innovación en productos y compromiso con la salud visual
-              de nuestra comunidad.
-            </p>
+          <div class="nosotros-intro-foto">
+            <!-- Foto de Denis Trushtin, disponible en Pexels: https://www.pexels.com/photo/close-up-of-face-of-woman-in-glasses-10080214/ -->
+            <img src="../imagenes/fondos/rostro-gafas-pexels-10080214.jpeg" alt="Primer plano de una mujer con gafas" class="nosotros-foto-img" />
+          </div>
+        </div>
+
+        <div class="nosotros-cards">
+          <div class="nosotros-card">
+            <div class="nosotros-card-icon"><i class="fa-solid fa-eye"></i></div>
+            <div class="nosotros-card-content">
+              <h3>Misión</h3>
+              <p>En Óptica Visión nuestra misión es brindar a nuestros clientes una experiencia visual excepcional, ofreciendo productos de alta calidad y servicios personalizados.</p>
+            </div>
+          </div>
+          <div class="nosotros-card">
+            <div class="nosotros-card-icon"><i class="fa-solid fa-glasses"></i></div>
+            <div class="nosotros-card-content">
+              <h3>Visión</h3>
+              <p>Nuestra visión es ser reconocidos como la óptica de referencia en la región, destacándonos por nuestra excelencia en atención al cliente, innovación en productos y compromiso con la salud visual de nuestra comunidad.</p>
+            </div>
           </div>
         </div>
       </section>

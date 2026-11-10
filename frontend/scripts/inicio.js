@@ -30,6 +30,87 @@ document.addEventListener("DOMContentLoaded", () => {
 
     window.addEventListener("scroll", actualizarNavbar);
 
+    // 3. Carrusel de Servicios: rotación automática y botones anterior / siguiente
+    const slides = [
+        document.getElementById("slide1"),
+        document.getElementById("slide2"),
+        document.getElementById("slide3")
+    ].filter(Boolean);
+
+    const btnPrev = document.getElementById("servicioPrev");
+    const btnNext = document.getElementById("servicioNext");
+    const contenedorServicios = document.querySelector(".servicios-contenedor");
+
+    let indiceActual = 0;
+    let temporizador = null;
+    const INTERVALO = 5000; // cambia cada 5 segundos
+
+    function obtenerIndiceActivo() {
+        const idx = slides.findIndex(radio => radio.checked);
+        return idx !== -1 ? idx : 0;
+    }
+
+    function mostrarSlide(idx) {
+        indiceActual = (idx + slides.length) % slides.length;
+        if (slides[indiceActual]) {
+            slides[indiceActual].checked = true;
+        }
+    }
+
+    function siguienteSlide() {
+        indiceActual = obtenerIndiceActivo();
+        mostrarSlide(indiceActual + 1);
+    }
+
+    function anteriorSlide() {
+        indiceActual = obtenerIndiceActivo();
+        mostrarSlide(indiceActual - 1);
+    }
+
+    function iniciarRotacion() {
+        detenerRotacion();
+        temporizador = setInterval(siguienteSlide, INTERVALO);
+    }
+
+    function detenerRotacion() {
+        if (temporizador) {
+            clearInterval(temporizador);
+            temporizador = null;
+        }
+    }
+
+    if (slides.length > 0) {
+        iniciarRotacion();
+
+        if (btnNext) {
+            btnNext.addEventListener("click", () => {
+                siguienteSlide();
+                iniciarRotacion();
+            });
+        }
+
+        if (btnPrev) {
+            btnPrev.addEventListener("click", () => {
+                anteriorSlide();
+                iniciarRotacion();
+            });
+        }
+
+        // Pausar si el usuario pasa el mouse por encima
+        if (contenedorServicios) {
+            contenedorServicios.addEventListener("mouseenter", detenerRotacion);
+            contenedorServicios.addEventListener("mouseleave", iniciarRotacion);
+        }
+
+        // Si el usuario hace clic directamente en los puntos inferiores
+        document.querySelectorAll(".carrusel-puntos label").forEach((label, i) => {
+            label.addEventListener("click", () => {
+                indiceActual = i;
+                iniciarRotacion();
+            });
+        });
+    }
+
 });
 
 const abrir = document.getElementById("abrirModal");

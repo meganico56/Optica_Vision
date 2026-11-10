@@ -22,11 +22,25 @@ html { scroll-behavior: smooth; }
     gap: 4rem;
     min-height: 75vh;
     padding: 4rem 5%;
+    position: relative;
 }
 
 .hero-text {
     flex: 1;
     max-width: 600px;
+    position: relative;
+    z-index: 1;
+}
+
+.hero-text .hero-tag,
+.hero-text h1,
+.hero-text h2,
+.hero-text p {
+    text-shadow:
+        0 0 4px #ffffff,
+        0 0 12px rgba(255, 255, 255, 1),
+        0 0 28px rgba(255, 255, 255, 0.98),
+        0 4px 42px rgba(255, 255, 255, 0.9);
 }
 
 .hero-tag {
@@ -79,6 +93,7 @@ html { scroll-behavior: smooth; }
     justify-content: center;
     align-items: center;
     position: relative;
+    z-index: 1;
 }
 
 .viewer-container {
@@ -164,176 +179,383 @@ html { scroll-behavior: smooth; }
     color: var(--text-muted);
 }
 
-/* SERVICIOS + CARRUSEL (solo CSS) */
+/* ===== BOTONES CON FLECHA ===== */
+.btn-arrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 11px 24px;
+    border-radius: 30px;
+    font-family: var(--font-title);
+    font-size: 0.88rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: none;
+    text-decoration: none;
+}
+.btn-arrow i { font-size: 0.75rem; transition: transform 0.3s ease; }
+.btn-arrow:hover i { transform: translateX(4px); }
+
+.btn-arrow-primary {
+    background: var(--gold);
+    color: #ffffff;
+    box-shadow: 0 6px 18px var(--gold-glow);
+}
+.btn-arrow-primary:hover {
+    background: var(--gold-dark);
+    transform: translateY(-3px);
+}
+
+.btn-arrow-secondary {
+    background: transparent;
+    color: var(--text-dark);
+    border: 1.5px solid var(--gold);
+}
+.btn-arrow-secondary:hover {
+    background: var(--gold);
+    color: #ffffff;
+    transform: translateY(-3px);
+}
+
+.btn-arrow-outline {
+    background: transparent;
+    color: var(--text-dark);
+    border: 1.5px solid var(--border);
+}
+.btn-arrow-outline:hover {
+    border-color: var(--gold);
+    color: var(--gold-dark);
+    transform: translateY(-2px);
+}
+
+/* ===== HERO — títulos bicolor ===== */
+.hero-h1-dark {
+    color: var(--text-dark);
+    font-family: var(--font-title);
+    font-size: 3.4rem;
+    font-weight: 800;
+    line-height: 1.1;
+}
+.hero-h1-gold {
+    color: var(--gold);
+    font-family: var(--font-title);
+    font-size: 3.4rem;
+    font-weight: 800;
+    line-height: 1.1;
+}
+.hero-text h1 {
+    font-family: var(--font-title);
+    font-size: 3.4rem;
+    font-weight: 800;
+    letter-spacing: 1px;
+    margin-bottom: 0.5rem;
+    line-height: 1.1;
+}
+
+/* ===== SECCIÓN SERVICIOS — nueva maqueta ===== */
 .servicios {
-    padding: 2rem 5% 4rem;
-    text-align: center;
-}
-
-.carrusel {
+    padding: 2rem 5% 1rem;
     position: relative;
-    max-width: 800px;
-    margin: 1.5rem auto 0;
 }
 
-.carrusel input {
+.servicios > input[type="radio"] {
     position: absolute;
     opacity: 0;
     pointer-events: none;
 }
 
-.carrusel-ventana {
-    overflow: hidden;
-    background: #fdfaf3;
-    border: 3px solid var(--gold);
-    border-radius: 20px;
-    box-shadow: 0 10px 25px rgba(204, 164, 59, 0.15);
+.servicios-contenedor {
+    position: relative;
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 34px;
 }
 
-.carrusel-pista {
+.servicios-track {
     display: flex;
-    transition: transform 0.6s ease;
+    overflow: hidden;
+    margin: 0 auto;
+    border-radius: 140px;
 }
 
-.slide {
+.servicio-card {
     flex: 0 0 100%;
-    box-sizing: border-box;
+    display: none;
+    align-items: center;
+    background:
+        radial-gradient(ellipse at 86% 50%, rgba(204, 164, 59, 0.08), transparent 35%),
+        var(--bg-card);
+    border: 1px solid rgba(204, 164, 59, 0.48);
+    border-radius: 140px;
+    overflow: hidden;
+    min-height: 280px;
+    box-shadow: 0 18px 45px rgba(45, 37, 18, 0.09), 0 3px 10px rgba(204, 164, 59, 0.08);
+    position: relative;
+    padding: 2rem 8rem 2rem 9rem;
+    animation: servicioEntrada 0.45s ease both;
+}
+
+.servicio-arco {
+    position: absolute;
+    left: -92px;
+    top: -18px;
+    bottom: -18px;
+    width: 205px;
+    background: linear-gradient(90deg, #c99d31 0%, #e8c85e 48%, rgba(232, 200, 94, 0.2) 76%, transparent 100%);
+    border-radius: 50%;
+    pointer-events: none;
+    box-shadow: 12px 0 24px rgba(204, 164, 59, 0.12);
+}
+
+.servicio-body {
+    flex: 1;
     display: flex;
     flex-direction: column;
-    align-items: center;
-    gap: 0.8rem;
-    padding: 3rem 2rem;
+    align-items: flex-start;
+    gap: 0.55rem;
+    padding: 1rem 0;
+    max-width: 480px;
+    position: relative;
+    z-index: 1;
 }
 
-.slide i {
-    font-size: 2.5rem;
+.servicio-icon {
+    font-size: 1.8rem;
     color: var(--gold);
+    margin-bottom: 0.2rem;
 }
 
-.slide h3 {
+.servicio-label {
     font-family: var(--font-title);
-    font-size: 1.5rem;
-    font-weight: 500;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 2px;
+    color: var(--gold-dark);
+    text-transform: uppercase;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+.servicio-label::after {
+    content: '';
+    display: inline-block;
+    height: 1.5px;
+    width: 40px;
+    background: var(--gold);
+    border-radius: 2px;
+}
+
+.servicio-body h3 {
+    font-family: var(--font-title);
+    font-size: clamp(1.8rem, 3vw, 2.35rem);
+    font-weight: 800;
     color: var(--text-dark);
+    line-height: 1.1;
+    margin: 0;
 }
 
-.slide p {
+.servicio-body p {
     font-family: var(--font-body);
-    max-width: 520px;
-    line-height: 1.8;
+    font-size: 0.95rem;
     color: var(--text-muted);
+    line-height: 1.7;
+    margin: 0;
 }
 
-#slide1:checked ~ .carrusel-ventana .carrusel-pista {
-    transform: translateX(0);
+.servicio-numero {
+    position: absolute;
+    right: 3.5rem;
+    top: 50%;
+    transform: translateY(-50%);
+    font-family: var(--font-title);
+    font-size: clamp(5rem, 9vw, 7.5rem);
+    font-weight: 800;
+    color: var(--gold);
+    opacity: 0.1;
+    line-height: 1;
+    pointer-events: none;
+    user-select: none;
+    border-left: 1px solid rgba(204, 164, 59, 0.3);
+    padding-left: 2.4rem;
 }
 
-#slide2:checked ~ .carrusel-ventana .carrusel-pista {
-    transform: translateX(-100%);
+/* Los controles están antes del contenedor; las tarjetas viven dentro de él. */
+#slide1:checked ~ .servicios-contenedor .servicios-track .servicio-card:nth-child(1),
+#slide2:checked ~ .servicios-contenedor .servicios-track .servicio-card:nth-child(2),
+#slide3:checked ~ .servicios-contenedor .servicios-track .servicio-card:nth-child(3) { display: flex; }
+
+.servicio-flecha {
+    position: absolute;
+    z-index: 2;
+    top: 50%;
+    display: grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    transform: translateY(-50%);
+    border: 1px solid rgba(204, 164, 59, 0.5);
+    border-radius: 50%;
+    background: var(--bg-card);
+    color: var(--gold-dark);
+    box-shadow: 0 5px 16px rgba(45, 37, 18, 0.12);
+    transition: color 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
 }
 
-#slide3:checked ~ .carrusel-ventana .carrusel-pista {
-    transform: translateX(-200%);
+.servicio-flecha:hover {
+    background: var(--gold);
+    color: #fff;
+    box-shadow: 0 8px 20px var(--gold-glow);
 }
+
+.servicio-flecha:focus-visible,
+.carrusel-puntos label:focus-visible {
+    outline: 2px solid var(--gold-dark);
+    outline-offset: 3px;
+}
+
+.servicio-flecha.prev { left: 8px; }
+.servicio-flecha.next { right: 8px; }
 
 .carrusel-puntos {
     display: flex;
     justify-content: center;
-    gap: 10px;
-    margin-top: 1.2rem;
+    gap: 8px;
+    margin-top: 1.1rem;
+    margin-bottom: 2rem;
 }
-
 .carrusel-puntos label {
-    width: 12px;
-    height: 12px;
-    border-radius: 50%;
-    background: var(--border);
+    width: 9px;
+    height: 9px;
+    border-radius: 8px;
+    background: rgba(204, 164, 59, 0.25);
     cursor: pointer;
-    transition: transform 0.3s ease, background 0.3s ease;
+    transition: width 0.25s ease, background 0.25s ease, transform 0.25s ease;
 }
-
-.carrusel-puntos label:hover {
-    transform: scale(1.3);
-}
-
+.carrusel-puntos label:hover { transform: scale(1.3); }
 #slide1:checked ~ .carrusel-puntos label:nth-child(1),
 #slide2:checked ~ .carrusel-puntos label:nth-child(2),
 #slide3:checked ~ .carrusel-puntos label:nth-child(3) {
+    width: 22px;
     background: var(--gold);
 }
 
-/* NOSOTROS */
+@keyframes servicioEntrada {
+    from { opacity: 0.65; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* ===== SECCIÓN NOSOTROS — nueva maqueta ===== */
 .nosotros {
-    position: relative;
-    display: flex;
     padding: 4rem 5%;
-    text-align: center;
-    justify-content: center;
-    flex-direction: column;
+    scroll-margin-top: 90px;
+}
+
+.nosotros-intro {
+    display: flex;
     align-items: center;
+    gap: 4rem;
+    max-width: 1100px;
+    margin: 0 auto 3rem;
 }
 
-.nosotros-container {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 2rem;
-    width: 100%;
-    max-width: 1000px;
-    margin-top: 1rem;
+.nosotros-intro-texto {
+    flex: 1;
+    max-width: 500px;
 }
 
-.nosotros h2,
-.servicios h2 {
+.nosotros-h2-dark {
     font-family: var(--font-title);
-    color: var(--gold);
-    font-size: 2.5rem;
+    font-size: 2.8rem;
     font-weight: 800;
-    letter-spacing: 1px;
-    margin-bottom: 0.5rem;
-    line-height: 1.15;
-}
-
-.nosotros h3 {
-    font-family: var(--font-title);
     color: var(--text-dark);
-    font-size: 1.5rem;
-    font-weight: 500;
-    margin-bottom: 1.5rem;
+}
+.nosotros-h2-gold {
+    font-family: var(--font-title);
+    font-size: 2.8rem;
+    font-weight: 800;
+    color: var(--gold);
 }
 
-.nosotros p {
+.nosotros-intro-texto p {
     font-family: var(--font-body);
+    font-size: 1rem;
     line-height: 1.8;
     color: var(--text-muted);
-    margin-bottom: 2rem;
-    font-size: 1.05rem;
+    margin: 1.2rem 0 1.8rem;
 }
 
-.nosotros-mision,
-.nosotros-vision {
+.nosotros-intro-foto {
+    flex: 1;
     display: flex;
-    flex-direction: column;
-    align-items: center;
     justify-content: center;
-    gap: 0.5rem;
+    align-items: center;
+}
+
+.nosotros-foto-img {
+    width: 100%;
+    max-width: 520px;
+    height: 250px;
+    border: 1px solid rgba(204, 164, 59, 0.65);
+    border-radius: 150px 24px 150px 24px;
+    object-fit: cover;
+    object-position: center 52%;
+    filter: brightness(1.12) saturate(0.9);
+    box-shadow: 0 15px 40px rgba(0,0,0,0.12);
+}
+
+.nosotros-cards {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+    max-width: 1100px;
+    margin: 0 auto;
+}
+
+.nosotros-card {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
     background: #fdfaf3;
-    border: 3px solid var(--gold);
+    border: 1.5px solid rgba(204, 164, 59, 0.35);
     border-radius: 20px;
-    padding: 2rem;
-    box-sizing: border-box;
-    min-height: 18rem;
+    padding: 1.8rem 2.2rem;
+    box-shadow: 0 6px 20px rgba(204, 164, 59, 0.06);
     transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
-
-.nosotros-mision:hover,
-.nosotros-vision:hover {
-    transform: translateY(-6px);
+.nosotros-card:hover {
+    transform: translateY(-5px);
     box-shadow: 0 12px 30px var(--gold-glow);
 }
 
-.nosotros-mision p,
-.nosotros-vision p {
-    margin-bottom: 0;
+.nosotros-card-icon {
+    flex-shrink: 0;
+    width: 58px;
+    height: 58px;
+    border-radius: 50%;
+    background: #ffffff;
+    border: 2px solid var(--gold-light);
+    box-shadow: 0 4px 12px rgba(204, 164, 59, 0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.35rem;
+    color: var(--gold);
+}
+
+.nosotros-card-content h3 {
+    font-family: var(--font-title);
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--text-dark);
+    margin-bottom: 0.5rem;
+}
+
+.nosotros-card-content p {
+    font-family: var(--font-body);
+    font-size: 0.9rem;
+    line-height: 1.7;
+    color: var(--text-muted);
 }
 
 @keyframes rotateGlasses {
@@ -705,6 +927,24 @@ footer .copyright {
 ========================================== */
 
 @media (max-width: 768px) {
+    .servicio-flecha {
+        width: 36px;
+        height: 36px;
+    }
+    .servicio-card {
+        border-radius: 34px;
+        padding: 2rem 3.5rem 2rem 4.5rem;
+        min-height: 290px;
+    }
+    .servicio-arco {
+        width: 100px;
+        left: -48px;
+    }
+    .servicio-numero {
+        font-size: 3.6rem;
+        right: 1rem;
+        padding-left: 0.8rem;
+    }
     .hero {
         flex-direction: column;
         text-align: center;
@@ -741,6 +981,17 @@ footer .copyright {
     .ventajas {
         grid-template-columns: repeat(2, minmax(0, 1fr));
     }
+
+    .servicios-contenedor {
+        padding: 0 24px;
+    }
+
+    .servicios-track {
+        border-radius: 36px;
+    }
+
+    .servicio-flecha.prev { left: 0; }
+    .servicio-flecha.next { right: 0; }
 
     .slide { padding: 2rem 1rem; }
 
@@ -823,6 +1074,10 @@ footer .copyright {
 }
 
 :root.dark-mode .hero-text h2 { color: var(--text-muted); }
+
+:root.dark-mode .hero-viewer {
+    background: radial-gradient(ellipse at center, rgba(17, 17, 17, 0.25), transparent 70%);
+}
 
 :root.dark-mode .btn-secondary {
     background: transparent;
