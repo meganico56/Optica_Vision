@@ -21,7 +21,7 @@ html { scroll-behavior: smooth; }
     align-items: center;
     gap: 4rem;
     min-height: 75vh;
-    padding: 4rem 3% 4rem 9%;
+    padding: 4rem 1% 4rem 15%;
     position: relative;
 }
 
