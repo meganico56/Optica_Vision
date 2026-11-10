@@ -1,4 +1,4 @@
-create database optica_vision;
+create database optica_vision character set utf8mb4 collate utf8mb4_unicode_ci;
 use optica_vision;
 
 
@@ -372,6 +372,18 @@ create table orden_trabajo (
     foreign key (id_receta, id_cliente) references receta_optica(id_receta, id_cliente),
     foreign key (id_producto_montura) references producto(id_producto),
     foreign key (id_usuario_registra) references usuario(id_usuario)
+);
+
+
+create table reporte (
+    id_reporte int auto_increment primary key,
+    titulo varchar(150) not null,
+    tipo_reporte varchar(50) not null,
+    fecha_generacion datetime not null default current_timestamp,
+    descripcion varchar(255),
+    contenido text,
+    id_usuario_genera int not null,
+    foreign key (id_usuario_genera) references usuario(id_usuario)
 );
 
 
