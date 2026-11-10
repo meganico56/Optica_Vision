@@ -32,15 +32,30 @@ html { scroll-behavior: smooth; }
     z-index: 1;
 }
 
+/* Aura blanca detrás de todo el bloque de texto */
+.hero-text::before {
+    content: "";
+    position: absolute;
+    inset: -18% -12%;
+    background: radial-gradient(ellipse at center, #ffffff 0%, rgba(255, 255, 255, 0.92) 45%, rgba(255, 255, 255, 0.6) 62%, transparent 75%);
+    filter: blur(18px);
+    z-index: -1;
+    pointer-events: none;
+}
+
 .hero-text .hero-tag,
 .hero-text h1,
 .hero-text h2,
 .hero-text p {
     text-shadow:
-        0 0 4px #ffffff,
-        0 0 12px rgba(255, 255, 255, 1),
-        0 0 28px rgba(255, 255, 255, 0.98),
-        0 4px 42px rgba(255, 255, 255, 0.9);
+        0 0 2px #ffffff,
+        0 0 6px #ffffff,
+        0 0 12px #ffffff,
+        0 0 20px #ffffff,
+        0 0 32px #ffffff,
+        0 0 48px #ffffff,
+        0 0 70px rgba(255, 255, 255, 0.95),
+        0 0 100px rgba(255, 255, 255, 0.85);
 }
 
 .hero-tag {
@@ -124,15 +139,114 @@ html { scroll-behavior: smooth; }
     filter: drop-shadow(0 30px 25px rgba(0,0,0,0.15));
 }
 
+/* PODIO 3D: tapa de mármol con aro dorado, cuerpo cilíndrico y base dorada */
 .podium {
+    --pw: 340px;
     position: absolute;
-    bottom: 70px;
-    width: 330px;
-    height: 80px;
-    border-radius: 50%;
-    background: radial-gradient(circle, #ffffff, #ececec);
-    box-shadow: 0 15px 40px rgba(0,0,0,0.12), 0 0 35px var(--gold-glow);
+    left: 50%;
+    bottom: 30px;
+    width: var(--pw);
+    height: calc(var(--pw) * 0.56);
+    transform: translateX(-50%);
     z-index: 1;
+    pointer-events: none;
+}
+
+.podium > div { position: absolute; }
+
+.podium-tapa {
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: calc(var(--pw) * 0.2);
+    border-radius: 50%;
+    overflow: hidden;
+    background: radial-gradient(ellipse at 50% 35%, #ffffff 0%, #faf7f0 45%, #e9e2d2 100%);
+    border: 2px solid var(--gold-light);
+    box-shadow:
+        inset 0 -8px 14px rgba(120, 95, 30, 0.12),
+        inset 0 4px 10px rgba(255, 255, 255, 0.9),
+        0 0 30px var(--gold-glow);
+    z-index: 3;
+}
+
+/* Aro grabado y reflejo dorado bajo las gafas */
+.podium-tapa::before {
+    content: "";
+    position: absolute;
+    inset: 16% 12%;
+    border-radius: 50%;
+    border: 1px solid rgba(204, 164, 59, 0.45);
+    background: radial-gradient(ellipse at center, rgba(229, 201, 109, 0.35), transparent 70%);
+}
+
+/* Destello de luz que gira al ritmo de las gafas */
+.podium-tapa::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 150%;
+    aspect-ratio: 1;
+    background: conic-gradient(from 0deg, transparent 0deg, rgba(255, 255, 255, 0.85) 25deg, transparent 60deg, transparent 180deg, rgba(229, 201, 109, 0.35) 205deg, transparent 240deg);
+    transform: translate(-50%, -50%) scaleY(0.2) rotate(0deg);
+    animation: podioDestello 12s linear infinite;
+}
+
+.podium-cuerpo {
+    top: calc(var(--pw) * 0.1);
+    left: 5%;
+    width: 90%;
+    height: calc(var(--pw) * 0.3);
+    background: linear-gradient(90deg, #c9bea7 0%, #efe9dc 18%, #ffffff 38%, #f3eee3 60%, #d8cfbb 82%, #b3a789 100%);
+    border-bottom: 4px solid var(--gold);
+    border-radius: 0 0 50% 50% / 0 0 calc(var(--pw) * 0.09) calc(var(--pw) * 0.09);
+    z-index: 2;
+}
+
+/* Filete dorado alrededor del cuerpo */
+.podium-cuerpo::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 32%;
+    height: calc(var(--pw) * 0.18);
+    border-radius: 50%;
+    border-bottom: 2px solid rgba(204, 164, 59, 0.7);
+}
+
+.podium-base {
+    top: calc(var(--pw) * 0.3);
+    left: -4%;
+    width: 108%;
+    height: calc(var(--pw) * 0.18);
+    border-radius: 50%;
+    background: linear-gradient(90deg, #7d6320 0%, var(--gold) 25%, var(--gold-light) 45%, var(--gold) 70%, #6e561b 100%);
+    box-shadow: 0 5px 0 #6e561b, 0 10px 25px rgba(0, 0, 0, 0.18);
+    z-index: 1;
+}
+
+/* Sombra en el suelo que respira con la flotación de las gafas */
+.podium-sombra {
+    left: -10%;
+    bottom: calc(var(--pw) * -0.03);
+    width: 120%;
+    height: calc(var(--pw) * 0.12);
+    border-radius: 50%;
+    background: radial-gradient(ellipse at center, rgba(0, 0, 0, 0.28), transparent 70%);
+    filter: blur(6px);
+    animation: podioSombra 12s ease-in-out infinite;
+    z-index: 0;
+}
+
+@keyframes podioDestello {
+    to { transform: translate(-50%, -50%) scaleY(0.2) rotate(360deg); }
+}
+
+@keyframes podioSombra {
+    0%, 100% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(0.9); opacity: 0.75; }
 }
 
 /* VENTAJAS */
@@ -372,7 +486,12 @@ html { scroll-behavior: smooth; }
     font-size: clamp(5rem, 9vw, 7.5rem);
     font-weight: 800;
     color: var(--gold);
-    opacity: 0.1;
+    background: linear-gradient(135deg, #000000 0%, #000000 22%, #5c4610 45%, #d4a11e 72%, #ffd23f 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    filter: drop-shadow(0 4px 10px rgba(212, 161, 30, 0.45));
+    opacity: 1;
     line-height: 1;
     pointer-events: none;
     user-select: none;
@@ -590,7 +709,9 @@ html { scroll-behavior: smooth; }
 
 /* Respeta a quien desactiva las animaciones */
 @media (prefers-reduced-motion: reduce) {
-    .glasses-model { animation: none; }
+    .glasses-model,
+    .podium-tapa::after,
+    .podium-sombra { animation: none; }
     .carrusel-pista { transition: none; }
 }
 
@@ -941,9 +1062,12 @@ footer .copyright {
         left: -48px;
     }
     .servicio-numero {
-        font-size: 3.6rem;
-        right: 1rem;
-        padding-left: 0.8rem;
+        font-size: 3rem;
+        right: 1.5rem;
+        top: 1.5rem;
+        transform: none;
+        border-left: none;
+        padding-left: 0;
     }
     .hero {
         flex-direction: column;
@@ -973,9 +1097,8 @@ footer .copyright {
     .glasses-model { width: 260px; }
 
     .podium {
-        width: 220px;
-        height: 50px;
-        bottom: 40px;
+        --pw: 210px;
+        bottom: 20px;
     }
 
     .ventajas {
@@ -1074,6 +1197,45 @@ footer .copyright {
 }
 
 :root.dark-mode .hero-text h2 { color: var(--text-muted); }
+
+:root.dark-mode .servicio-numero {
+    background-image: linear-gradient(135deg, #5a5a5a 0%, #6e5414 35%, #e0ab22 68%, #ffdc5c 100%);
+}
+
+/* En oscuro el aura del hero es negra con borde dorado */
+:root.dark-mode .hero-text::before {
+    background: radial-gradient(ellipse at center, rgba(8, 8, 8, 0.95) 0%, rgba(12, 12, 12, 0.88) 45%, rgba(204, 164, 59, 0.35) 64%, transparent 76%);
+}
+
+:root.dark-mode .hero-text .hero-tag,
+:root.dark-mode .hero-text h1,
+:root.dark-mode .hero-text h2,
+:root.dark-mode .hero-text p {
+    text-shadow:
+        0 0 2px #000000,
+        0 0 6px #000000,
+        0 0 12px rgba(0, 0, 0, 0.95),
+        0 0 22px rgba(0, 0, 0, 0.9),
+        0 0 40px rgba(204, 164, 59, 0.55),
+        0 0 70px rgba(204, 164, 59, 0.4);
+}
+
+:root.dark-mode .podium-tapa {
+    background: radial-gradient(ellipse at 50% 35%, #3a3a3a 0%, #262626 50%, #161616 100%);
+    border-color: var(--gold);
+    box-shadow:
+        inset 0 -8px 14px rgba(0, 0, 0, 0.5),
+        inset 0 4px 10px rgba(255, 255, 255, 0.08),
+        0 0 35px var(--gold-glow);
+}
+
+:root.dark-mode .podium-cuerpo {
+    background: linear-gradient(90deg, #0d0d0d 0%, #222222 20%, #3a3a3a 40%, #262626 62%, #141414 85%, #080808 100%);
+}
+
+:root.dark-mode .podium-sombra {
+    background: radial-gradient(ellipse at center, rgba(204, 164, 59, 0.3), transparent 70%);
+}
 
 :root.dark-mode .hero-viewer {
     background: radial-gradient(ellipse at center, rgba(17, 17, 17, 0.25), transparent 70%);
