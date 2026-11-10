@@ -105,7 +105,23 @@
 .navbar-menu {
   display: flex;
   align-items: center;
-  gap: 1.8rem;
+  justify-content: center;
+  gap: clamp(0.65rem, 1.25vw, 1.25rem);
+  position: relative;
+  box-sizing: border-box;
+  padding-right: 145px;
+}
+
+.navbar nav {
+  flex: 1;
+  min-width: 0;
+}
+
+.navbar-menu .navbar-theme-item {
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
 }
 
 .navbar-menu li a {
@@ -310,14 +326,17 @@ footer {
 
 @media (max-width: 768px) {
   .hamburguesa { display: flex; }
+  .navbar nav { flex: initial; }
 
   .navbar-menu {
     flex-direction: column;
     align-items: stretch;
+    justify-content: flex-start;
     width: 100%;
     max-height: 0;
     overflow: hidden;
     gap: 0;
+    padding-right: 5%;
     background: var(--navbar-menu-bg);
     position: absolute;
     top: 100%;
@@ -331,6 +350,11 @@ footer {
     max-height: 400px;
     padding: 1rem 5%;
     border-bottom-color: var(--border);
+  }
+
+  .navbar-menu .navbar-theme-item {
+    position: static;
+    transform: none;
   }
 
   .navbar-menu li a { display: block; padding: 12px 0; }
@@ -383,6 +407,10 @@ footer {
 
 .btn-tema:hover i { transform: rotate(20deg); }
 
+:root.dark-mode .logo-icon {
+  filter: none;
+}
+
 /* ==========================================
    MODO OSCURO — Páginas públicas
    ========================================== */
@@ -404,7 +432,7 @@ footer {
 }
 
 :root.dark-mode .busc::placeholder {
-  color: var(--text-muted);
+  color: #c4beb4;
 }
 
 :root.dark-mode .buscador {
@@ -417,13 +445,37 @@ footer {
 }
 
 :root.dark-mode footer {
-  background: rgba(10, 10, 10, 0.92);
+  background: rgba(12, 11, 9, 0.96);
   border-top-color: var(--border);
   color: var(--text-dark);
 }
 
+:root.dark-mode .footer-col h4 {
+  color: var(--gold-light);
+}
+
 :root.dark-mode .footer-col ul a {
-  color: var(--text-muted);
+  color: #ece8e1;
+}
+
+:root.dark-mode .footer-col ul a:hover {
+  color: var(--gold-light);
+}
+
+:root.dark-mode .contact-info {
+  color: #ece8e1;
+}
+
+:root.dark-mode .contact-info i {
+  color: var(--gold-light);
+}
+
+:root.dark-mode .social-icons a {
+  color: var(--gold-light);
+}
+
+:root.dark-mode .social-icons a:hover {
+  color: var(--gold);
 }
 
 :root.dark-mode .payment-methods span {
@@ -432,7 +484,14 @@ footer {
   color: var(--text-dark);
 }
 
+:root.dark-mode .copyright {
+  background: #0a0907;
+  color: #ded9cf;
+  border-top: 1px solid rgba(204, 164, 59, 0.2);
+}
+
 :root.dark-mode .btn-tema {
+  background: rgba(204, 164, 59, 0.12);
   color: var(--gold-light);
   border-color: var(--gold);
 }

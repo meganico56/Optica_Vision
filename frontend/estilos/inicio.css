@@ -21,7 +21,7 @@ html { scroll-behavior: smooth; }
     align-items: center;
     gap: 4rem;
     min-height: 75vh;
-    padding: 4rem 5%;
+    padding: 4rem 3% 4rem 9%;
     position: relative;
 }
 
@@ -144,7 +144,7 @@ html { scroll-behavior: smooth; }
     --pw: 340px;
     position: absolute;
     left: 50%;
-    bottom: 30px;
+    bottom: 12px;
     width: var(--pw);
     height: calc(var(--pw) * 0.56);
     transform: translateX(-50%);
@@ -241,12 +241,28 @@ html { scroll-behavior: smooth; }
 }
 
 @keyframes podioDestello {
-    to { transform: translate(-50%, -50%) scaleY(0.2) rotate(360deg); }
+    to { transform: translate(-50%, -50%) scaleY(0.2) rotate(-360deg); }
 }
 
 @keyframes podioSombra {
     0%, 100% { transform: scale(1); opacity: 1; }
     50% { transform: scale(0.9); opacity: 0.75; }
+}
+
+/* El disco (y las gafas sobre él) se gira arrastrando con clic sostenido */
+.podium-tapa,
+.glasses-model {
+    pointer-events: auto;
+    cursor: grab;
+    touch-action: pan-y;
+    user-select: none;
+    -webkit-user-drag: none;
+}
+
+body.disco-arrastrando,
+body.disco-arrastrando .podium-tapa,
+body.disco-arrastrando .glasses-model {
+    cursor: grabbing;
 }
 
 /* VENTAJAS */
@@ -398,13 +414,13 @@ html { scroll-behavior: smooth; }
     display: none;
     align-items: center;
     background:
-        radial-gradient(ellipse at 86% 50%, rgba(204, 164, 59, 0.08), transparent 35%),
-        var(--bg-card);
-    border: 1px solid rgba(204, 164, 59, 0.48);
+        radial-gradient(ellipse at 84% 50%, rgba(204, 164, 59, 0.2), transparent 42%),
+        linear-gradient(110deg, #fffdf8 0%, #fffaf0 58%, #f6ecd2 100%);
+    border: 1px solid rgba(164, 125, 35, 0.78);
     border-radius: 140px;
     overflow: hidden;
     min-height: 280px;
-    box-shadow: 0 18px 45px rgba(45, 37, 18, 0.09), 0 3px 10px rgba(204, 164, 59, 0.08);
+    box-shadow: 0 18px 40px rgba(45, 37, 18, 0.16), 0 3px 12px rgba(164, 125, 35, 0.18);
     position: relative;
     padding: 2rem 8rem 2rem 9rem;
     animation: servicioEntrada 0.45s ease both;
@@ -416,7 +432,7 @@ html { scroll-behavior: smooth; }
     top: -18px;
     bottom: -18px;
     width: 205px;
-    background: linear-gradient(90deg, #c99d31 0%, #e8c85e 48%, rgba(232, 200, 94, 0.2) 76%, transparent 100%);
+    background: linear-gradient(90deg, #a87913 0%, #d2a52c 46%, rgba(232, 200, 94, 0.48) 76%, transparent 100%);
     border-radius: 50%;
     pointer-events: none;
     box-shadow: 12px 0 24px rgba(204, 164, 59, 0.12);
@@ -436,7 +452,7 @@ html { scroll-behavior: smooth; }
 
 .servicio-icon {
     font-size: 1.8rem;
-    color: var(--gold);
+    color: #a87913;
     margin-bottom: 0.2rem;
 }
 
@@ -445,7 +461,7 @@ html { scroll-behavior: smooth; }
     font-size: 0.72rem;
     font-weight: 700;
     letter-spacing: 2px;
-    color: var(--gold-dark);
+    color: #79550b;
     text-transform: uppercase;
     display: flex;
     align-items: center;
@@ -611,16 +627,111 @@ html { scroll-behavior: smooth; }
     align-items: center;
 }
 
-.nosotros-foto-img {
+.nosotros-carrusel {
+    position: relative;
     width: 100%;
     max-width: 520px;
     height: 250px;
+    overflow: hidden;
     border: 1px solid rgba(204, 164, 59, 0.65);
     border-radius: 150px 24px 150px 24px;
+    background: var(--bg-card);
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.12);
+}
+
+.nosotros-carrusel-track {
+    display: flex;
+    width: 200%;
+    height: 100%;
+    transition: transform 0.42s cubic-bezier(0.7, 0, 0.25, 1);
+}
+
+.nosotros-foto-img {
+    display: block;
+    flex: 0 0 50%;
+    width: 50%;
+    max-width: none;
+    height: 100%;
     object-fit: cover;
-    object-position: center 52%;
+    object-position: center 48%;
     filter: brightness(1.12) saturate(0.9);
-    box-shadow: 0 15px 40px rgba(0,0,0,0.12);
+}
+
+.nosotros-foto-img:nth-child(2) {
+    object-position: center 40%;
+}
+
+.nosotros-carrusel-dash {
+    position: absolute;
+    z-index: 2;
+    top: -35%;
+    left: -42%;
+    width: 32%;
+    height: 170%;
+    opacity: 0;
+    pointer-events: none;
+    background: linear-gradient(
+        90deg,
+        transparent 0%,
+        rgba(255, 255, 255, 0.12) 28%,
+        rgba(255, 255, 255, 0.9) 50%,
+        rgba(204, 164, 59, 0.42) 60%,
+        transparent 100%
+    );
+    transform: translateX(-160%) skewX(-20deg);
+}
+
+.nosotros-carrusel-dash.is-activo {
+    animation: nosotrosDash 0.48s cubic-bezier(0.2, 0.75, 0.35, 1) both;
+}
+
+@keyframes nosotrosDash {
+    0% {
+        opacity: 0;
+        transform: translateX(-160%) skewX(-20deg);
+    }
+    18% { opacity: 1; }
+    100% {
+        opacity: 0;
+        transform: translateX(560%) skewX(-20deg);
+    }
+}
+
+.nosotros-carrusel-flecha {
+    position: absolute;
+    z-index: 3;
+    top: 50%;
+    display: grid;
+    width: 38px;
+    height: 38px;
+    place-items: center;
+    border: 1px solid rgba(255, 255, 255, 0.72);
+    border-radius: 50%;
+    background: rgba(25, 24, 21, 0.58);
+    color: #ffffff;
+    cursor: pointer;
+    opacity: 0.82;
+    transform: translateY(-50%);
+    transition: background 0.2s ease, opacity 0.2s ease, scale 0.2s ease;
+}
+
+.nosotros-carrusel-flecha.anterior { left: 14px; }
+.nosotros-carrusel-flecha.siguiente { right: 14px; }
+
+.nosotros-carrusel-flecha:hover {
+    background: var(--gold-dark);
+    opacity: 1;
+    scale: 1.08;
+}
+
+.nosotros-carrusel-flecha:focus-visible {
+    outline: 2px solid #ffffff;
+    outline-offset: 3px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .nosotros-carrusel-track { transition: none; }
+    .nosotros-carrusel-dash.is-activo { animation: none; }
 }
 
 .nosotros-cards {
@@ -675,6 +786,205 @@ html { scroll-behavior: smooth; }
     font-size: 0.9rem;
     line-height: 1.7;
     color: var(--text-muted);
+}
+
+/* ===== SECCIÓN RESEÑAS ===== */
+.resenas {
+    padding: 5rem 5% 4rem;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.resenas-header {
+    text-align: center;
+    max-width: 650px;
+    margin: 0 auto 3.5rem;
+}
+
+.resenas-tag {
+    display: inline-block;
+    color: var(--gold-dark);
+    font-family: var(--font-title);
+    letter-spacing: 2.5px;
+    font-size: 0.78rem;
+    font-weight: 700;
+    margin-bottom: 0.75rem;
+    text-transform: uppercase;
+}
+
+.resenas-header h2 {
+    font-family: var(--font-title);
+    font-size: 2.5rem;
+    font-weight: 800;
+    line-height: 1.2;
+    margin-bottom: 0.8rem;
+}
+
+.resenas-h2-dark {
+    color: var(--text-dark);
+}
+
+.resenas-h2-gold {
+    color: var(--gold);
+}
+
+.resenas-subtitulo {
+    font-family: var(--font-body);
+    font-size: 0.98rem;
+    color: var(--text-muted);
+    line-height: 1.6;
+    margin: 0;
+}
+
+.resenas-carrusel-wrapper {
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+    padding: 1.5rem 0.5rem 2rem;
+    cursor: grab;
+    user-select: none;
+    -webkit-user-select: none;
+}
+
+.resenas-carrusel-wrapper:active {
+    cursor: grabbing;
+}
+
+.resenas-track {
+    display: flex;
+    gap: 1.8rem;
+    will-change: transform;
+    width: max-content;
+}
+
+.resena-card {
+    background: #ffffff;
+    border: 1.5px solid var(--border);
+    border-radius: 22px;
+    padding: 2.2rem 2rem;
+    width: 360px;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    box-shadow: 0 10px 28px rgba(0, 0, 0, 0.04);
+    transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+    position: relative;
+}
+
+.resena-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 16px 36px var(--gold-glow);
+    border-color: rgba(204, 164, 59, 0.45);
+}
+
+.resena-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.25rem;
+}
+
+.resena-estrellas {
+    display: flex;
+    gap: 4px;
+    color: #f5a623;
+    font-size: 0.95rem;
+}
+
+.resena-comillas {
+    color: var(--gold);
+    opacity: 0.35;
+    font-size: 1.4rem;
+}
+
+.resena-comentario {
+    font-family: var(--font-body);
+    font-size: 0.94rem;
+    line-height: 1.75;
+    color: var(--text-muted);
+    font-style: italic;
+    margin: 0 0 1.75rem 0;
+    flex: 1;
+}
+
+.resena-autor {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    border-top: 1px solid var(--border);
+    padding-top: 1.25rem;
+}
+
+.resena-avatar {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%);
+    color: #ffffff;
+    font-family: var(--font-title);
+    font-weight: 700;
+    font-size: 0.88rem;
+    letter-spacing: 0.5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 12px var(--gold-glow);
+    flex-shrink: 0;
+}
+
+.resena-datos h4 {
+    font-family: var(--font-title);
+    font-size: 0.98rem;
+    font-weight: 700;
+    color: var(--text-dark);
+    margin: 0 0 2px 0;
+}
+
+.resena-datos span {
+    font-family: var(--font-body);
+    font-size: 0.8rem;
+    color: var(--text-muted);
+}
+
+/* Modo oscuro para reseñas */
+:root.dark-mode .resena-card {
+    background: #151411;
+    border-color: rgba(204, 164, 59, 0.22);
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.45);
+}
+
+:root.dark-mode .resena-card:hover {
+    border-color: var(--gold);
+    box-shadow: 0 16px 36px var(--gold-glow);
+}
+
+:root.dark-mode .resena-comentario {
+    color: var(--text-muted);
+}
+
+:root.dark-mode .resena-autor {
+    border-top-color: rgba(204, 164, 59, 0.15);
+}
+
+:root.dark-mode .resenas-h2-dark {
+    color: var(--text-dark);
+}
+
+:root.dark-mode .resena-datos h4 {
+    color: var(--text-dark);
+}
+
+:root.dark-mode .resena-datos span {
+    color: #e5e0d8;
+}
+
+/* Responsive para reseñas */
+@media (max-width: 900px) {
+    .resena-card {
+        width: 300px;
+        padding: 1.8rem 1.5rem;
+    }
 }
 
 @keyframes rotateGlasses {
@@ -1048,6 +1358,21 @@ footer .copyright {
 ========================================== */
 
 @media (max-width: 768px) {
+    .nosotros-intro {
+        flex-direction: column;
+        gap: 2rem;
+    }
+
+    .nosotros-intro-texto,
+    .nosotros-intro-foto {
+        width: 100%;
+        max-width: 520px;
+    }
+
+    .nosotros-intro-foto { flex: initial; }
+
+    .nosotros-carrusel { height: 220px; }
+
     .servicio-flecha {
         width: 36px;
         height: 36px;
@@ -1098,7 +1423,7 @@ footer .copyright {
 
     .podium {
         --pw: 210px;
-        bottom: 20px;
+        bottom: 8px;
     }
 
     .ventajas {
@@ -1180,44 +1505,59 @@ footer .copyright {
 
 
 /* ========== MODO OSCURO — inicio.html ========== */
-:root.dark-mode .ventaja {
-    background: #1e1e1e;
-    border-color: #333333;
+:root.dark-mode body {
+    background-color: #0c0b09;
+    background-image: 
+        linear-gradient(rgba(12, 11, 9, 0.45), rgba(12, 11, 9, 0.45)),
+        url('../imagenes/fondos/fondo-boutique.png');
+    background-blend-mode: normal;
 }
 
-:root.dark-mode .carrusel-ventana {
-    background: #1a1a1a;
-    border-color: var(--gold);
-}
-
-:root.dark-mode .nosotros-mision,
-:root.dark-mode .nosotros-vision {
-    background: #1a1a1a;
-    border-color: var(--gold);
-}
-
-:root.dark-mode .hero-text h2 { color: var(--text-muted); }
-
-:root.dark-mode .servicio-numero {
-    background-image: linear-gradient(135deg, #5a5a5a 0%, #6e5414 35%, #e0ab22 68%, #ffdc5c 100%);
-}
-
-/* En oscuro el aura del hero es negra con borde dorado */
+/* En modo oscuro se remueve el aura blanca del texto */
 :root.dark-mode .hero-text::before {
-    background: radial-gradient(ellipse at center, rgba(8, 8, 8, 0.95) 0%, rgba(12, 12, 12, 0.88) 45%, rgba(204, 164, 59, 0.35) 64%, transparent 76%);
+    display: none;
+    content: none;
 }
 
 :root.dark-mode .hero-text .hero-tag,
 :root.dark-mode .hero-text h1,
 :root.dark-mode .hero-text h2,
 :root.dark-mode .hero-text p {
-    text-shadow:
-        0 0 2px #000000,
-        0 0 6px #000000,
-        0 0 12px rgba(0, 0, 0, 0.95),
-        0 0 22px rgba(0, 0, 0, 0.9),
-        0 0 40px rgba(204, 164, 59, 0.55),
-        0 0 70px rgba(204, 164, 59, 0.4);
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.85);
+}
+
+/* Hero */
+:root.dark-mode .hero-h1-dark {
+    color: #ffffff;
+    text-shadow: 0 2px 14px rgba(0, 0, 0, 0.9);
+}
+
+:root.dark-mode .hero-text h2 {
+    color: var(--gold-light);
+}
+
+:root.dark-mode .hero-text p {
+    color: var(--text-muted);
+}
+
+:root.dark-mode .btn-arrow-secondary {
+    color: var(--text-dark);
+    border-color: var(--gold);
+}
+
+:root.dark-mode .btn-arrow-secondary:hover {
+    background: var(--gold);
+    color: #ffffff;
+}
+
+:root.dark-mode .btn-arrow-outline {
+    color: var(--text-dark);
+    border-color: rgba(204, 164, 59, 0.4);
+}
+
+:root.dark-mode .btn-arrow-outline:hover {
+    border-color: var(--gold-light);
+    color: var(--gold-light);
 }
 
 :root.dark-mode .podium-tapa {
@@ -1241,17 +1581,171 @@ footer .copyright {
     background: radial-gradient(ellipse at center, rgba(17, 17, 17, 0.25), transparent 70%);
 }
 
-:root.dark-mode .btn-secondary {
+:root.dark-mode .podium {
+    border-color: transparent;
     background: transparent;
-    color: var(--gold-light);
-    border-color: var(--gold);
+    box-shadow: none;
 }
-:root.dark-mode .btn-secondary:hover {
+
+/* Ventajas */
+:root.dark-mode .ventaja {
+    background: #151411;
+    border-color: rgba(204, 164, 59, 0.2);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+}
+
+:root.dark-mode .ventaja:hover {
+    border-color: var(--gold);
+    box-shadow: 0 14px 32px var(--gold-glow);
+}
+
+:root.dark-mode .ventaja h3 {
+    color: var(--text-dark);
+}
+
+:root.dark-mode .ventaja p {
+    color: var(--text-muted);
+}
+
+/* Servicios (Carrusel Píldora) */
+:root.dark-mode .servicio-card {
+    background:
+        radial-gradient(ellipse at 84% 50%, rgba(204, 164, 59, 0.2), transparent 42%),
+        linear-gradient(110deg, #11100d 0%, #1c1912 58%, #282113 100%);
+    border-color: rgba(229, 201, 109, 0.82);
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.62), 0 0 18px rgba(204, 164, 59, 0.18);
+}
+
+:root.dark-mode .servicio-icon { color: #f0c84b; }
+
+:root.dark-mode .servicio-body h3 {
+    color: #fffdf7;
+}
+
+:root.dark-mode .servicio-body p {
+    color: #e2ded4;
+}
+
+:root.dark-mode .servicio-label {
+    color: var(--gold-light);
+}
+
+:root.dark-mode .servicio-numero {
+    background-image: linear-gradient(135deg, #8a6a1c 0%, #c8901a 30%, #f2bd2c 62%, #fff0a8 100%);
+    color: #f0c84b;
+    opacity: 1;
+    filter:
+        drop-shadow(0 0 6px rgba(255, 210, 63, 0.75))
+        drop-shadow(0 0 18px rgba(240, 180, 40, 0.5));
+}
+
+:root.dark-mode .servicio-flecha {
+    background: #1a1814;
+    border-color: rgba(204, 164, 59, 0.5);
+    color: var(--gold-light);
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.45);
+}
+
+:root.dark-mode .servicio-flecha:hover {
     background: var(--gold);
+    color: #ffffff;
+    box-shadow: 0 6px 22px var(--gold-glow);
+}
+
+:root.dark-mode .carrusel-puntos label {
+    background: rgba(204, 164, 59, 0.25);
+}
+
+:root.dark-mode .carrusel-puntos label:hover {
+    background: var(--gold-light);
+}
+
+/* Nosotros */
+:root.dark-mode .nosotros-h2-dark {
     color: #ffffff;
 }
 
+:root.dark-mode .nosotros-intro-texto p {
+    color: var(--text-muted);
+}
+
+:root.dark-mode .nosotros-foto-img {
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6), 0 0 30px rgba(204, 164, 59, 0.15);
+}
+
+:root.dark-mode .nosotros-card {
+    background: #151411;
+    border-color: rgba(204, 164, 59, 0.25);
+    box-shadow: 0 10px 28px rgba(0, 0, 0, 0.4);
+}
+
+:root.dark-mode .nosotros-card:hover {
+    border-color: var(--gold);
+    box-shadow: 0 14px 32px var(--gold-glow);
+}
+
+:root.dark-mode .nosotros-card-icon {
+    background: #1c1a15;
+    border-color: rgba(204, 164, 59, 0.6);
+    color: var(--gold-light);
+}
+
+:root.dark-mode .nosotros-card-content h3 {
+    color: var(--text-dark);
+}
+
+:root.dark-mode .nosotros-card-content p {
+    color: var(--text-muted);
+}
+
+/* Modales de ayuda */
+:root.dark-mode .ayuda-modal-contenido {
+    background: #161512;
+    border-color: var(--gold);
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.7);
+}
+
+:root.dark-mode .ayuda-modal-contenido h2 {
+    color: var(--gold-light);
+}
+
+:root.dark-mode .ayuda-modal-contenido p {
+    color: var(--text-muted);
+}
+
+:root.dark-mode .ayuda-cerrar {
+    color: var(--gold-light);
+}
+
+:root.dark-mode .ayuda-cerrar:hover {
+    color: #ff6b6b;
+}
+
+/* Footer */
 :root.dark-mode footer {
-    background: #0d0d0d;
-    border-top-color: #333333;
+    background: #0c0b09;
+    border-top-color: rgba(204, 164, 59, 0.2);
+}
+
+/* Titulares y textos destacados de inicio en tonos claros */
+:root.dark-mode .hero-tag,
+:root.dark-mode .resenas-tag,
+:root.dark-mode .servicio-label {
+    color: #f0c84b;
+}
+
+:root.dark-mode .hero-h1-dark,
+:root.dark-mode .nosotros-h2-dark,
+:root.dark-mode .resenas-h2-dark,
+:root.dark-mode .ventaja h3,
+:root.dark-mode .servicio-body h3,
+:root.dark-mode .nosotros-card-content h3,
+:root.dark-mode .resena-datos h4 {
+    color: #fff4d6;
+}
+
+:root.dark-mode .hero-h1-gold,
+:root.dark-mode .nosotros-h2-gold,
+:root.dark-mode .resenas-h2-gold {
+    color: #f0c84b;
 }

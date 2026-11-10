@@ -53,12 +53,16 @@
           <li><a href="catalogo.html">CATÁLOGO</a></li>
           <!-- ENLACE CORREGIDO A AGENDAR CITA -->
           <li><a href="agendar-cita.html">AGENDAR CITA</a></li>
-          <li>
-            <a href="carrito.html"><i class="fa-solid fa-cart-shopping"></i></a>
-          </li>
           <li><a href="inicio-sesion.html">INICIAR SESIÓN</a></li>
-                        <li><button class="btn-tema" id="btnTemaPublico" type="button" aria-label="Alternar modo oscuro"><i class="fa-solid fa-moon"></i><span>Modo oscuro</span></button></li>
-</ul>
+          <li>
+            <a href="carrito.html" aria-label="Carrito"><i class="fa-solid fa-cart-shopping"></i></a>
+          </li>
+          <li class="navbar-theme-item">
+            <button class="btn-tema" id="btnTemaPublico" type="button" aria-label="Alternar modo oscuro">
+              <i class="fa-solid fa-moon"></i><span>Modo oscuro</span>
+            </button>
+          </li>
+        </ul>
       </nav>
     </header>
 
@@ -204,8 +208,31 @@
             <a href="agendar-cita.html" class="btn-arrow btn-arrow-outline">Conoce más <i class="fa-solid fa-chevron-right"></i></a>
           </div>
           <div class="nosotros-intro-foto">
-            <!-- Foto de Denis Trushtin, disponible en Pexels: https://www.pexels.com/photo/close-up-of-face-of-woman-in-glasses-10080214/ -->
-            <img src="../imagenes/fondos/rostro-gafas-pexels-10080214.jpeg" alt="Primer plano de una mujer con gafas" class="nosotros-foto-img" />
+            <div class="nosotros-carrusel" id="nosotrosCarrusel" role="region" aria-label="Galería de personas con gafas">
+              <div class="nosotros-carrusel-track" id="nosotrosCarruselTrack">
+                <!-- Foto de Denis Trushtin: https://www.pexels.com/photo/close-up-of-face-of-woman-in-glasses-10080214/ -->
+                <img
+                  src="../imagenes/fondos/rostro-gafas-pexels-10080214.jpeg"
+                  alt="Primer plano de una mujer con gafas"
+                  class="nosotros-foto-img"
+                  aria-hidden="false"
+                />
+                <!-- Foto de Pexels: https://images.pexels.com/photos/1239291/pexels-photo-1239291.jpeg -->
+                <img
+                  src="../imagenes/fondos/rostro-gafas-pexels-1239291.jpeg"
+                  alt="Mujer sonriendo con gafas en la ciudad"
+                  class="nosotros-foto-img"
+                  aria-hidden="true"
+                />
+              </div>
+              <span class="nosotros-carrusel-dash" aria-hidden="true"></span>
+              <button class="nosotros-carrusel-flecha anterior" id="nosotrosFotoAnterior" type="button" aria-label="Foto anterior">
+                <i class="fa-solid fa-chevron-left" aria-hidden="true"></i>
+              </button>
+              <button class="nosotros-carrusel-flecha siguiente" id="nosotrosFotoSiguiente" type="button" aria-label="Foto siguiente">
+                <i class="fa-solid fa-chevron-right" aria-hidden="true"></i>
+              </button>
+            </div>
           </div>
         </div>
 
@@ -223,6 +250,144 @@
               <h3>Visión</h3>
               <p>Nuestra visión es ser reconocidos como la óptica de referencia en la región, destacándonos por nuestra excelencia en atención al cliente, innovación en productos y compromiso con la salud visual de nuestra comunidad.</p>
             </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- RESEÑAS DE CLIENTES -->
+      <section class="resenas" id="resenas">
+        <div class="resenas-header">
+          <span class="resenas-tag">TESTIMONIOS REALES</span>
+          <h2>
+            <span class="resenas-h2-dark">Lo que dicen</span>
+            <span class="resenas-h2-gold"> nuestros clientes</span>
+          </h2>
+          <p class="resenas-subtitulo">
+            La confianza de quienes cuidan su salud visual con nosotros es nuestro mayor respaldo.
+          </p>
+        </div>
+
+        <div class="resenas-carrusel-wrapper">
+          <div class="resenas-track" id="resenasTrack">
+            <!-- Reseña 1 -->
+            <article class="resena-card">
+              <div class="resena-top">
+                <div class="resena-estrellas" aria-label="Calificación: 5 de 5 estrellas">
+                  <i class="fa-solid fa-star"></i>
+                  <i class="fa-solid fa-star"></i>
+                  <i class="fa-solid fa-star"></i>
+                  <i class="fa-solid fa-star"></i>
+                  <i class="fa-solid fa-star"></i>
+                </div>
+                <span class="resena-comillas"><i class="fa-solid fa-quote-right"></i></span>
+              </div>
+              <p class="resena-comentario">
+                "Excelente atención desde el primer momento. Me asesoraron perfectamente para elegir monturas acordes a mi rostro y los lentes quedaron con la fórmula exacta. 100% recomendados."
+              </p>
+              <div class="resena-autor">
+                <div class="resena-avatar">CC</div>
+                <div class="resena-datos">
+                  <h4>Camila Castellanos</h4>
+                  <span>Cliente frecuente • Duitama</span>
+                </div>
+              </div>
+            </article>
+
+            <!-- Reseña 2 -->
+            <article class="resena-card">
+              <div class="resena-top">
+                <div class="resena-estrellas" aria-label="Calificación: 5 de 5 estrellas">
+                  <i class="fa-solid fa-star"></i>
+                  <i class="fa-solid fa-star"></i>
+                  <i class="fa-solid fa-star"></i>
+                  <i class="fa-solid fa-star"></i>
+                  <i class="fa-solid fa-star"></i>
+                </div>
+                <span class="resena-comillas"><i class="fa-solid fa-quote-right"></i></span>
+              </div>
+              <p class="resena-comentario">
+                "La calidad de los lentes antireflejo y el filtro de luz azul es notable, trabajo todo el día frente a pantallas y el descanso visual es increíble. Además la boutique es hermosa y muy elegante."
+              </p>
+              <div class="resena-autor">
+                <div class="resena-avatar">AR</div>
+                <div class="resena-datos">
+                  <h4>Andrés Felipe Rojas</h4>
+                  <span>Lentes Digitales • Sogamoso</span>
+                </div>
+              </div>
+            </article>
+
+            <!-- Reseña 3 -->
+            <article class="resena-card">
+              <div class="resena-top">
+                <div class="resena-estrellas" aria-label="Calificación: 5 de 5 estrellas">
+                  <i class="fa-solid fa-star"></i>
+                  <i class="fa-solid fa-star"></i>
+                  <i class="fa-solid fa-star"></i>
+                  <i class="fa-solid fa-star"></i>
+                  <i class="fa-solid fa-star"></i>
+                </div>
+                <span class="resena-comillas"><i class="fa-solid fa-quote-right"></i></span>
+              </div>
+              <p class="resena-comentario">
+                "Agendé mi cita por la página web muy fácil. El trato de los asesores fue muy cálido y la entrega de mis gafas fue puntual. Gran variedad de monturas exclusivas."
+              </p>
+              <div class="resena-autor">
+                <div class="resena-avatar">VM</div>
+                <div class="resena-datos">
+                  <h4>Valentina Morales</h4>
+                  <span>Monturas Boutique • Tunja</span>
+                </div>
+              </div>
+            </article>
+
+            <!-- Reseña 4 -->
+            <article class="resena-card">
+              <div class="resena-top">
+                <div class="resena-estrellas" aria-label="Calificación: 5 de 5 estrellas">
+                  <i class="fa-solid fa-star"></i>
+                  <i class="fa-solid fa-star"></i>
+                  <i class="fa-solid fa-star"></i>
+                  <i class="fa-solid fa-star"></i>
+                  <i class="fa-solid fa-star"></i>
+                </div>
+                <span class="resena-comillas"><i class="fa-solid fa-quote-right"></i></span>
+              </div>
+              <p class="resena-comentario">
+                "Increíble la precisión del examen y la tecnología de los lentes progresivos. Se nota la diferencia de calidad frente a otras ópticas tradicionales."
+              </p>
+              <div class="resena-autor">
+                <div class="resena-avatar">JG</div>
+                <div class="resena-datos">
+                  <h4>Juan Guillermo Pérez</h4>
+                  <span>Lentes Progresivos • Paipa</span>
+                </div>
+              </div>
+            </article>
+
+            <!-- Reseña 5 -->
+            <article class="resena-card">
+              <div class="resena-top">
+                <div class="resena-estrellas" aria-label="Calificación: 5 de 5 estrellas">
+                  <i class="fa-solid fa-star"></i>
+                  <i class="fa-solid fa-star"></i>
+                  <i class="fa-solid fa-star"></i>
+                  <i class="fa-solid fa-star"></i>
+                  <i class="fa-solid fa-star"></i>
+                </div>
+                <span class="resena-comillas"><i class="fa-solid fa-quote-right"></i></span>
+              </div>
+              <p class="resena-comentario">
+                "Diseños hermosos y modernos. Compré unas monturas doradas espectaculares y la garantía postventa es insuperable. Muy feliz con mi compra."
+              </p>
+              <div class="resena-autor">
+                <div class="resena-avatar">SP</div>
+                <div class="resena-datos">
+                  <h4>Sofía Parra</h4>
+                  <span>Montura Titanium • Duitama</span>
+                </div>
+              </div>
+            </article>
           </div>
         </div>
       </section>

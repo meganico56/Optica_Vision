@@ -23,13 +23,15 @@
 
 /* ===== MODO OSCURO (páginas públicas) ===== */
 :root.dark-mode {
-  --text-dark:   #f0ead8;
-  --text-muted:  #aaaaaa;
-  --border:      #333333;
-  --bg:          #111111;
-  --bg-card:     #1a1a1a;
-  --navbar-bg:   rgba(15, 15, 15, 0.97);
-  --navbar-menu-bg: rgba(18, 18, 18, 0.99);
+  --text-dark:   #ffffff;
+  --text-muted:  #ece8e1;
+  --border:      rgba(204, 164, 59, 0.28);
+  --bg:          #0e0d0b;
+  --bg-card:     #171613;
+  --navbar-bg:   rgba(14, 13, 11, 0.94);
+  --navbar-menu-bg: rgba(18, 17, 14, 0.98);
+  --gold-glow:   rgba(204, 164, 59, 0.28);
+  --gold-subtle: rgba(204, 164, 59, 0.16);
 }
 
 /* ---------- Reset ---------- */
