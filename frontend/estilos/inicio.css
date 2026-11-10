@@ -486,11 +486,12 @@ html { scroll-behavior: smooth; }
     font-size: clamp(5rem, 9vw, 7.5rem);
     font-weight: 800;
     color: var(--gold);
-    background: linear-gradient(135deg, #111111 0%, #3b3120 35%, var(--gold-dark) 65%, var(--gold-light) 100%);
+    background: linear-gradient(135deg, #000000 0%, #000000 22%, #5c4610 45%, #d4a11e 72%, #ffd23f 100%);
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
-    opacity: 0.9;
+    filter: drop-shadow(0 4px 10px rgba(212, 161, 30, 0.45));
+    opacity: 1;
     line-height: 1;
     pointer-events: none;
     user-select: none;
@@ -1198,7 +1199,7 @@ footer .copyright {
 :root.dark-mode .hero-text h2 { color: var(--text-muted); }
 
 :root.dark-mode .servicio-numero {
-    background-image: linear-gradient(135deg, #4a4a4a 0%, #6b5a30 35%, var(--gold) 65%, var(--gold-light) 100%);
+    background-image: linear-gradient(135deg, #5a5a5a 0%, #6e5414 35%, #e0ab22 68%, #ffdc5c 100%);
 }
 
 /* En oscuro el aura del hero es negra con borde dorado */
