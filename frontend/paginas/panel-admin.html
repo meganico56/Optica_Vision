@@ -181,7 +181,23 @@
 </div>
 <div class="section-content" id="sec-reportes" data-roles="Administrador,Vendedor">
 <div class="dashboard-container">
-<div class="page-header"><div><h1 class="page-title">Reportes</h1><p class="page-subtitle">Informes del sistema</p></div><button class="btn-primary" type="button" data-nuevo="reporte"><i class="fa-solid fa-file-circle-plus"></i> Generar reporte</button></div><div class="reporte-grid" id="gridReportes"></div>
+<div class="page-header"><div><h1 class="page-title">Reportes</h1><p class="page-subtitle">Informes del sistema</p></div><button class="btn-primary" type="button" data-nuevo="reporte"><i class="fa-solid fa-file-circle-plus"></i> Generar reporte</button></div><div class="data-card" id="cardVentasProducto" data-roles="Administrador">
+<div class="data-card-header"><h2 class="data-card-title"><i class="fa-solid fa-chart-column"></i> Ventas por producto</h2></div>
+<div class="rep-filtros">
+<div class="rep-campo"><label for="repVpDesde">Desde</label><input type="date" id="repVpDesde" class="input-admin"></div>
+<div class="rep-campo"><label for="repVpHasta">Hasta</label><input type="date" id="repVpHasta" class="input-admin"></div>
+<button type="button" class="btn-primary" id="repVpConsultar"><i class="fa-solid fa-magnifying-glass"></i> Consultar</button>
+</div>
+<p class="rep-error" id="repVpError" role="alert" hidden></p>
+<div class="kpi-grid cols-4">
+<div class="kpi-card"><div class="kpi-info"><p>Unidades vendidas</p><h3 id="repVpUnidades">–</h3></div><div class="kpi-icon blue"><i class="fa-solid fa-boxes-packing"></i></div></div>
+<div class="kpi-card"><div class="kpi-info"><p>Ingresos</p><h3 id="repVpIngresos">–</h3></div><div class="kpi-icon gold"><i class="fa-solid fa-sack-dollar"></i></div></div>
+<div class="kpi-card"><div class="kpi-info"><p>Productos vendidos</p><h3 id="repVpProductos">–</h3></div><div class="kpi-icon green"><i class="fa-solid fa-glasses"></i></div></div>
+<div class="kpi-card"><div class="kpi-info"><p>Bajo mínimo</p><h3 id="repVpBajoMinimo">–</h3></div><div class="kpi-icon orange"><i class="fa-solid fa-box-open"></i></div></div>
+</div>
+<table class="admin-table"><thead><tr><th>Producto</th><th class="rep-num">Unidades</th><th class="rep-num">Ingresos</th><th class="rep-num">Stock actual</th><th class="rep-num">Mínimo</th><th>Estado</th></tr></thead><tbody id="tbVentasProducto"><tr><td colspan="6" style="text-align:center;">Selecciona un rango de fechas y pulsa Consultar.</td></tr></tbody></table>
+</div>
+<div class="reporte-grid" id="gridReportes"></div>
 </div>
 </div>
 </main>
