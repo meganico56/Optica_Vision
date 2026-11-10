@@ -139,12 +139,12 @@ html { scroll-behavior: smooth; }
     filter: drop-shadow(0 30px 25px rgba(0,0,0,0.15));
 }
 
-/* PODIO 3D: tapa de mármol con aro dorado, cuerpo cilíndrico y base dorada */
+/* PODIO: disco de cristal flotante con canto dorado, haz de luz y anillo de luz en el suelo */
 .podium {
-    --pw: 340px;
+    --pw: 380px;
     position: absolute;
     left: 50%;
-    bottom: 12px;
+    bottom: 49px;
     width: var(--pw);
     height: calc(var(--pw) * 0.56);
     transform: translateX(-50%);
@@ -154,30 +154,37 @@ html { scroll-behavior: smooth; }
 
 .podium > div { position: absolute; }
 
+/* Disco de cristal: translúcido, con canto dorado y flotando sobre el haz */
 .podium-tapa {
     top: 0;
     left: 0;
     width: 100%;
-    height: calc(var(--pw) * 0.2);
+    height: calc(var(--pw) * 0.18);
     border-radius: 50%;
     overflow: hidden;
-    background: radial-gradient(ellipse at 50% 35%, #ffffff 0%, #faf7f0 45%, #e9e2d2 100%);
-    border: 2px solid var(--gold-light);
+    background:
+        radial-gradient(ellipse at 50% 30%, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.55) 45%, rgba(236, 228, 205, 0.45) 100%);
+    border: 1.5px solid rgba(255, 255, 255, 0.95);
     box-shadow:
-        inset 0 -8px 14px rgba(120, 95, 30, 0.12),
-        inset 0 4px 10px rgba(255, 255, 255, 0.9),
-        0 0 30px var(--gold-glow);
+        0 0 0 3px rgba(204, 164, 59, 0.6),
+        0 7px 0 3px rgba(160, 125, 40, 0.55),
+        inset 0 -6px 12px rgba(204, 164, 59, 0.18),
+        inset 0 3px 8px rgba(255, 255, 255, 0.95),
+        0 14px 36px var(--gold-glow);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    animation: podioFlota 6s ease-in-out infinite;
     z-index: 3;
 }
 
-/* Aro grabado y reflejo dorado bajo las gafas */
+/* Anillo interior grabado y luz dorada bajo las gafas */
 .podium-tapa::before {
     content: "";
     position: absolute;
-    inset: 16% 12%;
+    inset: 20% 16%;
     border-radius: 50%;
-    border: 1px solid rgba(204, 164, 59, 0.45);
-    background: radial-gradient(ellipse at center, rgba(229, 201, 109, 0.35), transparent 70%);
+    border: 1px solid rgba(204, 164, 59, 0.55);
+    background: radial-gradient(ellipse at center, rgba(229, 201, 109, 0.45), transparent 70%);
 }
 
 /* Destello de luz que gira al ritmo de las gafas */
@@ -188,43 +195,55 @@ html { scroll-behavior: smooth; }
     top: 50%;
     width: 150%;
     aspect-ratio: 1;
-    background: conic-gradient(from 0deg, transparent 0deg, rgba(255, 255, 255, 0.85) 25deg, transparent 60deg, transparent 180deg, rgba(229, 201, 109, 0.35) 205deg, transparent 240deg);
+    background: conic-gradient(from 0deg, transparent 0deg, rgba(255, 255, 255, 0.95) 25deg, transparent 60deg, transparent 180deg, rgba(229, 201, 109, 0.5) 205deg, transparent 240deg);
     transform: translate(-50%, -50%) scaleY(0.2) rotate(0deg);
     animation: podioDestello 12s linear infinite;
 }
 
+/* Haz de luz que sostiene el disco */
 .podium-cuerpo {
-    top: calc(var(--pw) * 0.1);
-    left: 5%;
-    width: 90%;
-    height: calc(var(--pw) * 0.3);
-    background: linear-gradient(90deg, #c9bea7 0%, #efe9dc 18%, #ffffff 38%, #f3eee3 60%, #d8cfbb 82%, #b3a789 100%);
-    border-bottom: 4px solid var(--gold);
-    border-radius: 0 0 50% 50% / 0 0 calc(var(--pw) * 0.09) calc(var(--pw) * 0.09);
-    z-index: 2;
+    top: calc(var(--pw) * 0.09);
+    left: 14%;
+    width: 72%;
+    height: calc(var(--pw) * 0.36);
+    background: linear-gradient(180deg, rgba(229, 201, 109, 0.55) 0%, rgba(229, 201, 109, 0.22) 55%, rgba(229, 201, 109, 0) 100%);
+    clip-path: polygon(30% 0, 70% 0, 100% 100%, 0 100%);
+    filter: blur(1.5px);
+    z-index: 1;
 }
 
-/* Filete dorado alrededor del cuerpo */
+/* Núcleo brillante del haz */
 .podium-cuerpo::before {
     content: "";
     position: absolute;
-    left: 0;
-    right: 0;
-    top: 32%;
-    height: calc(var(--pw) * 0.18);
-    border-radius: 50%;
-    border-bottom: 2px solid rgba(204, 164, 59, 0.7);
+    top: 0;
+    bottom: 0;
+    left: 46%;
+    width: 8%;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.85), rgba(255, 255, 255, 0) 80%);
 }
 
+/* Anillo de luz en el suelo */
 .podium-base {
-    top: calc(var(--pw) * 0.3);
-    left: -4%;
-    width: 108%;
-    height: calc(var(--pw) * 0.18);
+    top: calc(var(--pw) * 0.39);
+    left: -6%;
+    width: 112%;
+    height: calc(var(--pw) * 0.16);
     border-radius: 50%;
-    background: linear-gradient(90deg, #7d6320 0%, var(--gold) 25%, var(--gold-light) 45%, var(--gold) 70%, #6e561b 100%);
-    box-shadow: 0 5px 0 #6e561b, 0 10px 25px rgba(0, 0, 0, 0.18);
-    z-index: 1;
+    border: 2px solid rgba(204, 164, 59, 0.75);
+    background: radial-gradient(ellipse at center, rgba(229, 201, 109, 0.4) 0%, rgba(229, 201, 109, 0.1) 55%, transparent 74%);
+    box-shadow:
+        0 0 26px var(--gold-glow),
+        inset 0 0 18px rgba(255, 255, 255, 0.6);
+    z-index: 0;
+}
+
+.podium-base::before {
+    content: "";
+    position: absolute;
+    inset: 18% 12%;
+    border-radius: 50%;
+    border: 1px dashed rgba(204, 164, 59, 0.45);
 }
 
 /* Sombra en el suelo que respira con la flotación de las gafas */
@@ -234,7 +253,7 @@ html { scroll-behavior: smooth; }
     width: 120%;
     height: calc(var(--pw) * 0.12);
     border-radius: 50%;
-    background: radial-gradient(ellipse at center, rgba(0, 0, 0, 0.28), transparent 70%);
+    background: radial-gradient(ellipse at center, rgba(0, 0, 0, 0.18), transparent 70%);
     filter: blur(6px);
     animation: podioSombra 12s ease-in-out infinite;
     z-index: 0;
@@ -242,6 +261,11 @@ html { scroll-behavior: smooth; }
 
 @keyframes podioDestello {
     to { transform: translate(-50%, -50%) scaleY(0.2) rotate(-360deg); }
+}
+
+@keyframes podioFlota {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-6px); }
 }
 
 @keyframes podioSombra {
@@ -1020,6 +1044,7 @@ body.disco-arrastrando .glasses-model {
 /* Respeta a quien desactiva las animaciones */
 @media (prefers-reduced-motion: reduce) {
     .glasses-model,
+    .podium-tapa,
     .podium-tapa::after,
     .podium-sombra { animation: none; }
     .carrusel-pista { transition: none; }
@@ -1422,8 +1447,8 @@ footer .copyright {
     .glasses-model { width: 260px; }
 
     .podium {
-        --pw: 210px;
-        bottom: 8px;
+        --pw: 235px;
+        bottom: 45px;
     }
 
     .ventajas {
@@ -1561,16 +1586,30 @@ footer .copyright {
 }
 
 :root.dark-mode .podium-tapa {
-    background: radial-gradient(ellipse at 50% 35%, #3a3a3a 0%, #262626 50%, #161616 100%);
-    border-color: var(--gold);
+    background: radial-gradient(ellipse at 50% 30%, rgba(90, 90, 90, 0.75) 0%, rgba(40, 40, 40, 0.65) 50%, rgba(15, 15, 15, 0.7) 100%);
+    border-color: rgba(255, 255, 255, 0.35);
     box-shadow:
-        inset 0 -8px 14px rgba(0, 0, 0, 0.5),
-        inset 0 4px 10px rgba(255, 255, 255, 0.08),
-        0 0 35px var(--gold-glow);
+        0 0 0 3px rgba(204, 164, 59, 0.85),
+        0 7px 0 3px rgba(120, 92, 28, 0.9),
+        inset 0 -6px 12px rgba(0, 0, 0, 0.6),
+        inset 0 3px 8px rgba(255, 255, 255, 0.18),
+        0 14px 40px var(--gold-glow);
 }
 
 :root.dark-mode .podium-cuerpo {
-    background: linear-gradient(90deg, #0d0d0d 0%, #222222 20%, #3a3a3a 40%, #262626 62%, #141414 85%, #080808 100%);
+    background: linear-gradient(180deg, rgba(229, 201, 109, 0.5) 0%, rgba(229, 201, 109, 0.18) 55%, rgba(229, 201, 109, 0) 100%);
+}
+
+:root.dark-mode .podium-cuerpo::before {
+    background: linear-gradient(180deg, rgba(255, 236, 170, 0.7), rgba(255, 236, 170, 0) 80%);
+}
+
+:root.dark-mode .podium-base {
+    border-color: rgba(229, 201, 109, 0.85);
+    background: radial-gradient(ellipse at center, rgba(229, 201, 109, 0.35) 0%, rgba(229, 201, 109, 0.08) 55%, transparent 74%);
+    box-shadow:
+        0 0 30px var(--gold-glow),
+        inset 0 0 18px rgba(229, 201, 109, 0.25);
 }
 
 :root.dark-mode .podium-sombra {
