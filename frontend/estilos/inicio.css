@@ -486,7 +486,11 @@ html { scroll-behavior: smooth; }
     font-size: clamp(5rem, 9vw, 7.5rem);
     font-weight: 800;
     color: var(--gold);
-    opacity: 0.1;
+    background: linear-gradient(135deg, #111111 0%, #3b3120 35%, var(--gold-dark) 65%, var(--gold-light) 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    opacity: 0.9;
     line-height: 1;
     pointer-events: none;
     user-select: none;
@@ -1057,9 +1061,12 @@ footer .copyright {
         left: -48px;
     }
     .servicio-numero {
-        font-size: 3.6rem;
-        right: 1rem;
-        padding-left: 0.8rem;
+        font-size: 3rem;
+        right: 1.5rem;
+        top: 1.5rem;
+        transform: none;
+        border-left: none;
+        padding-left: 0;
     }
     .hero {
         flex-direction: column;
@@ -1189,6 +1196,10 @@ footer .copyright {
 }
 
 :root.dark-mode .hero-text h2 { color: var(--text-muted); }
+
+:root.dark-mode .servicio-numero {
+    background-image: linear-gradient(135deg, #4a4a4a 0%, #6b5a30 35%, var(--gold) 65%, var(--gold-light) 100%);
+}
 
 /* En oscuro el aura del hero es negra con borde dorado */
 :root.dark-mode .hero-text::before {
