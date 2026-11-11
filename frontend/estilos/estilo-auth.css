@@ -953,6 +953,24 @@ footer .copyright {
     0 0 28px rgba(204, 164, 59, 0.12);
 }
 
+/* Botón de tema a la misma altura que en el navbar de inicio
+   (navbar: 1rem de padding + logo de 55px, botón centrado) */
+.pagina-login .btn-tema-flotante {
+  top: calc(1rem + 27.5px);
+  bottom: auto;
+  right: 5%;
+  transform: translateY(-50%);
+}
+
+.pagina-login .btn-tema-flotante:hover {
+  transform: translateY(-50%) scale(1.07);
+}
+
+/* Espacio arriba para que el botón no tape la tarjeta (registro es alta) */
+.pagina-login .inicio {
+  padding-top: max(clamp(2rem, 5vh, 3.5rem), 76px);
+}
+
 /* Flecha del select en dark mode: versión dorada clara */
 :root.dark-mode .pagina-login .campos select {
   background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'><path d='M1 1l5 5 5-5' stroke='%23e5c96d' stroke-width='2' fill='none' stroke-linecap='round' stroke-linejoin='round'/></svg>");
