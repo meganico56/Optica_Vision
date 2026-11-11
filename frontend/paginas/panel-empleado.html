@@ -1,11 +1,198 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link rel="stylesheet" href="../estilos/estilo-admin.css">
+<title>Panel de gestión | Boutique de la Visión</title>
 </head>
 <body>
-    
+    <aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+        <img src="../imagenes/logos/Logo_modo_claro.png" class="sidebar-logo" id="mainLogo">
+        <button class="sidebar-close" id="sidebarClose" type="button" aria-label="Cerrar menú"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+<nav class="sidebar-nav">
+    <a href="#" class="nav-item active" data-section="dashboard"><i class="fa-solid fa-chart-pie"></i><span>Dashboard</span></a>
+    <a href="#" class="nav-item" data-section="ventas" data-roles="Vendedor"><i class="fa-solid fa-cash-register"></i><span>Ventas y devoluciones</span></a>
+    <a href="#" class="nav-item" data-section="citas" data-roles="Vendedor"><i class="fa-solid fa-calendar-check"></i><span>Citas y recetas</span></a>
+    <a href="#" class="nav-item" data-section="reportes" data-roles="Vendedor"><i class="fa-solid fa-file-invoice"></i><span>Reportes</span></a>
+</nav>
+<div class="sidebar-footer">
+    <a href="inicio.html" class="store-btn"><i class="fa-solid fa-store"></i><span>Ver tienda</span></a>
+    <a href="inicio-sesion.html" class="logout-btn" id="logoutBtn"><i class="fa-solid fa-right-from-bracket"></i><span>Cerrar sesión</span></a>
+</div>
+</aside>
+<main class="main-content">
+<header class="top-bar">
+<div class="topbar-left">
+<button class="menu-toggle" id="menuToggle" type="button" aria-label="Abrir menú"><i class="fa-solid fa-bars"></i></button>
+</div>
+<div class="top-bar-right">
+<button class="theme-toggle-btn" id="themeToggleBtn" type="button" aria-label="Cambiar tema" title="Alternar modo claro / oscuro">
+  <i class="fa-solid fa-sun" id="themeToggleIcon"></i>
+  <span class="theme-toggle-text" id="themeToggleText">Modo claro</span>
+</button>
+<div class="admin-profile">
+<div class="admin-info"><div class="admin-name" id="adminName"></div><div class="admin-role" id="adminRol"></div></div>
+<div class="admin-avatar" id="adminAvatar"></div>
+</div>
+</div>
+</header>
+<div id="suspensionWarning" class="suspension-warning" role="alert" hidden></div>
+
+<div class="section-content active" id="sec-dashboard">
+<div class="dashboard-container">
+<div class="page-header"><div><h1 class="page-title">Visión general</h1><p class="page-subtitle" id="todayDate"></p></div></div>
+<div class="kpi-grid">
+<div class="kpi-card" data-roles="Administrador"><div class="kpi-info"><p>Ingresos del mes</p><h3 id="kpiIngresos">–</h3></div><div class="kpi-icon gold"><i class="fa-solid fa-sack-dollar"></i></div></div>
+<div class="kpi-card"><div class="kpi-info"><p>Ventas completadas</p><h3 id="kpiVentas">–</h3></div><div class="kpi-icon blue"><i class="fa-solid fa-bag-shopping"></i></div></div>
+<div class="kpi-card"><div class="kpi-info"><p>Citas programadas</p><h3 id="kpiCitas">–</h3></div><div class="kpi-icon green"><i class="fa-solid fa-calendar-days"></i></div></div>
+<div class="kpi-card"><div class="kpi-info"><p>Clientes registrados</p><h3 id="kpiClientes">–</h3></div><div class="kpi-icon purple"><i class="fa-solid fa-users"></i></div></div>
+<div class="kpi-card"><div class="kpi-info"><p>Productos bajo mínimo</p><h3 id="kpiBajoMinimo">–</h3></div><div class="kpi-icon orange"><i class="fa-solid fa-box-open"></i></div></div>
+<div class="kpi-card" data-roles="Administrador"><div class="kpi-info"><p>Recetas vigentes</p><h3 id="kpiRecetas">–</h3></div><div class="kpi-icon teal"><i class="fa-solid fa-prescription-bottle-medical"></i></div></div>
+</div>
+<div class="data-section">
+<div class="data-card"><div class="data-card-header"><h2 class="data-card-title"><i class="fa-solid fa-receipt"></i> Últimas ventas</h2><a href="#" class="view-all-btn" data-goto="ventas">Ver todas <i class="fa-solid fa-arrow-right"></i></a></div><table class="admin-table"><thead><tr><th>Cód.</th><th>Cliente</th><th>Total</th><th>Fecha</th><th>Estado</th><th></th></tr></thead><tbody id="tbUltimasVentas"></tbody></table></div>
+<div class="data-card"><div class="data-card-header"><h2 class="data-card-title"><i class="fa-solid fa-triangle-exclamation"></i> Alertas de inventario</h2></div><ul class="alert-list" id="listaAlertas"></ul></div>
+</div>
+</div>
+</div>
+  <div class="page-header">
+    <div>
+      <h1 class="page-title">Catálogo e inventario</h1>
+      <p class="page-subtitle">Productos, marcas, categorías y existencias</p>
+    </div>
+    <div style="display:flex;gap:10px;align-items:center;">
+      <button class="btn-primary" type="button" id="btnNuevoInventario" data-nuevo="producto">
+        <i class="fa-solid fa-plus"></i> Nuevo producto
+      </button>
+    </div>
+  </div>
+    <!-- KPIs -->
+  <div class="kpi-grid" style="grid-template-columns:repeat(3,1fr);margin-bottom:28px">
+    <div class="kpi-card"><div class="kpi-info"><p>Total productos</p><h3 id="kpiProductos">–</h3></div><div class="kpi-icon gold"><i class="fa-solid fa-glasses"></i></div></div>
+    <div class="kpi-card"><div class="kpi-info"><p>Bajo mínimo</p><h3 id="kpiBajoMinimo2">–</h3></div><div class="kpi-icon orange"><i class="fa-solid fa-box-open"></i></div></div>
+    <div class="kpi-card"><div class="kpi-info"><p>Categorías activas</p><h3 id="kpiCategorias">–</h3></div><div class="kpi-icon teal"><i class="fa-solid fa-tag"></i></div></div>
+  </div>
+    <!-- Pestañas de navegación -->
+  <div class="inv-tab-bar">
+    <button class="inv-tab active" data-inv-tab="productos">
+      <i class="fa-solid fa-glasses"></i> Productos
+    </button>
+    <button class="inv-tab" data-inv-tab="marcas">
+      <i class="fa-solid fa-copyright"></i> Marcas
+    </button>
+    <button class="inv-tab" data-inv-tab="categorias">
+      <i class="fa-solid fa-tag"></i> Categorías
+    </button>
+  </div>
+    <!-- Panel: Productos -->
+  <div class="inv-panel active" id="invPanel-productos">
+    <div class="data-card">
+      <div class="data-card-header">
+        <h2 class="data-card-title"><i class="fa-solid fa-glasses"></i> Listado de productos</h2>
+        <button class="btn-ghost" type="button" data-nuevo="producto"><i class="fa-solid fa-plus"></i> Añadir</button>
+      </div>
+      <table class="admin-table">
+        <thead><tr><th>ID</th><th>Producto</th><th>Categoría</th><th>Marca</th><th>Precio</th><th>Stock</th><th>Mín</th><th>Estado</th><th>Acc.</th></tr></thead>
+        <tbody id="tbProductos"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Panel: Marcas -->
+  <div class="inv-panel" id="invPanel-marcas">
+    <div class="data-card">
+      <div class="data-card-header">
+        <h2 class="data-card-title"><i class="fa-solid fa-copyright"></i> Marcas registradas</h2>
+        <button class="btn-ghost" type="button" data-nuevo="marca"><i class="fa-solid fa-plus"></i> Añadir marca</button>
+      </div>
+      <table class="admin-table">
+        <thead><tr><th>ID</th><th>Nombre</th><th>País</th><th>Estado</th><th>Acciones</th></tr></thead>
+        <tbody id="tbMarcas"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Panel: Categorías -->
+  <div class="inv-panel" id="invPanel-categorias">
+    <div class="data-card">
+      <div class="data-card-header">
+        <h2 class="data-card-title"><i class="fa-solid fa-tag"></i> Categorías de productos</h2>
+        <button class="btn-ghost" type="button" data-nuevo="categoria"><i class="fa-solid fa-plus"></i> Añadir categoría</button>
+      </div>
+      <table class="admin-table">
+        <thead><tr><th>ID</th><th>Nombre</th><th>Descripción</th><th>Estado</th><th>Acciones</th></tr></thead>
+        <tbody id="tbCategorias"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+</div>
+<div class="section-content" id="sec-ventas" data-roles="Administrador,Vendedor">
+<div class="dashboard-container">
+<div class="page-header"><div><h1 class="page-title">Ventas y devoluciones</h1><p class="page-subtitle">Historial de ventas, pagos y devoluciones</p></div><button class="btn-primary" type="button" data-nuevo="venta"><i class="fa-solid fa-plus"></i> Nueva venta</button></div>
+<div class="kpi-grid" style="grid-template-columns:repeat(4,1fr);margin-bottom:25px">
+<div class="kpi-card"><div class="kpi-info"><p>Total ingresos</p><h3 id="kpiTotalIngresos">–</h3></div><div class="kpi-icon gold"><i class="fa-solid fa-sack-dollar"></i></div></div>
+<div class="kpi-card"><div class="kpi-info"><p>Ventas completadas</p><h3 id="kpiVentasCompletadas">–</h3></div><div class="kpi-icon green"><i class="fa-solid fa-check-circle"></i></div></div>
+<div class="kpi-card"><div class="kpi-info"><p>Cotizaciones</p><h3 id="kpiCotizaciones">–</h3></div><div class="kpi-icon blue"><i class="fa-solid fa-file-pen"></i></div></div>
+<div class="kpi-card"><div class="kpi-info"><p>Devoluciones</p><h3 id="kpiDevoluciones">–</h3></div><div class="kpi-icon orange"><i class="fa-solid fa-rotate-left"></i></div></div>
+</div>
+<div class="data-card"><div class="data-card-header"><h2 class="data-card-title"><i class="fa-solid fa-cash-register"></i> Registro de ventas</h2></div><table class="admin-table"><thead><tr><th>Cód.</th><th>Cliente</th><th>Fecha</th><th>Total</th><th>Cotiz.</th><th>Promo</th><th>Receta</th><th>Estado</th><th>Acc.</th></tr></thead><tbody id="tbVentas"></tbody></table></div>
+<div class="data-card"><div class="data-card-header"><h2 class="data-card-title"><i class="fa-solid fa-rotate-left"></i> Devoluciones registradas</h2><button class="btn-ghost" type="button" data-nuevo="devolucion"><i class="fa-solid fa-plus"></i> Registrar devolución</button></div><table class="admin-table"><thead><tr><th>ID</th><th>Motivo</th><th>Cantidad</th><th>Observaciones</th><th>Venta</th><th>Registrado por</th><th>Acc.</th></tr></thead><tbody id="tbDevoluciones"></tbody></table></div>
+</div>
+<div class="section-content" id="sec-citas" data-roles="Administrador,Vendedor">
+<div class="dashboard-container">
+<div class="page-header"><div><h1 class="page-title">Citas y recetas ópticas</h1><p class="page-subtitle">Agenda de atención y fórmulas registradas</p></div><button class="btn-primary" type="button" data-nuevo="cita"><i class="fa-solid fa-calendar-plus"></i> Nueva cita</button></div><div class="data-section"><div class="data-card"><div class="data-card-header"><h2 class="data-card-title"><i class="fa-solid fa-calendar-check"></i> Agenda de citas</h2></div><table class="admin-table"><thead><tr><th>#</th><th>Cliente</th><th>Fecha y hora</th><th>Motivo</th><th>Atiende</th><th>Estado</th><th>Acc.</ th></tr></thead><tbody id="tbCitas"></tbody></table></div><div class="data-card"><div class="data-card-header"><h2 class="data-card-title"><i class="fa-solid fa-file-medical"></i> Recetas ópticas</h2><button class="btn-ghost" type="button" data-nuevo="receta"><i class="fa-solid fa-plus"></i> Nueva</button></div><table class="admin-table"><thead><tr>< th>#</ th >< th >Cliente< / th >< th >Emisión< / th >< th >Vence< / th >< th >Diagnóstico< / th >< th >Estado< / th >< th >Acc.< / th ></ tr ></ thead >< tbody id ="tbRecetas" ></ tbody ></ table ></ div ></ div >
+</div>
+</div>
+<div class="section-content" id="sec-reportes" data-roles="Administrador,Vendedor">
+<div class="dashboard-container">
+<div class="page-header"><div><h1 class="page-title">Reportes</h1><p class="page-subtitle">Informes del sistema</p></div><button class="btn-primary" type="button" data-nuevo="reporte"><i class="fa-solid fa-file-circle-plus"></i> Generar reporte</button></div><div class="data-card" id="cardVentasProducto" data-roles="Administrador">
+<div class="data-card-header"><h2 class="data-card-title"><i class="fa-solid fa-chart-column"></i> Ventas por producto</h2></div>
+<div class="rep-filtros">
+<div class="rep-campo"><label for="repVpDesde">Desde</label><input type="date" id="repVpDesde" class="input-admin"></div>
+<div class="rep-campo"><label for="repVpHasta">Hasta</label><input type="date" id="repVpHasta" class="input-admin"></div>
+<button type="button" class="btn-primary" id="repVpConsultar"><i class="fa-solid fa-magnifying-glass"></i> Consultar</button>
+</div>
+<p class="rep-error" id="repVpError" role="alert" hidden></p>
+<div class="kpi-grid cols-4">
+<div class="kpi-card"><div class="kpi-info"><p>Unidades vendidas</p><h3 id="repVpUnidades">–</h3></div><div class="kpi-icon blue"><i class="fa-solid fa-boxes-packing"></i></div></div>
+<div class="kpi-card"><div class="kpi-info"><p>Ingresos</p><h3 id="repVpIngresos">–</h3></div><div class="kpi-icon gold"><i class="fa-solid fa-sack-dollar"></i></div></div>
+<div class="kpi-card"><div class="kpi-info"><p>Productos vendidos</p><h3 id="repVpProductos">–</h3></div><div class="kpi-icon green"><i class="fa-solid fa-glasses"></i></div></div>
+<div class="kpi-card"><div class="kpi-info"><p>Bajo mínimo</p><h3 id="repVpBajoMinimo">–</h3></div><div class="kpi-icon orange"><i class="fa-solid fa-box-open"></i></div></div>
+</div>
+<table class="admin-table"><thead><tr><th>Producto</th><th class="rep-num">Unidades</th><th class="rep-num">Ingresos</th><th class="rep-num">Stock actual</th><th class="rep-num">Mínimo</th><th>Estado</th></tr></thead><tbody id="tbVentasProducto"><tr><td colspan="6" style="text-align:center;">Selecciona un rango de fechas y pulsa Consultar.</td></tr></tbody></table>
+</div>
+<div class="reporte-grid" id="gridReportes"></div>
+</div>
+</div>
+</main>
+<dialog id="modal" class="modal">
+<form id="formModal" novalidate>
+<div class="modal-header-bar">
+  <h2 id="modalTitulo"><i class="fa-solid fa-box"></i> <span>Producto</span></h2>
+  <button type="button" class="modal-close-btn" id="modalCloseBtn" aria-label="Cerrar ventana"><i class="fa-solid fa-xmark"></i></button>
+</div>
+<div id="modalCampos"></div>
+<p class="mensaje-error" id="modalError" role="alert" hidden></p>
+<div class="modal-footer-bar">
+  <button type="button" class="btn-secondary" id="modalCancelar"><i class="fa-solid fa-xmark"></i> Cancelar</button>
+  <button type="submit" class="btn-primary" id="modalGuardar"><i class="fa-solid fa-floppy-disk"></i> Guardar producto</button>
+</div>
+</form>
+</dialog>
+
+<script src="../scripts/api.js"></script>
+<script src="../scripts/sesion.js"></script>
+<script src="../scripts/panel-navegacion.js"></script>
+<script src="../scripts/panel-admin.js"></script>
+<script src="../scripts/intro-animacion.js"></script>    
+
 </body>
 </html>
