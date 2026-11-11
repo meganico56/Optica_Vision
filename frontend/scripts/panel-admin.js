@@ -2144,10 +2144,17 @@
     try {
       const ventas = await Api.get("/api/ventas");
       await cargarSuspensiones();
+
       let ingresos = 0,
+        ingresosMes = 0,
         completadas = 0,
         cotizaciones = 0;
+
+      const hoy = new Date();
+      const periodoActual = `${hoy.getFullYear()}-${String(hoy.getMonth() + 1).padStart(2, "0")}`;
+
       tbVentas.innerHTML = "";
+
       if (ventas.length === 0) {
         tbVentas.innerHTML =
           '<tr><td colspan="9" style="text-align:center;">No hay ventas registradas.</td></tr>';
@@ -2158,6 +2165,10 @@
           if (!esCotiz && v.estado === "Pagada") {
             ingresos += parseFloat(v.total || 0);
             completadas++;
+
+            if (v.fecha && String(v.fecha).slice(0, 7) === periodoActual) {
+              ingresosMes += parseFloat(v.total || 0);
+            }
           }
           if (esCotiz) cotizaciones++;
           const estadoDisplay = esCotiz ? "Cotización" : v.estado;
@@ -2187,7 +2198,7 @@
       if (kpiVentasCompletadas) kpiVentasCompletadas.textContent = completadas;
       if (kpiCotizaciones) kpiCotizaciones.textContent = cotizaciones;
       // Actualizar KPIs del dashboard
-      if (kpiIngresos) kpiIngresos.textContent = BV.moneda(ingresos);
+      if (kpiIngresos) kpiIngresos.textContent = BV.moneda(ingresosMes);
       if (kpiVentas) kpiVentas.textContent = completadas;
 
       // Renderizar Últimas ventas en el Dashboard
