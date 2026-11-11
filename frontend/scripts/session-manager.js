@@ -37,10 +37,17 @@ document.addEventListener('DOMContentLoaded', () => {
                     cerrarSesionGlobal();
                 });
                 
-                // Si es admin/empleado, agregar un enlace al Panel justo antes
-                if (userData.rol === 'admin' || userData.rol === 'empleado' || userData.rol === 'Administrador' || userData.rol === 'Vendedor') {
+                // Si es admin, agregar un enlace al Panel Admin justo antes
+                if (userData.rol === 'admin' || userData.rol === 'Administrador') {
                     const li = document.createElement('li');
                     li.innerHTML = '<a href="panel-admin.html" style="color: var(--gold);"><i class="fa-solid fa-chart-pie"></i> PANEL ADMIN</a>';
+                    link.parentElement.insertAdjacentElement('beforebegin', li);
+                }
+                
+                // Si es empleado/vendedor, agregar enlace al Panel Empleado
+                if (userData.rol === 'empleado' || userData.rol === 'Vendedor') {
+                    const li = document.createElement('li');
+                    li.innerHTML = '<a href="panel-empleado.html" style="color: var(--gold);"><i class="fa-solid fa-id-badge"></i> MI PANEL</a>';
                     link.parentElement.insertAdjacentElement('beforebegin', li);
                 }
                 

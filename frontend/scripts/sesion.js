@@ -21,7 +21,7 @@
     }
 
     function panelDe(rol) {
-        if (STAFF.indexOf(rol) !== -1) return 'panel-admin.html';
+        if (rol === 'Administrador') return 'panel-admin.html';
         if (rol === 'Vendedor') return 'panel-empleado.html';
         if (rol === 'Cliente') return 'panel-usuario.html';
         return 'inicio.html';
@@ -131,12 +131,14 @@
     // "REGISTRO / LOGIN" pasa a "CERRAR SESIÓN" (+ enlace al panel) solo en la barra superior.
     function pintarNavbar(usuario) {
         document.querySelectorAll('header.navbar a[href="inicio-sesion.html"]').forEach((enlace) => {
-            const esStaff = STAFF.indexOf(usuario.rol) !== -1;
             const li = document.createElement('li');
-            li.innerHTML = esStaff
-                ? '<a href="panel-admin.html" style="color: var(--gold);"><i class="fa-solid fa-chart-pie"></i> PANEL</a>'
-                : '<a href="panel-usuario.html" style="color: var(--gold);"><i class="fa-solid fa-user"></i> MI PANEL</a>'
-                - '<a href="panel-empleado.html" style="color: var(--gold);"><i class="fa-solid fa-user"></i>panel empleado</a>'
+            if (usuario.rol === 'Administrador') {
+                li.innerHTML = '<a href="panel-admin.html" style="color: var(--gold);"><i class="fa-solid fa-chart-pie"></i> PANEL</a>';
+            } else if (usuario.rol === 'Vendedor') {
+                li.innerHTML = '<a href="panel-empleado.html" style="color: var(--gold);"><i class="fa-solid fa-id-badge"></i> MI PANEL</a>';
+            } else {
+                li.innerHTML = '<a href="panel-usuario.html" style="color: var(--gold);"><i class="fa-solid fa-user"></i> MI PANEL</a>';
+            }
             enlace.parentElement.insertAdjacentElement('beforebegin', li);
 
             enlace.innerHTML = '<i class="fa-solid fa-right-from-bracket"></i> CERRAR SESIÓN';
