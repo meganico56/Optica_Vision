@@ -371,3 +371,195 @@ footer .copyright {
     gap: 0.75rem;
   }
 }
+
+/* ---------- Acabado de la pantalla de inicio de sesión ---------- */
+.pagina-login {
+  display: flex;
+  flex-direction: column;
+}
+
+.pagina-login .inicio {
+  flex: 1 0 auto;
+  min-height: calc(100vh - 48px);
+  min-height: calc(100svh - 48px);
+  justify-content: space-between;
+  gap: clamp(2rem, 7vw, 8rem);
+  padding: clamp(2rem, 5vh, 3.5rem) clamp(2rem, 9vw, 9rem);
+  background-position: center;
+}
+
+.pagina-login .inicio::before {
+  background:
+    radial-gradient(ellipse at 18% 48%, rgba(255, 255, 255, 0.17), transparent 42%),
+    linear-gradient(105deg, rgba(20, 19, 17, 0.3) 0%, rgba(35, 32, 25, 0.1) 45%, rgba(255, 255, 255, 0.3) 100%);
+}
+
+.pagina-login .inicio .logo {
+  flex: 1 1 50%;
+}
+
+.pagina-login .inicio .logo img {
+  width: min(100%, 370px);
+  max-width: 370px;
+  filter: drop-shadow(0 0 12px rgba(255, 231, 160, 0.72)) drop-shadow(0 18px 30px rgba(0, 0, 0, 0.46));
+}
+
+.pagina-login .formulario {
+  flex: 0 1 600px;
+  max-width: 600px;
+  padding: clamp(2.5rem, 5vw, 4rem) clamp(2rem, 4vw, 3.5rem);
+  border: 1px solid rgba(255, 255, 255, 0.72);
+  border-radius: 2rem;
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.22), rgba(255, 255, 255, 0.1));
+  backdrop-filter: blur(12px) saturate(125%);
+  -webkit-backdrop-filter: blur(12px) saturate(125%);
+  box-shadow:
+    0 28px 70px rgba(24, 21, 14, 0.2),
+    0 0 0 1px rgba(255, 255, 255, 0.32) inset,
+    0 12px 30px rgba(245, 220, 157, 0.2);
+}
+
+.pagina-login .titulo h5 {
+  letter-spacing: 2px;
+}
+
+.pagina-login .subtitulo h1 {
+  font-size: clamp(2rem, 3vw, 2.5rem);
+}
+
+.pagina-login .input-group {
+  isolation: isolate;
+  margin-bottom: 1.35rem;
+}
+
+.pagina-login .input-group::before {
+  position: absolute;
+  z-index: -1;
+  inset: -3px;
+  border-radius: 16px;
+  background: linear-gradient(110deg, rgba(255, 255, 255, 0.9), var(--gold-light), rgba(255, 255, 255, 0.96), var(--gold));
+  background-size: 220% 100%;
+  content: "";
+  opacity: 0;
+  transition: opacity 0.25s ease;
+}
+
+.pagina-login .input-group:focus-within::before {
+  opacity: 1;
+  animation: brillo-campo 2.4s linear infinite;
+}
+
+.pagina-login .input-group input[type="email"],
+.pagina-login .input-group input[type="password"] {
+  min-height: 62px;
+  border: 2px solid rgba(255, 255, 255, 0.88);
+  border-radius: 13px;
+  background-color: rgba(255, 255, 255, 0.76);
+  font-size: 1rem;
+  transition: border-color 0.25s ease, background-color 0.25s ease, box-shadow 0.25s ease, transform 0.25s ease;
+}
+
+.pagina-login .input-group input:focus {
+  border-color: rgba(255, 255, 255, 0.98);
+  background-color: rgba(255, 255, 255, 0.94);
+  box-shadow: 0 0 0 1px rgba(204, 164, 59, 0.36), 0 0 20px rgba(255, 255, 255, 0.82), 0 8px 20px rgba(176, 140, 47, 0.13);
+  transform: translateY(-1px);
+  animation: pulso-campo 1.8s ease-in-out infinite;
+}
+
+.pagina-login .input-group input:not(:placeholder-shown) {
+  border-color: rgba(204, 164, 59, 0.52);
+}
+
+.pagina-login .input-group:focus-within i.icon-left,
+.pagina-login .input-group:focus-within .toggle-password {
+  color: var(--gold-dark);
+}
+
+.pagina-login .iniciar {
+  min-height: 60px;
+  border: 2px solid rgba(255, 241, 197, 0.88);
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.48), 0 10px 24px rgba(176, 140, 47, 0.34);
+}
+
+.pagina-login .iniciar:hover {
+  box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.6), 0 12px 30px rgba(176, 140, 47, 0.48);
+}
+
+.pagina-login .registrar {
+  min-height: 58px;
+  border: 2px solid rgba(204, 164, 59, 0.85);
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.44);
+}
+
+.pagina-login footer .copyright {
+  min-height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(34, 31, 24, 0.92);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+:root.dark-mode .pagina-login .formulario {
+  border-color: rgba(255, 255, 255, 0.38);
+  background: linear-gradient(145deg, rgba(35, 33, 29, 0.48), rgba(19, 18, 16, 0.34));
+  backdrop-filter: blur(20px) saturate(130%);
+  -webkit-backdrop-filter: blur(20px) saturate(130%);
+}
+
+:root.dark-mode .pagina-login .input-group input[type="email"],
+:root.dark-mode .pagina-login .input-group input[type="password"] {
+  border-color: rgba(255, 255, 255, 0.18);
+  background-color: rgba(255, 255, 255, 0.1);
+  color: var(--text-dark);
+}
+
+:root.dark-mode .pagina-login .input-group input:focus {
+  background-color: rgba(255, 255, 255, 0.17);
+}
+
+@keyframes brillo-campo {
+  to { background-position: -220% 0; }
+}
+
+@keyframes pulso-campo {
+  0%, 100% { box-shadow: 0 0 0 1px rgba(204, 164, 59, 0.3), 0 0 15px rgba(255, 255, 255, 0.72), 0 8px 20px rgba(176, 140, 47, 0.1); }
+  50% { box-shadow: 0 0 0 2px rgba(204, 164, 59, 0.48), 0 0 23px rgba(255, 255, 255, 0.96), 0 8px 22px rgba(176, 140, 47, 0.18); }
+}
+
+@media (max-width: 768px) {
+  .pagina-login .inicio {
+    min-height: calc(100vh - 48px);
+    min-height: calc(100svh - 48px);
+    gap: 1rem;
+    padding: 1.5rem 1.25rem;
+  }
+
+  .pagina-login .inicio .logo img { max-width: 210px; }
+  .pagina-login .formulario { flex: 0 1 auto; }
+}
+
+@media (max-width: 576px) {
+  .pagina-login .inicio {
+    justify-content: center;
+    padding: 2rem 1rem;
+  }
+
+  .pagina-login .inicio .logo img { max-width: 150px; }
+  .pagina-login .formulario { width: 100%; }
+}
+
+@media (min-width: 769px) and (max-height: 760px) {
+  .pagina-login .inicio { padding-top: 1.25rem; padding-bottom: 1.25rem; }
+  .pagina-login .inicio .logo img { max-width: 300px; }
+  .pagina-login .formulario { padding: 1.75rem 2.5rem; }
+  .pagina-login .subtitulo { margin-bottom: 0.8rem; }
+  .pagina-login .input-group { margin-bottom: 0.9rem; }
+  .pagina-login .input-group input[type="email"],
+  .pagina-login .input-group input[type="password"] { min-height: 54px; }
+  .pagina-login .iniciar { min-height: 52px; margin-bottom: 1rem; }
+  .pagina-login .registro-link { gap: 0.5rem; padding-top: 1rem; }
+  .pagina-login .registrar { min-height: 50px; }
+}
