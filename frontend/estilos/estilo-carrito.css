@@ -18,10 +18,8 @@
   --step-inactive: #e0e0e0;
 }
 
-/* El HTML sigue cargando inicio.css antes que esta hoja: se anula su imagen de fondo */
 body {
   background-color: var(--cart-bg);
-  background-image: none;
 }
 
 /* El header con indicadores de pasos */
@@ -449,4 +447,203 @@ body {
   .item-price {
     text-align: left;
   }
+}
+
+/* ==========================================
+   MODO OSCURO — Carrito
+   ========================================== */
+:root.dark-mode {
+  --cart-bg: #0e0d0b;
+  --cart-card: #171613;
+  --cart-border: rgba(204, 164, 59, 0.16);
+  --cart-text: #f5f0e6;
+  --cart-text-light: #a9a294;
+  --shadow-sm: 0 10px 30px rgba(0, 0, 0, 0.35);
+  --shadow-lg: 0 24px 50px rgba(0, 0, 0, 0.5);
+  --shadow-gold: 0 10px 26px rgba(204, 164, 59, 0.22);
+  --glass-bg: rgba(24, 22, 18, 0.78);
+  --glass-border: rgba(204, 164, 59, 0.28);
+  --step-inactive: rgba(255, 255, 255, 0.12);
+}
+
+:root.dark-mode body {
+  background-color: var(--cart-bg);
+  background-image:
+    radial-gradient(ellipse 70% 45% at 50% 0%, rgba(204, 164, 59, 0.09), transparent 70%),
+    radial-gradient(ellipse 40% 35% at 100% 100%, rgba(204, 164, 59, 0.05), transparent 70%);
+  background-attachment: fixed;
+}
+
+/* Encabezado con los pasos */
+:root.dark-mode .cart-header-wrapper {
+  background: linear-gradient(180deg, rgba(23, 22, 19, 0.9) 0%, rgba(14, 13, 11, 0.6) 100%);
+  border-bottom-color: rgba(204, 164, 59, 0.18);
+}
+
+:root.dark-mode .cart-title {
+  background: linear-gradient(135deg, #f5f0e6 20%, var(--gold-light) 60%, var(--gold) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+:root.dark-mode .stepper::before {
+  background: linear-gradient(90deg, rgba(204, 164, 59, 0.5), rgba(255, 255, 255, 0.1) 40%);
+}
+
+:root.dark-mode .step-circle {
+  background: #12110e;
+}
+
+:root.dark-mode .step-item.active .step-circle {
+  background: linear-gradient(135deg, var(--gold-light), var(--gold-dark));
+  border-color: var(--gold);
+  color: #12110e;
+  box-shadow: 0 0 0 5px rgba(204, 164, 59, 0.16), 0 0 18px rgba(204, 164, 59, 0.35);
+}
+
+:root.dark-mode .step-item.active .step-label {
+  color: var(--gold-light);
+}
+
+:root.dark-mode .step-item.completed .step-circle {
+  background: #12110e;
+  color: var(--gold-light);
+}
+
+/* Tarjeta de productos */
+:root.dark-mode .cart-items-section {
+  background: linear-gradient(160deg, #1b1a16 0%, #141310 100%);
+  border: 1px solid var(--cart-border);
+  box-shadow: var(--shadow-sm), 0 1px 0 rgba(255, 255, 255, 0.04) inset;
+}
+
+:root.dark-mode .cart-table-header {
+  color: var(--gold-light);
+  opacity: 0.85;
+}
+
+:root.dark-mode .cart-item:hover {
+  background: rgba(204, 164, 59, 0.04);
+}
+
+:root.dark-mode .item-image-wrapper {
+  background: radial-gradient(circle at 50% 40%, rgba(255, 255, 255, 0.09), rgba(255, 255, 255, 0.02));
+  border: 1px solid rgba(204, 164, 59, 0.14);
+}
+
+:root.dark-mode .item-info h3 {
+  color: var(--cart-text);
+}
+
+:root.dark-mode .remove-btn {
+  color: #e8806f;
+}
+
+:root.dark-mode .remove-btn:hover {
+  color: #ff9a88;
+}
+
+:root.dark-mode .qty-btn {
+  background: rgba(255, 255, 255, 0.04);
+  border-color: rgba(204, 164, 59, 0.22);
+  color: var(--cart-text);
+}
+
+:root.dark-mode .qty-btn:hover {
+  background: var(--gold-subtle);
+  border-color: var(--gold);
+  color: var(--gold-light);
+}
+
+:root.dark-mode .qty-input {
+  color: var(--cart-text);
+}
+
+:root.dark-mode .item-price {
+  color: var(--gold-light);
+}
+
+/* Resumen de compra (vidrio oscuro con borde dorado) */
+:root.dark-mode .cart-summary {
+  background: linear-gradient(160deg, rgba(32, 30, 24, 0.88) 0%, rgba(18, 17, 14, 0.9) 100%);
+  border-color: var(--glass-border);
+  box-shadow: var(--shadow-lg), 0 1px 0 rgba(229, 201, 109, 0.12) inset, 0 0 40px rgba(204, 164, 59, 0.06);
+}
+
+:root.dark-mode .summary-title {
+  color: var(--cart-text);
+  border-bottom-color: var(--cart-border);
+}
+
+:root.dark-mode .summary-row.discount {
+  color: #6fcf97;
+}
+
+:root.dark-mode .summary-total {
+  border-top: 1px solid transparent;
+  border-image: linear-gradient(90deg, transparent, var(--gold), transparent) 1;
+  color: var(--cart-text);
+}
+
+:root.dark-mode .summary-total span:last-child {
+  color: var(--gold-light);
+}
+
+:root.dark-mode .promo-input {
+  background: rgba(255, 255, 255, 0.04);
+  border-color: rgba(204, 164, 59, 0.22);
+  color: var(--cart-text);
+}
+
+:root.dark-mode .promo-input::placeholder {
+  color: #8a8377;
+}
+
+:root.dark-mode .promo-input:focus {
+  border-color: var(--gold);
+  background: rgba(255, 255, 255, 0.06);
+  box-shadow: 0 0 0 3px rgba(204, 164, 59, 0.15);
+}
+
+:root.dark-mode .promo-btn {
+  background: linear-gradient(135deg, var(--gold), var(--gold-dark));
+  color: #12110e;
+}
+
+:root.dark-mode .promo-btn:hover {
+  background: var(--gold-light);
+}
+
+:root.dark-mode .checkout-btn {
+  color: #12110e;
+  box-shadow: var(--shadow-gold), 0 0 0 1px rgba(229, 201, 109, 0.35) inset;
+}
+
+:root.dark-mode .checkout-btn:hover {
+  box-shadow: 0 14px 30px rgba(204, 164, 59, 0.32), 0 0 0 1px rgba(229, 201, 109, 0.5) inset;
+}
+
+:root.dark-mode .checkout-btn:disabled {
+  opacity: 0.4;
+  box-shadow: none;
+}
+
+:root.dark-mode .security-badges {
+  color: #7d776b;
+}
+
+/* Carrito vacío y mensajes */
+:root.dark-mode .carrito-vacio > i {
+  color: var(--gold-light);
+  filter: drop-shadow(0 0 14px rgba(204, 164, 59, 0.35));
+}
+
+:root.dark-mode .mensaje-promo {
+  color: #f08a7a;
+}
+
+:root.dark-mode .mensaje-promo.ok,
+:root.dark-mode .mensaje-promo.exito {
+  color: #6fcf97;
 }

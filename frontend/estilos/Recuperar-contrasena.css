@@ -1,14 +1,16 @@
 
 .aviso-recuperar {
   font-family: var(--font-body);
-  font-size: 0.9rem;
-  color: var(--text-muted);
+  font-size: 0.95rem;
+  color: #444444;
   text-align: center;
   line-height: 1.5;
   margin-bottom: 1.5rem;
+  position: relative;
+  z-index: 2;
 }
 
 /* Modo oscuro */
 :root.dark-mode .aviso-recuperar {
-  color: #b0a997;
+  color: #c4beb4;
 }
