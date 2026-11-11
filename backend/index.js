@@ -152,7 +152,7 @@ app.get("/api/health", async (req, res) => {
 
 // Ruta para obtener productos (soporta filtro por categoria ?categoria= y búsqueda ?q=)
 app.get("/api/productos", async (req, res) => {
-  const { q: busqueda, categoria } = req.query;
+  const { q: busqueda, categoria, vista} = req.query;
 
   try {
     let query = `
@@ -162,6 +162,15 @@ app.get("/api/productos", async (req, res) => {
       LEFT JOIN marca m ON p.id_marca = m.id_marca
       WHERE 1=1
     `;
+
+    if (vista === "publica"){
+      query += ` AND NOT EXISTS ( 
+      SELECT 1 
+      FROM panel_suspensiones ps
+      WHERE ps.tipo = 'producto'
+      AND ps.id_registro = CAST(p.id_producto AS CHAR)
+      )`;
+    }
     let params = [];
 
     if (busqueda && busqueda.trim() !== "") {
