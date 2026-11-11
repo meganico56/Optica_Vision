@@ -563,3 +563,75 @@ footer .copyright {
   .pagina-login .registro-link { gap: 0.5rem; padding-top: 1rem; }
   .pagina-login .registrar { min-height: 50px; }
 }
+
+/* ---------- Registro con el mismo acabado del inicio de sesión ---------- */
+.pagina-login .formulario:has(.campos) {
+  flex-basis: 680px;
+  max-width: 680px;
+}
+
+.pagina-login .campos input[type="text"],
+.pagina-login .campos input[type="email"],
+.pagina-login .campos input[type="password"],
+.pagina-login .campos input[type="tel"],
+.pagina-login .campos input[type="date"],
+.pagina-login .campos select {
+  min-height: 56px;
+  border: 2px solid rgba(255, 255, 255, 0.88);
+  border-radius: 13px;
+  background-color: rgba(255, 255, 255, 0.76);
+  font-size: 1rem;
+  transition: border-color 0.25s ease, background-color 0.25s ease, box-shadow 0.25s ease, transform 0.25s ease;
+}
+
+.pagina-login .campos input:focus,
+.pagina-login .campos select:focus {
+  border-color: rgba(255, 255, 255, 0.98);
+  background-color: rgba(255, 255, 255, 0.94);
+  transform: translateY(-1px);
+  animation: pulso-campo 1.8s ease-in-out infinite;
+}
+
+.pagina-login .campos input[type="text"]:not(:placeholder-shown),
+.pagina-login .campos input[type="email"]:not(:placeholder-shown),
+.pagina-login .campos input[type="password"]:not(:placeholder-shown),
+.pagina-login .campos input[type="tel"]:not(:placeholder-shown),
+.pagina-login .campos input[type="date"]:valid,
+.pagina-login .campos select:valid {
+  border-color: rgba(204, 164, 59, 0.52);
+}
+
+.pagina-login .etiqueta-campo,
+.pagina-login .aceptar-datos {
+  color: var(--text-dark);
+}
+
+:root.dark-mode .pagina-login .campos input[type="text"],
+:root.dark-mode .pagina-login .campos input[type="email"],
+:root.dark-mode .pagina-login .campos input[type="password"],
+:root.dark-mode .pagina-login .campos input[type="tel"],
+:root.dark-mode .pagina-login .campos input[type="date"],
+:root.dark-mode .pagina-login .campos select {
+  border-color: rgba(255, 255, 255, 0.18);
+  background-color: rgba(255, 255, 255, 0.1);
+  color: var(--text-dark);
+}
+
+:root.dark-mode .pagina-login .campos input:focus,
+:root.dark-mode .pagina-login .campos select:focus {
+  background-color: rgba(255, 255, 255, 0.17);
+}
+
+:root.dark-mode .pagina-login .campos select option {
+  background-color: #1f1d19;
+}
+
+@media (min-width: 769px) and (max-height: 760px) {
+  .pagina-login .campos { gap: 0.8rem; }
+  .pagina-login .campos input[type="text"],
+  .pagina-login .campos input[type="email"],
+  .pagina-login .campos input[type="password"],
+  .pagina-login .campos input[type="tel"],
+  .pagina-login .campos input[type="date"],
+  .pagina-login .campos select { min-height: 50px; }
+}
