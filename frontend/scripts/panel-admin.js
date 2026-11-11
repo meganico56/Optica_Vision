@@ -1022,7 +1022,12 @@
   }
 
   // ── Abrir Modal de Venta ─────────────────────────────────────
-  function abrirModalVenta() {
+  async function abrirModalVenta() {
+    await Promise.all([
+      cargarProductos(),
+      cargarUsuarios(),
+      cargarPromociones(),
+    ]);
     tipoModal = "venta";
     editandoId = null;
     if (modalTitulo)
@@ -1031,10 +1036,17 @@
     if (modalError) modalError.hidden = true;
 
     const clientes = usuariosMemoria.filter((u) => u.rol === "Cliente");
+    const productos = productosMemoria.filter((p) => p.estado === "Activo");
     const opcClientes = clientes
       .map(
         (u) =>
           `<option value="${u.id_usuario}">${BV.escapar(u.nombre + " " + u.apellido)}</option>`,
+      )
+      .join("");
+    const opcProductos = productos
+      .map(
+        (p) =>
+          `<option value="${p.id}">${BV.escapar(p.nombre)} (${BV.moneda(p.precio)})</option>`,
       )
       .join("");
 
@@ -1058,15 +1070,28 @@
                         </select>
                     </div>
                     <div class="form-field">
-                        <label for="mVentaTotal">Total <span class="req">*</span></label>
-                        <input type="number" id="mVentaTotal" class="input-admin" placeholder="0.00" min="0" step="0.01" required>
+                        <label for="mVentaProducto">Producto <span class="req">*</span></label>
+                        <select id="mVentaProducto" class="input-admin" required>
+                            <option value="">-- Seleccionar --</option>
+                            ${opcProductos}
+                        </select>
+                    </div>
+                </div>
+                <div class="form-grid-2">
+                    <div class="form-field">
+                        <label for="mVentaCantidad">Cantidad <span class="req">*</span></label>
+                        <input type="number" id="mVentaCantidad" class="input-admin" value="1" min="1" step="1" required>
+                    </div>
+                    <div class="form-field">
+                        <label for="mVentaTotal">Subtotal</label>
+                        <input type="number" id="mVentaTotal" class="input-admin" placeholder="0.00" readonly>
                     </div>
                 </div>
                 <div class="form-grid-2">
                     <div class="form-field">
                         <label for="mVentaEstado">Estado</label>
                         <select id="mVentaEstado" class="input-admin">
-                            <option value="Completada">Completada</option>
+                            <option value="Pagada">Pagada</option>
                             <option value="Pendiente">Pendiente</option>
                         </select>
                     </div>
@@ -1092,11 +1117,31 @@
                 }
             </div>
         `;
+    const productoSelect = document.getElementById("mVentaProducto");
+    const cantidadInput = document.getElementById("mVentaCantidad");
+    const subtotalInput = document.getElementById("mVentaTotal");
+    const actualizarSubtotal = () => {
+      const producto = productos.find(
+        (p) => String(p.id) === productoSelect.value,
+      );
+      const cantidad = Number(cantidadInput.value);
+      subtotalInput.value =
+        producto && Number.isInteger(cantidad) && cantidad > 0
+          ? (Number(producto.precio) * cantidad).toFixed(2)
+          : "";
+    };
+    productoSelect.addEventListener("change", actualizarSubtotal);
+    cantidadInput.addEventListener("input", actualizarSubtotal);
     if (modalGuardar)
       modalGuardar.innerHTML =
         '<i class="fa-solid fa-floppy-disk"></i> Registrar venta';
     if (typeof modal.showModal === "function") modal.showModal();
     else modal.setAttribute("open", "");
+    if (promocionesError && modalError) {
+      modalError.textContent =
+        "No se pudieron cargar las promociones. La venta se puede guardar sin descuento.";
+      modalError.hidden = false;
+    }
   }
 
   // ── Abrir Modal de Cita ─────────────────────────────────────
@@ -1301,8 +1346,8 @@
                     </div>
                 </div>
                 <div class="form-field form-grid-full">
-                    <label for="mDevVenta">Código de venta (opcional)</label>
-                    <input type="number" id="mDevVenta" class="input-admin" placeholder="Ej. 5">
+                    <label for="mDevVenta">Código de venta <span class="req">*</span></label>
+                    <input type="number" id="mDevVenta" class="input-admin" placeholder="Ej. 5" min="1" required>
                 </div>
                 <div class="form-field form-grid-full">
                     <label for="mDevObs">Observaciones</label>
@@ -1426,7 +1471,7 @@
             await Api.post("/api/productos", datos);
           }
           modal.close();
-          cargarProductos();
+          await cargarProductos();
         } catch (err) {
           if (modalError) {
             modalError.textContent =
@@ -1458,7 +1503,7 @@
             await Api.post("/api/categorias", datos);
           }
           modal.close();
-          cargarCategorias();
+          await cargarCategorias();
         } catch (err) {
           if (modalError) {
             modalError.textContent =
@@ -1487,7 +1532,7 @@
             await Api.post("/api/marcas", datos);
           }
           modal.close();
-          cargarMarcas();
+          await cargarMarcas();
         } catch (err) {
           if (modalError) {
             modalError.textContent =
@@ -1663,19 +1708,32 @@
         }
       } else if (tipoModal === "venta") {
         const id_usuario = document.getElementById("mVentaCliente").value;
-        const total = parseFloat(document.getElementById("mVentaTotal").value);
+        const id_producto = parseInt(
+          document.getElementById("mVentaProducto").value,
+          10,
+        );
+        const cantidad = Number(
+          document.getElementById("mVentaCantidad").value,
+        );
         const estado = document.getElementById("mVentaEstado").value;
         const es_cotizacion = parseInt(
           document.getElementById("mVentaEsCotiz").value,
           10,
         );
+        const estadoVenta = es_cotizacion ? "Pendiente" : estado;
         const promoEl = document.getElementById("mVentaPromo");
         const codigo_promocion =
           promoEl && promoEl.value ? promoEl.value : null;
 
-        if (!id_usuario || isNaN(total)) {
+        if (
+          !id_usuario ||
+          !Number.isInteger(id_producto) ||
+          !Number.isInteger(cantidad) ||
+          cantidad < 1
+        ) {
           if (modalError) {
-            modalError.textContent = "Cliente y total son obligatorios.";
+            modalError.textContent =
+              "Selecciona un cliente y un producto e indica una cantidad válida.";
             modalError.hidden = false;
           }
           return;
@@ -1683,13 +1741,13 @@
         try {
           await Api.post("/api/ventas", {
             id_usuario,
-            total,
-            estado,
-            es_cotizacion,
+            items: [{ id_producto, cantidad }],
+            estado: estadoVenta,
+            observaciones: es_cotizacion ? "[Cotización]" : null,
             codigo_promocion,
           });
           modal.close();
-          cargarVentas();
+          await Promise.all([cargarVentas(), cargarProductos()]);
         } catch (err) {
           if (modalError) {
             modalError.textContent =
@@ -1729,7 +1787,7 @@
             await Api.post("/api/citas-admin", datos);
           }
           modal.close();
-          cargarCitas();
+          await cargarCitas();
         } catch (err) {
           if (modalError) {
             modalError.textContent = err.message || "Error al guardar la cita.";
@@ -1778,7 +1836,7 @@
             optometra,
           });
           modal.close();
-          cargarRecetas();
+          await cargarRecetas();
         } catch (err) {
           if (modalError) {
             modalError.textContent =
@@ -1792,12 +1850,13 @@
           document.getElementById("mDevCantidad").value,
           10,
         );
-        const id_venta = document.getElementById("mDevVenta").value;
+        const codigo_venta = document.getElementById("mDevVenta").value;
         const observaciones = document.getElementById("mDevObs").value.trim();
 
-        if (!motivo || isNaN(cantidad) || cantidad < 1) {
+        if (!motivo || isNaN(cantidad) || cantidad < 1 || !codigo_venta) {
           if (modalError) {
-            modalError.textContent = "Motivo y cantidad son obligatorios.";
+            modalError.textContent =
+              "Motivo, cantidad y código de una venta pagada son obligatorios.";
             modalError.hidden = false;
           }
           return;
@@ -1806,11 +1865,11 @@
           await Api.post("/api/devoluciones", {
             motivo,
             cantidad,
-            id_venta: id_venta || null,
+            codigo_venta,
             observaciones,
           });
           modal.close();
-          cargarDevoluciones();
+          await cargarDevoluciones();
         } catch (err) {
           if (modalError) {
             modalError.textContent =
@@ -1833,7 +1892,7 @@
         try {
           await Api.post("/api/reportes", { titulo, tipo, descripcion });
           modal.close();
-          cargarReportes();
+          await cargarReportes();
         } catch (err) {
           if (modalError) {
             modalError.textContent =
@@ -2054,7 +2113,7 @@
     const btnNuevaVenta = e.target.closest('[data-nuevo="venta"]');
     if (btnNuevaVenta) {
       e.preventDefault();
-      abrirModalVenta();
+      await abrirModalVenta();
       return;
     }
 
@@ -2118,9 +2177,9 @@
     const btnCambiarVenta = e.target.closest("[data-cambiar-venta]");
     if (btnCambiarVenta) {
       e.preventDefault();
-      const estados = ["Pendiente", "Completada", "Cancelada"];
+      const estados = ["Pendiente", "Pagada", "Anulada"];
       const nuevoEstado = prompt(
-        "Cambiar estado de la venta a:\n1. Pendiente\n2. Completada\n3. Cancelada\n(escribe el nombre exacto)",
+        "Cambiar estado de la venta a:\n1. Pendiente\n2. Pagada\n3. Anulada\n(escribe el nombre exacto)",
       );
       if (nuevoEstado && estados.includes(nuevoEstado)) {
         try {
@@ -2151,7 +2210,9 @@
   // ── Ventas ──────────────────────────────────────────────────
   const ESTADO_VENTA_CLASE = {
     Completada: "green",
+    Pagada: "green",
     Pendiente: "orange",
+    Anulada: "red",
     Cancelada: "red",
     Cotización: "blue",
   };
@@ -2178,7 +2239,9 @@
       } else {
         ventas.forEach((v) => {
           const suspendido = estaSuspendido("venta", v.codigo_venta);
-          const esCotiz = v.es_cotizacion == 1;
+          const esCotiz =
+            v.es_cotizacion == 1 ||
+            (v.estado === "Pendiente" && v.observaciones === "[Cotización]");
           if (!esCotiz && v.estado === "Pagada") {
             ingresos += parseFloat(v.total || 0);
             completadas++;
@@ -2197,7 +2260,7 @@
                         <td>${BV.escapar(v.cliente || "—")}</td>
                         <td>${v.fecha ? v.fecha.split(" ")[0] : "—"}</td>
                         <td><strong>${BV.moneda(v.total)}</strong></td>
-                        <td>${v.es_cotizacion ? '<span class="badge blue">Sí</span>' : '<span class="badge" style="background:rgba(100,100,100,0.15)">No</span>'}</td>
+                        <td>${esCotiz ? '<span class="badge blue">Sí</span>' : '<span class="badge" style="background:rgba(100,100,100,0.15)">No</span>'}</td>
                         <td>${v.codigo_promocion ? `<span class="badge purple">#${v.codigo_promocion}</span>` : "—"}</td>
                         <td>${v.id_receta ? `<span class="badge teal">#${v.id_receta}</span>` : "—"}</td>
                         <td><span class="badge ${clase}">${BV.escapar(estadoDisplay)}</span> ${insigniaSuspension(suspendido)}</td>
@@ -2230,7 +2293,9 @@
             const tr = document.createElement("tr");
             const suspendido = estaSuspendido("venta", v.codigo_venta);
             tr.classList.toggle("fila-suspendida", suspendido);
-            const esCotiz = v.es_cotizacion == 1;
+            const esCotiz =
+              v.es_cotizacion == 1 ||
+              (v.estado === "Pendiente" && v.observaciones === "[Cotización]");
             const estadoDisplay = esCotiz ? "Cotización" : v.estado;
             const clase = ESTADO_VENTA_CLASE[estadoDisplay] || "blue";
             tr.innerHTML = `
@@ -2448,13 +2513,15 @@
 
   // ── Promociones ──────────────────────────────────────────────
   let promosMemoria = [];
+  let promocionesError = null;
 
   async function cargarPromociones() {
-    if (!gridPromos) return;
     try {
       const promos = await Api.get("/api/promociones");
       await cargarSuspensiones();
       promosMemoria = promos;
+      promocionesError = null;
+      if (!gridPromos) return;
       gridPromos.innerHTML = "";
       if (promos.length === 0) {
         gridPromos.innerHTML =
@@ -2489,6 +2556,7 @@
       });
     } catch (e) {
       console.error("Error al cargar promociones:", e);
+      promocionesError = e;
       if (gridPromos)
         gridPromos.innerHTML =
           '<p style="text-align:center;color:var(--red);">Error al cargar promociones.</p>';
@@ -2798,7 +2866,7 @@
       } else if (seccion === "reportes") {
         cargarReportes();
         cargarVentasProducto();
-      } else if (seccion === "catalogo") {
+      } else if (seccion === "inventario" || seccion === "catalogo") {
         cargarProductos();
         cargarMarcas();
         cargarCategorias();

@@ -1,4 +1,4 @@
-@import url('base.css');
+@import url('Base.css');
 
 
 :root {
@@ -1377,11 +1377,11 @@ textarea.input-admin {
   display: flex;
   gap: 10px;
   margin-bottom: 22px;
-  background: var(--admin-card-bg);
+  background: var(--admin-card);
   padding: 8px 12px;
   border-radius: 14px;
   border: 1px solid var(--admin-border);
-  box-shadow: var(--admin-card-shadow);
+  box-shadow: var(--admin-shadow);
   backdrop-filter: blur(12px);
   width: fit-content;
 }
