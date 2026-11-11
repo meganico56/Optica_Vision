@@ -5,6 +5,8 @@ const db = require("./db");
 
 const fs = require("fs");
 const path = require("path");
+const DIRECTORIO_IMAGENES_PRODUCTOS = path.join(__dirname, "..", "frontend", "imagenes", "productos");
+const IMAGEN_PRODUCTO_PREDETERMINADA = "gafas-modelo1.png";
 
 const app = express();
 
@@ -13,6 +15,21 @@ app.use(express.json({ limit: "15mb" }));
 
 // Sirve el frontend para que el panel pueda abrirse desde el mismo puerto de la API
 app.use(express.static(path.join(__dirname, "../frontend")));
+
+app.get("/api/imagenes-productos", async (req, res) => {
+  try {
+    const archivos = await fs.promises.readdir(DIRECTORIO_IMAGENES_PRODUCTOS, { withFileTypes: true });
+    const imagenes = archivos
+      .filter((archivo) => archivo.isFile() && /\.(png|jpe?g|webp|gif)$/i.test(archivo.name))
+      .map((archivo) => archivo.name)
+      .sort((a, b) => a.localeCompare(b));
+
+    res.json(imagenes);
+  } catch (error) {
+    console.error("Error al listar imágenes de productos:", error);
+    res.status(500).json({ mensaje: "No se pudieron consultar las imágenes de productos" });
+  }
+});
 
 // Ruta para subir imagen de producto
 app.post("/api/upload-imagen", (req, res) => {
@@ -46,6 +63,23 @@ const CANALES_VENTA = ["Mostrador", "Web"];
 const MOTIVOS_DEVOLUCION = ["Producto defectuoso", "Cambio de formula", "Ajuste o talla incorrecta", "Cliente se arrepintio", "Otro"];
 const DESTINOS_DEVOLUCION = ["Vuelve a inventario", "Descarte", "Devuelto a proveedor"];
 const TIPOS_DOCUMENTO = ["C.C.", "T.I.", "R.C.", "C.E.", "PAS"];
+
+function imagenProductoDisponible(nombreArchivo) {
+  if (
+    typeof nombreArchivo !== "string" ||
+    path.basename(nombreArchivo) !== nombreArchivo ||
+    !/\.(png|jpe?g|webp|gif)$/i.test(nombreArchivo)
+  ) {
+    return false;
+  }
+  return fs.existsSync(path.join(DIRECTORIO_IMAGENES_PRODUCTOS, nombreArchivo));
+}
+
+function resolverImagenProducto(nombreArchivo) {
+  return imagenProductoDisponible(nombreArchivo)
+    ? nombreArchivo
+    : IMAGEN_PRODUCTO_PREDETERMINADA;
+}
 
 // Error con código HTTP para responder mensajes claros desde dentro de una transacción
 function errorHttp(status, mensaje) {
@@ -148,7 +182,7 @@ app.get("/api/productos", async (req, res) => {
       nombre: p.nombre,
       descripcion: p.descripcion,
       precio: p.precio,
-      imagen: p.imagen,
+      imagen: resolverImagenProducto(p.imagen),
       material: p.material,
       genero: p.genero,
       existencia_actual: p.existencia_actual,
@@ -176,6 +210,9 @@ app.post("/api/productos", async (req, res) => {
 
   if (!nombre || !precio || !imagen) {
     return res.status(400).json({ mensaje: "Nombre, precio e imagen son obligatorios" });
+  }
+  if (!imagenProductoDisponible(imagen)) {
+    return res.status(400).json({ mensaje: "Selecciona una imagen existente del catálogo de productos" });
   }
 
   try {
@@ -216,6 +253,10 @@ app.post("/api/productos", async (req, res) => {
 app.put("/api/productos/:id", async (req, res) => {
   const { id } = req.params;
   const { sku, costo_compra, nombre, descripcion, precio, imagen, material, genero, existencia_actual, existencia_minima, id_categoria, id_marca, estado } = req.body;
+
+  if (imagen !== undefined && imagen !== null && !imagenProductoDisponible(imagen)) {
+    return res.status(400).json({ mensaje: "Selecciona una imagen existente del catálogo de productos" });
+  }
 
   try {
     await db.query(
@@ -398,7 +439,7 @@ app.get("/api/productos/:id", async (req, res) => {
       nombre: p.nombre,
       descripcion: p.descripcion,
       precio: p.precio,
-      imagen: p.imagen,
+      imagen: resolverImagenProducto(p.imagen),
       material: p.material,
       genero: p.genero,
       existencia_actual: p.existencia_actual,

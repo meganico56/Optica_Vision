@@ -46,7 +46,7 @@
             nombre: p.nombre,
             marca: p.marca,
             precio: p.precio,
-            imagen: RUTA_IMAGENES + (p.imagen || 'montura-clasica-negro.png'),
+            imagen: RUTA_IMAGENES + (p.imagen || 'gafas-modelo1.png'),
             stock: p.stock
         };
     }
@@ -72,7 +72,11 @@
             if (bcProducto) bcProducto.textContent = producto.nombre || 'Producto';
 
             if (mainImage) {
-                mainImage.src = RUTA_IMAGENES + (producto.imagen || 'montura-clasica-negro.png');
+                mainImage.src = RUTA_IMAGENES + (producto.imagen || 'gafas-modelo1.png');
+                mainImage.onerror = () => {
+                    mainImage.onerror = null;
+                    mainImage.src = RUTA_IMAGENES + 'gafas-modelo1.png';
+                };
             }
 
             if (marca) marca.textContent = producto.marca || 'Óptica Visión';

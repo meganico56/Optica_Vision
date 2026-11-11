@@ -487,22 +487,22 @@ insert into categoria (nombre, descripcion, estado) values
 
 -- existencia_actual ya refleja los movimientos de inventario de abajo
 insert into producto (sku, nombre, descripcion, precio, costo_compra, imagen, material, color, calibre, genero, existencia_actual, existencia_minima, maneja_inventario, requiere_receta, meses_garantia, id_categoria, id_marca) values
-('MON-0001', 'Montura clásica acetato negro', 'Montura de pasta color negro, forma rectangular', 180000.00, 95000.00, 'montura-clasica-negro.png', 'Acetato', 'Negro', '52-18-145', 'Unisex', 19, 5, true, false, 12, 1, 2),
-('MON-0002', 'Montura metálica redonda', 'Montura metálica ultraliviana, forma redonda', 320000.00, 160000.00, 'montura-metalica-redonda.png', 'Metal', 'Dorado', '49-20-140', 'Unisex', 13, 5, true, false, 12, 1, 1),
-('SOL-0001', 'Gafa de sol aviador', 'Gafa de sol clásica estilo aviador con protección UV400', 350000.00, 180000.00, 'gafa-sol-aviador.png', 'Metal', 'Dorado', '58-14-135', 'Hombre', 0, 5, true, false, 12, 2, 1),
-('SOL-0002', 'Gafa de sol oversized', 'Gafa de sol de pasta, montura grande, protección UV400', 250000.00, 120000.00, 'gafa-sol-oversized.png', 'Acetato', 'Carey', '56-17-140', 'Mujer', 15, 5, true, false, 12, 2, 2),
-('LCO-0001', 'Lentes de contacto mensuales', 'Caja x6 lentes de contacto blandos de uso mensual', 85000.00, 45000.00, 'lentes-contacto-mensual.png', null, null, null, 'Unisex', 48, 10, true, true, 0, 3, 4),
-('LOF-0001', 'Lente oftálmico antirreflejo', 'Par de cristales graduados con tratamiento antirreflejo', 220000.00, 110000.00, 'lente-antireflejo.png', null, null, null, 'Unisex', 0, 0, false, true, 6, 4, 3),
-('LIM-0001', 'Líquido limpiador para lentes de contacto', 'Solución multipropósito 355ml para lentes de contacto', 32000.00, 15000.00, 'liquido-limpiador.png', null, null, null, 'Unisex', 29, 10, true, false, 0, 5, 4),
-('ACC-0001', 'Estuche rígido para gafas', 'Estuche rígido acolchado, protege armazón y lentes', 18000.00, 7000.00, 'estuche-rigido.png', null, null, null, 'Unisex', 25, 8, true, false, 0, 6, 5),
-('ACC-0002', 'Paño de microfibra', 'Paño de microfibra para limpieza de lentes', 8000.00, 2500.00, 'pano-microfibra.png', null, null, null, 'Unisex', 38, 15, true, false, 0, 6, 5);
+('MON-0001', 'Montura clásica acetato negro', 'Montura de pasta color negro, forma rectangular', 180000.00, 95000.00, 'gafas-modelo1.png', 'Acetato', 'Negro', '52-18-145', 'Unisex', 19, 5, true, false, 12, 1, 2),
+('MON-0002', 'Montura metálica redonda', 'Montura metálica ultraliviana, forma redonda', 320000.00, 160000.00, 'gafas-modelo2.png', 'Metal', 'Dorado', '49-20-140', 'Unisex', 13, 5, true, false, 12, 1, 1),
+('SOL-0001', 'Gafa de sol aviador', 'Gafa de sol clásica estilo aviador con protección UV400', 350000.00, 180000.00, 'gafas-modelo3.png', 'Metal', 'Dorado', '58-14-135', 'Hombre', 0, 5, true, false, 12, 2, 1),
+('SOL-0002', 'Gafa de sol oversized', 'Gafa de sol de pasta, montura grande, protección UV400', 250000.00, 120000.00, 'gafas-modelo4.png', 'Acetato', 'Carey', '56-17-140', 'Mujer', 15, 5, true, false, 12, 2, 2),
+('LCO-0001', 'Lentes de contacto mensuales', 'Caja x6 lentes de contacto blandos de uso mensual', 85000.00, 45000.00, 'gafas-modelo-antiguo.png', null, null, null, 'Unisex', 48, 10, true, true, 0, 3, 4),
+('LOF-0001', 'Lente oftálmico antirreflejo', 'Par de cristales graduados con tratamiento antirreflejo', 220000.00, 110000.00, '1794343008966-gafas-modelo1.png', null, null, null, 'Unisex', 0, 0, false, true, 6, 4, 3),
+('LIM-0001', 'Líquido limpiador para lentes de contacto', 'Solución multipropósito 355ml para lentes de contacto', 32000.00, 15000.00, 'gafas-modelo1.png', null, null, null, 'Unisex', 29, 10, true, false, 0, 5, 4),
+('ACC-0001', 'Estuche rígido para gafas', 'Estuche rígido acolchado, protege armazón y lentes', 18000.00, 7000.00, 'gafas-modelo2.png', null, null, null, 'Unisex', 25, 8, true, false, 0, 6, 5),
+('ACC-0002', 'Paño de microfibra', 'Paño de microfibra para limpieza de lentes', 8000.00, 2500.00, 'gafas-modelo3.png', null, null, null, 'Unisex', 38, 15, true, false, 0, 6, 5);
 
 
 insert into imagen_producto (ruta, orden, id_producto) values
-('montura-clasica-negro-lateral.png', 1, 1),
-('montura-clasica-negro-frontal.png', 2, 1),
-('montura-metalica-redonda-lateral.png', 1, 2),
-('gafa-sol-aviador-frontal.png', 1, 3);
+('gafas-modelo2.png', 1, 1),
+('1794343008966-gafas-modelo1.png', 2, 1),
+('gafas-modelo3.png', 1, 2),
+('gafas-modelo4.png', 1, 3);
 
 
 insert into proveedor (nombre, nit, telefono, correo, direccion, estado) values

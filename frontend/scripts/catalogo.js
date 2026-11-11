@@ -53,7 +53,11 @@
             tarjeta.querySelectorAll('.enlace-producto').forEach((a) => { a.href = url; });
 
             const img = tarjeta.querySelector('.img-producto');
-            img.src = RUTA_IMAGENES + p.imagen;
+            img.src = RUTA_IMAGENES + (p.imagen || 'gafas-modelo1.png');
+            img.onerror = () => {
+                img.onerror = null;
+                img.src = RUTA_IMAGENES + 'gafas-modelo1.png';
+            };
             tarjeta.querySelector('.nombre-producto').textContent = p.nombre;
             tarjeta.querySelector('.precio').textContent = BV.moneda(p.precio);
 

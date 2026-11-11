@@ -122,6 +122,7 @@
     "gafas-modelo3.png",
     "gafas-modelo4.png",
     "gafas-modelo-antiguo.png",
+    "1794343008966-gafas-modelo1.png",
   ];
 
   // Cargar Lista de Productos
@@ -629,11 +630,20 @@
   }
 
   // Abrir Modal de Producto (Nuevo o Editar)
-  function abrirModalProducto(producto = null) {
+  async function abrirModalProducto(producto = null) {
     tipoModal = "producto";
     editandoId = producto ? producto.id : null;
     nuevaImagenBase64 = null;
     nombreNuevaImagen = null;
+
+    let imagenesDisponibles = IMAGENES_DISPONIBLES;
+    let errorImagenes = null;
+    try {
+      imagenesDisponibles = await Api.get("/api/imagenes-productos");
+    } catch (error) {
+      errorImagenes = error;
+      console.error("Error al cargar imágenes de productos:", error);
+    }
 
     if (modalTitulo) {
       modalTitulo.innerHTML = producto
@@ -644,6 +654,9 @@
 
     const p = producto || {};
     const imagenInicial = p.imagen || "gafas-modelo1.png";
+    if (!imagenesDisponibles.includes(imagenInicial)) {
+      imagenesDisponibles = [...imagenesDisponibles, imagenInicial];
+    }
 
     modalCampos.innerHTML = `
             <!-- SECCIÓN 1: IDENTIFICACIÓN DEL PRODUCTO -->
@@ -680,8 +693,7 @@
                             <div class="input-icon-wrapper">
                                 <i class="fa-solid fa-images prefix-icon"></i>
                                 <select id="mImagenSelect" class="input-admin">
-                                    ${IMAGENES_DISPONIBLES.map((img) => `<option value="${img}" ${imagenInicial === img ? "selected" : ""}>${img}</option>`).join("")}
-                                    ${!IMAGENES_DISPONIBLES.includes(imagenInicial) ? `<option value="${imagenInicial}" selected>${imagenInicial}</option>` : ""}
+                                    ${imagenesDisponibles.map((img) => `<option value="${BV.escapar(img)}" ${imagenInicial === img ? "selected" : ""}>${BV.escapar(img)}</option>`).join("")}
                                 </select>
                             </div>
                         </div>
@@ -800,6 +812,11 @@
                 </div>
             </div>
         `;
+
+    if (errorImagenes && modalError) {
+      modalError.textContent = `No se pudieron cargar todas las imágenes guardadas (${errorImagenes.message}). Puedes seleccionar una de las imágenes predeterminadas.`;
+      modalError.hidden = false;
+    }
 
     const selectImg = document.getElementById("mImagenSelect");
     const fileImg = document.getElementById("mImagenFile");
