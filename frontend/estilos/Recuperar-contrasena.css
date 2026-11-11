@@ -7,3 +7,8 @@
   line-height: 1.5;
   margin-bottom: 1.5rem;
 }
+
+/* Modo oscuro */
+:root.dark-mode .aviso-recuperar {
+  color: #b0a997;
+}

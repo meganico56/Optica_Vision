@@ -2,6 +2,30 @@
 @import url('base.css');
 @import url('layout-publico.css');
 
+/* ---------- Transiciones suaves para cambio de tema ---------- */
+.pagina-login .inicio::before,
+.pagina-login .formulario,
+.pagina-login .titulo h5,
+.pagina-login .subtitulo h1,
+.pagina-login .btn-volver,
+.pagina-login .olvidar,
+.pagina-login .iniciar,
+.pagina-login .registrar,
+.pagina-login .registro-link,
+.pagina-login .registro-link p,
+.pagina-login .etiqueta-campo,
+.pagina-login .aceptar-datos,
+.pagina-login footer .copyright,
+.pagina-login .mensaje-error,
+.pagina-login .aviso-recuperar {
+  transition:
+    background 0.45s cubic-bezier(0.4, 0, 0.2, 1),
+    background-color 0.45s cubic-bezier(0.4, 0, 0.2, 1),
+    color 0.45s cubic-bezier(0.4, 0, 0.2, 1),
+    border-color 0.45s cubic-bezier(0.4, 0, 0.2, 1),
+    box-shadow 0.45s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
 .inicio {
   display: flex;
   justify-content: space-around;
@@ -502,22 +526,224 @@ footer .copyright {
   -webkit-backdrop-filter: blur(12px);
 }
 
-:root.dark-mode .pagina-login .formulario {
-  border-color: rgba(255, 255, 255, 0.38);
-  background: linear-gradient(145deg, rgba(35, 33, 29, 0.48), rgba(19, 18, 16, 0.34));
-  backdrop-filter: blur(20px) saturate(130%);
-  -webkit-backdrop-filter: blur(20px) saturate(130%);
+/* =============================================================
+   MODO OSCURO COMPLETO — Páginas de autenticación
+   (inicio-sesion, registro-usuario, rcontrasena)
+   ============================================================= */
+
+/* --- Overlay de fondo: más profundo, con tinte dorado cálido --- */
+:root.dark-mode .pagina-login .inicio::before {
+  background:
+    radial-gradient(ellipse at 18% 48%, rgba(204, 164, 59, 0.08), transparent 42%),
+    linear-gradient(105deg, rgba(6, 5, 4, 0.82) 0%, rgba(14, 13, 10, 0.72) 45%, rgba(30, 27, 20, 0.68) 100%);
 }
 
+/* --- Imagen de fondo: oscurecida con filtro sutil --- */
+:root.dark-mode .pagina-login .inicio {
+  filter: none;
+}
+
+/* --- Tarjeta del formulario: glassmorphism oscuro --- */
+:root.dark-mode .pagina-login .formulario {
+  border-color: rgba(204, 164, 59, 0.22);
+  background: linear-gradient(
+    145deg,
+    rgba(28, 26, 22, 0.72),
+    rgba(18, 17, 14, 0.58)
+  );
+  backdrop-filter: blur(24px) saturate(140%) brightness(0.95);
+  -webkit-backdrop-filter: blur(24px) saturate(140%) brightness(0.95);
+  box-shadow:
+    0 28px 70px rgba(0, 0, 0, 0.45),
+    0 0 0 1px rgba(204, 164, 59, 0.12) inset,
+    0 1px 0 rgba(255, 255, 255, 0.06) inset,
+    0 12px 40px rgba(0, 0, 0, 0.3);
+}
+
+/* --- Título y subtítulo --- */
+:root.dark-mode .pagina-login .titulo h5 {
+  color: var(--gold-light);
+}
+
+:root.dark-mode .pagina-login .subtitulo h1 {
+  color: #f5f0e6;
+}
+
+/* --- Botón "Volver" --- */
+:root.dark-mode .pagina-login .btn-volver {
+  background: rgba(255, 255, 255, 0.06);
+  color: #c4beb4;
+}
+
+:root.dark-mode .pagina-login .btn-volver:hover {
+  color: var(--gold-light);
+  background: rgba(204, 164, 59, 0.15);
+}
+
+/* --- Inputs del login/recuperar (con ícono) --- */
 :root.dark-mode .pagina-login .input-group input[type="email"],
 :root.dark-mode .pagina-login .input-group input[type="password"] {
-  border-color: rgba(255, 255, 255, 0.18);
-  background-color: rgba(255, 255, 255, 0.1);
-  color: var(--text-dark);
+  border-color: rgba(204, 164, 59, 0.18);
+  background-color: rgba(255, 255, 255, 0.07);
+  color: #f5f0e6;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2) inset;
+}
+
+:root.dark-mode .pagina-login .input-group input::placeholder {
+  color: #9e9787;
 }
 
 :root.dark-mode .pagina-login .input-group input:focus {
-  background-color: rgba(255, 255, 255, 0.17);
+  border-color: rgba(204, 164, 59, 0.5);
+  background-color: rgba(255, 255, 255, 0.1);
+  box-shadow:
+    0 0 0 1px rgba(204, 164, 59, 0.3),
+    0 0 20px rgba(204, 164, 59, 0.08),
+    0 4px 16px rgba(0, 0, 0, 0.25) inset;
+}
+
+:root.dark-mode .pagina-login .input-group input:not(:placeholder-shown) {
+  border-color: rgba(204, 164, 59, 0.35);
+}
+
+/* Brillo del borde animado (gradient glow) en modo oscuro */
+:root.dark-mode .pagina-login .input-group::before {
+  background: linear-gradient(
+    110deg,
+    rgba(204, 164, 59, 0.3),
+    rgba(229, 201, 109, 0.2),
+    rgba(204, 164, 59, 0.4),
+    rgba(229, 201, 109, 0.15)
+  );
+  background-size: 220% 100%;
+}
+
+/* Íconos dentro de los inputs */
+:root.dark-mode .pagina-login .input-group i.icon-left {
+  color: #8a8377;
+}
+
+:root.dark-mode .pagina-login .input-group:focus-within i.icon-left,
+:root.dark-mode .pagina-login .input-group:focus-within .toggle-password {
+  color: var(--gold-light);
+}
+
+:root.dark-mode .pagina-login .input-group input:not(:placeholder-shown) ~ i.icon-left {
+  color: var(--gold);
+}
+
+:root.dark-mode .pagina-login .toggle-password {
+  color: #8a8377;
+}
+
+:root.dark-mode .pagina-login .toggle-password:hover {
+  color: var(--gold-light);
+}
+
+/* Animación de pulso adaptada al dark mode */
+@keyframes pulso-campo-dark {
+  0%, 100% {
+    box-shadow:
+      0 0 0 1px rgba(204, 164, 59, 0.25),
+      0 0 12px rgba(204, 164, 59, 0.06),
+      0 4px 16px rgba(0, 0, 0, 0.2) inset;
+  }
+  50% {
+    box-shadow:
+      0 0 0 2px rgba(204, 164, 59, 0.4),
+      0 0 18px rgba(204, 164, 59, 0.12),
+      0 4px 16px rgba(0, 0, 0, 0.22) inset;
+  }
+}
+
+:root.dark-mode .pagina-login .input-group input:focus {
+  animation: pulso-campo-dark 1.8s ease-in-out infinite;
+}
+
+/* --- Botón "¿Olvidaste tu contraseña?" --- */
+:root.dark-mode .pagina-login .olvidar {
+  color: #b0a997;
+}
+
+:root.dark-mode .pagina-login .olvidar:hover {
+  color: var(--gold-light);
+}
+
+/* --- Botón principal "Iniciar sesión" / "Crear cuenta" / "Enviar enlace" --- */
+:root.dark-mode .pagina-login .iniciar {
+  background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%);
+  color: #ffffff;
+  border-color: rgba(229, 201, 109, 0.4);
+  box-shadow:
+    0 0 0 2px rgba(204, 164, 59, 0.15),
+    0 8px 24px rgba(176, 140, 47, 0.25),
+    0 0 30px rgba(204, 164, 59, 0.08);
+}
+
+:root.dark-mode .pagina-login .iniciar:hover {
+  box-shadow:
+    0 0 0 3px rgba(204, 164, 59, 0.25),
+    0 12px 30px rgba(176, 140, 47, 0.35),
+    0 0 40px rgba(204, 164, 59, 0.12);
+}
+
+:root.dark-mode .pagina-login .iniciar:disabled {
+  opacity: 0.45;
+  box-shadow: none;
+}
+
+/* --- Botón secundario "Regístrate ahora" / "Volver a iniciar sesión" --- */
+:root.dark-mode .pagina-login .registrar {
+  background: transparent;
+  color: var(--gold-light);
+  border-color: rgba(204, 164, 59, 0.5);
+  box-shadow: 0 0 0 2px rgba(204, 164, 59, 0.08);
+}
+
+:root.dark-mode .pagina-login .registrar:hover {
+  background: var(--gold);
+  color: #ffffff;
+  border-color: var(--gold);
+  box-shadow:
+    0 0 0 3px rgba(204, 164, 59, 0.18),
+    0 8px 20px rgba(176, 140, 47, 0.3);
+}
+
+/* --- Separador y texto del bloque de registro --- */
+:root.dark-mode .pagina-login .registro-link {
+  border-top-color: rgba(204, 164, 59, 0.18);
+}
+
+:root.dark-mode .pagina-login .registro-link p {
+  color: #b0a997;
+}
+
+/* --- Mensaje de error --- */
+:root.dark-mode .pagina-login .mensaje-error {
+  background: rgba(192, 57, 43, 0.12);
+  border-color: rgba(231, 76, 60, 0.3);
+  color: #f1948a;
+}
+
+:root.dark-mode .pagina-login .mensaje-error.exito,
+:root.dark-mode .pagina-login .mensaje-exito {
+  background: rgba(46, 125, 50, 0.12);
+  border-color: rgba(46, 125, 50, 0.3);
+  color: #81c784;
+}
+
+/* --- Footer de las pantallas de acceso --- */
+:root.dark-mode .pagina-login footer .copyright {
+  background: rgba(8, 7, 5, 0.96);
+  color: #c4beb4;
+  border-top: 1px solid rgba(204, 164, 59, 0.15);
+}
+
+/* --- Logo: resplandor dorado sutil en dark mode --- */
+:root.dark-mode .pagina-login .inicio .logo img {
+  filter:
+    drop-shadow(0 0 18px rgba(204, 164, 59, 0.45))
+    drop-shadow(0 20px 35px rgba(0, 0, 0, 0.6));
 }
 
 @keyframes brillo-campo {
@@ -606,24 +832,68 @@ footer .copyright {
   color: var(--text-dark);
 }
 
+/* --- Campos del registro (sin input-group) --- */
 :root.dark-mode .pagina-login .campos input[type="text"],
 :root.dark-mode .pagina-login .campos input[type="email"],
 :root.dark-mode .pagina-login .campos input[type="password"],
 :root.dark-mode .pagina-login .campos input[type="tel"],
 :root.dark-mode .pagina-login .campos input[type="date"],
 :root.dark-mode .pagina-login .campos select {
-  border-color: rgba(255, 255, 255, 0.18);
-  background-color: rgba(255, 255, 255, 0.1);
-  color: var(--text-dark);
+  border-color: rgba(204, 164, 59, 0.18);
+  background-color: rgba(255, 255, 255, 0.07);
+  color: #f5f0e6;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2) inset;
+}
+
+:root.dark-mode .pagina-login .campos input::placeholder {
+  color: #9e9787;
 }
 
 :root.dark-mode .pagina-login .campos input:focus,
 :root.dark-mode .pagina-login .campos select:focus {
-  background-color: rgba(255, 255, 255, 0.17);
+  border-color: rgba(204, 164, 59, 0.5);
+  background-color: rgba(255, 255, 255, 0.1);
+  box-shadow:
+    0 0 0 1px rgba(204, 164, 59, 0.3),
+    0 0 16px rgba(204, 164, 59, 0.06),
+    0 4px 16px rgba(0, 0, 0, 0.2) inset;
+  animation: pulso-campo-dark 1.8s ease-in-out infinite;
+}
+
+:root.dark-mode .pagina-login .campos input[type="text"]:not(:placeholder-shown),
+:root.dark-mode .pagina-login .campos input[type="email"]:not(:placeholder-shown),
+:root.dark-mode .pagina-login .campos input[type="password"]:not(:placeholder-shown),
+:root.dark-mode .pagina-login .campos input[type="tel"]:not(:placeholder-shown),
+:root.dark-mode .pagina-login .campos input[type="date"]:valid,
+:root.dark-mode .pagina-login .campos select:valid {
+  border-color: rgba(204, 164, 59, 0.35);
 }
 
 :root.dark-mode .pagina-login .campos select option {
-  background-color: #1f1d19;
+  background-color: #1a1815;
+  color: #f5f0e6;
+}
+
+:root.dark-mode .pagina-login .campos select:invalid {
+  color: #9e9787;
+}
+
+/* Etiqueta de campo y checkbox en dark mode */
+:root.dark-mode .pagina-login .etiqueta-campo {
+  color: #b0a997;
+}
+
+:root.dark-mode .pagina-login .aceptar-datos {
+  color: #c4beb4;
+}
+
+:root.dark-mode .pagina-login .aceptar-datos input {
+  accent-color: var(--gold);
+}
+
+/* --- Ícono del date picker en dark mode --- */
+:root.dark-mode .pagina-login .campos input[type="date"]::-webkit-calendar-picker-indicator {
+  filter: invert(0.8) sepia(0.3) hue-rotate(10deg);
 }
 
 @media (min-width: 769px) and (max-height: 760px) {
@@ -634,4 +904,56 @@ footer .copyright {
   .pagina-login .campos input[type="tel"],
   .pagina-login .campos input[type="date"],
   .pagina-login .campos select { min-height: 50px; }
+}
+
+/* =============================================================
+   ACABADO VISUAL DARK MODE — Viñeta y brillo ambiental
+   ============================================================= */
+
+/* Viñeta oscura + oscurecimiento del fondo para profundidad */
+:root.dark-mode .pagina-login .inicio::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse at center, transparent 50%, rgba(0, 0, 0, 0.4) 100%),
+    rgba(0, 0, 0, 0.15);
+}
+
+/* Brillo ambiental dorado detrás de la tarjeta */
+:root.dark-mode .pagina-login .formulario::before {
+  content: "";
+  position: absolute;
+  inset: -40px;
+  z-index: -1;
+  border-radius: 3rem;
+  background: radial-gradient(
+    ellipse at 50% 50%,
+    rgba(204, 164, 59, 0.06) 0%,
+    transparent 70%
+  );
+  filter: blur(30px);
+  pointer-events: none;
+}
+
+/* Botón flotante de tema: ajustado para dark mode */
+:root.dark-mode .btn-tema-flotante {
+  background: rgba(204, 164, 59, 0.85);
+  box-shadow:
+    0 4px 16px rgba(204, 164, 59, 0.25),
+    0 0 20px rgba(204, 164, 59, 0.08);
+}
+
+:root.dark-mode .btn-tema-flotante:hover {
+  background: var(--gold);
+  box-shadow:
+    0 6px 20px rgba(204, 164, 59, 0.35),
+    0 0 28px rgba(204, 164, 59, 0.12);
+}
+
+/* Flecha del select en dark mode: versión dorada clara */
+:root.dark-mode .pagina-login .campos select {
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'><path d='M1 1l5 5 5-5' stroke='%23e5c96d' stroke-width='2' fill='none' stroke-linecap='round' stroke-linejoin='round'/></svg>");
 }
