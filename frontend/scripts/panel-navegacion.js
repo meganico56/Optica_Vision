@@ -38,11 +38,13 @@
     const CLAVE_TEMA = 'bv_admin_theme';
     const LOGO_OSCURO = '../imagenes/logos/Logo_modo_oscuro.png';
     const LOGO_CLARO = '../imagenes/logos/Logo_modo_claro.png';
+    let temporizadorAnimacionTema;
 
     function aplicarTema(tema) {
         const raiz = document.documentElement;
         const icon = document.getElementById('themeToggleIcon');
         const texto = document.getElementById('themeToggleText');
+        const botonTema = document.getElementById('themeToggleBtn');
         const logo = document.getElementById('mainLogo');
 
         if (tema === 'light') {
@@ -50,12 +52,20 @@
             raiz.classList.remove('dark-mode');
             if (icon) icon.className = 'fa-solid fa-moon';
             if (texto) texto.textContent = 'Modo oscuro';
+            if (botonTema) {
+                botonTema.setAttribute('aria-label', 'Activar modo oscuro');
+                botonTema.title = 'Activar modo oscuro';
+            }
             if (logo) logo.src = LOGO_CLARO;
         } else {
             raiz.classList.remove('light-mode');
             raiz.classList.add('dark-mode');
             if (icon) icon.className = 'fa-solid fa-sun';
             if (texto) texto.textContent = 'Modo claro';
+            if (botonTema) {
+                botonTema.setAttribute('aria-label', 'Activar modo claro');
+                botonTema.title = 'Activar modo claro';
+            }
             if (logo) logo.src = LOGO_OSCURO;
         }
 
@@ -66,7 +76,21 @@
     }
 
     function toggleTema() {
-        const esClaro = document.documentElement.classList.contains('light-mode');
+        const raiz = document.documentElement;
+        const botonTema = document.getElementById('themeToggleBtn');
+        raiz.classList.remove('theme-transition');
+        if (botonTema) botonTema.classList.remove('is-animating');
+        void raiz.offsetWidth;
+        raiz.classList.add('theme-transition');
+        if (botonTema) botonTema.classList.add('is-animating');
+
+        window.clearTimeout(temporizadorAnimacionTema);
+        temporizadorAnimacionTema = window.setTimeout(() => {
+            raiz.classList.remove('theme-transition');
+            if (botonTema) botonTema.classList.remove('is-animating');
+        }, 900);
+
+        const esClaro = raiz.classList.contains('light-mode');
         const nuevoTema = esClaro ? 'dark' : 'light';
         aplicarTema(nuevoTema);
     }
