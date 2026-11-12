@@ -421,6 +421,14 @@ create table favorito (
 );
 
 
+create table panel_suspensiones (
+    tipo varchar(32) not null,
+    id_registro varchar(64) not null,
+    fecha_suspension timestamp not null default current_timestamp,
+    primary key (tipo, id_registro)
+);
+
+
 
 
 insert into rol (nombre_rol, descripcion, es_personal) values
