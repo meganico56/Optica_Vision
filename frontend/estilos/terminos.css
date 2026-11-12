@@ -1,0 +1,397 @@
+/* este mismo reutiliza el navbar footer botones fondo y variables del inicio.css */
+@import url('inicio.css');
+
+html { scroll-behavior: smooth; }
+
+.terminos-main {
+    padding: 8.5rem 5% 4rem;
+}
+
+/* Lo del encabezado */
+.terminos-hero {
+    max-width: 800px;
+    margin: 0 auto 3.5rem;
+    text-align: center;
+}
+
+.terminos-tag {
+    display: inline-block;
+    color: var(--gold-dark);
+    font-family: var(--font-title);
+    letter-spacing: 3px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    text-transform: uppercase;
+}
+
+.terminos-h1-dark,
+.terminos-h1-gold {
+    font-family: var(--font-title);
+    font-size: 3rem;
+    font-weight: 800;
+    line-height: 1.15;
+}
+.terminos-h1-dark { color: var(--text-dark); }
+.terminos-h1-gold { color: var(--gold); }
+
+.terminos-hero p {
+    font-family: var(--font-body);
+    font-size: 1.05rem;
+    line-height: 1.8;
+    color: var(--text-muted);
+    margin: 1.2rem 0 1.4rem;
+}
+
+.terminos-fecha {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 8px 18px;
+    border-radius: 30px;
+    background: #fdfaf3;
+    border: 1.5px solid rgba(204, 164, 59, 0.35);
+    font-family: var(--font-title);
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--text-dark);
+}
+.terminos-fecha i { color: var(--gold); }
+
+/* El Layout de indice y contenido */
+.terminos-layout {
+    display: grid;
+    grid-template-columns: 270px minmax(0, 1fr);
+    gap: 2.5rem;
+    max-width: 1150px;
+    margin: 0 auto;
+    align-items: start;
+}
+
+/* El indice lateral wey */
+.terminos-indice {
+    position: sticky;
+    top: 105px;
+    background: #ffffff;
+    border: 1.5px solid var(--border);
+    border-radius: 20px;
+    padding: 1.5rem 1.2rem;
+    max-height: calc(100vh - 130px);
+    overflow-y: auto;
+}
+
+.terminos-indice h2 {
+    font-family: var(--font-title);
+    font-size: 0.8rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--gold-dark);
+    margin-bottom: 1rem;
+    padding: 0 0.6rem;
+}
+
+.terminos-indice ol {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    counter-reset: indice;
+}
+
+.terminos-indice li { counter-increment: indice; }
+
+.terminos-indice a {
+    display: flex;
+    align-items: baseline;
+    gap: 0.6rem;
+    padding: 7px 0.6rem;
+    border-radius: 10px;
+    font-family: var(--font-body);
+    font-size: 0.86rem;
+    line-height: 1.4;
+    color: var(--text-muted);
+    text-decoration: none;
+    transition: background 0.25s ease, color 0.25s ease;
+}
+
+.terminos-indice a::before {
+    content: counter(indice, decimal-leading-zero);
+    font-family: var(--font-title);
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: var(--gold);
+}
+
+.terminos-indice a:hover,
+.terminos-indice a.activo {
+    background: rgba(204, 164, 59, 0.12);
+    color: var(--text-dark);
+}
+
+/* Del contenideishon*/
+.terminos-contenido {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.termino-card {
+    position: relative;
+    background: #fdfaf3;
+    border: 1.5px solid rgba(204, 164, 59, 0.35);
+    border-radius: 20px;
+    padding: 2rem 2.2rem;
+    box-shadow: 0 6px 20px rgba(204, 164, 59, 0.06);
+    scroll-margin-top: 105px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.termino-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 30px var(--gold-glow);
+}
+
+.termino-cabecera {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1.1rem;
+}
+
+.termino-icono {
+    flex-shrink: 0;
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    background: #ffffff;
+    border: 2px solid var(--gold-light);
+    box-shadow: 0 4px 12px rgba(204, 164, 59, 0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    color: var(--gold);
+}
+
+.termino-cabecera h2 {
+    font-family: var(--font-title);
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--text-dark);
+    line-height: 1.3;
+}
+
+.termino-cabecera h2 span {
+    color: var(--gold);
+    margin-right: 0.35rem;
+}
+
+.termino-card p,
+.termino-card li {
+    font-family: var(--font-body);
+    font-size: 0.95rem;
+    line-height: 1.8;
+    color: var(--text-muted);
+}
+
+.termino-card p + p,
+.termino-card p + ul,
+.termino-card ul + p { margin-top: 0.8rem; }
+
+.termino-card ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.termino-card ul li {
+    position: relative;
+    padding-left: 1.5rem;
+    margin-bottom: 0.45rem;
+}
+
+.termino-card ul li::before {
+    content: "";
+    position: absolute;
+    left: 0.2rem;
+    top: 0.75em;
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--gold);
+}
+
+.termino-card strong { color: var(--text-dark); }
+
+/* Los datos en filas tanto de clientes como desarrolladores */
+
+.datos-lista {
+    display: grid;
+    gap: 0.6rem;
+    margin-top: 0.4rem;
+}
+
+.dato-fila {
+    display: grid;
+    grid-template-columns: 190px 1fr;
+    gap: 1rem;
+    padding: 0.7rem 1rem;
+    background: #ffffff;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    font-family: var(--font-body);
+    font-size: 0.92rem;
+    line-height: 1.5;
+}
+
+.dato-fila dt {
+    font-family: var(--font-title);
+    font-weight: 600;
+    color: var(--text-dark);
+}
+
+.dato-fila dd {
+    margin: 0;
+    color: var(--text-muted);
+}
+
+/* El del marcador de las cosas por confirmar */
+.por-confirmar {
+    display: inline-block;
+    padding: 1px 10px;
+    border-radius: 20px;
+    background: rgba(204, 164, 59, 0.15);
+    border: 1px dashed var(--gold);
+    color: var(--gold-dark);
+    font-family: var(--font-title);
+    font-size: 0.78rem;
+    font-weight: 600;
+    line-height: 1.7;
+}
+
+/* El del aviso de destacado*/
+.termino-aviso {
+    display: flex;
+    gap: 0.9rem;
+    margin-top: 1rem;
+    padding: 1rem 1.2rem;
+    border-radius: 14px;
+    background: rgba(204, 164, 59, 0.1);
+    border-left: 4px solid var(--gold);
+}
+
+.termino-aviso i {
+    color: var(--gold);
+    font-size: 1.1rem;
+    margin-top: 0.2rem;
+}
+
+.termino-aviso p { margin: 0; font-size: 0.9rem; }
+
+/* La aceptacion final wey */
+.terminos-cta {
+    text-align: center;
+    padding: 2.2rem 1.5rem;
+    border-radius: 20px;
+    background: #ffffff;
+    border: 1.5px solid var(--border);
+}
+
+.terminos-cta h3 {
+    font-family: var(--font-title);
+    font-size: 1.3rem;
+    color: var(--text-dark);
+    margin-bottom: 0.5rem;
+}
+
+.terminos-cta p {
+    font-family: var(--font-body);
+    color: var(--text-muted);
+    line-height: 1.7;
+    margin-bottom: 1.4rem;
+}
+
+.terminos-cta .hero-buttons { justify-content: center; flex-wrap: wrap; }
+
+/* Los ajustes del responsive */
+@media (max-width: 900px) {
+    .terminos-main { padding-top: 7.5rem; }
+
+    .terminos-layout { grid-template-columns: 1fr; }
+
+    .terminos-indice {
+        position: static;
+        max-height: none;
+    }
+
+    .terminos-h1-dark,
+    .terminos-h1-gold { font-size: 2.2rem; }
+}
+
+@media (max-width: 600px) {
+    .termino-card { padding: 1.5rem 1.2rem; }
+
+    .termino-cabecera h2 { font-size: 1.08rem; }
+
+    .dato-fila {
+        grid-template-columns: 1fr;
+        gap: 0.2rem;
+    }
+}
+
+/* El modo oscuro de terminos html mamon */
+:root.dark-mode .terminos-h1-dark { color: #ffffff; }
+
+:root.dark-mode .terminos-hero p,
+:root.dark-mode .termino-card p,
+:root.dark-mode .termino-card li,
+:root.dark-mode .terminos-cta p,
+:root.dark-mode .dato-fila dd,
+:root.dark-mode .terminos-indice a { color: var(--text-muted); }
+
+:root.dark-mode .terminos-fecha,
+:root.dark-mode .termino-card {
+    background: #151411;
+    border-color: rgba(204, 164, 59, 0.2);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+}
+
+:root.dark-mode .terminos-fecha { color: #fff4d6; }
+
+:root.dark-mode .termino-card:hover {
+    border-color: var(--gold);
+    box-shadow: 0 14px 32px var(--gold-glow);
+}
+
+:root.dark-mode .terminos-indice,
+:root.dark-mode .terminos-cta {
+    background: #151411;
+    border-color: rgba(204, 164, 59, 0.2);
+}
+
+:root.dark-mode .terminos-indice a:hover,
+:root.dark-mode .terminos-indice a.activo {
+    background: rgba(204, 164, 59, 0.16);
+    color: #fff4d6;
+}
+
+:root.dark-mode .termino-icono {
+    background: #1c1912;
+    border-color: rgba(204, 164, 59, 0.5);
+}
+
+:root.dark-mode .termino-cabecera h2,
+:root.dark-mode .termino-card strong,
+:root.dark-mode .terminos-cta h3,
+:root.dark-mode .dato-fila dt { color: #fff4d6; }
+
+:root.dark-mode .dato-fila {
+    background: #1c1912;
+    border-color: rgba(204, 164, 59, 0.15);
+}
+
+:root.dark-mode .por-confirmar {
+    background: rgba(204, 164, 59, 0.12);
+    color: var(--gold-light);
+}
+
+:root.dark-mode .termino-aviso { background: rgba(204, 164, 59, 0.08); }
