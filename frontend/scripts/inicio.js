@@ -1,21 +1,22 @@
-// ScriptInicio.js
-// Comportamiento básico de la página de Inicio: animación de entrada
-// y navbar que cambia de aspecto al hacer scroll.
+// inicio.js — Optimizado para rendimiento
+// Comportamiento de la página de Inicio: animaciones, carruseles,
+// navbar scroll, modales de ayuda y rotación del podio.
 
 document.addEventListener("DOMContentLoaded", () => {
 
-    // 1. Animación de entrada del hero (texto y visor de gafas)
+    // =============================================
+    // 1. Animación de entrada del hero
+    // =============================================
     const elementosAnimados = document.querySelectorAll(".fade-in-up");
-
     elementosAnimados.forEach((el, index) => {
-        // pequeño retraso escalonado para que no aparezcan todos a la vez
-        setTimeout(() => {
-            el.classList.add("visible");
-        }, 150 * index);
+        setTimeout(() => el.classList.add("visible"), 150 * index);
     });
 
-    // 2. Navbar que se compacta al hacer scroll
+    // =============================================
+    // 2. Navbar compacta al hacer scroll (con RAF throttle)
+    // =============================================
     const navbar = document.querySelector(".navbar");
+    let scrollPendiente = false;
 
     function actualizarNavbar() {
         if (window.scrollY > 40) {
@@ -23,14 +24,21 @@ document.addEventListener("DOMContentLoaded", () => {
         } else {
             navbar.classList.remove("scrolled");
         }
+        scrollPendiente = false;
     }
 
-    // estado inicial (por si la página carga ya con scroll, ej. al recargar)
     actualizarNavbar();
 
-    window.addEventListener("scroll", actualizarNavbar);
+    window.addEventListener("scroll", () => {
+        if (!scrollPendiente) {
+            scrollPendiente = true;
+            requestAnimationFrame(actualizarNavbar);
+        }
+    }, { passive: true });
 
-    // 3. Carrusel de Servicios: rotación automática y botones anterior / siguiente
+    // =============================================
+    // 3. Carrusel de Servicios
+    // =============================================
     const slides = [
         document.getElementById("slide1"),
         document.getElementById("slide2"),
@@ -43,7 +51,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     let indiceActual = 0;
     let temporizador = null;
-    const INTERVALO = 5000; // cambia cada 5 segundos
+    const INTERVALO = 5000;
 
     function obtenerIndiceActivo() {
         const idx = slides.findIndex(radio => radio.checked);
@@ -96,13 +104,11 @@ document.addEventListener("DOMContentLoaded", () => {
             });
         }
 
-        // Pausar si el usuario pasa el mouse por encima
         if (contenedorServicios) {
             contenedorServicios.addEventListener("mouseenter", detenerRotacion);
             contenedorServicios.addEventListener("mouseleave", iniciarRotacion);
         }
 
-        // Si el usuario hace clic directamente en los puntos inferiores
         document.querySelectorAll(".carrusel-puntos label").forEach((label, i) => {
             label.addEventListener("click", () => {
                 indiceActual = i;
@@ -111,7 +117,9 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    // Galería de fotos de "Quiénes somos": avance rápido cada 4 segundos.
+    // =============================================
+    // 4. Galería de fotos de "Quiénes somos"
+    // =============================================
     const nosotrosCarrusel = document.getElementById("nosotrosCarrusel");
     const nosotrosTrack = document.getElementById("nosotrosCarruselTrack");
     const nosotrosFotos = nosotrosTrack ? Array.from(nosotrosTrack.querySelectorAll("img")) : [];
@@ -173,29 +181,32 @@ document.addEventListener("DOMContentLoaded", () => {
         iniciarRotacionFotos();
     }
 
-    // 4. Carrusel de Reseñas: Avance automático continuo y arrastre por clic sostenido (drag & touch)
+    // =============================================
+    // 5. Carrusel de Reseñas (con IntersectionObserver)
+    // =============================================
     const resenasWrapper = document.querySelector(".resenas-carrusel-wrapper");
     const resenasTrack = document.getElementById("resenasTrack");
 
     if (resenasWrapper && resenasTrack) {
-        // Clonar las tarjetas para permitir un scroll infinito y continuo
         const originalCards = Array.from(resenasTrack.children);
         originalCards.forEach(card => {
-            const clon = card.cloneNode(true);
-            resenasTrack.appendChild(clon);
+            resenasTrack.appendChild(card.cloneNode(true));
         });
 
         let posX = 0;
         let isDown = false;
         let startX = 0;
         let scrollStart = 0;
-        const speed = 0.8; // Velocidad del desplazamiento automático continuo
+        const speed = 0.8;
+        let resenasVisible = false;
+        let rafId = null;
 
         function obtenerAnchoMitad() {
             return resenasTrack.scrollWidth / 2;
         }
 
         function animar() {
+            if (!resenasVisible) { rafId = null; return; }
             if (!isDown) {
                 posX -= speed;
                 const mitad = obtenerAnchoMitad();
@@ -204,135 +215,114 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
                 resenasTrack.style.transform = `translateX(${posX}px)`;
             }
-            requestAnimationFrame(animar);
+            rafId = requestAnimationFrame(animar);
         }
 
-        // Eventos de Mouse (clic sostenido para arrastrar)
+        // IntersectionObserver: solo anima cuando es visible
+        const resenasObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                resenasVisible = entry.isIntersecting;
+                if (resenasVisible && !rafId) {
+                    rafId = requestAnimationFrame(animar);
+                }
+            });
+        }, { threshold: 0.1 });
+
+        resenasObserver.observe(resenasWrapper);
+
+        // Eventos de arrastre: registrar mousemove/touchmove solo cuando se necesitan
+        function onMouseMove(e) {
+            if (!isDown) return;
+            e.preventDefault();
+            const x = e.pageX - resenasWrapper.offsetLeft;
+            const walk = (x - startX) * 1.3;
+            posX = scrollStart + walk;
+            resenasTrack.style.transform = `translateX(${posX}px)`;
+        }
+
+        function onMouseUp() {
+            if (!isDown) return;
+            isDown = false;
+            resenasWrapper.style.cursor = "grab";
+            const mitad = obtenerAnchoMitad();
+            if (posX > 0) posX = -mitad + (posX % mitad);
+            if (Math.abs(posX) >= mitad) posX = -(Math.abs(posX) % mitad);
+            window.removeEventListener("mousemove", onMouseMove);
+            window.removeEventListener("mouseup", onMouseUp);
+        }
+
         resenasWrapper.addEventListener("mousedown", (e) => {
             isDown = true;
             startX = e.pageX - resenasWrapper.offsetLeft;
             scrollStart = posX;
             resenasWrapper.style.cursor = "grabbing";
+            window.addEventListener("mousemove", onMouseMove);
+            window.addEventListener("mouseup", onMouseUp);
         });
 
-        window.addEventListener("mouseup", () => {
-            if (isDown) {
-                isDown = false;
-                resenasWrapper.style.cursor = "grab";
-                const mitad = obtenerAnchoMitad();
-                if (posX > 0) posX = -mitad + (posX % mitad);
-                if (Math.abs(posX) >= mitad) posX = -(Math.abs(posX) % mitad);
-            }
-        });
-
-        window.addEventListener("mousemove", (e) => {
-            if (!isDown) return;
-            e.preventDefault();
-            const x = e.pageX - resenasWrapper.offsetLeft;
-            const walk = (x - startX) * 1.3; // Factor de arrastre
-            posX = scrollStart + walk;
-            resenasTrack.style.transform = `translateX(${posX}px)`;
-        });
-
-        // Eventos táctiles para móviles
-        resenasWrapper.addEventListener("touchstart", (e) => {
-            isDown = true;
-            startX = e.touches[0].pageX - resenasWrapper.offsetLeft;
-            scrollStart = posX;
-        }, { passive: true });
-
-        window.addEventListener("touchend", () => {
-            if (isDown) {
-                isDown = false;
-                const mitad = obtenerAnchoMitad();
-                if (posX > 0) posX = -mitad + (posX % mitad);
-                if (Math.abs(posX) >= mitad) posX = -(Math.abs(posX) % mitad);
-            }
-        });
-
-        window.addEventListener("touchmove", (e) => {
+        // Eventos táctiles
+        function onTouchMove(e) {
             if (!isDown) return;
             const x = e.touches[0].pageX - resenasWrapper.offsetLeft;
             const walk = (x - startX) * 1.3;
             posX = scrollStart + walk;
             resenasTrack.style.transform = `translateX(${posX}px)`;
-        }, { passive: true });
+        }
 
-        // Iniciar el bucle de animación continua
-        requestAnimationFrame(animar);
+        function onTouchEnd() {
+            if (!isDown) return;
+            isDown = false;
+            const mitad = obtenerAnchoMitad();
+            if (posX > 0) posX = -mitad + (posX % mitad);
+            if (Math.abs(posX) >= mitad) posX = -(Math.abs(posX) % mitad);
+            window.removeEventListener("touchmove", onTouchMove);
+            window.removeEventListener("touchend", onTouchEnd);
+        }
+
+        resenasWrapper.addEventListener("touchstart", (e) => {
+            isDown = true;
+            startX = e.touches[0].pageX - resenasWrapper.offsetLeft;
+            scrollStart = posX;
+            window.addEventListener("touchmove", onTouchMove, { passive: true });
+            window.addEventListener("touchend", onTouchEnd);
+        }, { passive: true });
     }
 
-});
-
-const abrir = document.getElementById("abrirModal");
-const cerrar = document.getElementById("cerrarModal");
-const modal = document.getElementById("miModal");
-
-// =====================================
-// MODALES DE AYUDA DEL FOOTER
-// =====================================
-
-document.addEventListener("DOMContentLoaded", () => {
-
+    // =============================================
+    // 6. Modales de Ayuda del Footer
+    // =============================================
     const botonesAyuda = document.querySelectorAll(".ayuda-link");
     const modalesAyuda = document.querySelectorAll(".ayuda-modal");
 
-    // Abrir modal correspondiente
     botonesAyuda.forEach(boton => {
-
         boton.addEventListener("click", () => {
-
             const idModal = boton.dataset.modal;
             const modal = document.getElementById(idModal);
-
-            if (modal) {
-                modal.style.display = "flex";
-            }
-
+            if (modal) modal.style.display = "flex";
         });
-
     });
 
-    // Cerrar con la X
     document.querySelectorAll(".ayuda-cerrar").forEach(boton => {
-
         boton.addEventListener("click", () => {
-
-            const modal = boton.closest(".ayuda-modal");
-
-            modal.style.display = "none";
-
+            boton.closest(".ayuda-modal").style.display = "none";
         });
-
     });
 
-    // Cerrar al hacer clic fuera del contenido
     modalesAyuda.forEach(modal => {
-
         modal.addEventListener("click", (event) => {
-
-            if (event.target === modal) {
-                modal.style.display = "none";
-            }
-
+            if (event.target === modal) modal.style.display = "none";
         });
-
     });
 
-    // Cerrar presionando ESC
     document.addEventListener("keydown", (event) => {
-
         if (event.key === "Escape") {
-
-            modalesAyuda.forEach(modal => {
-                modal.style.display = "none";
-            });
-
+            modalesAyuda.forEach(modal => { modal.style.display = "none"; });
         }
-
     });
 
-    // Disco del podio: se gira arrastrando con clic sostenido (las gafas giran con él)
+    // =============================================
+    // 7. Disco del podio: rotación por arrastre
+    // =============================================
     const discoPodio = document.querySelector(".podium-tapa");
     const gafasPodio = document.querySelector(".glasses-model");
 
@@ -348,7 +338,6 @@ document.addEventListener("DOMContentLoaded", () => {
         const animacionesGiro = () => document.getAnimations()
             .filter(a => ANIMACIONES_GIRO.includes(a.animationName));
 
-        // una vuelta completa cada vez que se arrastra el doble del ancho del disco
         const msPorPixel = () => 12000 / (discoPodio.offsetWidth * 2);
 
         function moverGiro(deltaMs) {
@@ -364,7 +353,6 @@ document.addEventListener("DOMContentLoaded", () => {
             arrastrando = false;
             document.body.classList.remove("disco-arrastrando");
 
-            // si se soltó con impulso, el disco sigue girando y frena poco a poco
             let v = e.timeStamp - ultimoT > 100 ? 0 : velocidad;
             const frenar = () => {
                 if (Math.abs(v) < 0.05) {

@@ -4,6 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Boutique de la Visión | Inicio</title>
+    <meta name="description" content="Óptica Boutique de la Visión — monturas exclusivas, lentes de alta tecnología y atención profesional en Duitama. Agenda tu cita y descubre elegancia y precisión para tus ojos." />
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -11,7 +12,8 @@
       href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Montserrat:wght@400;500;600;700;800&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" media="print" onload="this.media='all'" />
+    <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" /></noscript>
     <link rel="stylesheet" href="../estilos/inicio.css"/>
   </head>
 
@@ -95,7 +97,7 @@
         <div class="hero-viewer fade-in-up delay">
           <div class="glow"></div>
           <div class="viewer-container">
-            <img src="../imagenes/productos/gafas-modelo1.png" class="glasses-model" alt="Gafas Premium" />
+            <img src="../imagenes/productos/gafas-modelo1.png" class="glasses-model" alt="Gafas Premium" width="450" height="450" />
             <div class="podium" aria-hidden="true">
               <div class="podium-sombra"></div>
               <div class="podium-base"></div>
@@ -215,6 +217,8 @@
                   src="../imagenes/fondos/rostro-gafas-pexels-10080214.jpeg"
                   alt="Primer plano de una mujer con gafas"
                   class="nosotros-foto-img"
+                  loading="lazy"
+                  width="520" height="250"
                   aria-hidden="false"
                 />
                 <!-- Foto de Pexels: https://images.pexels.com/photos/1239291/pexels-photo-1239291.jpeg -->
@@ -222,6 +226,8 @@
                   src="../imagenes/fondos/rostro-gafas-pexels-1239291.jpeg"
                   alt="Mujer sonriendo con gafas en la ciudad"
                   class="nosotros-foto-img"
+                  loading="lazy"
+                  width="520" height="250"
                   aria-hidden="true"
                 />
               </div>
@@ -487,11 +493,11 @@
             <h4>MÉTODOS DE PAGO</h4>
 
             <div class="payment-methods">
-                <span style="color: #1a1f71">VISA</span>
-                <span style="color: #eb001b">MC</span>
-                <span style="color: #007bc1">AMEX</span>
-                <span style="color: #2b84c6">PSE</span>
-                <span style="color: #58164b">NEQUI</span>
+                <span class="pago-visa">VISA</span>
+                <span class="pago-mc">MC</span>
+                <span class="pago-amex">AMEX</span>
+                <span class="pago-pse">PSE</span>
+                <span class="pago-nequi">NEQUI</span>
                 <span><i class="fa-solid fa-money-bill"></i></span>
             </div>
         </div>
@@ -576,8 +582,8 @@
         </div>
     </div>
 
-    <script src="../scripts/inicio.js"></script>
-    <script src="../scripts/session-manager.js"></script>
-    <script src="../scripts/intro-animacion.js"></script>
+    <script defer src="../scripts/inicio.js"></script>
+    <script defer src="../scripts/session-manager.js"></script>
+    <script defer src="../scripts/intro-animacion.js"></script>
   </body>
 </html>

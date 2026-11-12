@@ -48,14 +48,9 @@ html { scroll-behavior: smooth; }
 .hero-text h2,
 .hero-text p {
     text-shadow:
-        0 0 2px #ffffff,
         0 0 6px #ffffff,
-        0 0 12px #ffffff,
-        0 0 20px #ffffff,
-        0 0 32px #ffffff,
-        0 0 48px #ffffff,
-        0 0 70px rgba(255, 255, 255, 0.95),
-        0 0 100px rgba(255, 255, 255, 0.85);
+        0 0 24px rgba(255, 255, 255, 0.85),
+        0 0 60px rgba(255, 255, 255, 0.55);
 }
 
 .hero-tag {
@@ -72,11 +67,11 @@ html { scroll-behavior: smooth; }
 .hero-text h1 {
     font-family: var(--font-title);
     color: var(--gold);
-    font-size: 3rem;
+    font-size: 3.4rem;
     font-weight: 800;
     letter-spacing: 1px;
     margin-bottom: 0.5rem;
-    line-height: 1.15;
+    line-height: 1.1;
 }
 
 .hero-text h2 {
@@ -396,14 +391,6 @@ body.disco-arrastrando .glasses-model {
     font-family: var(--font-title);
     font-size: 3.4rem;
     font-weight: 800;
-    line-height: 1.1;
-}
-.hero-text h1 {
-    font-family: var(--font-title);
-    font-size: 3.4rem;
-    font-weight: 800;
-    letter-spacing: 1px;
-    margin-bottom: 0.5rem;
     line-height: 1.1;
 }
 
@@ -983,16 +970,8 @@ body.disco-arrastrando .glasses-model {
     box-shadow: 0 16px 36px var(--gold-glow);
 }
 
-:root.dark-mode .resena-comentario {
-    color: var(--text-muted);
-}
-
 :root.dark-mode .resena-autor {
     border-top-color: rgba(204, 164, 59, 0.15);
-}
-
-:root.dark-mode .resenas-h2-dark {
-    color: var(--text-dark);
 }
 
 :root.dark-mode .resena-datos h4 {
@@ -1047,7 +1026,6 @@ body.disco-arrastrando .glasses-model {
     .podium-tapa,
     .podium-tapa::after,
     .podium-sombra { animation: none; }
-    .carrusel-pista { transition: none; }
 }
 
 /* ==========================================
@@ -1220,6 +1198,13 @@ footer .payment-methods span {
 
     box-sizing: border-box;
 }
+
+/* Colores de marcas de pago */
+.pago-visa  { color: #1a1f71; }
+.pago-mc    { color: #eb001b; }
+.pago-amex  { color: #007bc1; }
+.pago-pse   { color: #2b84c6; }
+.pago-nequi { color: #58164b; }
 
 /* COPYRIGHT */
 footer .copyright {
@@ -1480,18 +1465,6 @@ footer .copyright {
 
     .servicio-flecha.prev { left: 0; }
     .servicio-flecha.next { right: 0; }
-
-    .slide { padding: 2rem 1rem; }
-
-    .nosotros-container {
-        grid-template-columns: 1fr;
-        max-width: 480px;
-    }
-
-    .nosotros-mision,
-    .nosotros-vision {
-        min-height: 0;
-    }
 }
 
 /* RESPONSIVE DEL FOOTER */
@@ -1605,7 +1578,7 @@ footer .copyright {
 }
 
 :root.dark-mode .hero-text p {
-    color: var(--text-muted);
+    color: #d4cfc5;
 }
 
 :root.dark-mode .btn-arrow-secondary {
