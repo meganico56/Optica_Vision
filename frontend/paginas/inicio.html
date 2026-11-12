@@ -27,21 +27,22 @@
       </div>
 
       <!-- Buscador del catálogo  -->
-      <form class="buscador" action="catalogo.html" method="get">
+      <form class="buscador" action="catalogo.html" method="get" role="search">
         <input
           type="text"
           name="q"
           placeholder="Buscar productos..."
           class="busc"
+          aria-label="Buscar productos"
         />
-        <button type="submit" class="bot_bus">
+        <button type="submit" class="bot_bus" aria-label="Buscar">
           <i class="fa-solid fa-magnifying-glass"></i>
         </button>
       </form>
 
       <input type="checkbox" id="menu-toggle" class="menu-toggle" />
 
-      <label for="menu-toggle" class="hamburguesa">
+      <label for="menu-toggle" class="hamburguesa" aria-label="Abrir menú">
         <span></span>
         <span></span>
         <span></span>
@@ -51,11 +52,10 @@
         <ul class="navbar-menu">
           <li><a href="inicio.html" class="activo">INICIO</a></li>
           <li><a href="catalogo.html">CATÁLOGO</a></li>
-          <!-- ENLACE CORREGIDO A AGENDAR CITA -->
           <li><a href="agendar-cita.html">AGENDAR CITA</a></li>
           <li><a href="inicio-sesion.html">INICIAR SESIÓN</a></li>
           <li>
-            <a href="carrito.html" aria-label="Carrito"><i class="fa-solid fa-cart-shopping"></i></a>
+            <a href="carrito.html" aria-label="Carrito"><i class="fa-solid fa-cart-shopping"></i><span class="cart-count" id="cartBadge" hidden>0</span></a>
           </li>
           <li class="navbar-theme-item">
             <button class="btn-tema" id="btnTemaPublico" type="button" aria-label="Alternar modo claro y oscuro" title="Alternar modo claro / oscuro">
