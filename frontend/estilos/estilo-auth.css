@@ -197,6 +197,24 @@
   min-width: 0;
 }
 
+.campo-password {
+  position: relative;
+  flex: 1;
+  min-width: 0;
+}
+
+.campos .campo-password input[type="password"],
+.campos .campo-password input[type="text"] {
+  padding-right: 3rem;
+}
+
+.campos .campo-password .toggle-password {
+  padding: 0;
+  border: 0;
+  background: transparent;
+  font-size: 1rem;
+}
+
 /* Inputs, selects y fechas comparten la misma apariencia */
 .formulario input[type="text"],
 .formulario input[type="email"],

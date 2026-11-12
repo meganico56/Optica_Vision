@@ -62,8 +62,18 @@
                 </div>
 
                 <div class="fila">
-                    <input type="password" id="contrasena" name="contrasena" class="password" placeholder="Contraseña (mínimo 8 caracteres)" minlength="8" autocomplete="new-password" required>
-                    <input type="password" id="confirmarContrasena" name="confirmarContrasena" class="password" placeholder="Confirmar contraseña" minlength="8" autocomplete="new-password" required>
+                    <div class="campo-password">
+                        <input type="password" id="contrasena" name="contrasena" class="password" placeholder="Contraseña (mínimo 8 caracteres)" minlength="8" autocomplete="new-password" required>
+                        <button class="toggle-password" type="button" data-password-target="contrasena" aria-label="Mostrar contraseña" aria-controls="contrasena" aria-pressed="false" title="Mostrar contraseña">
+                            <i class="fa-solid fa-eye" aria-hidden="true"></i>
+                        </button>
+                    </div>
+                    <div class="campo-password">
+                        <input type="password" id="confirmarContrasena" name="confirmarContrasena" class="password" placeholder="Confirmar contraseña" minlength="8" autocomplete="new-password" required>
+                        <button class="toggle-password" type="button" data-password-target="confirmarContrasena" aria-label="Mostrar contraseña de confirmación" aria-controls="confirmarContrasena" aria-pressed="false" title="Mostrar contraseña de confirmación">
+                            <i class="fa-solid fa-eye" aria-hidden="true"></i>
+                        </button>
+                    </div>
                 </div>
 
                 <label class="aceptar-datos">

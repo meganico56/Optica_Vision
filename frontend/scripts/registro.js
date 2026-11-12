@@ -7,6 +7,25 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (!form) return;
 
+    form.querySelectorAll('[data-password-target]').forEach((boton) => {
+        const input = document.getElementById(boton.dataset.passwordTarget);
+        const icono = boton.querySelector('i');
+        if (!input || !icono) return;
+
+        boton.addEventListener('click', () => {
+            const mostrar = input.type === 'password';
+            input.type = mostrar ? 'text' : 'password';
+            boton.setAttribute('aria-pressed', String(mostrar));
+            const etiqueta = boton.dataset.passwordTarget === 'confirmarContrasena'
+                ? (mostrar ? 'Ocultar contraseña de confirmación' : 'Mostrar contraseña de confirmación')
+                : (mostrar ? 'Ocultar contraseña' : 'Mostrar contraseña');
+            boton.setAttribute('aria-label', etiqueta);
+            boton.title = etiqueta;
+            icono.classList.toggle('fa-eye', !mostrar);
+            icono.classList.toggle('fa-eye-slash', mostrar);
+        });
+    });
+
     function mostrarError(texto) {
         mensaje.textContent = texto;
         mensaje.hidden = false;
