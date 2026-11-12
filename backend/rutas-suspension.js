@@ -20,16 +20,32 @@ const TIPOS_SUSPENDIBLES = new Set([
 
 let tablaLista;
 
+// Mismo cotejamiento que el resto de la base, para poder cruzarla con producto, usuario, etc.
+async function crearTabla() {
+  await db.query(`
+    CREATE TABLE IF NOT EXISTS panel_suspensiones (
+      tipo VARCHAR(32) NOT NULL,
+      id_registro VARCHAR(64) NOT NULL,
+      fecha_suspension TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+      PRIMARY KEY (tipo, id_registro)
+    ) DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_unicode_ci
+  `);
+
+  // Las tablas creadas antes sin cotejamiento explícito se convierten una sola vez
+  const [[tabla]] = await db.query(
+    `SELECT TABLE_COLLATION AS cotejamiento FROM information_schema.TABLES
+     WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'panel_suspensiones'`,
+  );
+  if (tabla && tabla.cotejamiento !== "utf8mb4_unicode_ci") {
+    await db.query(
+      "ALTER TABLE panel_suspensiones CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci",
+    );
+  }
+}
+
 async function asegurarTabla() {
   if (!tablaLista) {
-    tablaLista = db.query(`
-      CREATE TABLE IF NOT EXISTS panel_suspensiones (
-        tipo VARCHAR(32) NOT NULL,
-        id_registro VARCHAR(64) NOT NULL,
-        fecha_suspension TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-        PRIMARY KEY (tipo, id_registro)
-      )
-    `);
+    tablaLista = crearTabla();
   }
 
   try {
