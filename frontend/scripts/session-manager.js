@@ -80,8 +80,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // --- Manejo Global del Tema y Logotipos ---
 (function() {
-    const esPaginaAdmin = window.location.pathname.includes('panel-admin.html');
-    const savedTheme = localStorage.getItem('pub_theme'); // clave separada del panel admin
+    const esPaginaPanel = window.location.pathname.includes('panel-admin.html') ||
+                          window.location.pathname.includes('panel-empleado.html') ||
+                          window.location.pathname.includes('panel-usuario.html');
+    const CLAVE_TEMA = 'pub_theme';
+    const savedTheme = localStorage.getItem(CLAVE_TEMA); // clave separada de los paneles
     // Por defecto modo claro; solo oscuro si el usuario lo eligió explícitamente
     const isDark = savedTheme === 'dark';
 
@@ -120,13 +123,13 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Aplicar de inmediato (antes del DOMContentLoaded) para evitar parpadeos
-    if (!esPaginaAdmin) {
+    if (!esPaginaPanel) {
         if (isDark) document.documentElement.classList.add('dark-mode');
         else        document.documentElement.classList.add('light-mode');
     }
 
     document.addEventListener('DOMContentLoaded', () => {
-        if (esPaginaAdmin) return; // El panel admin tiene su propio toggle
+        if (esPaginaPanel) return; // Los paneles tienen su propio toggle en panel-navegacion.js
 
         // Aplicar tema inicial completo (logos + botón)
         aplicarTemaPublico(isDark);
@@ -137,7 +140,7 @@ document.addEventListener('DOMContentLoaded', () => {
             btn.addEventListener('click', () => {
                 const ahoraOscuro = document.documentElement.classList.contains('dark-mode');
                 const nuevoOscuro = !ahoraOscuro;
-                localStorage.setItem('pub_theme', nuevoOscuro ? 'dark' : 'light');
+                localStorage.setItem(CLAVE_TEMA, nuevoOscuro ? 'dark' : 'light');
                 aplicarTemaPublico(nuevoOscuro);
             });
         }

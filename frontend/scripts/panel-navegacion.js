@@ -33,7 +33,8 @@
         alCambiar: (fn) => { oyentes.push(fn); }
     };
 
-    // Manejo de tema Claro / Oscuro
+    // Manejo unificado de tema Claro / Oscuro para todos los paneles (admin, empleado, usuario)
+    const MANEJA_TEMA = true;
     const CLAVE_TEMA = 'bv_admin_theme';
     const LOGO_OSCURO = '../imagenes/logos/Logo_modo_oscuro.png';
     const LOGO_CLARO = '../imagenes/logos/Logo_modo_claro.png';
@@ -83,6 +84,7 @@
 
     // Aplicar clase a :root de inmediato para evitar parpadeos visuales al cargar
     (function precargarTema() {
+        if (!MANEJA_TEMA) return;
         const tema = obtenerTemaInicial();
         if (tema === 'light') {
             document.documentElement.classList.add('light-mode');
@@ -94,6 +96,7 @@
     })();
 
     function iniciarTema() {
+        if (!MANEJA_TEMA) return;
         const tema = obtenerTemaInicial();
         aplicarTema(tema);
 

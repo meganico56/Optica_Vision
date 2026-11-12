@@ -69,9 +69,12 @@
         if ($('profileCiudad')) $('profileCiudad').value = p.ciudad || '';
 
         const inicial = (p.nombre || '?').charAt(0).toUpperCase();
-        $('userName').textContent = p.nombre || '';
-        $('userAvatar').textContent = inicial;
-        $('profileAvatarLarge').textContent = inicial;
+        if ($('userName')) $('userName').textContent = p.nombre || '';
+        if ($('userAvatar')) $('userAvatar').textContent = inicial;
+        if ($('adminName')) $('adminName').textContent = [p.nombre, p.apellido].filter(Boolean).join(' ');
+        if ($('adminAvatar')) $('adminAvatar').textContent = inicial;
+        if ($('adminRol')) $('adminRol').textContent = p.rol || 'Cliente';
+        if ($('profileAvatarLarge')) $('profileAvatarLarge').textContent = inicial;
     }
 
     function avisoPerfil(texto) {

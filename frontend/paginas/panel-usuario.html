@@ -33,12 +33,17 @@
 <header class="top-bar">
 <div class="topbar-left">
 <button class="menu-toggle" id="menuToggle" type="button" aria-label="Abrir menú"><i class="fa-solid fa-bars"></i></button>
-<div class="user-welcome"><span>Hola, </span><span class="user-name" id="userName"></span></div>
 </div>
 <div class="top-bar-right">
-<a href="carrito.html" class="cart-btn" aria-label="Carrito"><i class="fa-solid fa-shopping-cart"></i><span class="cart-count" id="cartCount">0</span></a>
-<button class="btn-tema" id="btnTemaPublico" type="button" aria-label="Alternar modo oscuro"><i class="fa-solid fa-moon"></i><span>Modo oscuro</span></button>
-<div class="user-avatar" id="userAvatar"></div>
+<a href="carrito.html" class="cart-btn" aria-label="Carrito" title="Ver carrito"><i class="fa-solid fa-shopping-cart"></i><span class="cart-count" id="cartCount">0</span></a>
+<button class="theme-toggle-btn" id="themeToggleBtn" type="button" aria-label="Cambiar tema" title="Alternar modo claro / oscuro">
+  <i class="fa-solid fa-sun" id="themeToggleIcon"></i>
+  <span class="theme-toggle-text" id="themeToggleText">Modo claro</span>
+</button>
+<div class="admin-profile">
+<div class="admin-info"><div class="admin-name" id="adminName"></div><div class="admin-role" id="adminRol">Cliente</div></div>
+<div class="admin-avatar" id="adminAvatar"></div>
+</div>
 </div>
 </header>
 
