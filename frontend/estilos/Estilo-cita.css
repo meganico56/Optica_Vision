@@ -4,9 +4,9 @@
 
 
 /* El HTML sigue cargando inicio.css antes que esta hoja: se anula su imagen de fondo */
-body {
+.body {
   background-color: #faf8f2;
-  background-image: none;
+  background-image: url(fondo-boutique.png);
 }
 
 .cita-contenedor {
