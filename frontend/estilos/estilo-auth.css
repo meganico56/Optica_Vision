@@ -1202,21 +1202,6 @@ footer .copyright {
     rgba(0, 0, 0, 0.15);
 }
 
-/* Botón flotante de tema: ajustado para dark mode */
-:root.dark-mode .btn-tema-flotante {
-  background: rgba(204, 164, 59, 0.85);
-  box-shadow:
-    0 4px 16px rgba(204, 164, 59, 0.25),
-    0 0 20px rgba(204, 164, 59, 0.08);
-}
-
-:root.dark-mode .btn-tema-flotante:hover {
-  background: var(--gold);
-  box-shadow:
-    0 6px 20px rgba(204, 164, 59, 0.35),
-    0 0 28px rgba(204, 164, 59, 0.12);
-}
-
 /* Botón de tema a la misma altura que en el navbar de inicio
    (navbar: 1rem de padding + logo de 55px, botón centrado) */
 .pagina-login .btn-tema-flotante {
@@ -1231,7 +1216,7 @@ footer .copyright {
 }
 
 .pagina-login .btn-tema-flotante:hover {
-  transform: translateY(-50%) scale(1.07);
+  transform: translateY(calc(-50% - 2px));
 }
 
 /* Espacio arriba para que el botón no tape la tarjeta (registro es alta) */

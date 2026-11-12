@@ -5,6 +5,11 @@
   --gold-light:  #e5c96d;
   --gold-glow:   rgba(204, 164, 59, 0.35);
   --gold-subtle: rgba(204, 164, 59, 0.12);
+  --theme-toggle-bg: rgba(255, 255, 255, 0.85);
+  --theme-toggle-border: rgba(204, 164, 59, 0.22);
+  --theme-toggle-text: #2c2921;
+  --theme-toggle-icon: #b08c2f;
+  --theme-toggle-shadow: 0 2px 10px rgba(0, 0, 0, 0.12);
 
   --text-dark:   #222222;
   --text-muted:  #555555;
@@ -32,6 +37,11 @@
   --navbar-menu-bg: rgba(18, 17, 14, 0.98);
   --gold-glow:   rgba(204, 164, 59, 0.28);
   --gold-subtle: rgba(204, 164, 59, 0.16);
+  --theme-toggle-bg: rgba(25, 25, 30, 0.82);
+  --theme-toggle-border: rgba(204, 164, 59, 0.2);
+  --theme-toggle-text: #f0f0f0;
+  --theme-toggle-icon: #cca43b;
+  --theme-toggle-shadow: 0 2px 10px rgba(0, 0, 0, 0.12);
 }
 
 /* ---------- Reset ---------- */
@@ -89,12 +99,54 @@ button { cursor: pointer; }
   min-width: 44px;
   padding: 0;
   border-radius: 50%;
+  background: var(--theme-toggle-bg);
+  border: 1px solid var(--theme-toggle-border);
+  color: var(--theme-toggle-text);
+  font-family: var(--font-title);
+  font-size: 1.15rem;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: var(--theme-toggle-shadow);
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  user-select: none;
 }
 
 .btn-tema i,
 .btn-tema-flotante i,
 .theme-toggle-btn i {
   font-size: 1.1rem;
+  color: var(--theme-toggle-icon);
+  transition: color 0.3s ease;
+}
+
+.btn-tema:hover,
+.btn-tema-flotante:hover,
+.theme-toggle-btn:hover {
+  border-color: var(--gold);
+  background: rgba(204, 164, 59, 0.1);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(204, 164, 59, 0.25);
+}
+
+.btn-tema:active,
+.btn-tema-flotante:active,
+.theme-toggle-btn:active {
+  transform: translateY(0);
+}
+
+:root.light-mode .btn-tema,
+:root.light-mode .btn-tema-flotante,
+:root.light-mode .theme-toggle-btn {
+  background: #ffffff;
+  border-color: rgba(204, 164, 59, 0.3);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+:root.light-mode .btn-tema:hover,
+:root.light-mode .btn-tema-flotante:hover,
+:root.light-mode .theme-toggle-btn:hover {
+  background: rgba(204, 164, 59, 0.12);
+  border-color: var(--gold-dark);
 }
 
 .btn-tema.is-animating i,
