@@ -13,7 +13,7 @@
     const PROTEGIDAS = {
         'panel-admin.html': STAFF,
         'panel-empleado.html': ['Vendedor'],
-        'panel-usuario.html': ['Cliente']
+        'panel-cliente.html': ['Cliente']
     };
 
     function leerUsuario() {
@@ -23,7 +23,7 @@
     function panelDe(rol) {
         if (rol === 'Administrador') return 'panel-admin.html';
         if (rol === 'Vendedor') return 'panel-empleado.html';
-        if (rol === 'Cliente') return 'panel-usuario.html';
+        if (rol === 'Cliente') return 'panel-cliente.html';
         return 'inicio.html';
     }
 
@@ -40,7 +40,7 @@
             localStorage.setItem(K_USUARIO, JSON.stringify(usuario));
             // Asegurar que al iniciar sesión el panel siempre abra desde la pestaña principal (Dashboard / Inicio)
             localStorage.removeItem('bv_seccion:panel-admin.html');
-            localStorage.removeItem('bv_seccion:panel-usuario.html');
+            localStorage.removeItem('bv_seccion:panel-cliente.html');
             localStorage.removeItem('bv_seccion:panel-empleado.html');
         },
 
@@ -137,7 +137,7 @@
             } else if (usuario.rol === 'Vendedor') {
                 li.innerHTML = '<a href="panel-empleado.html" style="color: var(--gold);"><i class="fa-solid fa-id-badge"></i> MI PANEL</a>';
             } else {
-                li.innerHTML = '<a href="panel-usuario.html" style="color: var(--gold);"><i class="fa-solid fa-user"></i> MI PANEL</a>';
+                li.innerHTML = '<a href="panel-cliente.html" style="color: var(--gold);"><i class="fa-solid fa-user"></i> MI PANEL</a>';
             }
             enlace.parentElement.insertAdjacentElement('beforebegin', li);
 

@@ -1,4 +1,4 @@
-// panel-usuario.js - Datos del panel del cliente (perfil, compras, citas y recetas).
+// panel-cliente.js - Datos del panel del cliente (perfil, compras, citas y recetas).
 // Usa Api y BV de api.js. La navegación entre secciones está en panel-navegacion.js.
 
 (function () {

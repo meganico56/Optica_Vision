@@ -54,7 +54,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 // Si es cliente, agregar enlace al Panel de Usuario
                 if (userData.rol === 'cliente' || userData.rol === 'Cliente') {
                     const li = document.createElement('li');
-                    li.innerHTML = '<a href="panel-usuario.html" style="color: var(--gold);"><i class="fa-solid fa-user"></i> MI PANEL</a>';
+                    li.innerHTML = '<a href="panel-cliente.html" style="color: var(--gold);"><i class="fa-solid fa-user"></i> MI PANEL</a>';
                     link.parentElement.insertAdjacentElement('beforebegin', li);
                 }
             }
@@ -82,7 +82,7 @@ document.addEventListener('DOMContentLoaded', () => {
 (function() {
     const esPaginaPanel = window.location.pathname.includes('panel-admin.html') ||
                           window.location.pathname.includes('panel-empleado.html') ||
-                          window.location.pathname.includes('panel-usuario.html');
+                          window.location.pathname.includes('panel-cliente.html');
     const CLAVE_TEMA = 'pub_theme';
     const savedTheme = localStorage.getItem(CLAVE_TEMA); // clave separada de los paneles
     // Por defecto modo claro; solo oscuro si el usuario lo eligió explícitamente

@@ -13,7 +13,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Detectar si estamos en el panel de administrador o panel de usuario (cualquier sección)
     const currentPath = window.location.pathname;
     const isAdminPanel = currentPath.includes('panel-admin.html') || currentPath.includes('panel-admin');
-    const isUserPanel = currentPath.includes('panel-usuario.html') || currentPath.includes('panel-usuario');
+    const isUserPanel = currentPath.includes('panel-cliente.html') || currentPath.includes('panel-cliente');
     const isPanelPage = isAdminPanel || isUserPanel;
 
     // Clave de almacenamiento por sesión según la sección
