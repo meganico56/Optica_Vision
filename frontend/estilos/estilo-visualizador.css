@@ -1,6 +1,6 @@
 
-@import url('base.css');
-@import url('layout-publico.css');
+@import url('Base.css');
+@import url('Layout-publico.css');
 
 
 /* sistema general de temas y configuración */
@@ -15,6 +15,8 @@
   --gold-mid:    rgba(204, 164, 59, 0.55);
   --ink:         #222222;
   --ink-soft:    #555555;
+  --button-ink:  #222222;
+  --visualizer-background: #fffdf8;
   --white:       #ffffff;
   --border:      #e8e8e8;
   --radius:      18px;
@@ -56,15 +58,56 @@
   --qty-bg:          rgba(255,255,255,0.85);
 }
 
+:root.dark-mode {
+  --gold:             #e0b94f;
+  --gold-light:       #f0d47a;
+  --gold-glow:        rgba(224,185,79,0.24);
+  --gold-subtle:      rgba(224,185,79,0.12);
+  --gold-mid:         rgba(224,185,79,0.48);
+  --ink:              #f3efe6;
+  --ink-soft:         #c9c1b2;
+  --button-ink:       #211b0d;
+  --visualizer-background: #0e0d0b;
+  --border:           rgba(224,185,79,0.24);
+  --vignette:         linear-gradient(160deg, rgba(14,13,11,0.74) 0%, rgba(14,13,11,0.84) 45%, rgba(14,13,11,0.76) 100%);
+  --text-hero:        #fff8e9;
+  --text-body:        #d1c9b9;
+  --text-nav:         #f3efe6;
+  --panel-glass:      rgba(29,27,23,0.92);
+  --panel-border:     rgba(224,185,79,0.3);
+  --spec-bg:          rgba(29,27,23,0.96);
+  --spec-text:        #f3efe6;
+  --feature-bg:       rgba(32,30,25,0.96);
+  --feature-text:     #d8d0c0;
+  --try-on-bg:        rgba(30,28,23,0.96);
+  --try-on-title:     #fff8e9;
+  --try-on-sub:       #d1c9b9;
+  --try-on-border:    rgba(224,185,79,0.4);
+  --cart-btn-bg:      rgba(255,255,255,0.045);
+  --cart-btn-border:  rgba(224,185,79,0.58);
+  --cart-btn-color:   #f3efe6;
+  --breadcrumb:       #d1c9b9;
+  --carousel-nav-bg:  rgba(29,27,23,0.94);
+  --section-title:    #fff8e9;
+  --ham-bar:          #f3efe6;
+  --menu-bg:          rgba(22,20,16,0.98);
+  --menu-text:        #f3efe6;
+  --shadow-deep:      0 24px 64px rgba(0,0,0,0.55);
+  --shadow:           0 8px 40px rgba(0,0,0,0.32);
+  --shadow-gold:      0 6px 28px rgba(224,185,79,0.16);
+  --qty-color:        #f3efe6;
+  --qty-bg:           rgba(29,27,23,0.96);
+}
+
 
 /* el body y el fondo we */
 body {
   font-family: var(--font-sans);
-  color: var(--ink);
+  color: var(--text-body);
   min-height: 100vh;
   overflow-x: hidden;
   position: relative;
-  background-color: #0e0d0b;
+  background-color: var(--visualizer-background);
 }
 body::before {
   content: '';
@@ -565,3 +608,79 @@ body > * { position: relative; z-index: 1; }
   .model-cards-row { flex-wrap: wrap; }
   .model-card { flex: 0 0 calc(50% - 5px); }
 }
+
+:root.dark-mode .main-image-shell,
+:root.dark-mode .rel-card-img {
+  background: linear-gradient(160deg, #242119 0%, #191813 68%, #211d14 100%);
+}
+
+:root.dark-mode .main-image-shell::before,
+:root.dark-mode .rel-card-img::before {
+  background: radial-gradient(ellipse 80% 50% at 50% 50%, rgba(240,212,122,0.3) 0%, rgba(224,185,79,0.18) 50%, rgba(224,185,79,0.04) 85%, transparent 100%);
+  border-color: rgba(224,185,79,0.45);
+  box-shadow: 0 10px 28px rgba(224,185,79,0.12), inset 0 1px 5px rgba(255,239,190,0.12);
+}
+
+:root.dark-mode .zoom-trigger,
+:root.dark-mode .model-selector,
+:root.dark-mode .model-card,
+:root.dark-mode .rel-card,
+:root.dark-mode .toast {
+  background-color: #1d1b17;
+  color: #f3efe6;
+}
+
+:root.dark-mode .zoom-trigger:hover,
+:root.dark-mode .try-on-btn:hover,
+:root.dark-mode .activate-camera:hover,
+:root.dark-mode .cam-close-btn:hover,
+:root.dark-mode .qty-btn:hover,
+:root.dark-mode .car-nav:hover {
+  background: var(--gold);
+  color: var(--button-ink);
+}
+
+:root.dark-mode .model-selector-title,
+:root.dark-mode .model-card span,
+:root.dark-mode .rel-card-body h3,
+:root.dark-mode .producto-no-encontrado h1,
+:root.dark-mode .producto-no-encontrado p {
+  color: var(--ink);
+}
+
+:root.dark-mode .model-card.active {
+  background: rgba(224,185,79,0.12);
+}
+
+:root.dark-mode .product-desc {
+  background: rgba(224,185,79,0.08);
+}
+
+:root.dark-mode .btn-cart:hover,
+:root.dark-mode .rel-btn:hover {
+  background: var(--gold);
+  border-color: var(--gold);
+  color: var(--button-ink);
+}
+
+:root.dark-mode .btn-buy,
+:root.dark-mode .try-on-btn,
+:root.dark-mode .zoom-trigger:hover,
+:root.dark-mode .zoom-close:hover,
+:root.dark-mode .rel-badge.pop {
+  color: var(--button-ink);
+}
+
+:root.dark-mode .rel-badge.new {
+  background: var(--gold);
+  color: var(--button-ink);
+}
+
+:root.dark-mode .spec-value.in-stock { color: #8bd19b; }
+:root.dark-mode .spec-value.in-stock i { color: #8bd19b; }
+:root.dark-mode .spec-value.out-of-stock,
+:root.dark-mode .spec-value.sin-stock,
+:root.dark-mode .spec-value.agotado,
+:root.dark-mode .spec-value.out-of-stock i,
+:root.dark-mode .spec-value.sin-stock i,
+:root.dark-mode .spec-value.agotado i { color: #ff9188; }

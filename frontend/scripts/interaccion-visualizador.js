@@ -14,51 +14,6 @@ document.addEventListener('DOMContentLoaded', function () {
   });
 
   // ══════════════════════════════════════════════════════════
-  // TOGGLE MODO CLARO / OSCURO
-  // ══════════════════════════════════════════════════════════
-  const themeToggle = document.getElementById('btnTemaPublico');
-  const themeIcon   = themeToggle?.querySelector('i');
-  let themeAnimationTimer;
-
-  function applyTheme(dark) {
-    const root = document.documentElement;
-    root.classList.toggle('dark-mode', dark);
-    root.classList.toggle('light-mode', !dark);
-    if (themeIcon) themeIcon.className = dark ? 'fa-solid fa-sun' : 'fa-solid fa-moon';
-    if (themeToggle) {
-      themeToggle.setAttribute('aria-label', dark ? 'Activar modo claro' : 'Activar modo oscuro');
-      themeToggle.title = dark ? 'Activar modo claro' : 'Activar modo oscuro';
-    }
-  }
-
-  function animateThemeChange() {
-    const root = document.documentElement;
-    root.classList.remove('theme-transition');
-    themeToggle?.classList.remove('is-animating');
-    void root.offsetWidth;
-    root.classList.add('theme-transition');
-    themeToggle?.classList.add('is-animating');
-
-    window.clearTimeout(themeAnimationTimer);
-    themeAnimationTimer = window.setTimeout(() => {
-      root.classList.remove('theme-transition');
-      themeToggle?.classList.remove('is-animating');
-    }, 900);
-  }
-
-  // Aplicar tema guardado (default: light)
-  const savedTheme = localStorage.getItem('bv-theme') || 'light';
-  applyTheme(savedTheme === 'dark');
-
-  themeToggle?.addEventListener('click', () => {
-    const isDark = !document.documentElement.classList.contains('dark-mode');
-    animateThemeChange();
-    localStorage.setItem('bv-theme', isDark ? 'dark' : 'light');
-    applyTheme(isDark);
-    showToast(isDark ? 'Modo oscuro activado' : 'Modo claro activado');
-  });
-
-  // ══════════════════════════════════════════════════════════
   // MENÚ HAMBURGUESA
   // ══════════════════════════════════════════════════════════
   const hamBtn     = document.getElementById('Id_ham');

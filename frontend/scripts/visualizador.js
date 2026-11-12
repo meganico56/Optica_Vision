@@ -89,12 +89,12 @@
 
             const stock = Number(producto.stock || producto.existencia_actual || 0);
             if (disponibilidad) {
+                disponibilidad.classList.toggle('in-stock', stock > 0);
+                disponibilidad.classList.toggle('out-of-stock', stock <= 0);
                 if (stock > 0) {
                     disponibilidad.textContent = `En stock (${stock} disponible${stock > 1 ? 's' : ''})`;
-                    disponibilidad.style.color = '#2ecc71';
                 } else {
                     disponibilidad.textContent = 'Agotado';
-                    disponibilidad.style.color = '#e74c3c';
                 }
             }
 

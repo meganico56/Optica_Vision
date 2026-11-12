@@ -161,7 +161,7 @@ button { cursor: pointer; }
     color 600ms ease, border-color 750ms ease, box-shadow 750ms ease;
 }
 
-:root.theme-transition body::after {
+:root.theme-transition::after {
   content: "";
   position: fixed;
   inset: 0;
