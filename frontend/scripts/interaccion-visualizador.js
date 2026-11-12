@@ -246,62 +246,16 @@ document.addEventListener('DOMContentLoaded', function () {
   });
 
   // ══════════════════════════════════════════════════════════
-  // CONTROL DE CANTIDAD
+  // TOAST
   // ══════════════════════════════════════════════════════════
-  const minusBtn = document.getElementById('minusBtn');
-  const plusBtn  = document.getElementById('plusBtn');
-  const qtyInput = document.getElementById('qtyInput');
-  if (minusBtn && plusBtn && qtyInput) {
-    minusBtn.addEventListener('click', () => {
-      const v = parseInt(qtyInput.value);
-      if (v > 1) qtyInput.value = v - 1;
-    });
-    plusBtn.addEventListener('click', () => {
-      const v = parseInt(qtyInput.value);
-      if (v < 10) qtyInput.value = v + 1;
-    });
-    qtyInput.addEventListener('change', () => {
-      let v = parseInt(qtyInput.value);
-      if (isNaN(v) || v < 1) qtyInput.value = 1;
-      if (v > 10) qtyInput.value = 10;
-    });
-  }
-
-  // ══════════════════════════════════════════════════════════
-  // AGREGAR AL CARRITO + TOAST
-  // ══════════════════════════════════════════════════════════
-  const addToCartBtn = document.getElementById('addToCartBtn');
   const toast        = document.getElementById('toast');
   const toastMsg     = document.getElementById('toastMsg');
-  const cartBadge    = document.getElementById('cartBadge');
-  let cartCount = 0;
 
   function showToast(msg) {
     if (!toast) return;
     if (toastMsg) toastMsg.textContent = msg;
     toast.classList.add('show');
     setTimeout(() => toast.classList.remove('show'), 3000);
-  }
-
-  if (addToCartBtn) {
-    addToCartBtn.addEventListener('click', function () {
-      const qty = parseInt(qtyInput?.value || 1);
-      this.innerHTML = '<i class="fi fi-br-hourglass"></i><span>Agregando...</span>';
-      this.disabled = true;
-      this.style.opacity = '0.7';
-      setTimeout(() => {
-        this.innerHTML = '<i class="fi fi-rs-shopping-cart"></i><span>Agregar al Carrito</span>';
-        this.disabled = false;
-        this.style.opacity = '1';
-        cartCount += qty;
-        if (cartBadge) {
-          cartBadge.textContent = cartCount;
-          cartBadge.style.transform = 'scale(1.6)';
-          setTimeout(() => { cartBadge.style.transform = 'scale(1)'; }, 300);
-        }
-        showToast(`${qty} producto(s) agregado(s) al carrito`);
-      }, 900);
-    });
   }
 
   // ══════════════════════════════════════════════════════════
