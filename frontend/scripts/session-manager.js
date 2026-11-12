@@ -87,6 +87,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const savedTheme = localStorage.getItem(CLAVE_TEMA); // clave separada de los paneles
     // Por defecto modo claro; solo oscuro si el usuario lo eligió explícitamente
     const isDark = savedTheme === 'dark';
+    let temporizadorAnimacionTema;
 
     function aplicarTemaPublico(dark) {
         const root = document.documentElement;
@@ -111,15 +112,31 @@ document.addEventListener('DOMContentLoaded', () => {
         const btn = document.getElementById('btnTemaPublico');
         if (btn) {
             const icon = btn.querySelector('i');
-            const txt  = btn.querySelector('span');
             if (dark) {
                 if (icon) icon.className = 'fa-solid fa-sun';
-                if (txt)  txt.textContent = 'Modo claro';
+                btn.setAttribute('aria-label', 'Activar modo claro');
+                btn.title = 'Activar modo claro';
             } else {
                 if (icon) icon.className = 'fa-solid fa-moon';
-                if (txt)  txt.textContent = 'Modo oscuro';
+                btn.setAttribute('aria-label', 'Activar modo oscuro');
+                btn.title = 'Activar modo oscuro';
             }
         }
+    }
+
+    function animarCambioTema(btn) {
+        const root = document.documentElement;
+        root.classList.remove('theme-transition');
+        if (btn) btn.classList.remove('is-animating');
+        void root.offsetWidth;
+        root.classList.add('theme-transition');
+        if (btn) btn.classList.add('is-animating');
+
+        window.clearTimeout(temporizadorAnimacionTema);
+        temporizadorAnimacionTema = window.setTimeout(() => {
+            root.classList.remove('theme-transition');
+            if (btn) btn.classList.remove('is-animating');
+        }, 900);
     }
 
     // Aplicar de inmediato (antes del DOMContentLoaded) para evitar parpadeos
@@ -140,6 +157,7 @@ document.addEventListener('DOMContentLoaded', () => {
             btn.addEventListener('click', () => {
                 const ahoraOscuro = document.documentElement.classList.contains('dark-mode');
                 const nuevoOscuro = !ahoraOscuro;
+                animarCambioTema(btn);
                 localStorage.setItem(CLAVE_TEMA, nuevoOscuro ? 'dark' : 'light');
                 aplicarTemaPublico(nuevoOscuro);
             });

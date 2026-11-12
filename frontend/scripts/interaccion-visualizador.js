@@ -16,25 +16,45 @@ document.addEventListener('DOMContentLoaded', function () {
   // ══════════════════════════════════════════════════════════
   // TOGGLE MODO CLARO / OSCURO
   // ══════════════════════════════════════════════════════════
-  const themeToggle = document.getElementById('themeToggle');
-  const themeIcon   = document.getElementById('themeIcon');
+  const themeToggle = document.getElementById('btnTemaPublico');
+  const themeIcon   = themeToggle?.querySelector('i');
+  let themeAnimationTimer;
+
+  function applyTheme(dark) {
+    const root = document.documentElement;
+    root.classList.toggle('dark-mode', dark);
+    root.classList.toggle('light-mode', !dark);
+    if (themeIcon) themeIcon.className = dark ? 'fa-solid fa-sun' : 'fa-solid fa-moon';
+    if (themeToggle) {
+      themeToggle.setAttribute('aria-label', dark ? 'Activar modo claro' : 'Activar modo oscuro');
+      themeToggle.title = dark ? 'Activar modo claro' : 'Activar modo oscuro';
+    }
+  }
+
+  function animateThemeChange() {
+    const root = document.documentElement;
+    root.classList.remove('theme-transition');
+    themeToggle?.classList.remove('is-animating');
+    void root.offsetWidth;
+    root.classList.add('theme-transition');
+    themeToggle?.classList.add('is-animating');
+
+    window.clearTimeout(themeAnimationTimer);
+    themeAnimationTimer = window.setTimeout(() => {
+      root.classList.remove('theme-transition');
+      themeToggle?.classList.remove('is-animating');
+    }, 900);
+  }
 
   // Aplicar tema guardado (default: light)
   const savedTheme = localStorage.getItem('bv-theme') || 'light';
-  if (savedTheme === 'dark') {
-    document.body.classList.add('dark-mode');
-    if (themeIcon) themeIcon.className = 'fi fi-br-moon';
-  }
+  applyTheme(savedTheme === 'dark');
 
   themeToggle?.addEventListener('click', () => {
-    const isDark = document.body.classList.toggle('dark-mode');
-    if (themeIcon) {
-      // Pequeña animación de rotación al cambiar
-      themeToggle.style.transform = 'rotate(360deg)';
-      setTimeout(() => { themeToggle.style.transform = ''; }, 350);
-      themeIcon.className = isDark ? 'fi fi-br-moon' : 'fi fi-br-brightness';
-    }
+    const isDark = !document.documentElement.classList.contains('dark-mode');
+    animateThemeChange();
     localStorage.setItem('bv-theme', isDark ? 'dark' : 'light');
+    applyTheme(isDark);
     showToast(isDark ? 'Modo oscuro activado' : 'Modo claro activado');
   });
 

@@ -1206,8 +1206,9 @@ footer .copyright {
   bottom: auto;
   right: 5%;
   transform: translateY(-50%);
-  /* Ancho fijo: "Modo oscuro" y "Modo claro" no mueven el botón al alternar */
-  min-width: 11.5em;
+  min-width: 44px;
+  width: 44px;
+  height: 44px;
   justify-content: center;
 }
 
