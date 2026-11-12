@@ -80,7 +80,7 @@
 
   async function cargar() {
     const peticion = ++ultimaPeticion;
-    const params = { q: busqueda };
+    const params = { q: busqueda, vista: "publica" };
 
     // "genero:Mujer" / "categoria:Accesorios" -> ?genero=Mujer / ?categoria=Accesorios
     if (filtroActual !== "todos") {
