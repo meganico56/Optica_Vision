@@ -91,7 +91,7 @@ body {
   font-weight: 600;
   letter-spacing: 0.5px;
   text-transform: uppercase;
-  color: var(--text-muted);
+  color: #383838;
 }
 
 .cita-campo input,
@@ -102,7 +102,7 @@ body {
   border: 1.5px solid var(--border);
   border-radius: 10px;
   background: #ffffff;
-  color: var(--text-dark);
+  color: #383838;
   font-size: 0.95rem;
   transition: border-color 0.3s ease, box-shadow 0.3s ease;
 }
@@ -122,7 +122,7 @@ body {
 
 .cita-campo select:disabled {
   background: #f4f4f4;
-  color: #999999;
+  color: #383838;
   cursor: not-allowed;
 }
 
