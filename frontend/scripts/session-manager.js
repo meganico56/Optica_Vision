@@ -84,7 +84,13 @@ document.addEventListener('DOMContentLoaded', () => {
                           window.location.pathname.includes('panel-empleado.html') ||
                           window.location.pathname.includes('panel-cliente.html');
     const CLAVE_TEMA = 'pub_theme';
-    const savedTheme = localStorage.getItem(CLAVE_TEMA); // clave separada de los paneles
+    const temaGuardado = localStorage.getItem(CLAVE_TEMA);
+    const temaAnterior = localStorage.getItem('bv-theme');
+    const savedTheme = temaGuardado || temaAnterior; // conservar la preferencia del visualizador anterior
+    if (!temaGuardado && temaAnterior) {
+        localStorage.setItem(CLAVE_TEMA, temaAnterior);
+        localStorage.removeItem('bv-theme');
+    }
     // Por defecto modo claro; solo oscuro si el usuario lo eligió explícitamente
     const isDark = savedTheme === 'dark';
     let temporizadorAnimacionTema;

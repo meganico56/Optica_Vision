@@ -5,6 +5,7 @@ const db = require("./db");
 
 const fs = require("fs");
 const path = require("path");
+const { ppid } = require("process");
 const DIRECTORIO_IMAGENES_PRODUCTOS = path.join(
   __dirname,
   "..",
@@ -1198,7 +1199,21 @@ app.post("/api/ventas", async (req, res) => {
     if (lineas.size > 0) {
       const ids = [...lineas.keys()];
       const [productos] = await conn.query(
-        "SELECT id_producto, nombre, precio, existencia_actual, maneja_inventario, estado FROM producto WHERE id_producto IN (?)",
+        `SELECT 
+        p.id_producto,
+        p.nombre, 
+        p.precio, 
+        p.existencia_actual, 
+        p.maneja_inventario, 
+        p.estado,
+        EXISTS (
+          SELECT 1
+          FROM panel_suspensiones ps
+          WHERE BINARY ps.tipo = BINARY 'producto'
+          AND BINARY ps.id_registro = BINARY CAST(p.id_producto AS CHAR)
+        ) AS suspendido
+        FROM producto p
+        WHERE p.id_producto IN (?)`,
         [ids],
       );
       const porId = new Map(productos.map((p) => [p.id_producto, p]));
@@ -1207,6 +1222,13 @@ app.post("/api/ventas", async (req, res) => {
         const p = porId.get(idProducto);
         if (!p || p.estado !== "Activo")
           throw errorHttp(400, `El producto ${idProducto} no está disponible`);
+
+        if (p.suspendido) {
+          throw errorHttp(
+            400,
+            `El producto "${p.nombre}" esta suspendido y no se puede comprar`,
+          );
+        }
         if (p.maneja_inventario && p.existencia_actual < cantidad) {
           throw errorHttp(
             409,
