@@ -1694,3 +1694,149 @@ textarea.input-admin {
   color: #9a3412;
   border-color: #fdba74;
 }
+
+/* Perfil de administradores y empleados */
+.profile-staff-card {
+  max-width: 1000px;
+  margin: 0 auto;
+  overflow: visible;
+}
+
+.profile-staff-header {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  padding-bottom: 24px;
+  margin-bottom: 24px;
+  border-bottom: 1px solid var(--admin-border);
+}
+
+.profile-staff-avatar {
+  display: flex;
+  flex: 0 0 112px;
+  align-items: center;
+  justify-content: center;
+  width: 112px;
+  height: 112px;
+  overflow: hidden;
+  border: 3px solid var(--admin-gold);
+  border-radius: 50%;
+  background: rgba(204, 164, 59, 0.16);
+  color: var(--admin-gold);
+  font-size: 2rem;
+  font-weight: 700;
+}
+
+.profile-staff-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.profile-staff-avatar-controls {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.profile-staff-avatar-controls h2 {
+  margin: 0;
+  font-size: 1.1rem;
+}
+
+.profile-staff-avatar-controls p {
+  margin: 0;
+  color: var(--admin-text-muted);
+  font-size: 0.85rem;
+}
+
+.profile-staff-form {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.profile-staff-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.profile-staff-field {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 7px;
+  color: var(--admin-text-muted);
+  font-size: 0.82rem;
+  font-weight: 600;
+}
+
+.profile-staff-field input {
+  width: 100%;
+  min-height: 44px;
+  padding: 10px 12px;
+  border: 1px solid var(--admin-border);
+  border-radius: 8px;
+  outline: none;
+  background: var(--admin-bg);
+  color: var(--admin-text);
+  font: inherit;
+  font-weight: 400;
+}
+
+.profile-staff-field input:focus {
+  border-color: var(--admin-gold);
+  box-shadow: 0 0 0 3px rgba(204, 164, 59, 0.14);
+}
+
+.profile-staff-field input:read-only {
+  opacity: 0.72;
+}
+
+.profile-staff-message {
+  margin: 0;
+  color: var(--admin-text-muted);
+  font-size: 0.88rem;
+}
+
+.profile-staff-message.is-error {
+  color: #f87171;
+}
+
+.profile-staff-message.is-success {
+  color: #4ade80;
+}
+
+.profile-staff-message[hidden] {
+  display: none;
+}
+
+.profile-staff-card .btn-ghost:disabled,
+.page-header .btn-primary:disabled {
+  cursor: wait;
+  opacity: 0.65;
+}
+
+@media (max-width: 600px) {
+  .profile-staff-card {
+    padding: 20px;
+  }
+
+  .profile-staff-header {
+    align-items: flex-start;
+    gap: 16px;
+  }
+
+  .profile-staff-avatar {
+    flex-basis: 84px;
+    width: 84px;
+    height: 84px;
+    font-size: 1.6rem;
+  }
+
+  .profile-staff-grid {
+    grid-template-columns: 1fr;
+  }
+}

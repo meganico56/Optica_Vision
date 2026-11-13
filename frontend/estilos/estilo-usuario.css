@@ -635,6 +635,7 @@ h1, h2, h3, h4, h5, h6 { color: var(--user-text); }
 }
 
 .profile-card {
+  position: relative;
   background: var(--user-card);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
@@ -644,6 +645,41 @@ h1, h2, h3, h4, h5, h6 { color: var(--user-text); }
   max-width: 600px;
   width: 100%;
   box-shadow: var(--user-shadow);
+}
+
+.profile-card .profile-image-status:not(:empty),
+.profile-card .profile-form #mensajePerfil:not([hidden]) {
+  position: absolute;
+  z-index: 5;
+  top: 16px;
+  left: 50%;
+  width: calc(100% - 32px);
+  max-width: 440px;
+  margin: 0;
+  padding: 12px 16px;
+  transform: translateX(-50%);
+  border: 1px solid rgba(192, 57, 43, 0.35);
+  border-radius: 10px;
+  background: var(--user-card);
+  color: var(--danger);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+  text-align: center;
+  line-height: 1.4;
+  pointer-events: none;
+}
+
+.profile-card .profile-image-status.is-success,
+.profile-card .profile-form #mensajePerfil.exito {
+  border-color: rgba(46, 125, 50, 0.4);
+  color: var(--success);
+}
+
+.profile-card .profile-image-status.is-error {
+  color: var(--danger);
+}
+
+.profile-card .profile-form #mensajePerfil[hidden] {
+  display: none;
 }
 
 .profile-header {
@@ -660,6 +696,7 @@ h1, h2, h3, h4, h5, h6 { color: var(--user-text); }
   width: 100px;
   height: 100px;
   border-radius: 50%;
+  overflow: hidden;
   background: var(--user-gold);
   display: flex;
   justify-content: center;
@@ -683,6 +720,41 @@ h1, h2, h3, h4, h5, h6 { color: var(--user-text); }
 .btn-change-avatar:hover {
   border-color: var(--user-gold);
   color: var(--user-gold);
+}
+
+.profile-avatar-large img,
+.admin-avatar img {
+  width: 100%;
+  height: 100%;
+  border-radius: inherit;
+  object-fit: cover;
+}
+
+.admin-avatar {
+  overflow: hidden;
+}
+
+.profile-avatar-controls {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.profile-image-help,
+.profile-image-status {
+  color: var(--user-text-muted);
+  font-size: 0.8rem;
+  text-align: center;
+}
+
+.profile-image-status:empty {
+  display: none;
+}
+
+.btn-change-avatar:disabled {
+  cursor: wait;
+  opacity: 0.65;
 }
 
 .profile-form {

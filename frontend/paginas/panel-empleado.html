@@ -18,6 +18,7 @@
     </div>
 <nav class="sidebar-nav">
     <a href="#" class="nav-item active" data-section="dashboard"><i class="fa-solid fa-chart-pie"></i><span>Dashboard</span></a>
+    <a href="#" class="nav-item" data-section="perfil"><i class="fa-solid fa-user"></i><span>Mi perfil</span></a>
     <a href="#" class="nav-item" data-section="inventario" data-roles="Vendedor"><i class="fa-solid fa-glasses"></i><span>Catálogo e inventario</span></a>
     <a href="#" class="nav-item" data-section="ventas" data-roles="Vendedor"><i class="fa-solid fa-cash-register"></i><span>Ventas y devoluciones</span></a>
     <a href="#" class="nav-item" data-section="citas" data-roles="Vendedor"><i class="fa-solid fa-calendar-check"></i><span>Citas y recetas</span></a>
@@ -44,6 +45,38 @@
 </div>
 </header>
 <div id="suspensionWarning" class="suspension-warning" role="alert" hidden></div>
+
+<div class="section-content" id="sec-perfil">
+<div class="dashboard-container">
+<div class="page-header"><div><h1 class="page-title">Mi perfil</h1><p class="page-subtitle">Actualiza tu información personal</p></div><button class="btn-primary" type="submit" form="formPerfil"><i class="fa-solid fa-save"></i> Guardar cambios</button></div>
+<div class="data-card profile-staff-card">
+<div class="profile-staff-header">
+<div class="profile-staff-avatar" id="profileAvatarLarge" aria-label="Imagen de perfil"></div>
+<div class="profile-staff-avatar-controls">
+<h2>Foto de perfil</h2>
+<p>JPG, PNG o WebP. Máximo 5 MB.</p>
+<input type="file" id="profileImageInput" accept="image/jpeg,image/png,image/webp" hidden>
+<button type="button" class="btn-ghost" id="changeProfileImage"><i class="fa-solid fa-camera"></i> Cambiar imagen</button>
+<p class="profile-staff-message" id="profileImageStatus" role="status" aria-live="polite" hidden></p>
+</div>
+</div>
+<form class="profile-staff-form" id="formPerfil" novalidate>
+<div class="profile-staff-grid">
+<label class="profile-staff-field"><span>Nombre</span><input type="text" id="profileNombre" maxlength="100" required></label>
+<label class="profile-staff-field"><span>Apellido</span><input type="text" id="profileApellido" maxlength="100" required></label>
+<label class="profile-staff-field"><span>Tipo de documento</span><input type="text" id="profileTipoDoc" readonly></label>
+<label class="profile-staff-field"><span>Número de documento</span><input type="text" id="profileDocumento" readonly></label>
+<label class="profile-staff-field"><span>Teléfono</span><input type="tel" id="profileTelefono" maxlength="20" required></label>
+<label class="profile-staff-field"><span>Correo electrónico</span><input type="email" id="profileCorreo" maxlength="100" required></label>
+<label class="profile-staff-field"><span>Dirección</span><input type="text" id="profileDireccion" maxlength="150"></label>
+<label class="profile-staff-field"><span>Ciudad</span><input type="text" id="profileCiudad" maxlength="60"></label>
+<label class="profile-staff-field"><span>Fecha de nacimiento</span><input type="date" id="profileFechaNacimiento"></label>
+</div>
+<p class="profile-staff-message" id="mensajePerfil" role="status" aria-live="polite" hidden></p>
+</form>
+</div>
+</div>
+</div>
 
 <div class="section-content active" id="sec-dashboard">
 <div class="dashboard-container">
@@ -211,6 +244,7 @@
 <script src="../scripts/sesion.js"></script>
 <script src="../scripts/panel-navegacion.js"></script>
 <script src="../scripts/panel-admin.js"></script>
+<script src="../scripts/perfil-panel.js"></script>
 <script src="../scripts/intro-animacion.js"></script>    
 
 </body>

@@ -12,6 +12,31 @@ const db = require("./db");
 
 const router = express.Router();
 
+let tablaFotosPerfil;
+
+async function crearTablaFotosPerfil() {
+  await db.query(`
+    CREATE TABLE IF NOT EXISTS foto_perfil_usuario (
+      id_usuario INT NOT NULL PRIMARY KEY,
+      foto_perfil MEDIUMTEXT NOT NULL,
+      FOREIGN KEY (id_usuario) REFERENCES usuario(id_usuario) ON DELETE CASCADE
+    ) DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_unicode_ci
+  `);
+}
+
+async function asegurarTablaFotosPerfil() {
+  if (!tablaFotosPerfil) {
+    tablaFotosPerfil = crearTablaFotosPerfil();
+  }
+
+  try {
+    await tablaFotosPerfil;
+  } catch (error) {
+    tablaFotosPerfil = null;
+    throw error;
+  }
+}
+
 function idValido(valor) {
   const id = Number(valor);
   return Number.isInteger(id) && id > 0 ? id : null;
@@ -23,10 +48,13 @@ router.get("/perfil/:id", async (req, res) => {
   if (!id) return res.status(400).json({ mensaje: "Identificador de usuario no válido" });
 
   try {
+    await asegurarTablaFotosPerfil();
     const [filas] = await db.query({
-      sql: `SELECT id_usuario, nombre, apellido, tipo_documento, num_documento, telefono,
-                   correo, direccion, ciudad, fecha_nacimiento
-            FROM usuario WHERE id_usuario = ?`,
+      sql: `SELECT u.id_usuario, u.nombre, u.apellido, u.tipo_documento, u.num_documento, u.telefono,
+                   u.correo, u.direccion, u.ciudad, u.fecha_nacimiento, f.foto_perfil
+            FROM usuario u
+            LEFT JOIN foto_perfil_usuario f ON f.id_usuario = u.id_usuario
+            WHERE u.id_usuario = ?`,
       values: [id],
       dateStrings: true,
     });
@@ -50,7 +78,13 @@ router.put("/perfil/:id", async (req, res) => {
   }
 
   try {
-    const [resultado] = await db.query(
+    const [usuarios] = await db.query(
+      "SELECT id_usuario FROM usuario WHERE id_usuario = ?",
+      [id],
+    );
+    if (usuarios.length === 0) return res.status(404).json({ mensaje: "Usuario no encontrado" });
+
+    await db.query(
       `UPDATE usuario SET nombre = ?, apellido = ?, telefono = ?, correo = ?,
                           direccion = ?, ciudad = ?, fecha_nacimiento = ?
        WHERE id_usuario = ?`,
@@ -65,7 +99,6 @@ router.put("/perfil/:id", async (req, res) => {
         id,
       ]
     );
-    if (resultado.affectedRows === 0) return res.status(404).json({ mensaje: "Usuario no encontrado" });
     res.json({ mensaje: "Perfil actualizado correctamente" });
   } catch (error) {
     console.error("Error en PUT /api/perfil/:id:", error);
@@ -73,6 +106,59 @@ router.put("/perfil/:id", async (req, res) => {
       return res.status(409).json({ mensaje: "Ya existe una cuenta con ese correo" });
     }
     res.status(500).json({ mensaje: "Error al actualizar el perfil" });
+  }
+});
+
+// Guardar la foto del perfil, optimizada por el cliente como JPEG base64.
+router.put("/perfil/:id/foto", async (req, res) => {
+  const id = idValido(req.params.id);
+  if (!id) return res.status(400).json({ mensaje: "Identificador de usuario no válido" });
+
+  const foto = req.body && req.body.foto_perfil;
+  const prefijo = "data:image/jpeg;base64,";
+  const maxBytes = 1024 * 1024;
+  if (typeof foto !== "string" || !foto.startsWith(prefijo)) {
+    return res.status(400).json({ mensaje: "La foto debe ser una imagen JPEG válida" });
+  }
+
+  const base64 = foto.slice(prefijo.length);
+  if (base64.length > Math.ceil(maxBytes / 3) * 4) {
+    return res.status(400).json({ mensaje: "La imagen debe ser un JPEG de máximo 1 MB" });
+  }
+  if (!/^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$/.test(base64)) {
+    return res.status(400).json({ mensaje: "Los datos de la imagen no son válidos" });
+  }
+
+  const imagen = Buffer.from(base64, "base64");
+  if (
+    imagen.length === 0 ||
+    imagen.length > maxBytes ||
+    imagen.toString("base64") !== base64 ||
+    imagen[0] !== 0xff ||
+    imagen[1] !== 0xd8 ||
+    imagen[2] !== 0xff
+  ) {
+    return res.status(400).json({ mensaje: "La imagen debe ser un JPEG de máximo 1 MB" });
+  }
+
+  try {
+    await asegurarTablaFotosPerfil();
+    const [usuarios] = await db.query(
+      "SELECT id_usuario FROM usuario WHERE id_usuario = ?",
+      [id],
+    );
+    if (usuarios.length === 0) return res.status(404).json({ mensaje: "Usuario no encontrado" });
+
+    await db.query(
+      `INSERT INTO foto_perfil_usuario (id_usuario, foto_perfil)
+       VALUES (?, ?)
+       ON DUPLICATE KEY UPDATE foto_perfil = VALUES(foto_perfil)`,
+      [id, foto],
+    );
+    res.json({ mensaje: "Imagen de perfil actualizada correctamente" });
+  } catch (error) {
+    console.error("Error en PUT /api/perfil/:id/foto:", error);
+    res.status(500).json({ mensaje: "Error al guardar la imagen de perfil" });
   }
 });
 
