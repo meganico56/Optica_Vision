@@ -23,6 +23,14 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // ---------- Resumen del pedido (antes estaba fijo en el HTML) ----------
     const items = compra.items;
+    const idProductoOrigen = items[0] && items[0].id;
+    const urlVolver = idProductoOrigen
+        ? 'visualizador-producto.html?id=' + encodeURIComponent(idProductoOrigen)
+        : 'catalogo.html';
+    document.querySelectorAll('[data-return-to-product]').forEach((link) => {
+        link.href = urlVolver;
+    });
+
     const total = items.reduce((suma, i) => suma + i.precio * i.cantidad, 0);
     const unico = items.length === 1;
     const nombresModelo = items.map((i) => i.nombre).join(', ');
