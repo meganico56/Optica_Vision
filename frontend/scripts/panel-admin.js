@@ -24,6 +24,7 @@
   const todayDate = document.getElementById("todayDate");
 
   const kpiIngresos = document.getElementById("kpiIngresos");
+  const kpiEgresos = document.getElementById("kpiEgresos");
   const kpiVentas = document.getElementById("kpiVentas");
   const kpiCitas = document.getElementById("kpiCitas");
   const kpiClientes = document.getElementById("kpiClientes");
@@ -2011,14 +2012,15 @@
           "¿Deseas desbloquear este periodo del calendario? Los usuarios podrán volver a agendar citas en estas fechas.",
         )
       ) {
-        (async () => {
-          try {
-            await Api.delete("/api/calendario/bloqueos/" + idBloqueo);
-            await cargarBloqueosCalendario();
-          } catch (err) {
-            alert("Error al desbloquear periodo: " + (err.message || err));
-          }
-        })();
+        btnEliminarBloqueo.disabled = true;
+        try {
+          await Api.del("/api/calendario/bloqueos/" + idBloqueo);
+          await cargarBloqueosCalendario();
+        } catch (err) {
+          alert("Error al desbloquear periodo: " + (err.message || err));
+        } finally {
+          btnEliminarBloqueo.disabled = false;
+        }
       }
       return;
     }
@@ -2406,6 +2408,18 @@
       const compras = await Api.get("/api/compras");
       await cargarSuspensiones();
       comprasMemoria = compras;
+      const hoy = new Date();
+      const periodoActual = `${hoy.getFullYear()}-${String(hoy.getMonth() + 1).padStart(2, "0")}`;
+      const egresosMes = compras.reduce((total, compra) => {
+        const esCompraConfirmada = compra.estado === "Confirmada";
+        const esDelMesActual =
+          compra.fecha && String(compra.fecha).slice(0, 7) === periodoActual;
+        return esCompraConfirmada && esDelMesActual
+          ? total + (Number(compra.total) || 0)
+          : total;
+      }, 0);
+      if (kpiEgresos) kpiEgresos.textContent = BV.moneda(egresosMes);
+
       tbCompras.innerHTML = "";
       if (compras.length === 0) {
         tbCompras.innerHTML =
@@ -2438,6 +2452,7 @@
       });
     } catch (e) {
       console.error("Error al cargar compras:", e);
+      if (kpiEgresos) kpiEgresos.textContent = "—";
       if (tbCompras)
         tbCompras.innerHTML =
           '<tr><td colspan="7" style="text-align:center;color:var(--red);">Error al cargar compras.</td></tr>';
@@ -2569,6 +2584,28 @@
 
   // ── Gestión de Bloqueos del Calendario ───────────────────────
   let bloqueosCalendarioMemoria = [];
+  let bloqueosCalendarioCargados = false;
+  let calendarioBloqueoAdmin = null;
+
+  function fechaLocalISO() {
+    const hoy = new Date();
+    return `${hoy.getFullYear()}-${String(hoy.getMonth() + 1).padStart(2, "0")}-${String(hoy.getDate()).padStart(2, "0")}`;
+  }
+
+  function obtenerUsuarioBloqueo() {
+    if (window.Sesion && typeof window.Sesion.usuario === "function") {
+      return window.Sesion.usuario();
+    }
+    if (window.SesionUsuario && typeof window.SesionUsuario.obtener === "function") {
+      return window.SesionUsuario.obtener();
+    }
+    try {
+      const usuario = localStorage.getItem("bv_usuario") || localStorage.getItem("usuario");
+      return usuario ? JSON.parse(usuario) : null;
+    } catch (error) {
+      return null;
+    }
+  }
 
   async function cargarBloqueosCalendario() {
     const tb = document.getElementById("tbBloqueosCalendario");
@@ -2576,15 +2613,26 @@
     if (!tb) return;
 
     try {
+      bloqueosCalendarioCargados = false;
+      const btnGuardar = document.getElementById("btnGuardarBloqueo");
+      if (btnGuardar) btnGuardar.disabled = true;
       const bloqueos = await Api.get("/api/calendario/bloqueos");
-      bloqueosCalendarioMemoria = Array.isArray(bloqueos) ? bloqueos : [];
+      if (!Array.isArray(bloqueos)) {
+        throw new Error("La respuesta de bloqueos del calendario no es válida.");
+      }
+      bloqueosCalendarioMemoria = bloqueos;
+      bloqueosCalendarioCargados = true;
+      if (btnGuardar) btnGuardar.disabled = false;
+      if (calendarioBloqueoAdmin) {
+        calendarioBloqueoAdmin.setBloqueos(bloqueosCalendarioMemoria);
+      }
       if (badge) {
         badge.textContent = `${bloqueosCalendarioMemoria.length} bloqueo(s)`;
       }
       tb.innerHTML = "";
       if (bloqueosCalendarioMemoria.length === 0) {
         tb.innerHTML =
-          '<tr><td colspan="5" style="text-align:center;color:var(--admin-text-muted);padding:20px;">No hay días bloqueados en el calendario actualmente.</td></tr>';
+          '<tr><td colspan="4" style="text-align:center;color:var(--admin-text-muted);padding:20px;">No hay días bloqueados en el calendario actualmente.</td></tr>';
         return;
       }
 
@@ -2594,7 +2642,6 @@
           <td><strong>${b.fecha_inicio}</strong></td>
           <td><strong>${b.fecha_fin}</strong></td>
           <td><span class="badge orange">${b.total_dias || 1} día(s)</span></td>
-          <td>${BV.escapar(b.motivo || "Día no laboral")}</td>
           <td>
             <button type="button" class="btn-ghost" data-eliminar-bloqueo="${b.id_bloqueo}" title="Desbloquear periodo" style="color:var(--red);gap:4px;display:inline-flex;align-items:center;">
               <i class="fa-solid fa-trash-can"></i> Desbloquear
@@ -2605,9 +2652,10 @@
       });
     } catch (err) {
       console.error("Error al cargar bloqueos del calendario:", err);
+      bloqueosCalendarioCargados = false;
       if (tb) {
         tb.innerHTML =
-          '<tr><td colspan="5" style="text-align:center;color:var(--red);">Error al consultar los bloqueos del calendario.</td></tr>';
+          '<tr><td colspan="4" style="text-align:center;color:var(--red);">Error al consultar los bloqueos del calendario.</td></tr>';
       }
     }
   }
@@ -2617,70 +2665,74 @@
     if (formBloqueoIniciado) return;
     const fInicio = document.getElementById("calFechaInicio");
     const fFin = document.getElementById("calFechaFin");
-    const cantDias = document.getElementById("calCantidadDias");
     const form = document.getElementById("formBloqueoCalendario");
     const errBox = document.getElementById("calError");
     const exitoBox = document.getElementById("calExito");
+    const rangoLabel = document.getElementById("calRangoSeleccionado");
+    const calendarioContenedor = document.getElementById("calendarioBloqueoAdmin");
 
-    if (!form || !fInicio || !fFin || !cantDias) return;
+    if (!form || !fInicio || !fFin) return;
 
-    const hoyStr = new Date().toISOString().split("T")[0];
-    if (!fInicio.value) {
-      fInicio.value = hoyStr;
-      fInicio.min = hoyStr;
-      fFin.value = hoyStr;
-      fFin.min = hoyStr;
-    }
-
-    function recalcularFin() {
-      if (!fInicio.value) return;
-      const dias = parseInt(cantDias.value, 10) || 1;
-      const dt = new Date(fInicio.value + "T00:00:00");
-      dt.setDate(dt.getDate() + (dias - 1));
-      fFin.value = dt.toISOString().split("T")[0];
-      fFin.min = fInicio.value;
-    }
-
-    function recalcularDias() {
-      if (!fInicio.value || !fFin.value) return;
-      const dInicio = new Date(fInicio.value + "T00:00:00");
-      const dFin = new Date(fFin.value + "T00:00:00");
-      const diff = Math.round((dFin - dInicio) / 86400000) + 1;
-      if (diff >= 1) {
-        cantDias.value = diff;
+    if (!window.CalendarioPersonalizado || !calendarioContenedor) {
+      if (errBox) {
+        errBox.textContent = "No se pudo cargar el calendario para seleccionar el bloqueo.";
+        errBox.hidden = false;
       }
+      return;
     }
+    const btnGuardar = document.getElementById("btnGuardarBloqueo");
+    if (btnGuardar) btnGuardar.disabled = !bloqueosCalendarioCargados;
 
-    fInicio.addEventListener("change", () => {
-      fFin.min = fInicio.value;
-      recalcularFin();
+    calendarioBloqueoAdmin = new window.CalendarioPersonalizado({
+      contenedor: calendarioContenedor,
+      modo: "bloqueo",
+      bloqueos: bloqueosCalendarioMemoria,
+      alSeleccionarFecha: (inicio, fin) => {
+        fInicio.value = inicio || "";
+        fFin.value = fin || "";
+        if (rangoLabel) {
+          rangoLabel.textContent = fin
+            ? `Periodo seleccionado: ${inicio} al ${fin}`
+            : inicio
+              ? `Inicio seleccionado: ${inicio}. Ahora elige el último día.`
+              : "Selecciona en el calendario el primer y el último día del bloqueo.";
+        }
+        if (fin && errBox) errBox.hidden = true;
+      },
     });
 
-    cantDias.addEventListener("input", recalcularFin);
-    cantDias.addEventListener("change", recalcularFin);
-
-    fFin.addEventListener("change", recalcularDias);
-
-    document.querySelectorAll(".btn-dias-preset").forEach((btn) => {
-      btn.addEventListener("click", () => {
-        const d = parseInt(btn.dataset.dias, 10) || 1;
-        cantDias.value = d;
-        recalcularFin();
-      });
-    });
-
-    form.addEventListener("submit", async (e) => {
-      e.preventDefault();
+    async function guardarBloqueo(e) {
+      if (e) e.preventDefault();
       if (errBox) errBox.hidden = true;
       if (exitoBox) exitoBox.hidden = true;
 
+      if (!bloqueosCalendarioCargados) {
+        if (errBox) {
+          errBox.textContent = "Espera a que se cargue la disponibilidad del calendario antes de guardar.";
+          errBox.hidden = false;
+        }
+        return;
+      }
+
       const fecha_inicio = fInicio.value;
       const fecha_fin = fFin.value;
-      const motivo = document.getElementById("calMotivo")?.value?.trim();
 
-      if (!fecha_inicio || !fecha_fin || !motivo) {
+      if (
+        !fecha_inicio ||
+        !fecha_fin ||
+        !calendarioBloqueoAdmin ||
+        !calendarioBloqueoAdmin.rangoFin
+      ) {
         if (errBox) {
-          errBox.textContent = "Por favor completa la fecha de inicio, fecha de fin y el motivo.";
+          errBox.textContent = "Selecciona el primer y el último día del bloqueo en el calendario.";
+          errBox.hidden = false;
+        }
+        return;
+      }
+
+      if (fecha_inicio < fechaLocalISO()) {
+        if (errBox) {
+          errBox.textContent = "No se pueden bloquear fechas anteriores al día de hoy.";
           errBox.hidden = false;
         }
         return;
@@ -2694,12 +2746,13 @@
         return;
       }
 
+      const btnGuardar = document.getElementById("btnGuardarBloqueo");
       try {
-        const usuarioSesion = window.SesionUsuario ? window.SesionUsuario.obtener() : null;
+        if (btnGuardar) btnGuardar.disabled = true;
+        const usuarioSesion = obtenerUsuarioBloqueo();
         await Api.post("/api/calendario/bloqueos", {
           fecha_inicio,
           fecha_fin,
-          motivo,
           id_usuario: usuarioSesion ? usuarioSesion.id_usuario : null,
         });
 
@@ -2711,7 +2764,12 @@
           }, 5000);
         }
 
-        document.getElementById("calMotivo").value = "";
+        calendarioBloqueoAdmin.setRango(null, null);
+        fInicio.value = "";
+        fFin.value = "";
+        if (rangoLabel) {
+          rangoLabel.textContent = "Selecciona en el calendario el primer y el último día del bloqueo.";
+        }
         await cargarBloqueosCalendario();
       } catch (err) {
         console.error("Error al registrar bloqueo:", err);
@@ -2719,8 +2777,15 @@
           errBox.textContent = err.message || "Error al registrar el bloqueo en el calendario";
           errBox.hidden = false;
         }
+      } finally {
+        if (btnGuardar) btnGuardar.disabled = !bloqueosCalendarioCargados;
       }
-    });
+    }
+
+    form.addEventListener("submit", guardarBloqueo);
+    if (btnGuardar) {
+      btnGuardar.addEventListener("click", guardarBloqueo);
+    }
 
     formBloqueoIniciado = true;
   }
@@ -2963,7 +3028,7 @@
   let repVpConsultaId = 0;
 
   // Fecha local (toISOString usaría UTC y en la noche de Colombia saltaría al día siguiente)
-  function fechaLocalISO(d) {
+  function fechaReporteLocalISO(d) {
     return (
       d.getFullYear() +
       "-" +
@@ -2975,10 +3040,10 @@
 
   if (repVpDesde && repVpHasta && !repVpDesde.value && !repVpHasta.value) {
     const hoy = new Date();
-    repVpDesde.value = fechaLocalISO(
+    repVpDesde.value = fechaReporteLocalISO(
       new Date(hoy.getFullYear(), hoy.getMonth(), 1),
     );
-    repVpHasta.value = fechaLocalISO(hoy);
+    repVpHasta.value = fechaReporteLocalISO(hoy);
   }
 
   function errorVentasProducto(msg) {

@@ -15,6 +15,7 @@
     />
     <link rel="stylesheet" href="../estilos/inicio.css" />
     <link rel="stylesheet" href="../estilos/estilo-cita.css" />
+    <link rel="stylesheet" href="../estilos/calendario-personalizado.css" />
     <title>Agendar cita | Boutique de la Visión</title>
       <link rel="stylesheet" href="../estilos/footer.css" />
   </head>
@@ -38,17 +39,21 @@
       </div>
 
       <form class="cita-form" id="formCita" novalidate>
-        <div class="cita-fila">
-          <div class="cita-campo">
-            <label for="fecha">Fecha</label>
-            <input type="date" id="fecha" name="fecha" required />
+        <div class="cita-campo cita-campo-calendario">
+          <label><i class="fa-solid fa-calendar-days"></i> Elige el día de tu cita</label>
+          <div id="calendarioCitaCliente" class="calendario-contenedor-cliente"></div>
+          <input type="hidden" id="fecha" name="fecha" required />
+          <div id="fechaSeleccionadaAviso" class="fecha-seleccionada-badge" hidden>
+            <i class="fa-solid fa-calendar-check"></i>
+            <span>Fecha seleccionada: <strong id="fechaSeleccionadaTexto"></strong></span>
           </div>
-          <div class="cita-campo">
-            <label for="hora">Hora</label>
-            <select id="hora" name="hora" required disabled>
-              <option value="" selected>Elige primero una fecha</option>
-            </select>
-          </div>
+        </div>
+
+        <div class="cita-campo">
+          <label for="hora"><i class="fa-solid fa-clock"></i> Hora de atención</label>
+          <select id="hora" name="hora" required disabled>
+            <option value="" selected>Selecciona primero un día disponible en el calendario</option>
+          </select>
         </div>
 
         <div class="cita-campo">
@@ -298,6 +303,7 @@
     <script src="../scripts/api.js"></script>
     <script src="../scripts/session-manager.js"></script>
     <script src="../scripts/intro-animacion.js"></script>
+    <script src="../scripts/calendario-personalizado.js"></script>
     <script src="../scripts/agendar-cita.js"></script>
   </body>
 </html>

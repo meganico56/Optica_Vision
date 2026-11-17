@@ -228,7 +228,7 @@ app.get("/api/productos", async (req, res) => {
     if (vista === "publica") {
       query += ` AND p.estado = 'Activo' AND NOT EXISTS (
       SELECT 1 
-      FROM panel_suspension ps
+      FROM panel_suspensiones ps
       WHERE ps.tipo = 'producto' COLLATE utf8mb4_unicode_ci
       AND ps.id_registro = CAST(p.id_producto AS CHAR) COLLATE utf8mb4_unicode_ci
       )`;
@@ -711,7 +711,7 @@ app.post("/api/login", async (req, res) => {
 
     const [suspensiones] = await db.query(
       `SELECT 1
-      FROM panel_suspension
+      FROM panel_suspensiones
       WHERE tipo = 'usuario'
       AND id_registro = ?
       LIMIT 1`,
@@ -1236,7 +1236,7 @@ app.post("/api/ventas", async (req, res) => {
         p.estado,
         EXISTS (
           SELECT 1
-          FROM panel_suspension ps
+          FROM panel_suspensiones ps
           WHERE BINARY ps.tipo = BINARY 'producto'
           AND BINARY ps.id_registro = BINARY CAST(p.id_producto AS CHAR)
         ) AS suspendido

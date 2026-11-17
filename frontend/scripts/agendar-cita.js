@@ -12,6 +12,8 @@
   const btnAgendar = document.getElementById("btnAgendar");
 
   let bloqueosCalendario = [];
+  let bloqueosCargados = false;
+  let fechaMaxima = "";
 
   const HORARIOS_DISPONIBLES = [
     "08:00", "08:30", "09:00", "09:30", "10:00", "10:30", "11:00", "11:30",
@@ -32,6 +34,11 @@
     }
   }
 
+  function fechaLocalISO(fecha = new Date()) {
+    const pad = (valor) => String(valor).padStart(2, "0");
+    return `${fecha.getFullYear()}-${pad(fecha.getMonth() + 1)}-${pad(fecha.getDate())}`;
+  }
+
   function obtenerUsuarioActual() {
     if (window.SesionUsuario && typeof window.SesionUsuario.obtener === "function") {
       return window.SesionUsuario.obtener();
@@ -45,13 +52,12 @@
   }
 
   async function cargarBloqueos() {
-    try {
-      const res = await Api.get("/api/calendario/bloqueos");
-      bloqueosCalendario = Array.isArray(res) ? res : [];
-    } catch (e) {
-      console.warn("No se pudieron consultar los bloqueos de calendario:", e);
-      bloqueosCalendario = [];
+    const bloqueos = await Api.get("/api/calendario/bloqueos");
+    if (!Array.isArray(bloqueos)) {
+      throw new Error("La respuesta de bloqueos del calendario no es válida.");
     }
+    bloqueosCalendario = bloqueos;
+    bloqueosCargados = true;
   }
 
   function fechaBloqueada(fechaStr) {
@@ -61,6 +67,7 @@
   }
 
   function poblarHoras() {
+    if (!horaSelect) return;
     horaSelect.innerHTML = '<option value="" disabled selected>Selecciona una hora</option>';
     HORARIOS_DISPONIBLES.forEach(h => {
       const opt = document.createElement("option");
@@ -69,6 +76,77 @@
       horaSelect.appendChild(opt);
     });
     horaSelect.disabled = false;
+  }
+
+  function validarFechaSeleccionada(seleccion) {
+    if (!horaSelect) return;
+    ocultarError();
+    if (!seleccion) {
+      horaSelect.disabled = true;
+      horaSelect.innerHTML = '<option value="" selected>Elige primero una fecha</option>';
+      return;
+    }
+
+    const hoyStr = fechaLocalISO();
+    if (seleccion < hoyStr) {
+      mostrarError("No puedes seleccionar una fecha anterior al día de hoy.");
+      horaSelect.disabled = true;
+      horaSelect.innerHTML = '<option value="" selected>Fecha no disponible</option>';
+      return;
+    }
+    if (seleccion > fechaMaxima) {
+      mostrarError("Solo puedes agendar citas hasta tres meses adelante.");
+      horaSelect.disabled = true;
+      horaSelect.innerHTML = '<option value="" selected>Fecha fuera del rango</option>';
+      return;
+    }
+
+    const diaSemana = new Date(`${seleccion}T00:00:00`).getDay();
+    if (diaSemana === 0) {
+      mostrarError("Los domingos la óptica permanece cerrada. Por favor elige otro día de lunes a sábado.");
+      horaSelect.disabled = true;
+      horaSelect.innerHTML = '<option value="" selected>Día no laboral</option>';
+      return;
+    }
+
+    const bloqueo = fechaBloqueada(seleccion);
+    if (bloqueo) {
+      mostrarError(`Esta fecha no está disponible para citas: "${bloqueo.motivo || "Día no laboral"}". Por favor selecciona otra fecha.`);
+      horaSelect.disabled = true;
+      horaSelect.innerHTML = '<option value="" selected>Fecha no disponible</option>';
+      return;
+    }
+
+    poblarHoras();
+  }
+
+  function inicializarCalendarioCliente() {
+    const calendarioContenedor = document.getElementById("calendarioCitaCliente");
+    if (!calendarioContenedor || !window.CalendarioPersonalizado) {
+      return;
+    }
+
+    new window.CalendarioPersonalizado({
+      contenedor: calendarioContenedor,
+      modo: "cliente",
+      bloqueos: bloqueosCalendario,
+      maxFecha: fechaMaxima,
+      alSeleccionarFecha: (fecha) => {
+        if (fechaInput) fechaInput.value = fecha;
+        const aviso = document.getElementById("fechaSeleccionadaAviso");
+        const texto = document.getElementById("fechaSeleccionadaTexto");
+        if (aviso && texto) {
+          texto.textContent = new Date(`${fecha}T00:00:00`).toLocaleDateString("es-CO", {
+            weekday: "long",
+            year: "numeric",
+            month: "long",
+            day: "numeric",
+          });
+          aviso.hidden = false;
+        }
+        validarFechaSeleccionada(fecha);
+      },
+    });
   }
 
   function inicializar() {
@@ -84,45 +162,16 @@
     }
 
     // Configurar fecha mínima (hoy) y máxima (3 meses adelante)
-    const hoy = new Date();
-    const hoyStr = hoy.toISOString().split("T")[0];
-    const maxFecha = new Date();
-    maxFecha.setMonth(maxFecha.getMonth() + 3);
-    const maxStr = maxFecha.toISOString().split("T")[0];
+    const hoyStr = fechaLocalISO();
+    const maxFechaDate = new Date();
+    maxFechaDate.setMonth(maxFechaDate.getMonth() + 3);
+    fechaMaxima = fechaLocalISO(maxFechaDate);
 
     if (fechaInput) {
       fechaInput.min = hoyStr;
-      fechaInput.max = maxStr;
+      fechaInput.max = fechaMaxima;
 
-      fechaInput.addEventListener("change", () => {
-        ocultarError();
-        const seleccion = fechaInput.value;
-        if (!seleccion) {
-          horaSelect.disabled = true;
-          horaSelect.innerHTML = '<option value="" selected>Elige primero una fecha</option>';
-          return;
-        }
-
-        // Validar si el día seleccionado cae en domingo
-        const diaSemana = new Date(seleccion + "T00:00:00").getDay();
-        if (diaSemana === 0) {
-          mostrarError("Los domingos la óptica permanece cerrada. Por favor elige otro día de lunes a sábado.");
-          horaSelect.disabled = true;
-          horaSelect.innerHTML = '<option value="" selected>Día no laboral</option>';
-          return;
-        }
-
-        // Validar si está en los bloqueos del administrador
-        const bloqueo = fechaBloqueada(seleccion);
-        if (bloqueo) {
-          mostrarError(`Esta fecha no está disponible para citas: "${bloqueo.motivo}". Por favor selecciona otra fecha.`);
-          horaSelect.disabled = true;
-          horaSelect.innerHTML = '<option value="" selected>Fecha no disponible</option>';
-          return;
-        }
-
-        poblarHoras();
-      });
+      fechaInput.addEventListener("change", () => validarFechaSeleccionada(fechaInput.value));
     }
 
     if (formCita) {
@@ -142,8 +191,22 @@
         const motivo = motivoSelect.value;
         const observaciones = obsInput ? obsInput.value.trim() : "";
 
+        if (!bloqueosCargados) {
+          mostrarError("No se pudo verificar la disponibilidad. Recarga la página e inténtalo de nuevo.");
+          return;
+        }
+
         if (!fecha || !hora || !motivo) {
           mostrarError("Por favor selecciona la fecha, la hora y el motivo de tu cita.");
+          return;
+        }
+
+        if (fecha < fechaLocalISO() || fecha > fechaMaxima) {
+          mostrarError("La fecha seleccionada está fuera del rango permitido.");
+          return;
+        }
+        if (new Date(`${fecha}T00:00:00`).getDay() === 0) {
+          mostrarError("Los domingos la óptica permanece cerrada. Por favor elige otro día.");
           return;
         }
 
@@ -187,7 +250,18 @@
   }
 
   document.addEventListener("DOMContentLoaded", async () => {
-    await cargarBloqueos();
     inicializar();
+    try {
+      await cargarBloqueos();
+      inicializarCalendarioCliente();
+    } catch (error) {
+      console.error("No se pudieron consultar los bloqueos de calendario:", error);
+      mostrarError("No se pudo verificar la disponibilidad del calendario. Intenta recargar la página.");
+      const calendarioContenedor = document.getElementById("calendarioCitaCliente");
+      if (calendarioContenedor) {
+        calendarioContenedor.textContent = "No se pudo cargar la disponibilidad del calendario.";
+      }
+      if (btnAgendar) btnAgendar.disabled = true;
+    }
   });
 })();

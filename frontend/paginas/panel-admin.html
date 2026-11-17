@@ -13,6 +13,7 @@
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
     />
+    <link rel="stylesheet" href="../estilos/calendario-personalizado.css" />
     <link rel="stylesheet" href="../estilos/estilo-admin.css" />
     <title>Panel de gestión | Boutique de la Visión</title>
   </head>
@@ -270,7 +271,7 @@
             <div class="kpi-card" data-roles="Administrador">
               <div class="kpi-info">
                 <p>Egresos del mes</p>
-                <h3 id="kpiIngresos">–</h3>
+                <h3 id="kpiEgresos">–</h3>
               </div>
               <div class="kpi-icon gold">
                 <i class="fa-solid fa-sack-dollar"></i>
@@ -768,7 +769,7 @@
           </div>
 
           <div class="inv-panel" id="citasPanel-calendario" style="display: none">
-            <div class="data-section" style="grid-template-columns: 1fr 1.3fr; gap: 20px">
+            <div class="data-section calendario-admin-layout" style="gap: 20px">
               <div class="data-card">
                 <div class="data-card-header">
                   <h2 class="data-card-title"><i class="fa-solid fa-calendar-days"></i> Bloquear días en el calendario</h2>
@@ -778,35 +779,15 @@
                 </p>
                 <form id="formBloqueoCalendario" novalidate>
                   <div style="display: flex; flex-direction: column; gap: 14px">
-                    <div class="form-field">
-                      <label for="calFechaInicio">Fecha de inicio <span class="req">*</span></label>
-                      <input type="date" id="calFechaInicio" class="input-admin" required />
-                    </div>
-                    <div class="form-field">
-                      <label>Duración del bloqueo</label>
-                      <div style="display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 8px">
-                        <button type="button" class="btn-ghost btn-dias-preset" data-dias="1">1 día</button>
-                        <button type="button" class="btn-ghost btn-dias-preset" data-dias="2">2 días</button>
-                        <button type="button" class="btn-ghost btn-dias-preset" data-dias="3">3 días</button>
-                        <button type="button" class="btn-ghost btn-dias-preset" data-dias="7">1 semana</button>
-                        <button type="button" class="btn-ghost btn-dias-preset" data-dias="15">15 días</button>
-                      </div>
-                      <div style="display: flex; align-items: center; gap: 10px">
-                        <input type="number" id="calCantidadDias" class="input-admin" min="1" max="365" value="1" style="max-width: 110px" />
-                        <span style="font-size: 0.85rem; color: var(--admin-text-muted)">días consecutivos</span>
-                      </div>
-                    </div>
-                    <div class="form-field">
-                      <label for="calFechaFin">Fecha de fin <span class="req">*</span></label>
-                      <input type="date" id="calFechaFin" class="input-admin" required />
-                    </div>
-                    <div class="form-field">
-                      <label for="calMotivo">Motivo del bloqueo <span class="req">*</span></label>
-                      <input type="text" id="calMotivo" class="input-admin" placeholder="Ej. Festivo, vacaciones..." required maxlength="255" />
-                    </div>
+                    <p id="calRangoSeleccionado" aria-live="polite">
+                      Selecciona en el calendario el primer y el último día del bloqueo.
+                    </p>
+                    <div id="calendarioBloqueoAdmin" aria-label="Calendario para seleccionar un rango de bloqueo"></div>
+                    <input type="hidden" id="calFechaInicio" />
+                    <input type="hidden" id="calFechaFin" />
                     <p class="mensaje-error" id="calError" role="alert" hidden></p>
                     <p class="mensaje-exito" id="calExito" role="status" hidden></p>
-                    <button type="submit" class="btn-primary" id="btnGuardarBloqueo" style="justify-content: center">
+                    <button type="button" class="btn-primary" id="btnGuardarBloqueo" style="justify-content: center">
                       <i class="fa-solid fa-lock"></i> Bloquear días seleccionados
                     </button>
                   </div>
@@ -821,10 +802,10 @@
                 <div style="overflow-x: auto">
                   <table class="admin-table">
                     <thead>
-                      <tr><th>Desde</th><th>Hasta</th><th>Días</th><th>Motivo</th><th>Acción</th></tr>
+                      <tr><th>Desde</th><th>Hasta</th><th>Días</th><th>Acción</th></tr>
                     </thead>
                     <tbody id="tbBloqueosCalendario">
-                      <tr><td colspan="5" style="text-align: center">Cargando bloqueos...</td></tr>
+                      <tr><td colspan="4" style="text-align: center">Cargando bloqueos...</td></tr>
                     </tbody>
                   </table>
                 </div>
@@ -1004,7 +985,8 @@
     <script src="../scripts/api.js"></script>
     <script src="../scripts/sesion.js"></script>
     <script src="../scripts/panel-navegacion.js"></script>
-    <script src="../scripts/panel-admin.js"></script>
+    <script src="../scripts/calendario-personalizado.js"></script>
+    <script src="../scripts/panel-admin.js?v=custom-calendar"></script>
     <script src="../scripts/perfil-panel.js"></script>
     <script src="../scripts/intro-animacion.js"></script>
   </body>

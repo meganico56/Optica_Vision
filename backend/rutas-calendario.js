@@ -101,10 +101,26 @@ router.post("/calendario/bloqueos", async (req, res) => {
     return res.status(400).json({ error: "La fecha de fin no puede ser anterior a la de inicio" });
   }
 
+  const formatoFechaValido = /^\d{4}-\d{2}-\d{2}$/;
+  if (!formatoFechaValido.test(fecha_inicio) || !formatoFechaValido.test(fecha_fin)) {
+    return res.status(400).json({ error: "Las fechas deben tener el formato YYYY-MM-DD" });
+  }
+
+  const inicio = new Date(fecha_inicio + "T00:00:00");
+  const fin = new Date(fecha_fin + "T00:00:00");
+  if (Number.isNaN(inicio.getTime()) || Number.isNaN(fin.getTime())) {
+    return res.status(400).json({ error: "Las fechas seleccionadas no son válidas" });
+  }
+
   const motivoFinal = (motivo && motivo.trim()) ? motivo.trim() : "Día no laboral / Sin servicio";
 
   try {
     await asegurarTablaBloqueos();
+
+    const [[hoy]] = await db.query("SELECT DATE_FORMAT(CURDATE(), '%Y-%m-%d') AS hoy");
+    if (fecha_inicio < hoy.hoy) {
+      return res.status(400).json({ error: "No se pueden bloquear fechas anteriores al día de hoy" });
+    }
 
     // Comprobar si ya existe algún solapamiento
     const [existentes] = await db.query(

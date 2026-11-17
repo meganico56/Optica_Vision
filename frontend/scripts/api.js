@@ -51,7 +51,18 @@
         let datos = null;
         const texto = await respuesta.text();
         if (texto) {
-            try { datos = JSON.parse(texto); } catch (e) { datos = { mensaje: texto }; }
+            try {
+                datos = JSON.parse(texto);
+            } catch (e) {
+                let mensajeLimpio = texto;
+                const matchPre = texto.match(/<pre[^>]*>([\s\S]*?)<\/pre>/i);
+                if (matchPre && matchPre[1]) {
+                    mensajeLimpio = matchPre[1].replace(/<[^>]+>/g, '').trim();
+                } else if (texto.includes('<html') || texto.includes('<!DOCTYPE')) {
+                    mensajeLimpio = `Error ${respuesta.status}: Solicitud no procesada por el servidor`;
+                }
+                datos = { mensaje: mensajeLimpio };
+            }
         }
 
         if (!respuesta.ok) {
