@@ -23,7 +23,7 @@ let tablaLista;
 // Mismo cotejamiento que el resto de la base, para poder cruzarla con producto, usuario, etc.
 async function crearTabla() {
   await db.query(`
-    CREATE TABLE IF NOT EXISTS panel_suspensiones (
+    CREATE TABLE IF NOT EXISTS panel_suspension (
       tipo VARCHAR(32) NOT NULL,
       id_registro VARCHAR(64) NOT NULL,
       fecha_suspension TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -34,11 +34,11 @@ async function crearTabla() {
   // Las tablas creadas antes sin cotejamiento explícito se convierten una sola vez
   const [[tabla]] = await db.query(
     `SELECT TABLE_COLLATION AS cotejamiento FROM information_schema.TABLES
-     WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'panel_suspensiones'`,
+     WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'panel_suspension'`,
   );
   if (tabla && tabla.cotejamiento !== "utf8mb4_unicode_ci") {
     await db.query(
-      "ALTER TABLE panel_suspensiones CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci",
+      "ALTER TABLE panel_suspension CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci",
     );
   }
 }
@@ -71,7 +71,7 @@ router.get("/suspensiones", async (req, res) => {
   try {
     await asegurarTabla();
     const [filas] = await db.query(
-      "SELECT tipo, id_registro FROM panel_suspensiones",
+      "SELECT tipo, id_registro FROM panel_suspension",
     );
     res.json(filas);
   } catch (error) {
@@ -93,14 +93,14 @@ router.put("/suspensiones", async (req, res) => {
     await asegurarTabla();
     if (suspendido) {
       await db.query(
-        `INSERT INTO panel_suspensiones (tipo, id_registro)
+        `INSERT INTO panel_suspension (tipo, id_registro)
          VALUES (?, ?)
          ON DUPLICATE KEY UPDATE fecha_suspension = CURRENT_TIMESTAMP`,
         [tipo, idRegistro],
       );
     } else {
       await db.query(
-        "DELETE FROM panel_suspensiones WHERE tipo = ? AND id_registro = ?",
+        "DELETE FROM panel_suspension WHERE tipo = ? AND id_registro = ?",
         [tipo, idRegistro],
       );
     }
@@ -111,4 +111,7 @@ router.put("/suspensiones", async (req, res) => {
   }
 });
 
+router.asegurarTabla = asegurarTabla;
 module.exports = router;
+
+

@@ -3,6 +3,8 @@ const cors = require("cors");
 const bcrypt = require("bcrypt");
 const db = require("./db");
 
+const rutasSuspension = require("./rutas-suspension");
+
 const fs = require("fs");
 const path = require("path");
 const { ppid } = require("process");
@@ -225,7 +227,7 @@ app.get("/api/productos", async (req, res) => {
     if (vista === "publica") {
       query += ` AND NOT EXISTS ( 
       SELECT 1 
-      FROM panel_suspensiones ps
+      FROM panel_suspension ps
       WHERE ps.tipo = 'producto' COLLATE utf8mb4_unicode_ci
       AND ps.id_registro = CAST(p.id_producto AS CHAR) COLLATE utf8mb4_unicode_ci
       )`;
@@ -685,6 +687,8 @@ app.post("/api/login", async (req, res) => {
   }
 
   try {
+    await rutasSuspension.asegurarTabla();
+
     // 1. Buscar usuario solo por correo (la contraseña está hasheada con bcrypt)
     const [usuarios] = await db.query(
       "SELECT u.*, r.nombre_rol AS rol FROM usuario u LEFT JOIN rol r ON u.id_rol = r.id_rol WHERE u.correo = ?",
@@ -696,6 +700,22 @@ app.post("/api/login", async (req, res) => {
     }
 
     const usuario = usuarios[0];
+
+    const [suspensiones] = await db.query(
+      `SELECT 1
+      FROM panel_suspension
+      WHERE tipo = 'usuario'
+      AND id_registro = ?
+      LIMIT 1`,
+      [String(usuario.id_usuario)],
+    );
+
+    if (suspensiones.length > 0) {
+      return res.status(403).json({
+        mensaje:
+          "Tu cuenta ha sido suspendida. Comunicate con la administración para desbloquearla.",
+      });
+    }
 
     // Cuentas sin contraseña (por ejemplo menores de edad) o inactivas no pueden iniciar sesión
     if (!usuario.contrasena) {
@@ -1208,7 +1228,7 @@ app.post("/api/ventas", async (req, res) => {
         p.estado,
         EXISTS (
           SELECT 1
-          FROM panel_suspensiones ps
+          FROM panel_suspension ps
           WHERE BINARY ps.tipo = BINARY 'producto'
           AND BINARY ps.id_registro = BINARY CAST(p.id_producto AS CHAR)
         ) AS suspendido
@@ -2129,7 +2149,7 @@ app.delete("/api/reportes/:id", async (req, res) => {
 
 // Rutas del panel del cliente: perfil y estado de pedidos (backend/rutas-panel.js)
 app.use("/api", require("./rutas-panel"));
-app.use("/api", require("./rutas-suspension"));
+app.use("/api", rutasSuspension);
 
 const PORT = Number(process.env.PORT) || 3000;
 app.listen(PORT, () => {
