@@ -2,6 +2,9 @@ const express = require("express");
 const cors = require("cors");
 const bcrypt = require("bcrypt");
 const db = require("./db");
+const { fechaEstaBloqueada, router: rutasCalendario } = require("./rutas-calendario");
+
+const rutasSuspension = require("./rutas-suspension");
 
 const fs = require("fs");
 const path = require("path");
@@ -223,9 +226,9 @@ app.get("/api/productos", async (req, res) => {
     `;
 
     if (vista === "publica") {
-      query += ` AND NOT EXISTS ( 
+      query += ` AND p.estado = 'Activo' AND NOT EXISTS (
       SELECT 1 
-      FROM panel_suspensiones ps
+      FROM panel_suspension ps
       WHERE ps.tipo = 'producto' COLLATE utf8mb4_unicode_ci
       AND ps.id_registro = CAST(p.id_producto AS CHAR) COLLATE utf8mb4_unicode_ci
       )`;
@@ -648,6 +651,13 @@ app.post("/api/citas", async (req, res) => {
   }
 
   try {
+    const bloqueo = await fechaEstaBloqueada(fechaHora);
+    if (bloqueo) {
+      return res
+        .status(400)
+        .json({ error: `La fecha seleccionada no está disponible para citas: ${bloqueo.motivo}` });
+    }
+
     if (await clienteTieneCita(clienteId, fechaHora)) {
       return res
         .status(409)
@@ -685,6 +695,8 @@ app.post("/api/login", async (req, res) => {
   }
 
   try {
+    await rutasSuspension.asegurarTabla();
+
     // 1. Buscar usuario solo por correo (la contraseña está hasheada con bcrypt)
     const [usuarios] = await db.query(
       "SELECT u.*, r.nombre_rol AS rol FROM usuario u LEFT JOIN rol r ON u.id_rol = r.id_rol WHERE u.correo = ?",
@@ -696,6 +708,22 @@ app.post("/api/login", async (req, res) => {
     }
 
     const usuario = usuarios[0];
+
+    const [suspensiones] = await db.query(
+      `SELECT 1
+      FROM panel_suspension
+      WHERE tipo = 'usuario'
+      AND id_registro = ?
+      LIMIT 1`,
+      [String(usuario.id_usuario)],
+    );
+
+    if (suspensiones.length > 0) {
+      return res.status(403).json({
+        mensaje:
+          "Tu cuenta ha sido suspendida. Comunicate con la administración para desbloquearla.",
+      });
+    }
 
     // Cuentas sin contraseña (por ejemplo menores de edad) o inactivas no pueden iniciar sesión
     if (!usuario.contrasena) {
@@ -1208,7 +1236,7 @@ app.post("/api/ventas", async (req, res) => {
         p.estado,
         EXISTS (
           SELECT 1
-          FROM panel_suspensiones ps
+          FROM panel_suspension ps
           WHERE BINARY ps.tipo = BINARY 'producto'
           AND BINARY ps.id_registro = BINARY CAST(p.id_producto AS CHAR)
         ) AS suspendido
@@ -1566,6 +1594,12 @@ app.post("/api/citas-admin", async (req, res) => {
       .json({ mensaje: "Cliente, fecha/hora y motivo son obligatorios" });
   }
   try {
+    const bloqueo = await fechaEstaBloqueada(fecha_hora);
+    if (bloqueo) {
+      return res.status(400).json({
+        mensaje: `La fecha seleccionada está bloqueada en el calendario: "${bloqueo.motivo}"`,
+      });
+    }
     if (await clienteTieneCita(id_cliente, fecha_hora)) {
       return res.status(409).json({
         mensaje: "El cliente ya tiene una cita asignada en ese horario exacto",
@@ -1608,6 +1642,14 @@ app.put("/api/citas/:id", async (req, res) => {
     return res.status(400).json({ mensaje: "Estado de cita no válido" });
   }
   try {
+    if (fecha_hora) {
+      const bloqueo = await fechaEstaBloqueada(fecha_hora);
+      if (bloqueo) {
+        return res.status(400).json({
+          mensaje: `No se puede mover la cita a esa fecha porque está bloqueada: "${bloqueo.motivo}"`,
+        });
+      }
+    }
     await db.query(
       "UPDATE cita SET estado=COALESCE(?,estado), observaciones=COALESCE(?,observaciones), fecha_hora=COALESCE(?,fecha_hora), motivo=COALESCE(?,motivo) WHERE id_cita=?",
       [estado, observaciones, fecha_hora, motivo, id],
@@ -2129,7 +2171,8 @@ app.delete("/api/reportes/:id", async (req, res) => {
 
 // Rutas del panel del cliente: perfil y estado de pedidos (backend/rutas-panel.js)
 app.use("/api", require("./rutas-panel"));
-app.use("/api", require("./rutas-suspension"));
+app.use("/api", rutasSuspension);
+app.use("/api", rutasCalendario);
 
 const PORT = Number(process.env.PORT) || 3000;
 app.listen(PORT, () => {

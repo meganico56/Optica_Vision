@@ -1,5 +1,5 @@
-@import url('base.css');
-@import url('layout-publico.css');
+@import url('Base.css');
+@import url('Layout-publico.css');
 
 
 /*  CATÁLOGO — contenido principal */
@@ -168,6 +168,13 @@
   font-size: 1.15rem;
   color: var(--gold-dark);
   font-weight: 700;
+  margin-bottom: 10px;
+}
+
+.producto-info .existencia {
+  color: #555555;
+  font-size: 0.9rem;
+  font-weight: 600;
   margin-bottom: 10px;
 }
 

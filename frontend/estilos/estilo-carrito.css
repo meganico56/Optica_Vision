@@ -228,6 +228,11 @@ body {
   color: var(--gold);
 }
 
+.qty-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
 .qty-input {
   width: 40px;
   text-align: center;
@@ -377,6 +382,8 @@ body {
   padding: 50px 20px;
   color: var(--cart-text-light);
 }
+
+.carrito-vacio[hidden] { display: none; }
 
 .carrito-vacio > i {
   font-size: 3rem;
@@ -647,3 +654,245 @@ body {
 :root.dark-mode .mensaje-promo.exito {
   color: #6fcf97;
 }
+/* AYUDA: PREGUNTAS CON APARIENCIA DE ENLACES */
+footer .ayuda-lista {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+footer .ayuda-lista li {
+    margin-bottom: 1rem;
+}
+
+footer .ayuda-link {
+    display: inline-block;
+    background: transparent;
+    border: none;
+    padding: 0;
+    margin: 0;
+
+    color: var(--text-muted);
+    font-family: var(--font-body);
+    font-size: 0.95rem;
+    font-weight: 400;
+    text-align: left;
+
+    cursor: pointer;
+    transition: color 0.3s ease;
+}
+
+footer .ayuda-link:hover {
+    color: var(--gold);
+    text-decoration: none;
+}
+
+/* ==========================================
+   MODALES DE AYUDA - PANTALLA COMPLETA
+========================================== */
+
+.ayuda-modal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100vh;
+    height: 100dvh;
+
+    z-index: 99999;
+
+    justify-content: center;
+    align-items: center;
+
+    padding: 20px;
+    box-sizing: border-box;
+
+    background: rgba(0, 0, 0, 0.70);
+    backdrop-filter: blur(5px);
+}
+
+/* CONTENIDO DEL MODAL */
+
+.ayuda-modal-contenido {
+    position: relative;
+
+    width: 100%;
+    max-width: 500px;
+    max-height: 85vh;
+    overflow-y: auto;
+
+    padding: 40px 35px;
+
+    background: #ffffff;
+    border: 2px solid var(--gold);
+    border-radius: 20px;
+
+    text-align: center;
+
+    box-shadow: 0 15px 45px rgba(0, 0, 0, 0.25);
+
+    animation: aparecerModal 0.3s ease;
+    box-sizing: border-box;
+}
+
+/* ICONO */
+
+.ayuda-icono {
+    display: block;
+    color: var(--gold);
+    font-size: 2.5rem;
+    margin-bottom: 18px;
+}
+
+/* TÍTULO */
+
+.ayuda-modal-contenido h2 {
+    font-family: var(--font-title);
+    color: var(--gold-dark);
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 18px;
+}
+
+/* TEXTO */
+
+.ayuda-modal-contenido p {
+    font-family: var(--font-body);
+    color: var(--text-muted);
+    font-size: 0.98rem;
+    line-height: 1.8;
+    margin: 0;
+}
+
+/* BOTÓN CERRAR */
+
+.ayuda-cerrar {
+    position: absolute;
+    top: 12px;
+    right: 17px;
+
+    background: none;
+    border: none;
+    padding: 0;
+
+    color: var(--gold-dark);
+    font-size: 30px;
+    cursor: pointer;
+
+    transition: color 0.3s ease, transform 0.3s ease;
+}
+
+.ayuda-cerrar:hover {
+    color: #b22222;
+    transform: rotate(90deg);
+}
+
+/* ANIMACIÓN */
+
+@keyframes aparecerModal {
+    from {
+        opacity: 0;
+        transform: translateY(20px) scale(0.95);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+/* RESPONSIVE */
+
+@media (max-width: 600px) {
+    .ayuda-modal-contenido {
+        padding: 35px 22px;
+    }
+
+    .ayuda-modal-contenido h2 {
+        font-size: 1.25rem;
+    }
+
+    .ayuda-modal-contenido p {
+        font-size: 0.9rem;
+    }
+}
+
+/* ==========================================
+   RESPONSIVE - TABLETS
+========================================== */
+
+@media (max-width: 900px) {
+    .footer-container {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 2rem;
+    }
+}
+
+/* ==========================================
+   RESPONSIVE - CELULARES
+========================================== */
+
+@media (max-width: 768px) {
+    .nosotros-intro {
+        flex-direction: column;
+        gap: 2rem;
+    }
+
+    .nosotros-intro-texto,
+    .nosotros-intro-foto {
+        width: 100%;
+        max-width: 520px;
+    }
+
+    .nosotros-intro-foto { flex: initial; }
+
+    .nosotros-carrusel { height: 220px; }
+
+    .nosotros-cards {
+        grid-template-columns: 1fr;
+        max-width: 520px;
+        gap: 1rem;
+    }
+
+    .nosotros-card {
+        gap: 1.1rem;
+        padding: 1.4rem 1.5rem;
+    }
+
+    .servicio-flecha {
+        width: 36px;
+        height: 36px;
+    }
+    .servicio-card {
+        border-radius: 34px;
+        padding: 2rem 3.5rem 2rem 4.5rem;
+        min-height: 290px;
+    }
+    .servicio-arco {
+        width: 100px;
+        left: -48px;
+    }
+    .servicio-numero {
+        font-size: 3rem;
+        right: 1.5rem;
+        top: 1.5rem;
+        transform: none;
+        border-left: none;
+        padding-left: 0;
+    }
+    .hero {
+        flex-direction: column;
+        text-align: center;
+        padding: 2.5rem 5%;
+        gap: 2rem;
+        overflow-x: clip;
+    }
+
+    .hero-text h1 { font-size: 2.2rem; }
+    .hero-text h2 { font-size: 1.3rem; }
+
+    .hero-buttons {
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+  };

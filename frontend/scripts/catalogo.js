@@ -6,6 +6,7 @@
 
   const lista = document.getElementById("listaProductos");
   const estado = document.getElementById("estadoLista");
+  const contenido = document.getElementById("contenidoCatalogo");
   const resumen = document.getElementById("resumenBusqueda");
   const filtros = document.getElementById("filtros");
   const plantilla = document.getElementById("tplProducto");
@@ -34,6 +35,7 @@
   function pintar(productos) {
     lista.innerHTML = "";
     productosPorId.clear();
+    contenido.hidden = false;
 
     if (productos.length === 0) {
       mostrarEstado(
@@ -65,6 +67,8 @@
       };
       tarjeta.querySelector(".nombre-producto").textContent = p.nombre;
       tarjeta.querySelector(".precio").textContent = BV.moneda(p.precio);
+      tarjeta.querySelector(".existencia").textContent =
+        "Existencias: " + Number(p.stock);
 
       const agotado = p.stock <= 0;
       tarjeta.classList.toggle("agotado", agotado);
@@ -92,12 +96,20 @@
     mostrarEstado("Cargando productos…");
 
     try {
+      const estadoApi = await Api.get("/api/health");
+      if (!estadoApi || estadoApi.database !== "ok") {
+        throw new Error("La base de datos no está disponible.");
+      }
+
       const productos = await Api.get("/api/productos", params);
       if (peticion !== ultimaPeticion) return; // llegó una respuesta más nueva
       pintar(productos);
     } catch (error) {
       if (peticion !== ultimaPeticion) return;
-      mostrarEstado("No se pudieron cargar los productos. " + error.message);
+      mostrarEstado(
+        "El catálogo estará disponible cuando se inicie la base de datos. " +
+          error.message,
+      );
     }
   }
 

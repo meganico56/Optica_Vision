@@ -60,7 +60,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!coincidencia) return;
 
         window.Api.get('/api/perfil/' + coincidencia[1]).then((perfil) => {
-            if (typeof perfil.foto_perfil !== 'string' || !perfil.foto_perfil.startsWith('data:image/jpeg;base64,')) return;
+            if (typeof perfil.foto_perfil !== 'string' || !/^data:image\/(?:jpeg|png|webp);base64,/i.test(perfil.foto_perfil)) return;
             avataresNavbar.forEach(({ avatar, fallback }) => {
                 avatar.src = perfil.foto_perfil;
                 avatar.hidden = false;
@@ -75,8 +75,25 @@ document.addEventListener('DOMContentLoaded', () => {
         let userData = {};
         try { userData = JSON.parse(usuarioLogueadoStr); } catch (e) {}
 
+        const menu = document.querySelector('.navbar-menu');
+        const esCliente = userData.rol === 'cliente' || userData.rol === 'Cliente';
+        const enlacePanelCliente = menu && menu.querySelector('a[href="panel-cliente.html"]');
+        if (esCliente && enlacePanelCliente) {
+            if (enlacePanelCliente.classList.contains('navbar-profile-link')) {
+                avataresNavbar.push({
+                    avatar: enlacePanelCliente.querySelector('.navbar-profile-avatar'),
+                    fallback: enlacePanelCliente.querySelector('.navbar-profile-fallback')
+                });
+            } else {
+                const elementoPanel = enlacePanelCliente.closest('li');
+                if (elementoPanel) elementoPanel.replaceWith(crearEnlacePanelCliente());
+            }
+        }
+
         // 1. Reemplazar "REGISTRO / LOGIN" por "CERRAR SESIÓN" en la barra de navegación
-        const loginLinks = document.querySelectorAll('a[href="inicio-sesion.html"]');
+        const loginLinks = menu
+            ? menu.querySelectorAll('a[href="inicio-sesion.html"]')
+            : [];
         
         loginLinks.forEach(link => {
             if (!pathActual.includes('inicio-sesion.html') && !pathActual.includes('registro-usuario.html')) {
@@ -103,14 +120,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
                 
                 // Si es cliente, agregar enlace al Panel de Usuario
-                if (userData.rol === 'cliente' || userData.rol === 'Cliente') {
-                    const li = link.closest('.navbar-menu')
-                        ? crearEnlacePanelCliente()
-                        : document.createElement('li');
-                    if (!link.closest('.navbar-menu')) {
-                        li.innerHTML = '<a href="panel-cliente.html" style="color: var(--gold);"><i class="fa-solid fa-user"></i> MI PANEL</a>';
-                    }
-                    link.parentElement.insertAdjacentElement('beforebegin', li);
+                if (esCliente && !avataresNavbar.length) {
+                    link.parentElement.insertAdjacentElement('beforebegin', crearEnlacePanelCliente());
                 }
             }
         });

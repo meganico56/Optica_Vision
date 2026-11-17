@@ -435,6 +435,18 @@ create table panel_suspensiones (
 );
 
 
+create table bloqueo_calendario (
+    id_bloqueo int auto_increment primary key,
+    fecha_inicio date not null,
+    fecha_fin date not null,
+    motivo varchar(255) not null default 'Día no laboral',
+    id_usuario int,
+    fecha_creacion timestamp not null default current_timestamp,
+    foreign key (id_usuario) references usuario(id_usuario),
+    index idx_bloqueo_rango (fecha_inicio, fecha_fin)
+);
+
+
 
 
 insert into rol (nombre_rol, descripcion, es_personal) values

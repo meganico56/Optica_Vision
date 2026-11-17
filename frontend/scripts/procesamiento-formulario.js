@@ -78,9 +78,34 @@ document.addEventListener('DOMContentLoaded', function () {
         botonEnviar.disabled = true;
 
         try {
-            // Solo viajan id y cantidad: el precio y el stock los toma el servidor de la BD.
+            const usuario = Sesion.usuario();
+            if (!usuario || !usuario.id) {
+                Sesion.irALogin();
+                return;
+            }
+
+            const datos = new FormData(form);
+            const observaciones = [
+                'Pedido web',
+                'Nombre: ' + datos.get('nombre'),
+                'Documento: ' + datos.get('documento'),
+                'Correo: ' + datos.get('correo'),
+                'Teléfono: ' + datos.get('telefono'),
+                'Dirección: ' + datos.get('direccion'),
+                'Ciudad: ' + datos.get('ciudad'),
+                'Departamento: ' + datos.get('departamento'),
+                'Indicaciones: ' + (datos.get('indicaciones') || 'Ninguna'),
+                'Fórmula: ' + (datos.get('tieneFormula') === 'si' ? 'Sí' : 'No, requiere asesoría'),
+                'Pago preferido: ' + datos.get('pago')
+            ].join(' | ');
+
+            // El servidor valida precio y existencias; recibe el identificador de producto de la API.
             const respuesta = await Api.post('/api/ventas', {
-                items: items.map((i) => ({ id: i.id, cantidad: i.cantidad }))
+                id_cliente: usuario.id,
+                canal: 'Web',
+                codigo_promocion: compra.codigoPromo,
+                observaciones,
+                items: items.map((i) => ({ id_producto: i.id, cantidad: i.cantidad }))
             });
 
             document.getElementById('confirmName').textContent = nombre;

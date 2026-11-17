@@ -152,4 +152,112 @@
     } else {
         pintarBadge();
     }
+  // =============================================
+    // 6. Modales de Ayuda del Footer
+    // =============================================
+    const botonesAyuda = document.querySelectorAll(".ayuda-link");
+    const modalesAyuda = document.querySelectorAll(".ayuda-modal");
+
+    botonesAyuda.forEach(boton => {
+        boton.addEventListener("click", () => {
+            const idModal = boton.dataset.modal;
+            const modal = document.getElementById(idModal);
+            if (modal) modal.style.display = "flex";
+        });
+    });
+
+    document.querySelectorAll(".ayuda-cerrar").forEach(boton => {
+        boton.addEventListener("click", () => {
+            boton.closest(".ayuda-modal").style.display = "none";
+        });
+    });
+
+    modalesAyuda.forEach(modal => {
+        modal.addEventListener("click", (event) => {
+            if (event.target === modal) modal.style.display = "none";
+        });
+    });
+
+    document.addEventListener("keydown", (event) => {
+        if (event.key === "Escape") {
+            modalesAyuda.forEach(modal => { modal.style.display = "none"; });
+        }
+    });
+
+    // =============================================
+    // 7. Disco del podio: rotación por arrastre
+    // =============================================
+    const discoPodio = document.querySelector(".podium-tapa");
+    const gafasPodio = document.querySelector(".glasses-model");
+
+    if (discoPodio) {
+        const ANIMACIONES_GIRO = ["podioDestello", "rotateGlasses", "podioSombra"];
+        const agarres = [discoPodio, gafasPodio].filter(Boolean);
+        let arrastrando = false;
+        let ultimoX = 0;
+        let ultimoT = 0;
+        let velocidad = 0;
+        let inercia = null;
+
+        const animacionesGiro = () => document.getAnimations()
+            .filter(a => ANIMACIONES_GIRO.includes(a.animationName));
+
+        const msPorPixel = () => 12000 / (discoPodio.offsetWidth * 2);
+
+        function moverGiro(deltaMs) {
+            animacionesGiro().forEach(a => {
+                const duracion = a.effect.getTiming().duration;
+                const actual = Number(a.currentTime) || 0;
+                a.currentTime = (((actual + deltaMs) % duracion) + duracion) % duracion;
+            });
+        }
+
+        function soltarDisco(e) {
+            if (!arrastrando) return;
+            arrastrando = false;
+            document.body.classList.remove("disco-arrastrando");
+
+            let v = e.timeStamp - ultimoT > 100 ? 0 : velocidad;
+            const frenar = () => {
+                if (Math.abs(v) < 0.05) {
+                    inercia = null;
+                    animacionesGiro().forEach(a => a.play());
+                    return;
+                }
+                moverGiro(v * 16);
+                v *= 0.94;
+                inercia = requestAnimationFrame(frenar);
+            };
+            inercia = requestAnimationFrame(frenar);
+        }
+
+        agarres.forEach(el => {
+            el.addEventListener("pointerdown", e => {
+                if (e.button !== 0) return;
+                e.preventDefault();
+                cancelAnimationFrame(inercia);
+                arrastrando = true;
+                ultimoX = e.clientX;
+                ultimoT = e.timeStamp;
+                velocidad = 0;
+                el.setPointerCapture(e.pointerId);
+                animacionesGiro().forEach(a => a.pause());
+                document.body.classList.add("disco-arrastrando");
+            });
+
+            el.addEventListener("pointermove", e => {
+                if (!arrastrando) return;
+                const deltaMs = (e.clientX - ultimoX) * msPorPixel();
+                const dt = e.timeStamp - ultimoT;
+                if (dt > 0) velocidad = deltaMs / dt;
+                moverGiro(deltaMs);
+                ultimoX = e.clientX;
+                ultimoT = e.timeStamp;
+            });
+
+            el.addEventListener("pointerup", soltarDisco);
+            el.addEventListener("pointercancel", soltarDisco);
+            el.addEventListener("dragstart", e => e.preventDefault());
+        });
+    }
 })();
