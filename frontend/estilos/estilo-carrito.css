@@ -228,6 +228,11 @@ body {
   color: var(--gold);
 }
 
+.qty-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
 .qty-input {
   width: 40px;
   text-align: center;
@@ -377,6 +382,8 @@ body {
   padding: 50px 20px;
   color: var(--cart-text-light);
 }
+
+.carrito-vacio[hidden] { display: none; }
 
 .carrito-vacio > i {
   font-size: 3rem;
