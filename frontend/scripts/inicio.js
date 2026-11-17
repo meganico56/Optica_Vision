@@ -4,41 +4,16 @@
 
 document.addEventListener("DOMContentLoaded", () => {
 
-    // =============================================
-    // 1. Animación de entrada del hero
-    // =============================================
+
+    // Animación de entrada del hero 
     const elementosAnimados = document.querySelectorAll(".fade-in-up");
     elementosAnimados.forEach((el, index) => {
         setTimeout(() => el.classList.add("visible"), 150 * index);
     });
 
-    // =============================================
-    // 2. Navbar compacta al hacer scroll (con RAF throttle)
-    // =============================================
-    const navbar = document.querySelector(".navbar");
-    let scrollPendiente = false;
 
-    function actualizarNavbar() {
-        if (window.scrollY > 40) {
-            navbar.classList.add("scrolled");
-        } else {
-            navbar.classList.remove("scrolled");
-        }
-        scrollPendiente = false;
-    }
+    // Carrusel de Servicios
 
-    actualizarNavbar();
-
-    window.addEventListener("scroll", () => {
-        if (!scrollPendiente) {
-            scrollPendiente = true;
-            requestAnimationFrame(actualizarNavbar);
-        }
-    }, { passive: true });
-
-    // =============================================
-    // 3. Carrusel de Servicios
-    // =============================================
     const slides = [
         document.getElementById("slide1"),
         document.getElementById("slide2"),
@@ -117,9 +92,9 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    // =============================================
-    // 4. Galería de fotos de "Quiénes somos"
-    // =============================================
+
+    // Galería de fotos de "Quiénes somos"
+
     const nosotrosCarrusel = document.getElementById("nosotrosCarrusel");
     const nosotrosTrack = document.getElementById("nosotrosCarruselTrack");
     const nosotrosFotos = nosotrosTrack ? Array.from(nosotrosTrack.querySelectorAll("img")) : [];
@@ -181,9 +156,9 @@ document.addEventListener("DOMContentLoaded", () => {
         iniciarRotacionFotos();
     }
 
-    // =============================================
-    // 5. Carrusel de Reseñas (con IntersectionObserver)
-    // =============================================
+
+    // Carrusel de Reseñas (con IntersectionObserver)
+
     const resenasWrapper = document.querySelector(".resenas-carrusel-wrapper");
     const resenasTrack = document.getElementById("resenasTrack");
 
@@ -288,41 +263,9 @@ document.addEventListener("DOMContentLoaded", () => {
         }, { passive: true });
     }
 
-    // =============================================
-    // 6. Modales de Ayuda del Footer
-    // =============================================
-    const botonesAyuda = document.querySelectorAll(".ayuda-link");
-    const modalesAyuda = document.querySelectorAll(".ayuda-modal");
 
-    botonesAyuda.forEach(boton => {
-        boton.addEventListener("click", () => {
-            const idModal = boton.dataset.modal;
-            const modal = document.getElementById(idModal);
-            if (modal) modal.style.display = "flex";
-        });
-    });
+    // Disco del podio: rotación por arrastre
 
-    document.querySelectorAll(".ayuda-cerrar").forEach(boton => {
-        boton.addEventListener("click", () => {
-            boton.closest(".ayuda-modal").style.display = "none";
-        });
-    });
-
-    modalesAyuda.forEach(modal => {
-        modal.addEventListener("click", (event) => {
-            if (event.target === modal) modal.style.display = "none";
-        });
-    });
-
-    document.addEventListener("keydown", (event) => {
-        if (event.key === "Escape") {
-            modalesAyuda.forEach(modal => { modal.style.display = "none"; });
-        }
-    });
-
-    // =============================================
-    // 7. Disco del podio: rotación por arrastre
-    // =============================================
     const discoPodio = document.querySelector(".podium-tapa");
     const gafasPodio = document.querySelector(".glasses-model");
 
