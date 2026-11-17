@@ -65,7 +65,15 @@
 <div class="dashboard-container">
 <div class="page-header"><div><h1 class="page-title">Mi perfil</h1><p class="page-subtitle">Actualiza tu información personal</p></div><button class="btn-primary" type="submit" form="formPerfil"><i class="fa-solid fa-save"></i> Guardar cambios</button></div>
 <div class="profile-section"><div class="profile-card">
-<div class="profile-header"><div class="profile-avatar-large" id="profileAvatarLarge"></div></div>
+<div class="profile-header">
+<div class="profile-avatar-large" id="profileAvatarLarge" aria-label="Imagen de perfil"></div>
+<div class="profile-avatar-controls">
+<input type="file" id="profileImageInput" accept="image/jpeg,image/png,image/webp" hidden>
+<button type="button" class="btn-change-avatar" id="changeProfileImage"><i class="fa-solid fa-camera"></i> Cambiar imagen</button>
+<p class="profile-image-help" id="profileImageHelp">JPG, PNG o WebP. Máximo 5 MB.</p>
+<p class="profile-image-status" id="profileImageStatus" role="status" aria-live="polite"></p>
+</div>
+</div>
 <form class="profile-form" id="formPerfil" novalidate>
 <div class="form-row">
 <div class="form-group"><label for="profileNombre">Nombre</label><input type="text" id="profileNombre" name="nombre" maxlength="100" required></div>

@@ -19,13 +19,81 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const usuarioLogueadoStr = localStorage.getItem('usuarioLogueado') || localStorage.getItem('bv_usuario') || sessionStorage.getItem('bv_usuario');
     const pathActual = window.location.pathname;
+    const avataresNavbar = [];
+
+    function crearEnlacePanelCliente() {
+        const li = document.createElement('li');
+        const link = document.createElement('a');
+        const fallback = document.createElement('i');
+        const avatar = document.createElement('img');
+        const texto = document.createElement('span');
+
+        link.href = 'panel-cliente.html';
+        link.className = 'navbar-profile-link';
+        link.title = 'Mi perfil';
+        link.setAttribute('aria-label', 'Abrir mi perfil');
+
+        fallback.className = 'fa-solid fa-user navbar-profile-fallback';
+        fallback.setAttribute('aria-hidden', 'true');
+        avatar.className = 'navbar-profile-avatar';
+        avatar.alt = '';
+        avatar.hidden = true;
+        avatar.addEventListener('error', () => {
+            avatar.hidden = true;
+            fallback.hidden = false;
+        }, { once: true });
+        texto.textContent = 'MI PANEL';
+
+        link.appendChild(fallback);
+        link.appendChild(avatar);
+        link.appendChild(texto);
+        li.appendChild(link);
+        avataresNavbar.push({ avatar, fallback });
+        return li;
+    }
+
+    function cargarFotoNavbar() {
+        if (!avataresNavbar.length || !window.Api) return;
+
+        const token = localStorage.getItem('bv_token') || sessionStorage.getItem('bv_token') || '';
+        const coincidencia = /^session-(\d+)$/.exec(token);
+        if (!coincidencia) return;
+
+        window.Api.get('/api/perfil/' + coincidencia[1]).then((perfil) => {
+            if (typeof perfil.foto_perfil !== 'string' || !/^data:image\/(?:jpeg|png|webp);base64,/i.test(perfil.foto_perfil)) return;
+            avataresNavbar.forEach(({ avatar, fallback }) => {
+                avatar.src = perfil.foto_perfil;
+                avatar.hidden = false;
+                fallback.hidden = true;
+            });
+        }).catch((error) => {
+            console.warn('No se pudo cargar la imagen de perfil del navbar:', error.message);
+        });
+    }
 
     if (usuarioLogueadoStr) {
         let userData = {};
         try { userData = JSON.parse(usuarioLogueadoStr); } catch (e) {}
 
+        const menu = document.querySelector('.navbar-menu');
+        const esCliente = userData.rol === 'cliente' || userData.rol === 'Cliente';
+        const enlacePanelCliente = menu && menu.querySelector('a[href="panel-cliente.html"]');
+        if (esCliente && enlacePanelCliente) {
+            if (enlacePanelCliente.classList.contains('navbar-profile-link')) {
+                avataresNavbar.push({
+                    avatar: enlacePanelCliente.querySelector('.navbar-profile-avatar'),
+                    fallback: enlacePanelCliente.querySelector('.navbar-profile-fallback')
+                });
+            } else {
+                const elementoPanel = enlacePanelCliente.closest('li');
+                if (elementoPanel) elementoPanel.replaceWith(crearEnlacePanelCliente());
+            }
+        }
+
         // 1. Reemplazar "REGISTRO / LOGIN" por "CERRAR SESIÓN" en la barra de navegación
-        const loginLinks = document.querySelectorAll('a[href="inicio-sesion.html"]');
+        const loginLinks = menu
+            ? menu.querySelectorAll('a[href="inicio-sesion.html"]')
+            : [];
         
         loginLinks.forEach(link => {
             if (!pathActual.includes('inicio-sesion.html') && !pathActual.includes('registro-usuario.html')) {
@@ -52,13 +120,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
                 
                 // Si es cliente, agregar enlace al Panel de Usuario
-                if (userData.rol === 'cliente' || userData.rol === 'Cliente') {
-                    const li = document.createElement('li');
-                    li.innerHTML = '<a href="panel-cliente.html" style="color: var(--gold);"><i class="fa-solid fa-user"></i> MI PANEL</a>';
-                    link.parentElement.insertAdjacentElement('beforebegin', li);
+                if (esCliente && !avataresNavbar.length) {
+                    link.parentElement.insertAdjacentElement('beforebegin', crearEnlacePanelCliente());
                 }
             }
         });
+        cargarFotoNavbar();
 
         // 2. Interceptar botones de logout con la clase .logout-btn
         const adminLogoutBtns = document.querySelectorAll('.logout-btn');

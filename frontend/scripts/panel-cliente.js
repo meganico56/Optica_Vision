@@ -56,6 +56,18 @@
     // ---------- Perfil ----------
     let perfil = {};
 
+    function pintarAvatar(elemento, inicial, foto) {
+        elemento.textContent = '';
+        if (foto) {
+            const imagen = document.createElement('img');
+            imagen.src = foto;
+            imagen.alt = '';
+            elemento.appendChild(imagen);
+        } else {
+            elemento.textContent = inicial;
+        }
+    }
+
     function pintarPerfil(p) {
         perfil = p;
         $('profileNombre').value = p.nombre || '';
@@ -70,18 +82,104 @@
 
         const inicial = (p.nombre || '?').charAt(0).toUpperCase();
         if ($('userName')) $('userName').textContent = p.nombre || '';
-        if ($('userAvatar')) $('userAvatar').textContent = inicial;
+        if ($('userAvatar')) pintarAvatar($('userAvatar'), inicial, p.foto_perfil);
         if ($('adminName')) $('adminName').textContent = [p.nombre, p.apellido].filter(Boolean).join(' ');
-        if ($('adminAvatar')) $('adminAvatar').textContent = inicial;
+        if ($('adminAvatar')) pintarAvatar($('adminAvatar'), inicial, p.foto_perfil);
         if ($('adminRol')) $('adminRol').textContent = p.rol || 'Cliente';
-        if ($('profileAvatarLarge')) $('profileAvatarLarge').textContent = inicial;
+        if ($('profileAvatarLarge')) pintarAvatar($('profileAvatarLarge'), inicial, p.foto_perfil);
     }
 
     function avisoPerfil(texto) {
         const aviso = $('mensajePerfil');
         aviso.textContent = texto;
         aviso.hidden = false;
+        aviso.classList.remove('exito');
     }
+
+    function estadoFotoPerfil(texto, tipo) {
+        const estado = $('profileImageStatus');
+        estado.textContent = texto;
+        estado.classList.toggle('is-success', tipo === 'success');
+        estado.classList.toggle('is-error', tipo === 'error');
+    }
+
+    function leerFotoOptimizada(archivo) {
+        return new Promise((resolve, reject) => {
+            const lector = new FileReader();
+            lector.onerror = () => reject(new Error('No se pudo leer la imagen seleccionada.'));
+            lector.onload = () => {
+                if (typeof lector.result !== 'string') {
+                    reject(new Error('No se pudo procesar la imagen seleccionada.'));
+                    return;
+                }
+
+                const imagen = new Image();
+                imagen.onerror = () => reject(new Error('El archivo seleccionado no es una imagen válida.'));
+                imagen.onload = () => {
+                    const ladoMayor = Math.max(imagen.naturalWidth, imagen.naturalHeight);
+                    if (!ladoMayor) {
+                        reject(new Error('La imagen seleccionada no tiene dimensiones válidas.'));
+                        return;
+                    }
+
+                    const escala = Math.min(1, 512 / ladoMayor);
+                    const canvas = document.createElement('canvas');
+                    canvas.width = Math.max(1, Math.round(imagen.naturalWidth * escala));
+                    canvas.height = Math.max(1, Math.round(imagen.naturalHeight * escala));
+                    const contexto = canvas.getContext('2d');
+                    if (!contexto) {
+                        reject(new Error('No se pudo procesar la imagen en este navegador.'));
+                        return;
+                    }
+
+                    try {
+                        contexto.drawImage(imagen, 0, 0, canvas.width, canvas.height);
+                        resolve(canvas.toDataURL('image/jpeg', 0.82));
+                    } catch (error) {
+                        reject(new Error('No se pudo procesar la imagen seleccionada.'));
+                    }
+                };
+                imagen.src = lector.result;
+            };
+            lector.readAsDataURL(archivo);
+        });
+    }
+
+    $('changeProfileImage').addEventListener('click', () => $('profileImageInput').click());
+    $('profileImageInput').addEventListener('change', async (e) => {
+        const archivo = e.target.files && e.target.files[0];
+        if (!archivo) return;
+
+        const estado = $('profileImageStatus');
+        const boton = $('changeProfileImage');
+        estadoFotoPerfil('', '');
+        if (!['image/jpeg', 'image/png', 'image/webp'].includes(archivo.type)) {
+            estadoFotoPerfil('Selecciona una imagen JPG, PNG o WebP.', 'error');
+            e.target.value = '';
+            return;
+        }
+        if (archivo.size > 5 * 1024 * 1024) {
+            estadoFotoPerfil('La imagen debe pesar 5 MB o menos.', 'error');
+            e.target.value = '';
+            return;
+        }
+
+        boton.disabled = true;
+        try {
+            const foto = await leerFotoOptimizada(archivo);
+            await Api.put('/api/perfil/' + ID + '/foto', { foto_perfil: foto });
+            pintarPerfil(Object.assign({}, perfil, { foto_perfil: foto }));
+            estadoFotoPerfil('Imagen de perfil actualizada.', 'success');
+        } catch (error) {
+            const mensaje = error.estado === 404
+                ? 'El backend no reconoce la ruta para cambiar la foto. Reinicia el servidor y vuelve a intentarlo.'
+                : error.message;
+            estadoFotoPerfil(mensaje, 'error');
+        } finally {
+            boton.disabled = false;
+            e.target.value = '';
+        }
+    });
 
     async function cargarPerfil() {
         try {
@@ -94,6 +192,7 @@
     $('formPerfil').addEventListener('submit', async (e) => {
         e.preventDefault();
         $('mensajePerfil').hidden = true;
+        $('mensajePerfil').classList.remove('exito');
 
         const datos = {
             nombre: $('profileNombre').value.trim(),
@@ -115,6 +214,7 @@
             const r = await Api.put('/api/perfil/' + ID, datos);
             pintarPerfil(Object.assign({}, perfil, datos));
             avisoPerfil(r.mensaje || 'Perfil actualizado correctamente');
+            $('mensajePerfil').classList.add('exito');
         } catch (err) {
             avisoPerfil(err.message);
         }
