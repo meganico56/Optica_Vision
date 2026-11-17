@@ -1993,8 +1993,38 @@
       return;
     }
 
+    // Clic en pestaña interna de citas
+    const citasTabBtn = e.target.closest("[data-citas-tab]");
+    if (citasTabBtn) {
+      e.preventDefault();
+      cambiarTabCitas(citasTabBtn.dataset.citasTab);
+      return;
+    }
+
+    // Clic en eliminar bloqueo de calendario
+    const btnEliminarBloqueo = e.target.closest("[data-eliminar-bloqueo]");
+    if (btnEliminarBloqueo) {
+      e.preventDefault();
+      const idBloqueo = btnEliminarBloqueo.dataset.eliminarBloqueo;
+      if (
+        confirm(
+          "¿Deseas desbloquear este periodo del calendario? Los usuarios podrán volver a agendar citas en estas fechas.",
+        )
+      ) {
+        (async () => {
+          try {
+            await Api.delete("/api/calendario/bloqueos/" + idBloqueo);
+            await cargarBloqueosCalendario();
+          } catch (err) {
+            alert("Error al desbloquear periodo: " + (err.message || err));
+          }
+        })();
+      }
+      return;
+    }
+
     // Clic en pestaña de inventario
-    const tabBtn = e.target.closest(".inv-tab");
+    const tabBtn = e.target.closest("[data-inv-tab]");
     if (tabBtn) {
       e.preventDefault();
       cambiarTabInventario(tabBtn.dataset.invTab);
@@ -2414,13 +2444,108 @@
     }
   }
 
-  // ── Citas ────────────────────────────────────────────────────
+  // ── Citas y Disponibilidad de Calendario ──────────────────────
   const ESTADO_CITA_CLASE = {
     Programada: "blue",
+    Confirmada: "blue",
     Atendida: "green",
+    Completada: "green",
     Cancelada: "red",
     "No asistió": "orange",
   };
+
+  function cambiarTabCitas(tab) {
+    document.querySelectorAll("[data-citas-tab]").forEach((b) => {
+      b.classList.toggle("active", b.dataset.citasTab === tab);
+    });
+    const panelAgendadas = document.getElementById("citasPanel-agendadas");
+    const panelCalendario = document.getElementById("citasPanel-calendario");
+    const panelRecetas = document.getElementById("citasPanel-recetas");
+
+    if (panelAgendadas) {
+      panelAgendadas.style.display = tab === "agendadas" ? "block" : "none";
+      panelAgendadas.classList.toggle("active", tab === "agendadas");
+      if (tab === "agendadas") cargarCitas();
+    }
+    if (panelCalendario) {
+      panelCalendario.style.display = tab === "calendario" ? "block" : "none";
+      panelCalendario.classList.toggle("active", tab === "calendario");
+      if (tab === "calendario") {
+        cargarBloqueosCalendario();
+        inicializarFormularioBloqueo();
+      }
+    }
+    if (panelRecetas) {
+      panelRecetas.style.display = tab === "recetas" ? "block" : "none";
+      panelRecetas.classList.toggle("active", tab === "recetas");
+      if (tab === "recetas") cargarRecetas();
+    }
+  }
+
+  function filtrarYRendearCitas() {
+    if (!tbCitas) return;
+    const buscarInput = document.getElementById("filtroCitaBuscar");
+    const estadoSelect = document.getElementById("filtroCitaEstado");
+    const q = buscarInput ? buscarInput.value.toLowerCase().trim() : "";
+    const est = estadoSelect ? estadoSelect.value : "";
+
+    let filtradas = citasMemoria;
+    if (est) {
+      filtradas = filtradas.filter((c) => c.estado === est);
+    }
+    if (q) {
+      filtradas = filtradas.filter(
+        (c) =>
+          (c.cliente && c.cliente.toLowerCase().includes(q)) ||
+          (c.motivo && c.motivo.toLowerCase().includes(q)) ||
+          (c.atiende && c.atiende.toLowerCase().includes(q)) ||
+          String(c.id_cita).includes(q),
+      );
+    }
+
+    tbCitas.innerHTML = "";
+    if (filtradas.length === 0) {
+      tbCitas.innerHTML =
+        '<tr><td colspan="7" style="text-align:center;padding:18px;">No se encontraron citas registradas.</td></tr>';
+      return;
+    }
+
+    filtradas.forEach((c) => {
+      const suspendido = estaSuspendido("cita", c.id_cita);
+      const clase = ESTADO_CITA_CLASE[c.estado] || "blue";
+      const tr = document.createElement("tr");
+      tr.classList.toggle("fila-suspendida", suspendido);
+      tr.innerHTML = `
+        <td><strong>#${c.id_cita}</strong></td>
+        <td>${BV.escapar(c.cliente || "—")}</td>
+        <td>${c.fecha_hora ? c.fecha_hora.replace("T", " ").substring(0, 16) : "—"}</td>
+        <td>${BV.escapar(c.motivo || "—")}</td>
+        <td>${BV.escapar(c.atiende || "—")}</td>
+        <td><span class="badge ${clase}">${BV.escapar(c.estado)}</span> ${insigniaSuspension(suspendido)}</td>
+        <td>
+          <div style="display:flex;gap:6px;">
+            <button type="button" class="btn-ghost" data-editar-cita="${c.id_cita}" title="Editar"><i class="fa-solid fa-pen-to-square"></i></button>
+            ${botonSuspension("cita", c.id_cita, suspendido)}
+          </div>
+        </td>
+      `;
+      tbCitas.appendChild(tr);
+    });
+  }
+
+  let filtrosCitasIniciados = false;
+  function inicializarFiltrosCitas() {
+    if (filtrosCitasIniciados) return;
+    const buscarInput = document.getElementById("filtroCitaBuscar");
+    const estadoSelect = document.getElementById("filtroCitaEstado");
+    if (buscarInput) {
+      buscarInput.addEventListener("input", filtrarYRendearCitas);
+    }
+    if (estadoSelect) {
+      estadoSelect.addEventListener("change", filtrarYRendearCitas);
+    }
+    filtrosCitasIniciados = true;
+  }
 
   async function cargarCitas() {
     if (!tbCitas) return;
@@ -2432,39 +2557,172 @@
         kpiCitas.textContent = citas.filter(
           (c) => c.estado === "Programada",
         ).length;
-      tbCitas.innerHTML = "";
-      if (citas.length === 0) {
-        tbCitas.innerHTML =
-          '<tr><td colspan="7" style="text-align:center;">No hay citas registradas.</td></tr>';
-        return;
-      }
-      citas.forEach((c) => {
-        const suspendido = estaSuspendido("cita", c.id_cita);
-        const clase = ESTADO_CITA_CLASE[c.estado] || "blue";
-        const tr = document.createElement("tr");
-        tr.classList.toggle("fila-suspendida", suspendido);
-        tr.innerHTML = `
-                    <td><strong>#${c.id_cita}</strong></td>
-                    <td>${BV.escapar(c.cliente || "—")}</td>
-                    <td>${c.fecha_hora ? c.fecha_hora.replace("T", " ").substring(0, 16) : "—"}</td>
-                    <td>${BV.escapar(c.motivo || "—")}</td>
-                    <td>${BV.escapar(c.atiende || "—")}</td>
-                    <td><span class="badge ${clase}">${BV.escapar(c.estado)}</span> ${insigniaSuspension(suspendido)}</td>
-                    <td>
-                        <div style="display:flex;gap:6px;">
-                            <button type="button" class="btn-ghost" data-editar-cita="${c.id_cita}" title="Editar"><i class="fa-solid fa-pen-to-square"></i></button>
-                            ${botonSuspension("cita", c.id_cita, suspendido)}
-                        </div>
-                    </td>
-                `;
-        tbCitas.appendChild(tr);
-      });
+      inicializarFiltrosCitas();
+      filtrarYRendearCitas();
     } catch (e) {
       console.error("Error al cargar citas:", e);
       if (tbCitas)
         tbCitas.innerHTML =
           '<tr><td colspan="7" style="text-align:center;color:var(--red);">Error al cargar citas.</td></tr>';
     }
+  }
+
+  // ── Gestión de Bloqueos del Calendario ───────────────────────
+  let bloqueosCalendarioMemoria = [];
+
+  async function cargarBloqueosCalendario() {
+    const tb = document.getElementById("tbBloqueosCalendario");
+    const badge = document.getElementById("badgeTotalBloqueos");
+    if (!tb) return;
+
+    try {
+      const bloqueos = await Api.get("/api/calendario/bloqueos");
+      bloqueosCalendarioMemoria = Array.isArray(bloqueos) ? bloqueos : [];
+      if (badge) {
+        badge.textContent = `${bloqueosCalendarioMemoria.length} bloqueo(s)`;
+      }
+      tb.innerHTML = "";
+      if (bloqueosCalendarioMemoria.length === 0) {
+        tb.innerHTML =
+          '<tr><td colspan="5" style="text-align:center;color:var(--admin-text-muted);padding:20px;">No hay días bloqueados en el calendario actualmente.</td></tr>';
+        return;
+      }
+
+      bloqueosCalendarioMemoria.forEach((b) => {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td><strong>${b.fecha_inicio}</strong></td>
+          <td><strong>${b.fecha_fin}</strong></td>
+          <td><span class="badge orange">${b.total_dias || 1} día(s)</span></td>
+          <td>${BV.escapar(b.motivo || "Día no laboral")}</td>
+          <td>
+            <button type="button" class="btn-ghost" data-eliminar-bloqueo="${b.id_bloqueo}" title="Desbloquear periodo" style="color:var(--red);gap:4px;display:inline-flex;align-items:center;">
+              <i class="fa-solid fa-trash-can"></i> Desbloquear
+            </button>
+          </td>
+        `;
+        tb.appendChild(tr);
+      });
+    } catch (err) {
+      console.error("Error al cargar bloqueos del calendario:", err);
+      if (tb) {
+        tb.innerHTML =
+          '<tr><td colspan="5" style="text-align:center;color:var(--red);">Error al consultar los bloqueos del calendario.</td></tr>';
+      }
+    }
+  }
+
+  let formBloqueoIniciado = false;
+  function inicializarFormularioBloqueo() {
+    if (formBloqueoIniciado) return;
+    const fInicio = document.getElementById("calFechaInicio");
+    const fFin = document.getElementById("calFechaFin");
+    const cantDias = document.getElementById("calCantidadDias");
+    const form = document.getElementById("formBloqueoCalendario");
+    const errBox = document.getElementById("calError");
+    const exitoBox = document.getElementById("calExito");
+
+    if (!form || !fInicio || !fFin || !cantDias) return;
+
+    const hoyStr = new Date().toISOString().split("T")[0];
+    if (!fInicio.value) {
+      fInicio.value = hoyStr;
+      fInicio.min = hoyStr;
+      fFin.value = hoyStr;
+      fFin.min = hoyStr;
+    }
+
+    function recalcularFin() {
+      if (!fInicio.value) return;
+      const dias = parseInt(cantDias.value, 10) || 1;
+      const dt = new Date(fInicio.value + "T00:00:00");
+      dt.setDate(dt.getDate() + (dias - 1));
+      fFin.value = dt.toISOString().split("T")[0];
+      fFin.min = fInicio.value;
+    }
+
+    function recalcularDias() {
+      if (!fInicio.value || !fFin.value) return;
+      const dInicio = new Date(fInicio.value + "T00:00:00");
+      const dFin = new Date(fFin.value + "T00:00:00");
+      const diff = Math.round((dFin - dInicio) / 86400000) + 1;
+      if (diff >= 1) {
+        cantDias.value = diff;
+      }
+    }
+
+    fInicio.addEventListener("change", () => {
+      fFin.min = fInicio.value;
+      recalcularFin();
+    });
+
+    cantDias.addEventListener("input", recalcularFin);
+    cantDias.addEventListener("change", recalcularFin);
+
+    fFin.addEventListener("change", recalcularDias);
+
+    document.querySelectorAll(".btn-dias-preset").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const d = parseInt(btn.dataset.dias, 10) || 1;
+        cantDias.value = d;
+        recalcularFin();
+      });
+    });
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      if (errBox) errBox.hidden = true;
+      if (exitoBox) exitoBox.hidden = true;
+
+      const fecha_inicio = fInicio.value;
+      const fecha_fin = fFin.value;
+      const motivo = document.getElementById("calMotivo")?.value?.trim();
+
+      if (!fecha_inicio || !fecha_fin || !motivo) {
+        if (errBox) {
+          errBox.textContent = "Por favor completa la fecha de inicio, fecha de fin y el motivo.";
+          errBox.hidden = false;
+        }
+        return;
+      }
+
+      if (fecha_fin < fecha_inicio) {
+        if (errBox) {
+          errBox.textContent = "La fecha de fin no puede ser anterior a la fecha de inicio.";
+          errBox.hidden = false;
+        }
+        return;
+      }
+
+      try {
+        const usuarioSesion = window.SesionUsuario ? window.SesionUsuario.obtener() : null;
+        await Api.post("/api/calendario/bloqueos", {
+          fecha_inicio,
+          fecha_fin,
+          motivo,
+          id_usuario: usuarioSesion ? usuarioSesion.id_usuario : null,
+        });
+
+        if (exitoBox) {
+          exitoBox.textContent = `¡Periodo bloqueado exitosamente (${fecha_inicio} al ${fecha_fin})!`;
+          exitoBox.hidden = false;
+          setTimeout(() => {
+            if (exitoBox) exitoBox.hidden = true;
+          }, 5000);
+        }
+
+        document.getElementById("calMotivo").value = "";
+        await cargarBloqueosCalendario();
+      } catch (err) {
+        console.error("Error al registrar bloqueo:", err);
+        if (errBox) {
+          errBox.textContent = err.message || "Error al registrar el bloqueo en el calendario";
+          errBox.hidden = false;
+        }
+      }
+    });
+
+    formBloqueoIniciado = true;
   }
 
   // ── Recetas ──────────────────────────────────────────────────
@@ -2843,6 +3101,7 @@
       cargarCompras(),
       cargarCitas(),
       cargarRecetas(),
+      cargarBloqueosCalendario(),
       cargarPromociones(),
       cargarReportes(),
       cargarVentasProducto(),
@@ -2861,6 +3120,8 @@
       } else if (seccion === "citas") {
         cargarCitas();
         cargarRecetas();
+        cargarBloqueosCalendario();
+        inicializarFormularioBloqueo();
       } else if (seccion === "promociones") {
         cargarPromociones();
       } else if (seccion === "reportes") {

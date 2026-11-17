@@ -1840,3 +1840,33 @@ textarea.input-admin {
     grid-template-columns: 1fr;
   }
 }
+
+/* Botones de preset de días en modificación de calendario */
+.btn-dias-preset {
+  border: 1px solid var(--admin-border);
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--admin-text-muted);
+  font-size: 0.8rem;
+  padding: 4px 10px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-dias-preset:hover {
+  border-color: var(--admin-gold);
+  color: var(--admin-gold);
+  background: rgba(212, 175, 55, 0.1);
+}
+
+:root.light-mode .btn-dias-preset {
+  background: #f1f5f9;
+  border-color: #cbd5e1;
+  color: #475569;
+}
+
+:root.light-mode .btn-dias-preset:hover {
+  background: rgba(212, 175, 55, 0.15);
+  border-color: var(--admin-gold);
+  color: #1e293b;
+}

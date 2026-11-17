@@ -2,6 +2,7 @@ const express = require("express");
 const cors = require("cors");
 const bcrypt = require("bcrypt");
 const db = require("./db");
+const { fechaEstaBloqueada, router: rutasCalendario } = require("./rutas-calendario");
 
 const rutasSuspension = require("./rutas-suspension");
 
@@ -225,7 +226,7 @@ app.get("/api/productos", async (req, res) => {
     `;
 
     if (vista === "publica") {
-      query += ` AND NOT EXISTS ( 
+      query += ` AND p.estado = 'Activo' AND NOT EXISTS (
       SELECT 1 
       FROM panel_suspension ps
       WHERE ps.tipo = 'producto' COLLATE utf8mb4_unicode_ci
@@ -650,6 +651,13 @@ app.post("/api/citas", async (req, res) => {
   }
 
   try {
+    const bloqueo = await fechaEstaBloqueada(fechaHora);
+    if (bloqueo) {
+      return res
+        .status(400)
+        .json({ error: `La fecha seleccionada no está disponible para citas: ${bloqueo.motivo}` });
+    }
+
     if (await clienteTieneCita(clienteId, fechaHora)) {
       return res
         .status(409)
@@ -1586,6 +1594,12 @@ app.post("/api/citas-admin", async (req, res) => {
       .json({ mensaje: "Cliente, fecha/hora y motivo son obligatorios" });
   }
   try {
+    const bloqueo = await fechaEstaBloqueada(fecha_hora);
+    if (bloqueo) {
+      return res.status(400).json({
+        mensaje: `La fecha seleccionada está bloqueada en el calendario: "${bloqueo.motivo}"`,
+      });
+    }
     if (await clienteTieneCita(id_cliente, fecha_hora)) {
       return res.status(409).json({
         mensaje: "El cliente ya tiene una cita asignada en ese horario exacto",
@@ -1628,6 +1642,14 @@ app.put("/api/citas/:id", async (req, res) => {
     return res.status(400).json({ mensaje: "Estado de cita no válido" });
   }
   try {
+    if (fecha_hora) {
+      const bloqueo = await fechaEstaBloqueada(fecha_hora);
+      if (bloqueo) {
+        return res.status(400).json({
+          mensaje: `No se puede mover la cita a esa fecha porque está bloqueada: "${bloqueo.motivo}"`,
+        });
+      }
+    }
     await db.query(
       "UPDATE cita SET estado=COALESCE(?,estado), observaciones=COALESCE(?,observaciones), fecha_hora=COALESCE(?,fecha_hora), motivo=COALESCE(?,motivo) WHERE id_cita=?",
       [estado, observaciones, fecha_hora, motivo, id],
@@ -2150,6 +2172,7 @@ app.delete("/api/reportes/:id", async (req, res) => {
 // Rutas del panel del cliente: perfil y estado de pedidos (backend/rutas-panel.js)
 app.use("/api", require("./rutas-panel"));
 app.use("/api", rutasSuspension);
+app.use("/api", rutasCalendario);
 
 const PORT = Number(process.env.PORT) || 3000;
 app.listen(PORT, () => {
