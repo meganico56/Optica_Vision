@@ -259,6 +259,12 @@ body {
   line-height: 1.55;
 }
 
+.nota-terminos-text {
+  flex: 1;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
 .nota-terminos > i {
   flex: 0 0 auto;
   margin-top: 0.15rem;

@@ -40,12 +40,19 @@
   }
 
   function obtenerUsuarioActual() {
-    if (window.SesionUsuario && typeof window.SesionUsuario.obtener === "function") {
-      return window.SesionUsuario.obtener();
+    if (window.Sesion && typeof window.Sesion.estaLogueado === "function") {
+      return window.Sesion.estaLogueado() ? window.Sesion.usuario() : null;
     }
+
+    const usuarioGuardado =
+      localStorage.getItem("usuarioLogueado") ||
+      localStorage.getItem("bv_usuario") ||
+      sessionStorage.getItem("bv_usuario");
+    if (!usuarioGuardado) return null;
+
     try {
-      const u = localStorage.getItem("usuario");
-      return u ? JSON.parse(u) : null;
+      const usuario = JSON.parse(usuarioGuardado);
+      return usuario && typeof usuario === "object" ? usuario : null;
     } catch {
       return null;
     }
