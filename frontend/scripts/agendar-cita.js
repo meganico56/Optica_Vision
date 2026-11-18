@@ -232,25 +232,26 @@
             hora_cita: hora,
             motivo,
             observaciones,
-            id_cliente: usuarioActivo.id_usuario,
-            estado: "Programada"
           });
 
           formCita.hidden = true;
           if (confirmacionCita) {
             confirmacionCita.hidden = false;
             if (resumenCita) {
-              resumenCita.innerHTML = `
-                Cita programada para el <strong>${fecha}</strong> a las <strong>${hora}</strong>.<br>
-                Motivo: <em>${motivo}</em>
-              `;
+              resumenCita.textContent = `Cita programada para el ${fecha} a las ${hora}. Motivo: ${motivo}. Registro de cita: #${res.id_cita}.`;
             }
           }
         } catch (err) {
           console.error("Error al agendar cita:", err);
           mostrarError(err.message || "Ocurrió un error al agendar la cita. Por favor intenta de nuevo.");
-          btnAgendar.disabled = false;
-          btnAgendar.textContent = "Agendar cita";
+          if (err.estado === 401) {
+            if (avisoLogin) avisoLogin.hidden = false;
+            btnAgendar.disabled = true;
+            btnAgendar.title = "Tu sesión expiró. Inicia sesión nuevamente para agendar.";
+          } else {
+            btnAgendar.disabled = false;
+            btnAgendar.textContent = "Confirmar mi cita";
+          }
         }
       });
     }

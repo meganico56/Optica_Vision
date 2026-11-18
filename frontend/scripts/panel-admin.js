@@ -2513,6 +2513,7 @@
         (c) =>
           (c.cliente && c.cliente.toLowerCase().includes(q)) ||
           (c.motivo && c.motivo.toLowerCase().includes(q)) ||
+          (c.canal && c.canal.toLowerCase().includes(q)) ||
           (c.atiende && c.atiende.toLowerCase().includes(q)) ||
           String(c.id_cita).includes(q),
       );
@@ -2521,7 +2522,7 @@
     tbCitas.innerHTML = "";
     if (filtradas.length === 0) {
       tbCitas.innerHTML =
-        '<tr><td colspan="7" style="text-align:center;padding:18px;">No se encontraron citas registradas.</td></tr>';
+        '<tr><td colspan="8" style="text-align:center;padding:18px;">No se encontraron citas registradas.</td></tr>';
       return;
     }
 
@@ -2535,6 +2536,7 @@
         <td>${BV.escapar(c.cliente || "—")}</td>
         <td>${c.fecha_hora ? c.fecha_hora.replace("T", " ").substring(0, 16) : "—"}</td>
         <td>${BV.escapar(c.motivo || "—")}</td>
+        <td>${BV.escapar(c.canal || "—")}</td>
         <td>${BV.escapar(c.atiende || "—")}</td>
         <td><span class="badge ${clase}">${BV.escapar(c.estado)}</span> ${insigniaSuspension(suspendido)}</td>
         <td>
@@ -2578,7 +2580,7 @@
       console.error("Error al cargar citas:", e);
       if (tbCitas)
         tbCitas.innerHTML =
-          '<tr><td colspan="7" style="text-align:center;color:var(--red);">Error al cargar citas.</td></tr>';
+          '<tr><td colspan="8" style="text-align:center;color:var(--red);">Error al cargar citas.</td></tr>';
     }
   }
 

@@ -630,25 +630,74 @@ app.get("/api/productos/:id", async (req, res) => {
 });
 
 // Ruta para agendar cita desde la web (Tabla cita)
-// Acepta fecha_cita + hora_cita (o fecha_hora) y el cliente como id_cliente o id_usuario
-app.post("/api/citas", async (req, res) => {
-  const clienteId = req.body.id_cliente || req.body.id_usuario;
-  const { fecha_cita, hora_cita, motivo, estado } = req.body;
+// El cliente se obtiene de la sesión verificada, nunca del cuerpo de la solicitud.
+app.post("/api/citas", verificarSesion, async (req, res) => {
+  const clienteId = req.usuario.id_usuario;
+  const { fecha_cita, hora_cita } = req.body;
+  const motivo =
+    typeof req.body.motivo === "string" ? req.body.motivo.trim() : "";
+  const observaciones =
+    typeof req.body.observaciones === "string"
+      ? req.body.observaciones.trim()
+      : "";
 
-  let fechaHora = req.body.fecha_hora;
-  if (!fechaHora && fecha_cita && hora_cita) {
-    fechaHora = `${fecha_cita} ${hora_cita.length === 5 ? hora_cita + ":00" : hora_cita}`;
+  let fechaHora =
+    typeof req.body.fecha_hora === "string" ? req.body.fecha_hora.trim() : "";
+  if (!fechaHora && typeof fecha_cita === "string" && typeof hora_cita === "string") {
+    fechaHora = `${fecha_cita.trim()} ${hora_cita.trim()}`;
   }
 
-  if (!fechaHora) {
+  const fechaHoraParts =
+    /^(\d{4}-\d{2}-\d{2})[ T](\d{2}:\d{2})(?::(\d{2}))?$/.exec(fechaHora);
+  if (!fechaHoraParts) {
     return res
       .status(400)
-      .json({ error: "La fecha y la hora de la cita son obligatorias" });
+      .json({ error: "La fecha y la hora de la cita no son válidas" });
   }
-  if (!clienteId) {
+
+  fechaHora = `${fechaHoraParts[1]} ${fechaHoraParts[2]}:${fechaHoraParts[3] || "00"}`;
+  const [year, month, day] = fechaHoraParts[1].split("-").map(Number);
+  const [hour, minute, second] = fechaHoraParts[2].split(":").map(Number);
+  const fechaValidada = new Date(year, month - 1, day, hour, minute, Number(fechaHoraParts[3] || 0));
+  if (
+    fechaValidada.getFullYear() !== year ||
+    fechaValidada.getMonth() !== month - 1 ||
+    fechaValidada.getDate() !== day ||
+    fechaValidada.getHours() !== hour ||
+    fechaValidada.getMinutes() !== minute ||
+    fechaValidada.getSeconds() !== Number(fechaHoraParts[3] || 0)
+  ) {
     return res
       .status(400)
-      .json({ error: "Debes iniciar sesión para agendar una cita" });
+      .json({ error: "La fecha y la hora de la cita no son válidas" });
+  }
+  if (fechaValidada.getDay() === 0) {
+    return res
+      .status(400)
+      .json({ error: "Los domingos la óptica permanece cerrada" });
+  }
+
+  if (!motivo || motivo.length > 150) {
+    return res
+      .status(400)
+      .json({ error: "El motivo de la cita es obligatorio y no debe superar 150 caracteres" });
+  }
+  if (observaciones.length > 255) {
+    return res
+      .status(400)
+      .json({ error: "Las observaciones no deben superar 255 caracteres" });
+  }
+
+  const ahora = new Date();
+  const pad = (valor) => String(valor).padStart(2, "0");
+  const fechaActual = `${ahora.getFullYear()}-${pad(ahora.getMonth() + 1)}-${pad(ahora.getDate())}`;
+  const fechaMaxima = new Date();
+  fechaMaxima.setMonth(fechaMaxima.getMonth() + 3);
+  const fechaMaximaTexto = `${fechaMaxima.getFullYear()}-${pad(fechaMaxima.getMonth() + 1)}-${pad(fechaMaxima.getDate())}`;
+  if (fechaHoraParts[1] < fechaActual || fechaHoraParts[1] > fechaMaximaTexto) {
+    return res
+      .status(400)
+      .json({ error: "Solo puedes agendar citas desde hoy y hasta tres meses adelante" });
   }
 
   try {
@@ -665,11 +714,10 @@ app.post("/api/citas", async (req, res) => {
         .json({ error: "Ya tienes una cita en ese horario" });
     }
 
-    const estadoFinal = ESTADOS_CITA.includes(estado) ? estado : "Programada";
     const [resultado] = await db.query(
-      `INSERT INTO cita (fecha_hora, motivo, canal, estado, id_cliente)
-       VALUES (?, ?, 'Web', ?, ?)`,
-      [fechaHora, motivo || "Examen visual", estadoFinal, clienteId],
+      `INSERT INTO cita (fecha_hora, duracion_minutos, motivo, canal, estado, observaciones, id_cliente)
+       VALUES (?, 30, ?, 'Web', 'Programada', ?, ?)`,
+      [fechaHora, motivo, observaciones || null, clienteId],
     );
 
     res.status(201).json({
@@ -1670,7 +1718,7 @@ app.delete("/api/compras/:id", async (req, res) => {
 app.get("/api/citas", async (req, res) => {
   const { id_cliente } = req.query;
   try {
-    let sql = `SELECT c.id_cita, c.fecha_hora, c.motivo, c.estado, c.observaciones,
+    let sql = `SELECT c.id_cita, c.fecha_hora, c.motivo, c.estado, c.observaciones, c.canal,
                CONCAT(cl.nombre,' ',cl.apellido) AS cliente,
                CONCAT(at.nombre,' ',at.apellido) AS atiende,
                c.id_cliente, c.id_usuario_atiende
