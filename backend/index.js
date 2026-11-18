@@ -4,6 +4,7 @@ const bcrypt = require("bcrypt");
 const db = require("./db");
 const { fechaEstaBloqueada, router: rutasCalendario } = require("./rutas-calendario");
 
+const crypto = require("crypto");
 const rutasSuspension = require("./rutas-suspension");
 
 const fs = require("fs");
@@ -683,6 +684,25 @@ app.post("/api/citas", async (req, res) => {
     res.status(500).json({ error: "Error al registrar la cita" });
   }
 });
+//control de inicio de sesion 
+
+const TIEMPO_INACTIVIDAD = 15 * 60 * 1000;
+
+async function asegurarTablaSesiones() {
+  await db.query (
+    `CREATE TABLE IF NOT EXISTS sesion_usuario(
+    id_sesion INT AUTO_INCREMENT PRIMARY KEY,
+    id_usuario INT NOT NULL,
+    token_hash CHAR(64) NOT NULL UNIQUE,
+    fecha_inicio TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    ultima_actividad TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    fecha_expiracion TIMESTAMP NOT NULL,
+    INDEX idx_sesion_usuario (id_usuario),
+    INDEX idx_sesion_expiracion (fecha_expiracion)
+    ) ENGINE= InnoDB DEFAULT CHARSET=utf8mb4`
+  );
+}
+
 
 // Ruta de autenticación / Login
 app.post("/api/login", async (req, res) => {
