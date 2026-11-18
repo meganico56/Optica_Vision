@@ -704,6 +704,79 @@ async function asegurarTablaSesiones() {
 }
 
 
+// Middleware para verificar y renovar la sesión
+async function verificarSesion(req, res, next) {
+  const autorizacion = req.headers.authorization;
+
+  if (!autorizacion || !autorizacion.startsWith("Bearer ")) {
+    return res.status(401).json({
+      mensaje: "Debes iniciar sesión",
+    });
+  }
+
+  const token = autorizacion.split(" ")[1];
+
+  const tokenHash = crypto
+    .createHash("sha256")
+    .update(token)
+    .digest("hex");
+
+  try {
+    const [sesiones] = await db.query(
+      `SELECT s.id_sesion, s.id_usuario, u.estado
+       FROM sesion_usuario s
+       INNER JOIN usuario u ON s.id_usuario = u.id_usuario
+       WHERE s.token_hash = ?
+       AND s.fecha_expiracion > NOW()
+       LIMIT 1`,
+      [tokenHash],
+    );
+
+    if (sesiones.length === 0) {
+      return res.status(401).json({
+        mensaje: "Tu sesión ha expirado. Inicia sesión nuevamente.",
+      });
+    }
+
+    const sesion = sesiones[0];
+
+    if (sesion.estado !== "Activo") {
+      await db.query(
+        "DELETE FROM sesion_usuario WHERE id_sesion = ?",
+        [sesion.id_sesion],
+      );
+
+      return res.status(403).json({
+        mensaje: "Tu cuenta está inactiva.",
+      });
+    }
+
+    // Renovar los 15 minutos de actividad
+    await db.query(
+      `UPDATE sesion_usuario
+       SET ultima_actividad = NOW(),
+           fecha_expiracion = DATE_ADD(NOW(), INTERVAL 15 MINUTE)
+       WHERE id_sesion = ?`,
+      [sesion.id_sesion],
+    );
+
+    req.usuario = {
+      id_usuario: sesion.id_usuario,
+    };
+
+    next();
+  } catch (error) {
+    console.error("Error al verificar la sesión:", error);
+
+    return res.status(500).json({
+      mensaje: "Error al verificar la sesión",
+    });
+  }
+}
+
+
+
+
 // Ruta de autenticación / Login
 app.post("/api/login", async (req, res) => {
   const { correo, contrasena } = req.body;
@@ -716,6 +789,8 @@ app.post("/api/login", async (req, res) => {
 
   try {
     await rutasSuspension.asegurarTabla();
+    await asegurarTablaSesiones();
+     
 
     // 1. Buscar usuario solo por correo (la contraseña está hasheada con bcrypt)
     const [usuarios] = await db.query(
@@ -764,9 +839,26 @@ app.post("/api/login", async (req, res) => {
       return res.status(401).json({ mensaje: "Credenciales inválidas" });
     }
 
+    // Generar un token seguro para la sesión
+    const token = crypto.randomBytes(32).toString("hex");
+
+    // Crear el hash del token para almacenarlo en la base de datos
+    const tokenHash = crypto
+      .createHash("sha256")
+      .update(token)
+      .digest("hex");
+
+    // Registrar la sesión con vencimiento de 15 minutos
+    await db.query(
+      `INSERT INTO sesion_usuario
+      (id_usuario, token_hash, fecha_expiracion)
+      VALUES (?, ?, DATE_ADD(NOW(), INTERVAL 15 MINUTE))`,
+    [usuario.id_usuario, tokenHash],
+    );
+
     res.json({
       mensaje: "Inicio de sesión exitoso",
-      token: "session-" + usuario.id_usuario, // token simple para compatibilidad con sesion.js
+      token: token,
       usuario: {
         id: usuario.id_usuario,
         nombre: usuario.nombre,
