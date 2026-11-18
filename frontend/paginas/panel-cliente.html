@@ -80,7 +80,14 @@
 <div class="form-group"><label for="profileApellido">Apellido</label><input type="text" id="profileApellido" name="apellido" maxlength="100" required></div>
 </div>
 <div class="form-row">
-<div class="form-group"><label for="profileTipoDoc">Tipo de documento</label><select id="profileTipoDoc" disabled><option>C.C.</option><option>T.I.</option><option>C.E.</option></select></div>
+<div class="form-group"><label for="profileTipoDoc">Tipo de documento</label><select id="profileTipoDoc" name="tipo_documento" required>
+<option value="">Selecciona un tipo de documento</option>
+<option value="C.C.">Cédula de ciudadanía (C.C.)</option>
+<option value="T.I.">Tarjeta de identidad (T.I.)</option>
+<option value="R.C.">Registro civil (R.C.)</option>
+<option value="C.E.">Cédula de extranjería (C.E.)</option>
+<option value="PAS">Pasaporte (PAS)</option>
+</select></div>
 <div class="form-group"><label for="profileDocumento">Número de documento</label><input type="text" id="profileDocumento" readonly></div>
 </div>
 <div class="form-group"><label for="profileTelefono">Teléfono</label><input type="tel" id="profileTelefono" name="telefono" maxlength="20" required></div>

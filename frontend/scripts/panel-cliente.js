@@ -72,7 +72,7 @@
         perfil = p;
         $('profileNombre').value = p.nombre || '';
         $('profileApellido').value = p.apellido || '';
-        $('profileTipoDoc').innerHTML = '<option>' + BV.escapar(p.tipo_documento) + '</option>';
+        $('profileTipoDoc').value = p.tipo_documento || '';
         $('profileDocumento').value = p.num_documento || '';
         $('profileTelefono').value = p.telefono || '';
         $('profileCorreo').value = p.correo || '';
@@ -197,6 +197,7 @@
         const datos = {
             nombre: $('profileNombre').value.trim(),
             apellido: $('profileApellido').value.trim(),
+            tipo_documento: $('profileTipoDoc').value,
             telefono: $('profileTelefono').value.trim(),
             correo: $('profileCorreo').value.trim(),
             direccion: $('profileDireccion').value.trim(),
@@ -205,8 +206,8 @@
             fecha_nacimiento: $('profileFechaNacimiento').value
         };
 
-        if (!datos.nombre || !datos.apellido || !datos.telefono || !datos.correo) {
-            avisoPerfil('Nombre, apellido, teléfono y correo son obligatorios.');
+        if (!datos.nombre || !datos.apellido || !datos.tipo_documento || !datos.telefono || !datos.correo) {
+            avisoPerfil('Nombre, apellido, tipo de documento, teléfono y correo son obligatorios.');
             return;
         }
 
@@ -224,7 +225,7 @@
     // venta.estado de la BD: Pendiente / Pagada / Anulada (las clases del CSS son completada / pendiente / anulada)
     const CLASE_VENTA = { Pagada: 'completada', Pendiente: 'pendiente', Anulada: 'anulada' };
 
-    function tarjetaCompra(venta, detalles, pedido) {
+    function tarjetaCompra(venta, detalles, pedido, errorDetalle) {
         const tarjeta = clonar('tplCompra');
         tarjeta.querySelector('.order-id').textContent = 'Compra #' + venta.codigo_venta;
         tarjeta.querySelector('.order-date').textContent = fechaCorta(venta.fecha);
@@ -236,7 +237,9 @@
         tarjeta.querySelector('.total-amount').textContent = BV.moneda(venta.total);
 
         const lista = tarjeta.querySelector('.order-products');
-        lista.innerHTML = detalles.length
+        lista.innerHTML = errorDetalle
+            ? '<p class="page-subtitle">' + BV.escapar(errorDetalle) + '</p>'
+            : detalles.length
             ? detalles.map((d) =>
                 '<div class="order-product">' +
                 '<img src="../imagenes/productos/' + BV.escapar(d.imagen) + '" alt="' + BV.escapar(d.nombre) + '">' +
@@ -266,30 +269,44 @@
         const listaCompleta = $('listaCompras');
         const recientes = $('comprasRecientes');
         try {
-            const [ventas, pedidos] = await Promise.all([
-                Api.get('/api/ventas', { id_cliente: ID }),
-                Api.get('/api/pedidos', { id_cliente: ID })
+            const ventas = await Api.get('/api/ventas', { id_cliente: ID });
+            $('totalCompras').textContent = ventas.filter((v) => v.estado === 'Pagada').length;
+            const [resultadoPedidos, ...resultadosDetalles] = await Promise.allSettled([
+                Api.get('/api/pedidos', { id_cliente: ID }),
+                ...ventas.map((v) => Api.get('/api/ventas/' + v.codigo_venta + '/detalles'))
             ]);
-            const detalles = await Promise.all(
-                ventas.map((v) => Api.get('/api/ventas/' + v.codigo_venta + '/detalles'))
-            );
+            const pedidos = resultadoPedidos.status === 'fulfilled' ? resultadoPedidos.value : [];
 
             listaCompleta.innerHTML = '';
             recientes.innerHTML = '';
             ventas.forEach((v, i) => {
                 const pedido = pedidos.find((p) => p.id_venta === v.codigo_venta);
-                listaCompleta.appendChild(tarjetaCompra(v, detalles[i], pedido));
-                if (i < 3) recientes.appendChild(tarjetaCompra(v, detalles[i], pedido));
+                const resultadoDetalle = resultadosDetalles[i];
+                const detalles = resultadoDetalle.status === 'fulfilled' ? resultadoDetalle.value : [];
+                const errorDetalle = resultadoDetalle.status === 'rejected'
+                    ? 'No se pudieron cargar los productos de esta compra.'
+                    : '';
+                listaCompleta.appendChild(tarjetaCompra(v, detalles, pedido, errorDetalle));
+                if (i < 3) recientes.appendChild(tarjetaCompra(v, detalles, pedido, errorDetalle));
             });
 
             if (ventas.length === 0) {
                 mensajeVacio(listaCompleta, 'Aún no tienes compras.');
                 mensajeVacio(recientes, 'Aún no tienes compras.');
             }
-            $('totalCompras').textContent = ventas.filter((v) => v.estado === 'Pagada').length;
+            if (resultadoPedidos.status === 'rejected') {
+                const aviso = 'No se pudo consultar el estado de los pedidos de laboratorio.';
+                [listaCompleta, recientes].forEach((contenedor) => {
+                    const mensaje = document.createElement('p');
+                    mensaje.className = 'page-subtitle';
+                    mensaje.textContent = aviso;
+                    contenedor.appendChild(mensaje);
+                });
+            }
         } catch (e) {
             mensajeVacio(listaCompleta, e.message);
             mensajeVacio(recientes, e.message);
+            $('totalCompras').textContent = 'No disponible';
         }
     }
 
@@ -355,6 +372,7 @@
                 : 'Ninguna';
         } catch (e) {
             mensajeVacio(lista, e.message);
+            $('proximaCita').textContent = 'No disponible';
         }
     }
 
@@ -393,12 +411,19 @@
         const lista = $('listaRecetas');
         try {
             const recetas = await Api.get('/api/recetas', { id_cliente: ID });
+            recetas.sort((a, b) => {
+                const vigenciaA = a.fecha_vencimiento >= hoy();
+                const vigenciaB = b.fecha_vencimiento >= hoy();
+                if (vigenciaA !== vigenciaB) return vigenciaB - vigenciaA;
+                return String(b.fecha_emision).localeCompare(String(a.fecha_emision));
+            });
             lista.innerHTML = '';
             recetas.forEach((r) => lista.appendChild(tarjetaReceta(r)));
             if (recetas.length === 0) mensajeVacio(lista, 'Aún no tienes fórmulas registradas.');
             $('recetasActivas').textContent = recetas.filter((r) => r.fecha_vencimiento >= hoy()).length;
         } catch (e) {
             mensajeVacio(lista, e.message);
+            $('recetasActivas').textContent = 'No disponible';
         }
     }
 

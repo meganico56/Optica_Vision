@@ -66,15 +66,19 @@ router.get("/perfil/:id", async (req, res) => {
   }
 });
 
-// Guardar cambios del perfil (el documento y el rol no se pueden cambiar desde aquí)
+// Guardar cambios del perfil; el número de documento y el rol no se pueden cambiar desde aquí.
 router.put("/perfil/:id", async (req, res) => {
   const id = idValido(req.params.id);
   if (!id) return res.status(400).json({ mensaje: "Identificador de usuario no válido" });
 
-  const { nombre, apellido, telefono, correo, direccion, ciudad, fecha_nacimiento } = req.body;
+  const { nombre, apellido, tipo_documento, telefono, correo, direccion, ciudad, fecha_nacimiento } = req.body;
+  const tiposDocumento = ["C.C.", "T.I.", "R.C.", "C.E.", "PAS"];
 
   if (!nombre || !apellido || !telefono || !correo) {
     return res.status(400).json({ mensaje: "Nombre, apellido, teléfono y correo son obligatorios" });
+  }
+  if (tipo_documento !== undefined && !tiposDocumento.includes(tipo_documento)) {
+    return res.status(400).json({ mensaje: "Tipo de documento no válido" });
   }
 
   try {
@@ -85,12 +89,13 @@ router.put("/perfil/:id", async (req, res) => {
     if (usuarios.length === 0) return res.status(404).json({ mensaje: "Usuario no encontrado" });
 
     await db.query(
-      `UPDATE usuario SET nombre = ?, apellido = ?, telefono = ?, correo = ?,
+      `UPDATE usuario SET nombre = ?, apellido = ?, tipo_documento = COALESCE(?, tipo_documento), telefono = ?, correo = ?,
                           direccion = ?, ciudad = ?, fecha_nacimiento = ?
        WHERE id_usuario = ?`,
       [
         nombre.trim(),
         apellido.trim(),
+        tipo_documento || null,
         telefono.trim(),
         correo.trim(),
         direccion ? direccion.trim() : null,
@@ -103,7 +108,7 @@ router.put("/perfil/:id", async (req, res) => {
   } catch (error) {
     console.error("Error en PUT /api/perfil/:id:", error);
     if (error.code === "ER_DUP_ENTRY") {
-      return res.status(409).json({ mensaje: "Ya existe una cuenta con ese correo" });
+      return res.status(409).json({ mensaje: "Ya existe una cuenta con ese correo o documento" });
     }
     res.status(500).json({ mensaje: "Error al actualizar el perfil" });
   }
