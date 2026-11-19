@@ -40,12 +40,19 @@
   }
 
   function obtenerUsuarioActual() {
-    if (window.SesionUsuario && typeof window.SesionUsuario.obtener === "function") {
-      return window.SesionUsuario.obtener();
+    if (window.Sesion && typeof window.Sesion.estaLogueado === "function") {
+      return window.Sesion.estaLogueado() ? window.Sesion.usuario() : null;
     }
+
+    const usuarioGuardado =
+      localStorage.getItem("usuarioLogueado") ||
+      localStorage.getItem("bv_usuario") ||
+      sessionStorage.getItem("bv_usuario");
+    if (!usuarioGuardado) return null;
+
     try {
-      const u = localStorage.getItem("usuario");
-      return u ? JSON.parse(u) : null;
+      const usuario = JSON.parse(usuarioGuardado);
+      return usuario && typeof usuario === "object" ? usuario : null;
     } catch {
       return null;
     }
@@ -225,25 +232,26 @@
             hora_cita: hora,
             motivo,
             observaciones,
-            id_cliente: usuarioActivo.id_usuario,
-            estado: "Programada"
           });
 
           formCita.hidden = true;
           if (confirmacionCita) {
             confirmacionCita.hidden = false;
             if (resumenCita) {
-              resumenCita.innerHTML = `
-                Cita programada para el <strong>${fecha}</strong> a las <strong>${hora}</strong>.<br>
-                Motivo: <em>${motivo}</em>
-              `;
+              resumenCita.textContent = `Cita programada para el ${fecha} a las ${hora}. Motivo: ${motivo}. Registro de cita: #${res.id_cita}.`;
             }
           }
         } catch (err) {
           console.error("Error al agendar cita:", err);
           mostrarError(err.message || "Ocurrió un error al agendar la cita. Por favor intenta de nuevo.");
-          btnAgendar.disabled = false;
-          btnAgendar.textContent = "Agendar cita";
+          if (err.estado === 401) {
+            if (avisoLogin) avisoLogin.hidden = false;
+            btnAgendar.disabled = true;
+            btnAgendar.title = "Tu sesión expiró. Inicia sesión nuevamente para agendar.";
+          } else {
+            btnAgendar.disabled = false;
+            btnAgendar.textContent = "Confirmar mi cita";
+          }
         }
       });
     }
