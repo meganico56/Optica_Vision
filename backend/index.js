@@ -18,6 +18,7 @@ const DIRECTORIO_IMAGENES_PRODUCTOS = path.join(
   "productos",
 );
 const IMAGEN_PRODUCTO_PREDETERMINADA = "gafas-modelo1.png";
+const CORREO_VALIDO = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 const app = express();
 
@@ -1018,11 +1019,15 @@ app.put("/api/horarios/atencion", verificarAdministrador, async (req, res) => {
 // Ruta de autenticación / Login
 app.post("/api/login", async (req, res) => {
   const { correo, contrasena } = req.body;
+  const correoNormalizado = typeof correo === "string" ? correo.trim() : "";
 
-  if (!correo || !contrasena) {
+  if (!correoNormalizado || !contrasena) {
     return res
       .status(400)
       .json({ mensaje: "Por favor ingresa correo y contraseña" });
+  }
+  if (!CORREO_VALIDO.test(correoNormalizado)) {
+    return res.status(400).json({ mensaje: "Ingresa un correo electrónico válido" });
   }
 
   try {
@@ -1033,7 +1038,7 @@ app.post("/api/login", async (req, res) => {
     // 1. Buscar usuario solo por correo (la contraseña está hasheada con bcrypt)
     const [usuarios] = await db.query(
       "SELECT u.*, r.nombre_rol AS rol FROM usuario u LEFT JOIN rol r ON u.id_rol = r.id_rol WHERE u.correo = ?",
-      [correo],
+      [correoNormalizado],
     );
 
     if (usuarios.length === 0) {
@@ -1124,6 +1129,7 @@ app.post("/api/registro", async (req, res) => {
     fecha_nacimiento,
     contrasena,
   } = req.body;
+  const correoNormalizado = typeof correo === "string" ? correo.trim() : "";
 
   if (
     !nombre ||
@@ -1131,13 +1137,17 @@ app.post("/api/registro", async (req, res) => {
     !tipo_documento ||
     !num_documento ||
     !telefono ||
-    !correo ||
+    !correoNormalizado ||
     !fecha_nacimiento ||
     !contrasena
   ) {
     return res
       .status(400)
       .json({ mensaje: "Todos los campos obligatorios deben estar completos" });
+  }
+
+  if (!CORREO_VALIDO.test(correoNormalizado)) {
+    return res.status(400).json({ mensaje: "Ingresa un correo electrónico válido" });
   }
 
   if (!TIPOS_DOCUMENTO.includes(tipo_documento)) {
@@ -1150,11 +1160,38 @@ app.post("/api/registro", async (req, res) => {
       .json({ mensaje: "La contraseña debe tener al menos 8 caracteres" });
   }
 
+  const fechaNacimientoPartes =
+    typeof fecha_nacimiento === "string"
+      ? /^(\d{4})-(\d{2})-(\d{2})$/.exec(fecha_nacimiento)
+      : null;
+  const fechaNacimientoValidada = fechaNacimientoPartes
+    ? new Date(Date.UTC(
+        Number(fechaNacimientoPartes[1]),
+        Number(fechaNacimientoPartes[2]) - 1,
+        Number(fechaNacimientoPartes[3]),
+      ))
+    : null;
+  const fechaNacimientoEsValida =
+    fechaNacimientoValidada &&
+    fechaNacimientoValidada.toISOString().slice(0, 10) === fecha_nacimiento;
+  const ahora = new Date();
+  const fechaLimiteNacimiento = new Date(Date.UTC(
+    ahora.getFullYear() - 10,
+    ahora.getMonth(),
+    ahora.getDate() - 1,
+  )).toISOString().slice(0, 10);
+
+  if (!fechaNacimientoEsValida || fecha_nacimiento > fechaLimiteNacimiento) {
+    return res.status(400).json({
+      mensaje: "Debes ser mayor de 10 años para crear una cuenta",
+    });
+  }
+
   try {
     // Verificar que no exista otro usuario con ese correo o documento
     const [existentes] = await db.query(
       "SELECT id_usuario FROM usuario WHERE correo = ? OR (tipo_documento = ? AND num_documento = ?)",
-      [correo, tipo_documento, num_documento],
+      [correoNormalizado, tipo_documento, num_documento],
     );
     if (existentes.length > 0) {
       return res.status(409).json({
@@ -1184,7 +1221,7 @@ app.post("/api/registro", async (req, res) => {
         tipo_documento,
         num_documento,
         telefono,
-        correo,
+        correoNormalizado,
         direccion || null,
         ciudad || null,
         fecha_nacimiento,

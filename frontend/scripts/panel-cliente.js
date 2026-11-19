@@ -81,9 +81,9 @@
         if ($('profileCiudad')) $('profileCiudad').value = p.ciudad || '';
 
         const inicial = (p.nombre || '?').charAt(0).toUpperCase();
-        if ($('userName')) $('userName').textContent = p.nombre || '';
+        if ($('userName')) $('userName').textContent = p.correo || '';
         if ($('userAvatar')) pintarAvatar($('userAvatar'), inicial, p.foto_perfil);
-        if ($('adminName')) $('adminName').textContent = [p.nombre, p.apellido].filter(Boolean).join(' ');
+        if ($('adminName')) $('adminName').textContent = p.correo || '';
         if ($('adminAvatar')) pintarAvatar($('adminAvatar'), inicial, p.foto_perfil);
         if ($('adminRol')) $('adminRol').textContent = p.rol || 'Cliente';
         if ($('profileAvatarLarge')) pintarAvatar($('profileAvatarLarge'), inicial, p.foto_perfil);
