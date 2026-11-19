@@ -856,6 +856,8 @@ app.post("/api/citas", verificarSesion, async (req, res) => {
 
 const TIEMPO_INACTIVIDAD = 15 * 60 * 1000;
 
+let ultimaActividadServidor = 0;
+
 let tablaSesionesPromise;
 async function asegurarTablaSesiones() {
   if (!tablaSesionesPromise) {
@@ -951,6 +953,11 @@ async function verificarSesion(req, res, next) {
     });
   }
 }
+
+// Registrar actividad de la sesión
+app.post("/api/sesion/actividad", verificarSesion, (req, res) => {
+  res.json({ mensaje: "Actividad registrada correctamente" });
+});
 
 function verificarAdministrador(req, res, next) {
   verificarSesion(req, res, () => {

@@ -108,9 +108,38 @@
     // ---------- Control de inactividad: 15 minutos ----------
     const TIEMPO_INACTIVIDAD = 15 * 60 * 1000;
     let temporizadorInactividad;
+    let ultimaActividadServidor = 0;
+
+    async function registrarActividadServidor() {
+    const token = Sesion.token();
+
+    if (!token) return;
+
+    const ahora = Date.now();
+
+    if (ahora - ultimaActividadServidor < 60000) return;
+
+    ultimaActividadServidor = ahora;
+
+    try {
+        const respuesta = await fetch("/api/sesion/actividad", {
+        method: "POST",
+        headers: {
+            Authorization: `Bearer ${token}`,
+        },
+        });
+
+        if (respuesta.status === 401 || respuesta.status === 403) {
+        window.dispatchEvent(new Event("bv:sesion-expirada"));
+        }
+    } catch (error) {
+        console.error("Error al registrar actividad:", error);
+    }
+    }
 
     function reiniciarTemporizador() {
         if (!Sesion.estaLogueado()) return;
+        registrarActividadServidor();
 
         clearTimeout(temporizadorInactividad);
 
