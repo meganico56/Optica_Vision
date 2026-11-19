@@ -15,11 +15,6 @@
   let bloqueosCargados = false;
   let fechaMaxima = "";
 
-  const HORARIOS_DISPONIBLES = [
-    "08:00", "08:30", "09:00", "09:30", "10:00", "10:30", "11:00", "11:30",
-    "14:00", "14:30", "15:00", "15:30", "16:00", "16:30", "17:00", "17:30"
-  ];
-
   function mostrarError(msg) {
     if (errorBox) {
       errorBox.textContent = msg;
@@ -40,12 +35,19 @@
   }
 
   function obtenerUsuarioActual() {
-    if (window.SesionUsuario && typeof window.SesionUsuario.obtener === "function") {
-      return window.SesionUsuario.obtener();
+    if (window.Sesion && typeof window.Sesion.estaLogueado === "function") {
+      return window.Sesion.estaLogueado() ? window.Sesion.usuario() : null;
     }
+
+    const usuarioGuardado =
+      localStorage.getItem("usuarioLogueado") ||
+      localStorage.getItem("bv_usuario") ||
+      sessionStorage.getItem("bv_usuario");
+    if (!usuarioGuardado) return null;
+
     try {
-      const u = localStorage.getItem("usuario");
-      return u ? JSON.parse(u) : null;
+      const usuario = JSON.parse(usuarioGuardado);
+      return usuario && typeof usuario === "object" ? usuario : null;
     } catch {
       return null;
     }
@@ -66,19 +68,22 @@
     });
   }
 
-  function poblarHoras() {
+  function poblarHoras(horarios) {
     if (!horaSelect) return;
     horaSelect.innerHTML = '<option value="" disabled selected>Selecciona una hora</option>';
-    HORARIOS_DISPONIBLES.forEach(h => {
+    horarios.forEach(h => {
       const opt = document.createElement("option");
       opt.value = h;
       opt.textContent = `${h} hrs`;
       horaSelect.appendChild(opt);
     });
-    horaSelect.disabled = false;
+    horaSelect.disabled = horarios.length === 0;
+    if (horarios.length === 0) {
+      horaSelect.innerHTML = '<option value="" selected>No hay horarios disponibles para esta fecha</option>';
+    }
   }
 
-  function validarFechaSeleccionada(seleccion) {
+  async function validarFechaSeleccionada(seleccion) {
     if (!horaSelect) return;
     ocultarError();
     if (!seleccion) {
@@ -117,7 +122,22 @@
       return;
     }
 
-    poblarHoras();
+    horaSelect.disabled = true;
+    horaSelect.innerHTML = '<option value="" selected>Cargando horarios disponibles...</option>';
+    try {
+      const disponibilidad = await Api.get("/api/horarios/disponibles", { fecha: seleccion });
+      if (!disponibilidad || !Array.isArray(disponibilidad.horarios)) {
+        throw new Error("La respuesta de horarios disponibles no es válida.");
+      }
+      if (fechaInput.value !== seleccion) return;
+      poblarHoras(disponibilidad.horarios);
+    } catch (error) {
+      console.error("No se pudieron consultar los horarios disponibles:", error);
+      if (fechaInput.value !== seleccion) return;
+      mostrarError(error.message || "No se pudieron consultar los horarios. Intenta nuevamente.");
+      horaSelect.innerHTML = '<option value="" selected>No se pudieron cargar los horarios</option>';
+      horaSelect.disabled = true;
+    }
   }
 
   function inicializarCalendarioCliente() {
@@ -225,25 +245,29 @@
             hora_cita: hora,
             motivo,
             observaciones,
-            id_cliente: usuarioActivo.id_usuario,
-            estado: "Programada"
           });
 
           formCita.hidden = true;
           if (confirmacionCita) {
             confirmacionCita.hidden = false;
             if (resumenCita) {
-              resumenCita.innerHTML = `
-                Cita programada para el <strong>${fecha}</strong> a las <strong>${hora}</strong>.<br>
-                Motivo: <em>${motivo}</em>
-              `;
+              resumenCita.textContent = `Cita programada para el ${fecha} a las ${hora}. Motivo: ${motivo}. Registro de cita: #${res.id_cita}.`;
             }
           }
         } catch (err) {
           console.error("Error al agendar cita:", err);
+          if (err.estado === 409) {
+            await validarFechaSeleccionada(fecha);
+          }
           mostrarError(err.message || "Ocurrió un error al agendar la cita. Por favor intenta de nuevo.");
-          btnAgendar.disabled = false;
-          btnAgendar.textContent = "Agendar cita";
+          if (err.estado === 401) {
+            if (avisoLogin) avisoLogin.hidden = false;
+            btnAgendar.disabled = true;
+            btnAgendar.title = "Tu sesión expiró. Inicia sesión nuevamente para agendar.";
+          } else {
+            btnAgendar.disabled = false;
+            btnAgendar.textContent = "Confirmar mi cita";
+          }
         }
       });
     }

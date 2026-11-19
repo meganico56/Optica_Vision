@@ -18,6 +18,7 @@ const DIRECTORIO_IMAGENES_PRODUCTOS = path.join(
   "productos",
 );
 const IMAGEN_PRODUCTO_PREDETERMINADA = "gafas-modelo1.png";
+const CORREO_VALIDO = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 const app = express();
 
@@ -148,13 +149,127 @@ function responderError(res, e) {
   res.status(500).json({ error: e.message });
 }
 
-// ¿El cliente ya tiene una cita activa en ese horario exacto?
-async function clienteTieneCita(idCliente, fechaHora) {
+const HORARIOS_ATENCION_PREDETERMINADOS = [
+  "08:00", "08:30", "09:00", "09:30", "10:00", "10:30", "11:00", "11:30",
+  "14:00", "14:30", "15:00", "15:30", "16:00", "16:30", "17:00", "17:30",
+];
+
+let horariosAtencionPromise;
+async function asegurarTablaHorariosAtencion() {
+  if (!horariosAtencionPromise) {
+    horariosAtencionPromise = (async () => {
+      await db.query(`
+        CREATE TABLE IF NOT EXISTS horarios_atencion (
+          id TINYINT NOT NULL PRIMARY KEY,
+          horarios TEXT NOT NULL
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
+      `);
+      await db.query(
+        `INSERT INTO horarios_atencion (id, horarios) VALUES (1, ?)
+         ON DUPLICATE KEY UPDATE id = id`,
+        [JSON.stringify(HORARIOS_ATENCION_PREDETERMINADOS)],
+      );
+    })().catch((error) => {
+      horariosAtencionPromise = null;
+      throw error;
+    });
+  }
+  await horariosAtencionPromise;
+}
+
+async function obtenerHorariosAtencion() {
+  await asegurarTablaHorariosAtencion();
   const [filas] = await db.query(
-    "SELECT id_cita FROM cita WHERE id_cliente = ? AND fecha_hora = ? AND estado NOT IN ('Cancelada', 'No asistio') LIMIT 1",
-    [idCliente, fechaHora],
+    "SELECT horarios FROM horarios_atencion WHERE id = 1",
   );
-  return filas.length > 0;
+  const horarios = JSON.parse(filas[0].horarios);
+  if (!Array.isArray(horarios)) {
+    throw new Error("La configuración de horarios de atención no es válida.");
+  }
+  return horarios;
+}
+
+function fechaISOValida(fecha) {
+  if (typeof fecha !== "string" || !/^\d{4}-\d{2}-\d{2}$/.test(fecha)) {
+    return false;
+  }
+  const [year, month, day] = fecha.split("-").map(Number);
+  const fechaValidada = new Date(year, month - 1, day);
+  return fechaValidada.getFullYear() === year &&
+    fechaValidada.getMonth() === month - 1 &&
+    fechaValidada.getDate() === day;
+}
+
+async function obtenerHorariosDisponibles(fecha) {
+  const configurados = await obtenerHorariosAtencion();
+  const [citas] = await db.query(
+    `SELECT TIME_FORMAT(fecha_hora, '%H:%i') AS hora, duracion_minutos
+     FROM cita
+     WHERE fecha_hora >= ? AND fecha_hora < DATE_ADD(?, INTERVAL 1 DAY)
+       AND estado NOT IN ('Cancelada', 'No asistio', 'Completada')`,
+    [`${fecha} 00:00:00`, `${fecha} 00:00:00`],
+  );
+  const minutosOcupados = citas.map((cita) => {
+    const [hora, minuto] = cita.hora.split(":").map(Number);
+    return {
+      inicio: hora * 60 + minuto,
+      fin: hora * 60 + minuto + Number(cita.duracion_minutos || 30),
+    };
+  });
+
+  return configurados.filter((hora) => {
+    const [horas, minutos] = hora.split(":").map(Number);
+    const inicio = horas * 60 + minutos;
+    const fin = inicio + 30;
+    return !minutosOcupados.some((cita) => inicio < cita.fin && fin > cita.inicio);
+  });
+}
+
+async function conHorarioReservado(fechaHora, operacion, excluirCitaId) {
+  const partesFechaHora =
+    typeof fechaHora === "string"
+      ? /^(\d{4}-\d{2}-\d{2})[ T]((?:[01]\d|2[0-3]):[0-5]\d)(?::([0-5]\d))?$/.exec(fechaHora)
+      : null;
+  if (!partesFechaHora || !fechaISOValida(partesFechaHora[1])) {
+    throw errorHttp(400, "La fecha y hora de la cita no son válidas.");
+  }
+  const fecha = partesFechaHora[1];
+  const fechaHoraNormalizada = `${fecha} ${partesFechaHora[2]}:${partesFechaHora[3] || "00"}`;
+  const nombreBloqueo = `cita-dia:${crypto.createHash("sha256").update(fecha).digest("hex").slice(0, 48)}`;
+  const conexion = await db.getConnection();
+  let bloqueoAdquirido = false;
+  try {
+    const [filasBloqueo] = await conexion.query(
+      "SELECT GET_LOCK(?, 10) AS adquirido",
+      [nombreBloqueo],
+    );
+    if (Number(filasBloqueo[0].adquirido) !== 1) {
+      throw errorHttp(503, "No se pudo confirmar el horario. Inténtalo nuevamente.");
+    }
+    bloqueoAdquirido = true;
+
+    const [citas] = await conexion.query(
+      `SELECT id_cita FROM cita
+       WHERE estado NOT IN ('Cancelada', 'No asistio', 'Completada')
+         AND fecha_hora < DATE_ADD(?, INTERVAL 30 MINUTE)
+         AND DATE_ADD(fecha_hora, INTERVAL duracion_minutos MINUTE) > ?
+         AND id_cita <> COALESCE(?, 0)
+       LIMIT 1`,
+      [fechaHoraNormalizada, fechaHoraNormalizada, excluirCitaId || null],
+    );
+    if (citas.length > 0) {
+      throw errorHttp(409, "Ese horario acaba de ser reservado. Selecciona otro horario disponible.");
+    }
+    return await operacion(conexion, fechaHoraNormalizada);
+  } finally {
+    try {
+      if (bloqueoAdquirido) {
+        await conexion.query("SELECT RELEASE_LOCK(?)", [nombreBloqueo]);
+      }
+    } finally {
+      conexion.release();
+    }
+  }
 }
 
 // Mueve el inventario de una venta y deja la huella en movimiento_inventario.
@@ -630,25 +745,74 @@ app.get("/api/productos/:id", async (req, res) => {
 });
 
 // Ruta para agendar cita desde la web (Tabla cita)
-// Acepta fecha_cita + hora_cita (o fecha_hora) y el cliente como id_cliente o id_usuario
-app.post("/api/citas", async (req, res) => {
-  const clienteId = req.body.id_cliente || req.body.id_usuario;
-  const { fecha_cita, hora_cita, motivo, estado } = req.body;
+// El cliente se obtiene de la sesión verificada, nunca del cuerpo de la solicitud.
+app.post("/api/citas", verificarSesion, async (req, res) => {
+  const clienteId = req.usuario.id_usuario;
+  const { fecha_cita, hora_cita } = req.body;
+  const motivo =
+    typeof req.body.motivo === "string" ? req.body.motivo.trim() : "";
+  const observaciones =
+    typeof req.body.observaciones === "string"
+      ? req.body.observaciones.trim()
+      : "";
 
-  let fechaHora = req.body.fecha_hora;
-  if (!fechaHora && fecha_cita && hora_cita) {
-    fechaHora = `${fecha_cita} ${hora_cita.length === 5 ? hora_cita + ":00" : hora_cita}`;
+  let fechaHora =
+    typeof req.body.fecha_hora === "string" ? req.body.fecha_hora.trim() : "";
+  if (!fechaHora && typeof fecha_cita === "string" && typeof hora_cita === "string") {
+    fechaHora = `${fecha_cita.trim()} ${hora_cita.trim()}`;
   }
 
-  if (!fechaHora) {
+  const fechaHoraParts =
+    /^(\d{4}-\d{2}-\d{2})[ T](\d{2}:\d{2})(?::(\d{2}))?$/.exec(fechaHora);
+  if (!fechaHoraParts) {
     return res
       .status(400)
-      .json({ error: "La fecha y la hora de la cita son obligatorias" });
+      .json({ error: "La fecha y la hora de la cita no son válidas" });
   }
-  if (!clienteId) {
+
+  fechaHora = `${fechaHoraParts[1]} ${fechaHoraParts[2]}:${fechaHoraParts[3] || "00"}`;
+  const [year, month, day] = fechaHoraParts[1].split("-").map(Number);
+  const [hour, minute, second] = fechaHoraParts[2].split(":").map(Number);
+  const fechaValidada = new Date(year, month - 1, day, hour, minute, Number(fechaHoraParts[3] || 0));
+  if (
+    fechaValidada.getFullYear() !== year ||
+    fechaValidada.getMonth() !== month - 1 ||
+    fechaValidada.getDate() !== day ||
+    fechaValidada.getHours() !== hour ||
+    fechaValidada.getMinutes() !== minute ||
+    fechaValidada.getSeconds() !== Number(fechaHoraParts[3] || 0)
+  ) {
     return res
       .status(400)
-      .json({ error: "Debes iniciar sesión para agendar una cita" });
+      .json({ error: "La fecha y la hora de la cita no son válidas" });
+  }
+  if (fechaValidada.getDay() === 0) {
+    return res
+      .status(400)
+      .json({ error: "Los domingos la óptica permanece cerrada" });
+  }
+
+  if (!motivo || motivo.length > 150) {
+    return res
+      .status(400)
+      .json({ error: "El motivo de la cita es obligatorio y no debe superar 150 caracteres" });
+  }
+  if (observaciones.length > 255) {
+    return res
+      .status(400)
+      .json({ error: "Las observaciones no deben superar 255 caracteres" });
+  }
+
+  const ahora = new Date();
+  const pad = (valor) => String(valor).padStart(2, "0");
+  const fechaActual = `${ahora.getFullYear()}-${pad(ahora.getMonth() + 1)}-${pad(ahora.getDate())}`;
+  const fechaMaxima = new Date();
+  fechaMaxima.setMonth(fechaMaxima.getMonth() + 3);
+  const fechaMaximaTexto = `${fechaMaxima.getFullYear()}-${pad(fechaMaxima.getMonth() + 1)}-${pad(fechaMaxima.getDate())}`;
+  if (fechaHoraParts[1] < fechaActual || fechaHoraParts[1] > fechaMaximaTexto) {
+    return res
+      .status(400)
+      .json({ error: "Solo puedes agendar citas desde hoy y hasta tres meses adelante" });
   }
 
   try {
@@ -659,25 +823,30 @@ app.post("/api/citas", async (req, res) => {
         .json({ error: `La fecha seleccionada no está disponible para citas: ${bloqueo.motivo}` });
     }
 
-    if (await clienteTieneCita(clienteId, fechaHora)) {
-      return res
-        .status(409)
-        .json({ error: "Ya tienes una cita en ese horario" });
+    const horarios = await obtenerHorariosAtencion();
+    if (!horarios.includes(fechaHoraParts[2])) {
+      return res.status(400).json({
+        error: "El horario seleccionado ya no está disponible. Selecciona otro horario.",
+      });
     }
 
-    const estadoFinal = ESTADOS_CITA.includes(estado) ? estado : "Programada";
-    const [resultado] = await db.query(
-      `INSERT INTO cita (fecha_hora, motivo, canal, estado, id_cliente)
-       VALUES (?, ?, 'Web', ?, ?)`,
-      [fechaHora, motivo || "Examen visual", estadoFinal, clienteId],
+    const resultado = await conHorarioReservado(fechaHora, (conexion) =>
+      conexion.query(
+        `INSERT INTO cita (fecha_hora, duracion_minutos, motivo, canal, estado, observaciones, id_cliente)
+         VALUES (?, 30, ?, 'Web', 'Programada', ?, ?)`,
+        [fechaHora, motivo, observaciones || null, clienteId],
+      ),
     );
 
     res.status(201).json({
       mensaje: "Cita agendada con éxito",
-      id_cita: resultado.insertId,
+      id_cita: resultado[0].insertId,
     });
   } catch (error) {
     console.error("Error al agendar cita:", error);
+    if (error.status) {
+      return res.status(error.status).json({ error: error.message, mensaje: error.message });
+    }
     if (error.code === "ER_NO_REFERENCED_ROW_2") {
       return res.status(400).json({ error: "El cliente indicado no existe" });
     }
@@ -688,19 +857,26 @@ app.post("/api/citas", async (req, res) => {
 
 const TIEMPO_INACTIVIDAD = 15 * 60 * 1000;
 
+let tablaSesionesPromise;
 async function asegurarTablaSesiones() {
-  await db.query (
-    `CREATE TABLE IF NOT EXISTS sesion_usuario(
-    id_sesion INT AUTO_INCREMENT PRIMARY KEY,
-    id_usuario INT NOT NULL,
-    token_hash CHAR(64) NOT NULL UNIQUE,
-    fecha_inicio TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    ultima_actividad TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    fecha_expiracion TIMESTAMP NOT NULL,
-    INDEX idx_sesion_usuario (id_usuario),
-    INDEX idx_sesion_expiracion (fecha_expiracion)
-    ) ENGINE= InnoDB DEFAULT CHARSET=utf8mb4`
-  );
+  if (!tablaSesionesPromise) {
+    tablaSesionesPromise = db.query(
+      `CREATE TABLE IF NOT EXISTS sesion_usuario(
+      id_sesion INT AUTO_INCREMENT PRIMARY KEY,
+      id_usuario INT NOT NULL,
+      token_hash CHAR(64) NOT NULL UNIQUE,
+      fecha_inicio TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+      ultima_actividad TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+      fecha_expiracion TIMESTAMP NOT NULL,
+      INDEX idx_sesion_usuario (id_usuario),
+      INDEX idx_sesion_expiracion (fecha_expiracion)
+      ) ENGINE= InnoDB DEFAULT CHARSET=utf8mb4`
+    ).catch((error) => {
+      tablaSesionesPromise = null;
+      throw error;
+    });
+  }
+  await tablaSesionesPromise;
 }
 
 
@@ -722,10 +898,12 @@ async function verificarSesion(req, res, next) {
     .digest("hex");
 
   try {
+    await asegurarTablaSesiones();
     const [sesiones] = await db.query(
-      `SELECT s.id_sesion, s.id_usuario, u.estado
+      `SELECT s.id_sesion, s.id_usuario, u.estado, r.nombre_rol AS rol
        FROM sesion_usuario s
        INNER JOIN usuario u ON s.id_usuario = u.id_usuario
+       LEFT JOIN rol r ON u.id_rol = r.id_rol
        WHERE s.token_hash = ?
        AND s.fecha_expiracion > NOW()
        LIMIT 1`,
@@ -762,6 +940,7 @@ async function verificarSesion(req, res, next) {
 
     req.usuario = {
       id_usuario: sesion.id_usuario,
+      rol: sesion.rol,
     };
 
     next();
@@ -774,17 +953,81 @@ async function verificarSesion(req, res, next) {
   }
 }
 
+function verificarAdministrador(req, res, next) {
+  verificarSesion(req, res, () => {
+    if (req.usuario.rol !== "Administrador") {
+      return res.status(403).json({ mensaje: "Solo un administrador puede modificar los horarios de atención." });
+    }
+    next();
+  });
+}
 
+app.get("/api/horarios/disponibles", async (req, res) => {
+  const { fecha } = req.query;
+  if (!fechaISOValida(fecha)) {
+    return res.status(400).json({ error: "Debe especificar una fecha válida (YYYY-MM-DD)" });
+  }
+  try {
+    if (new Date(`${fecha}T00:00:00`).getDay() === 0 || await fechaEstaBloqueada(fecha)) {
+      return res.json({ horarios: [] });
+    }
+    res.json({ horarios: await obtenerHorariosDisponibles(fecha) });
+  } catch (error) {
+    console.error("Error al consultar horarios disponibles:", error);
+    res.status(500).json({ error: "Error al consultar los horarios disponibles" });
+  }
+});
 
+app.get("/api/horarios/atencion", verificarAdministrador, async (req, res) => {
+  try {
+    res.json({ horarios: await obtenerHorariosAtencion() });
+  } catch (error) {
+    console.error("Error al obtener horarios de atención:", error);
+    res.status(500).json({ error: "Error al obtener los horarios de atención" });
+  }
+});
+
+app.put("/api/horarios/atencion", verificarAdministrador, async (req, res) => {
+  const horarios = req.body && req.body.horarios;
+  const formatoHora = /^(?:[01]\d|2[0-3]):(?:00|30)$/;
+  if (
+    !Array.isArray(horarios) ||
+    horarios.length === 0 ||
+    horarios.length > 48 ||
+    horarios.some((hora) => typeof hora !== "string" || !formatoHora.test(hora)) ||
+    new Set(horarios).size !== horarios.length
+  ) {
+    return res.status(400).json({
+      error: "Configura al menos un horario válido, sin duplicados y en intervalos de 30 minutos.",
+    });
+  }
+
+  const horariosOrdenados = [...horarios].sort();
+  try {
+    await asegurarTablaHorariosAtencion();
+    await db.query(
+      "UPDATE horarios_atencion SET horarios = ? WHERE id = 1",
+      [JSON.stringify(horariosOrdenados)],
+    );
+    res.json({ mensaje: "Horarios de atención actualizados", horarios: horariosOrdenados });
+  } catch (error) {
+    console.error("Error al guardar horarios de atención:", error);
+    res.status(500).json({ error: "Error al guardar los horarios de atención" });
+  }
+});
 
 // Ruta de autenticación / Login
 app.post("/api/login", async (req, res) => {
   const { correo, contrasena } = req.body;
+  const correoNormalizado = typeof correo === "string" ? correo.trim() : "";
 
-  if (!correo || !contrasena) {
+  if (!correoNormalizado || !contrasena) {
     return res
       .status(400)
       .json({ mensaje: "Por favor ingresa correo y contraseña" });
+  }
+  if (!CORREO_VALIDO.test(correoNormalizado)) {
+    return res.status(400).json({ mensaje: "Ingresa un correo electrónico válido" });
   }
 
   try {
@@ -795,7 +1038,7 @@ app.post("/api/login", async (req, res) => {
     // 1. Buscar usuario solo por correo (la contraseña está hasheada con bcrypt)
     const [usuarios] = await db.query(
       "SELECT u.*, r.nombre_rol AS rol FROM usuario u LEFT JOIN rol r ON u.id_rol = r.id_rol WHERE u.correo = ?",
-      [correo],
+      [correoNormalizado],
     );
 
     if (usuarios.length === 0) {
@@ -886,6 +1129,7 @@ app.post("/api/registro", async (req, res) => {
     fecha_nacimiento,
     contrasena,
   } = req.body;
+  const correoNormalizado = typeof correo === "string" ? correo.trim() : "";
 
   if (
     !nombre ||
@@ -893,13 +1137,17 @@ app.post("/api/registro", async (req, res) => {
     !tipo_documento ||
     !num_documento ||
     !telefono ||
-    !correo ||
+    !correoNormalizado ||
     !fecha_nacimiento ||
     !contrasena
   ) {
     return res
       .status(400)
       .json({ mensaje: "Todos los campos obligatorios deben estar completos" });
+  }
+
+  if (!CORREO_VALIDO.test(correoNormalizado)) {
+    return res.status(400).json({ mensaje: "Ingresa un correo electrónico válido" });
   }
 
   if (!TIPOS_DOCUMENTO.includes(tipo_documento)) {
@@ -912,11 +1160,38 @@ app.post("/api/registro", async (req, res) => {
       .json({ mensaje: "La contraseña debe tener al menos 8 caracteres" });
   }
 
+  const fechaNacimientoPartes =
+    typeof fecha_nacimiento === "string"
+      ? /^(\d{4})-(\d{2})-(\d{2})$/.exec(fecha_nacimiento)
+      : null;
+  const fechaNacimientoValidada = fechaNacimientoPartes
+    ? new Date(Date.UTC(
+        Number(fechaNacimientoPartes[1]),
+        Number(fechaNacimientoPartes[2]) - 1,
+        Number(fechaNacimientoPartes[3]),
+      ))
+    : null;
+  const fechaNacimientoEsValida =
+    fechaNacimientoValidada &&
+    fechaNacimientoValidada.toISOString().slice(0, 10) === fecha_nacimiento;
+  const ahora = new Date();
+  const fechaLimiteNacimiento = new Date(Date.UTC(
+    ahora.getFullYear() - 10,
+    ahora.getMonth(),
+    ahora.getDate() - 1,
+  )).toISOString().slice(0, 10);
+
+  if (!fechaNacimientoEsValida || fecha_nacimiento > fechaLimiteNacimiento) {
+    return res.status(400).json({
+      mensaje: "Debes ser mayor de 10 años para crear una cuenta",
+    });
+  }
+
   try {
     // Verificar que no exista otro usuario con ese correo o documento
     const [existentes] = await db.query(
       "SELECT id_usuario FROM usuario WHERE correo = ? OR (tipo_documento = ? AND num_documento = ?)",
-      [correo, tipo_documento, num_documento],
+      [correoNormalizado, tipo_documento, num_documento],
     );
     if (existentes.length > 0) {
       return res.status(409).json({
@@ -946,7 +1221,7 @@ app.post("/api/registro", async (req, res) => {
         tipo_documento,
         num_documento,
         telefono,
-        correo,
+        correoNormalizado,
         direccion || null,
         ciudad || null,
         fecha_nacimiento,
@@ -1670,7 +1945,7 @@ app.delete("/api/compras/:id", async (req, res) => {
 app.get("/api/citas", async (req, res) => {
   const { id_cliente } = req.query;
   try {
-    let sql = `SELECT c.id_cita, c.fecha_hora, c.motivo, c.estado, c.observaciones,
+    let sql = `SELECT c.id_cita, c.fecha_hora, c.motivo, c.estado, c.observaciones, c.canal,
                CONCAT(cl.nombre,' ',cl.apellido) AS cliente,
                CONCAT(at.nombre,' ',at.apellido) AS atiende,
                c.id_cliente, c.id_usuario_atiende
@@ -1712,32 +1987,34 @@ app.post("/api/citas-admin", async (req, res) => {
         mensaje: `La fecha seleccionada está bloqueada en el calendario: "${bloqueo.motivo}"`,
       });
     }
-    if (await clienteTieneCita(id_cliente, fecha_hora)) {
-      return res.status(409).json({
-        mensaje: "El cliente ya tiene una cita asignada en ese horario exacto",
-      });
-    }
     if (estado && !ESTADOS_CITA.includes(estado)) {
       return res.status(400).json({ mensaje: "Estado de cita no válido" });
     }
     const atiende = id_usuario_atiende || id_cliente;
-    const [r] = await db.query(
-      `INSERT INTO cita (fecha_hora, duracion_minutos, motivo, estado, observaciones, id_cliente, id_usuario_atiende)
-       VALUES (?, ?, ?, ?, ?, ?, ?)`,
-      [
-        fecha_hora,
-        duracion_minutos || 30,
-        motivo,
-        estado || "Programada",
-        observaciones || null,
-        id_cliente,
-        atiende,
-      ],
-    );
+    const crearCita = (conexion, fechaHoraNormalizada = fecha_hora) =>
+      conexion.query(
+        `INSERT INTO cita (fecha_hora, duracion_minutos, motivo, estado, observaciones, id_cliente, id_usuario_atiende)
+         VALUES (?, ?, ?, ?, ?, ?, ?)`,
+        [
+          fechaHoraNormalizada,
+          duracion_minutos || 30,
+          motivo,
+          estado || "Programada",
+          observaciones || null,
+          id_cliente,
+          atiende,
+        ],
+      );
+    const [r] = ["Cancelada", "No asistio", "Completada"].includes(estado)
+      ? await crearCita(db)
+      : await conHorarioReservado(fecha_hora, crearCita);
     res
       .status(201)
       .json({ mensaje: "Cita programada con éxito", id_cita: r.insertId });
   } catch (e) {
+    if (e.status) {
+      return res.status(e.status).json({ mensaje: e.message, error: e.message });
+    }
     if (e.code === "ER_DUP_ENTRY") {
       return res.status(409).json({
         mensaje: "El cliente ya tiene una cita asignada en ese horario exacto",
@@ -1754,20 +2031,40 @@ app.put("/api/citas/:id", async (req, res) => {
     return res.status(400).json({ mensaje: "Estado de cita no válido" });
   }
   try {
-    if (fecha_hora) {
-      const bloqueo = await fechaEstaBloqueada(fecha_hora);
+    const [citasActuales] = await db.query(
+      `SELECT DATE_FORMAT(fecha_hora, '%Y-%m-%d %H:%i:%s') AS fecha_hora, estado
+       FROM cita WHERE id_cita = ?`,
+      [id],
+    );
+    if (citasActuales.length === 0) {
+      return res.status(404).json({ mensaje: "Cita no encontrada" });
+    }
+    const fechaHoraFinal = fecha_hora || citasActuales[0].fecha_hora;
+    const estadoFinal = estado || citasActuales[0].estado;
+    const citaActiva = !["Cancelada", "No asistio", "Completada"].includes(estadoFinal);
+    if (citaActiva) {
+      const bloqueo = await fechaEstaBloqueada(fechaHoraFinal);
       if (bloqueo) {
         return res.status(400).json({
-          mensaje: `No se puede mover la cita a esa fecha porque está bloqueada: "${bloqueo.motivo}"`,
+          mensaje: `No se puede programar la cita en esa fecha porque está bloqueada: "${bloqueo.motivo}"`,
         });
       }
     }
-    await db.query(
-      "UPDATE cita SET estado=COALESCE(?,estado), observaciones=COALESCE(?,observaciones), fecha_hora=COALESCE(?,fecha_hora), motivo=COALESCE(?,motivo) WHERE id_cita=?",
-      [estado, observaciones, fecha_hora, motivo, id],
-    );
+    const actualizarCita = (conexion, fechaHoraNormalizada = fecha_hora) =>
+      conexion.query(
+        "UPDATE cita SET estado=COALESCE(?,estado), observaciones=COALESCE(?,observaciones), fecha_hora=COALESCE(?,fecha_hora), motivo=COALESCE(?,motivo) WHERE id_cita=?",
+        [estado, observaciones, fecha_hora ? fechaHoraNormalizada : null, motivo, id],
+      );
+    if (citaActiva) {
+      await conHorarioReservado(fechaHoraFinal, actualizarCita, id);
+    } else {
+      await actualizarCita(db);
+    }
     res.json({ mensaje: "Cita actualizada" });
   } catch (e) {
+    if (e.status) {
+      return res.status(e.status).json({ mensaje: e.message, error: e.message });
+    }
     res.status(500).json({ error: e.message });
   }
 });

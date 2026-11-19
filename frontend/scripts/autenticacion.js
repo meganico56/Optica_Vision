@@ -47,6 +47,10 @@ document.addEventListener('DOMContentLoaded', () => {
             mostrarError('Por favor ingresa tu correo y contraseña.');
             return;
         }
+        if (!inputCorreo.validity.valid) {
+            mostrarError('Ingresa un correo electrónico válido.');
+            return;
+        }
 
         btnLogin.disabled = true;
         btnLogin.textContent = 'Ingresando...';

@@ -14,7 +14,7 @@
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
     />
     <link rel="stylesheet" href="../estilos/inicio.css" />
-    <link rel="stylesheet" href="../estilos/estilo-cita.css" />
+    <link rel="stylesheet" href="../estilos/Estilo-cita.css" />
     <link rel="stylesheet" href="../estilos/calendario-personalizado.css" />
     <title>Agendar cita | Boutique de la Visión</title>
       <link rel="stylesheet" href="../estilos/footer.css" />
@@ -24,24 +24,39 @@
 
     <main class="cita-contenedor">
       <section class="cita-intro">
-        <h1>Agenda tu cita</h1>
-        <p>Cada cita dura 30 minutos y te atiende uno de nuestros asesores.</p>
+        <p class="cita-etiqueta"><i class="fa-regular fa-eye" aria-hidden="true"></i> CUIDAMOS DE TU VISIÓN</p>
+        <h1>Agenda <span>tu cita</span></h1>
+        <p class="cita-intro-resumen">Una atención personalizada, pensada para ti.</p>
         <p class="cita-nota">
-          El examen visual lo hace un optómetra externo. En tu cita revisamos
-          tus resultados, registramos tu fórmula y te asesoramos con la montura.
+          <i class="fa-regular fa-clock" aria-hidden="true"></i>
+          <span>
+            <strong>30 minutos de atención</strong>
+            Cada cita dura 30 minutos y te atiende uno de nuestros asesores.
+            El examen visual lo hace un optómetra externo; aquí revisamos tus
+            resultados y te asesoramos con la montura.
+          </span>
         </p>
       </section>
 
       <div class="cita-aviso" id="avisoLogin" hidden>
-        Para agendar necesitas una cuenta.
-        <a href="inicio-sesion.html">Inicia sesión</a> o
-        <a href="registro-usuario.html">crea tu cuenta</a>.
+        <i class="fa-solid fa-lock" aria-hidden="true"></i>
+        <span>
+          Para agendar necesitas una cuenta.
+          <a href="inicio-sesion.html">Inicia sesión</a> o
+          <a href="registro-usuario.html">crea tu cuenta</a>.
+        </span>
       </div>
 
       <form class="cita-form" id="formCita" novalidate>
         <div class="cita-campo cita-campo-calendario">
-          <label><i class="fa-solid fa-calendar-days"></i> Elige el día de tu cita</label>
-          <div id="calendarioCitaCliente" class="calendario-contenedor-cliente"></div>
+          <div class="cita-paso-heading">
+            <span class="cita-paso-numero">01</span>
+            <div>
+              <h2>Elige el día</h2>
+              <p>Selecciona una fecha disponible en el calendario.</p>
+            </div>
+          </div>
+          <div id="calendarioCitaCliente" class="calendario-contenedor-cliente" role="group" aria-label="Calendario de disponibilidad"></div>
           <input type="hidden" id="fecha" name="fecha" required />
           <div id="fechaSeleccionadaAviso" class="fecha-seleccionada-badge" hidden>
             <i class="fa-solid fa-calendar-check"></i>
@@ -49,48 +64,61 @@
           </div>
         </div>
 
-        <div class="cita-campo">
-          <label for="hora"><i class="fa-solid fa-clock"></i> Hora de atención</label>
-          <select id="hora" name="hora" required disabled>
-            <option value="" selected>Selecciona primero un día disponible en el calendario</option>
-          </select>
+        <div class="cita-detalles">
+          <div class="cita-paso-heading">
+            <span class="cita-paso-numero">02</span>
+            <div>
+              <h2>Cuéntanos un poco más</h2>
+              <p>Completa los detalles para reservar tu espacio.</p>
+            </div>
+          </div>
+
+          <div class="cita-campo">
+            <label for="hora"><i class="fa-regular fa-clock" aria-hidden="true"></i> Hora de atención</label>
+            <select id="hora" name="hora" required disabled>
+              <option value="" selected>Selecciona primero un día disponible en el calendario</option>
+            </select>
+          </div>
+
+          <div class="cita-campo">
+            <label for="motivo"><i class="fa-regular fa-comment-dots" aria-hidden="true"></i> Motivo de la cita</label>
+            <select id="motivo" name="motivo" required>
+              <option value="" disabled selected>Selecciona un motivo</option>
+              <option>Primera asesoría para elección de montura</option>
+              <option>Entrega de resultados de examen visual</option>
+              <option>
+                Entrega de resultados de examen visual y asesoría de montura
+              </option>
+              <option>Control de seguimiento</option>
+            </select>
+          </div>
+
+          <div class="cita-campo">
+            <label for="observaciones"><i class="fa-regular fa-note-sticky" aria-hidden="true"></i> Observaciones <span>(opcional)</span></label>
+            <textarea
+              id="observaciones"
+              name="observaciones"
+              rows="3"
+              maxlength="255"
+              placeholder="Cuéntanos si necesitas algo especial"
+            ></textarea>
+          </div>
+
+          <p class="mensaje-error" id="mensajeError" role="alert" hidden></p>
+
+          <p class="nota-terminos">
+            <i class="fa-solid fa-shield-halved" aria-hidden="true"></i>
+            <span class="nota-terminos-text">
+              Al agendar aceptas nuestros
+              <a href="terminos.html" target="_blank" rel="noopener">términos y condiciones</a>
+              y el tratamiento de tus datos personales.
+            </span>
+          </p>
+
+          <button class="btn-primary" type="submit" id="btnAgendar">
+            Confirmar mi cita <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
+          </button>
         </div>
-
-        <div class="cita-campo">
-          <label for="motivo">¿Para qué es la cita?</label>
-          <select id="motivo" name="motivo" required>
-            <option value="" disabled selected>Selecciona un motivo</option>
-            <option>Primera asesoría para elección de montura</option>
-            <option>Entrega de resultados de examen visual</option>
-            <option>
-              Entrega de resultados de examen visual y asesoría de montura
-            </option>
-            <option>Control de seguimiento</option>
-          </select>
-        </div>
-
-        <div class="cita-campo">
-          <label for="observaciones">Observaciones (opcional)</label>
-          <textarea
-            id="observaciones"
-            name="observaciones"
-            rows="3"
-            maxlength="255"
-            placeholder="Cuéntanos si necesitas algo especial"
-          ></textarea>
-        </div>
-
-        <p class="mensaje-error" id="mensajeError" role="alert" hidden></p>
-
-        <p class="nota-terminos">
-          Al agendar tu cita aceptas nuestros
-          <a href="terminos.html" target="_blank" rel="noopener">términos y condiciones</a>
-          y el tratamiento de tus datos personales.
-        </p>
-
-        <button class="btn-primary" type="submit" id="btnAgendar">
-          Agendar cita
-        </button>
       </form>
 
       <section
