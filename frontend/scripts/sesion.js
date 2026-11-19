@@ -52,10 +52,24 @@
             sessionStorage.removeItem(K_USUARIO);
             sessionStorage.removeItem('usuarioLogueado');
         },
+        async cerrar() {
+            const token = Sesion.token();
 
-        cerrar() {
-            Sesion.limpiar();
-            location.href = 'inicio.html';
+            try {
+                if (token) {
+                    await fetch('/api/logout', {
+                        method: 'POST',
+                        headers: {
+                            Authorization: `Bearer ${token}`
+                        }
+                    });
+                }
+            } catch (error) {
+                console.error('Error al cerrar la sesión:', error);
+            } finally {
+                Sesion.limpiar();
+                location.href = 'inicio.html';
+            }
         },
 
         // Manda al login y recuerda a dónde volver (carrito, agendar cita, etc.).
@@ -91,11 +105,37 @@
         }
     }
 
+    // ---------- Control de inactividad: 15 minutos ----------
+    const TIEMPO_INACTIVIDAD = 15 * 60 * 1000;
+    let temporizadorInactividad;
+
+    function reiniciarTemporizador() {
+        if (!Sesion.estaLogueado()) return;
+
+        clearTimeout(temporizadorInactividad);
+
+        temporizadorInactividad = setTimeout(() => {
+            Sesion.cerrar();
+        }, TIEMPO_INACTIVIDAD);
+    }
+
+
     // Token vencido: api.js avisa con este evento.
     window.addEventListener('bv:sesion-expirada', () => {
+        clearTimeout(temporizadorInactividad);
         Sesion.limpiar();
         Sesion.irALogin();
     });
+
+
+    // Detectar actividad del usuario
+    ['click', 'keydown', 'scroll', 'touchstart'].forEach((evento) => {
+        window.addEventListener(evento, reiniciarTemporizador);
+    });
+
+    // Iniciar el temporizador
+    reiniciarTemporizador();
+
 
     // ---------- Interfaz ----------
     function iniciales(nombre) {
@@ -120,11 +160,10 @@
 
     function pintarIdentidad(usuario) {
         const nombre = usuario.nombre || '';
-        const identificador = usuario.rol === 'Cliente' ? (usuario.correo || nombre) : nombre;
-        ponerTexto('adminName', identificador);
+        ponerTexto('adminName', nombre);
         ponerTexto('adminRol', usuario.rol || '');
         ponerTexto('adminAvatar', iniciales(nombre));
-        ponerTexto('userName', usuario.rol === 'Cliente' ? identificador : nombre.split(' ')[0]);
+        ponerTexto('userName', nombre.split(' ')[0]);
         ponerTexto('userAvatar', iniciales(nombre));
         ponerTexto('profileAvatarLarge', iniciales(nombre));
     }
