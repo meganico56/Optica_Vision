@@ -2474,6 +2474,7 @@
       b.classList.toggle("active", b.dataset.citasTab === tab);
     });
     const panelAgendadas = document.getElementById("citasPanel-agendadas");
+    const panelHorarios = document.getElementById("citasPanel-horarios");
     const panelCalendario = document.getElementById("citasPanel-calendario");
     const panelRecetas = document.getElementById("citasPanel-recetas");
 
@@ -2482,14 +2483,20 @@
       panelAgendadas.classList.toggle("active", tab === "agendadas");
       if (tab === "agendadas") cargarCitas();
     }
+    if (panelHorarios) {
+      panelHorarios.style.display = tab === "horarios" ? "block" : "none";
+      panelHorarios.classList.toggle("active", tab === "horarios");
+      if (tab === "horarios") {
+        inicializarHorariosAtencion();
+        cargarHorariosAtencion();
+      }
+    }
     if (panelCalendario) {
       panelCalendario.style.display = tab === "calendario" ? "block" : "none";
       panelCalendario.classList.toggle("active", tab === "calendario");
       if (tab === "calendario") {
         cargarBloqueosCalendario();
         inicializarFormularioBloqueo();
-        inicializarHorariosAtencion();
-        cargarHorariosAtencion();
       }
     }
     if (panelRecetas) {
@@ -2586,48 +2593,180 @@
     }
   }
 
-  let horariosAtencionMemoria = [];
+  let rangosAtencionMemoria = [];
   let horariosAtencionIniciados = false;
   let horariosAtencionCargados = false;
+  const FORMATO_HORA_ATENCION = /^(?:[01]\d|2[0-3]):(?:00|30)$/;
 
-  function renderizarHorariosAtencion() {
-    const lista = document.getElementById("listaHorariosAtencion");
-    if (!lista) return;
-    lista.innerHTML = "";
-    horariosAtencionMemoria.forEach((hora) => {
-      const elemento = document.createElement("span");
-      elemento.style.cssText = "display:inline-flex;align-items:center;gap:6px;padding:6px 10px;border:1px solid var(--admin-border);border-radius:20px";
-      const etiqueta = document.createElement("strong");
-      etiqueta.textContent = hora;
+  function minutosDesdeHoraAtencion(hora) {
+    if (!FORMATO_HORA_ATENCION.test(hora)) {
+      throw new Error("Las horas deben estar en intervalos de 30 minutos.");
+    }
+    const [horas, minutos] = hora.split(":").map(Number);
+    return horas * 60 + minutos;
+  }
+
+  function horaDesdeMinutosAtencion(minutos) {
+    if (minutos === 1440) return "00:00";
+    return `${String(Math.floor(minutos / 60)).padStart(2, "0")}:${String(minutos % 60).padStart(2, "0")}`;
+  }
+
+  function rangosDesdeHorariosAtencion(horarios) {
+    if (!Array.isArray(horarios) || horarios.some((hora) => !FORMATO_HORA_ATENCION.test(hora))) {
+      throw new Error("La respuesta de horarios de atención no es válida.");
+    }
+    const valores = horarios.map(minutosDesdeHoraAtencion).sort((a, b) => a - b);
+    if (new Set(valores).size !== valores.length) {
+      throw new Error("La configuración contiene turnos duplicados.");
+    }
+
+    const rangos = [];
+    let inicio = valores[0];
+    let anterior = valores[0];
+    for (let indice = 1; indice < valores.length; indice += 1) {
+      const actual = valores[indice];
+      if (actual !== anterior + 30) {
+        rangos.push({
+          inicio: horaDesdeMinutosAtencion(inicio),
+          fin: horaDesdeMinutosAtencion(anterior + 30),
+        });
+        inicio = actual;
+      }
+      anterior = actual;
+    }
+    if (valores.length > 0) {
+      rangos.push({
+        inicio: horaDesdeMinutosAtencion(inicio),
+        fin: horaDesdeMinutosAtencion(anterior + 30),
+      });
+    }
+    return rangos;
+  }
+
+  function leerRangosFormularioAtencion() {
+    const contenedor = document.getElementById("rangosHorariosAtencion");
+    if (!contenedor) return [];
+    return Array.from(contenedor.querySelectorAll(".horario-rango")).map((fila) => ({
+      inicio: fila.querySelector("[data-inicio-rango]").value,
+      fin: fila.querySelector("[data-fin-rango]").value,
+    }));
+  }
+
+  function generarHorariosAtencion(rangos) {
+    const intervalos = [];
+    rangos.forEach((rango) => {
+      if (!rango.inicio && !rango.fin) return;
+      if (!rango.inicio || !rango.fin) {
+        throw new Error("Completa la hora de inicio y de fin de cada rango.");
+      }
+      const inicio = minutosDesdeHoraAtencion(rango.inicio);
+      let fin = minutosDesdeHoraAtencion(rango.fin);
+      if (fin === 0 && inicio > 0) fin = 1440;
+      if (fin <= inicio) {
+        throw new Error("La hora de fin debe ser posterior a la hora de inicio.");
+      }
+      intervalos.push({ inicio, fin });
+    });
+
+    intervalos.sort((a, b) => a.inicio - b.inicio);
+    intervalos.forEach((rango, indice) => {
+      if (indice > 0 && rango.inicio < intervalos[indice - 1].fin) {
+        throw new Error("Los rangos de atención no pueden superponerse.");
+      }
+    });
+
+    const horarios = [];
+    intervalos.forEach(({ inicio, fin }) => {
+      for (let minuto = inicio; minuto + 30 <= fin; minuto += 30) {
+        horarios.push(horaDesdeMinutosAtencion(minuto));
+      }
+    });
+    return horarios;
+  }
+
+  function renderizarRangosAtencion() {
+    const contenedor = document.getElementById("rangosHorariosAtencion");
+    if (!contenedor) return;
+    contenedor.innerHTML = "";
+    if (rangosAtencionMemoria.length === 0) {
+      const vacio = document.createElement("p");
+      vacio.className = "page-subtitle";
+      vacio.textContent = "No hay rangos configurados. La agenda permanecerá cerrada.";
+      contenedor.appendChild(vacio);
+      return;
+    }
+
+    rangosAtencionMemoria.forEach((rango, indice) => {
+      const fila = document.createElement("div");
+      fila.className = "horario-rango";
+      fila.style.cssText = "display:flex;align-items:end;gap:12px;flex-wrap:wrap;min-width:0;max-width:100%";
+      [
+        ["Desde", "data-inicio-rango", rango.inicio],
+        ["Hasta", "data-fin-rango", rango.fin],
+      ].forEach(([texto, atributo, valor]) => {
+        const etiqueta = document.createElement("label");
+        etiqueta.style.cssText = "display:grid;gap:6px";
+        const titulo = document.createElement("span");
+        titulo.textContent = texto;
+        const entrada = document.createElement("input");
+        entrada.type = "time";
+        entrada.step = "1800";
+        entrada.className = "input-admin";
+        entrada.dataset[atributo === "data-inicio-rango" ? "inicioRango" : "finRango"] = "";
+        entrada.value = valor;
+        etiqueta.append(titulo, entrada);
+        fila.appendChild(etiqueta);
+      });
+
       const quitar = document.createElement("button");
       quitar.type = "button";
       quitar.className = "btn-ghost";
-      quitar.dataset.quitarHorario = hora;
-      quitar.setAttribute("aria-label", `Quitar horario ${hora}`);
-      quitar.innerHTML = '<i class="fa-solid fa-xmark" aria-hidden="true"></i>';
-      elemento.append(etiqueta, quitar);
-      lista.appendChild(elemento);
+      quitar.dataset.quitarRango = String(indice);
+      quitar.setAttribute("aria-label", `Quitar rango ${indice + 1}`);
+      quitar.innerHTML = '<i class="fa-solid fa-trash-can" aria-hidden="true"></i> Quitar';
+      fila.appendChild(quitar);
+      contenedor.appendChild(fila);
     });
   }
 
-  async function cargarHorariosAtencion() {
+  function actualizarVistaHorariosAtencion() {
     const lista = document.getElementById("listaHorariosAtencion");
-    if (!lista || !window.Sesion || window.Sesion.rol() !== "Administrador") return;
-    horariosAtencionCargados = false;
+    if (!lista) return;
+    lista.innerHTML = "";
+    try {
+      const horarios = generarHorariosAtencion(leerRangosFormularioAtencion());
+      if (horarios.length === 0) {
+        lista.textContent = "Sin turnos configurados; no se podrán agendar citas.";
+        return;
+      }
+      horarios.forEach((hora) => {
+        const turno = document.createElement("span");
+        turno.className = "badge orange";
+        turno.textContent = `${hora} hrs`;
+        lista.appendChild(turno);
+      });
+    } catch (error) {
+      lista.textContent = error.message;
+    }
+  }
+
+  async function cargarHorariosAtencion() {
+    const contenedor = document.getElementById("rangosHorariosAtencion");
+    if (!contenedor || !window.Sesion || window.Sesion.rol() !== "Administrador" || horariosAtencionCargados) return;
+    const btnAgregar = document.getElementById("btnAgregarRangoHorario");
+    const btnGuardar = document.getElementById("btnGuardarHorarios");
+    const errorBox = document.getElementById("horariosAtencionError");
     try {
       const respuesta = await Api.get("/api/horarios/atencion");
-      if (!respuesta || !Array.isArray(respuesta.horarios)) {
-        throw new Error("La respuesta de horarios de atención no es válida.");
-      }
-      horariosAtencionMemoria = respuesta.horarios;
+      rangosAtencionMemoria = rangosDesdeHorariosAtencion(respuesta.horarios);
       horariosAtencionCargados = true;
-      renderizarHorariosAtencion();
-      const errorBox = document.getElementById("horariosAtencionError");
+      renderizarRangosAtencion();
+      actualizarVistaHorariosAtencion();
+      if (btnAgregar) btnAgregar.disabled = false;
+      if (btnGuardar) btnGuardar.disabled = false;
       if (errorBox) errorBox.hidden = true;
     } catch (error) {
       console.error("Error al cargar horarios de atención:", error);
-      lista.textContent = "No se pudieron cargar los horarios.";
-      const errorBox = document.getElementById("horariosAtencionError");
       if (errorBox) {
         errorBox.textContent = error.message || "Error al consultar horarios de atención.";
         errorBox.hidden = false;
@@ -2637,51 +2776,33 @@
 
   function inicializarHorariosAtencion() {
     if (horariosAtencionIniciados) return;
-    const lista = document.getElementById("listaHorariosAtencion");
-    const entrada = document.getElementById("nuevoHorarioAtencion");
-    const btnAgregar = document.getElementById("btnAgregarHorario");
+    const contenedor = document.getElementById("rangosHorariosAtencion");
+    const btnAgregar = document.getElementById("btnAgregarRangoHorario");
     const btnGuardar = document.getElementById("btnGuardarHorarios");
     const errorBox = document.getElementById("horariosAtencionError");
     const exitoBox = document.getElementById("horariosAtencionExito");
-    if (!lista || !entrada || !btnAgregar || !btnGuardar) return;
+    if (!contenedor || !btnAgregar || !btnGuardar) return;
 
-    lista.addEventListener("click", (evento) => {
-      const boton = evento.target.closest("[data-quitar-horario]");
+    contenedor.addEventListener("input", () => {
+      if (errorBox) errorBox.hidden = true;
+      actualizarVistaHorariosAtencion();
+    });
+    contenedor.addEventListener("click", (evento) => {
+      const boton = evento.target.closest("[data-quitar-rango]");
       if (!boton) return;
-      if (horariosAtencionMemoria.length === 1) {
-        if (errorBox) {
-          errorBox.textContent = "Debe mantenerse al menos un horario de atención.";
-          errorBox.hidden = false;
-        }
-        return;
-      }
-      horariosAtencionMemoria = horariosAtencionMemoria.filter(
-        (hora) => hora !== boton.dataset.quitarHorario,
-      );
-      renderizarHorariosAtencion();
+      rangosAtencionMemoria = leerRangosFormularioAtencion();
+      rangosAtencionMemoria.splice(Number(boton.dataset.quitarRango), 1);
+      renderizarRangosAtencion();
+      actualizarVistaHorariosAtencion();
+      if (errorBox) errorBox.hidden = true;
     });
 
     btnAgregar.addEventListener("click", () => {
-      if (errorBox) errorBox.hidden = true;
-      const hora = entrada.value;
-      if (!/^(?:[01]\d|2[0-3]):(?:00|30)$/.test(hora)) {
-        if (errorBox) {
-          errorBox.textContent = "Selecciona una hora en intervalos de 30 minutos.";
-          errorBox.hidden = false;
-        }
-        return;
-      }
-      if (horariosAtencionMemoria.includes(hora)) {
-        if (errorBox) {
-          errorBox.textContent = "Ese horario ya está en la lista.";
-          errorBox.hidden = false;
-        }
-        return;
-      }
-      horariosAtencionMemoria.push(hora);
-      horariosAtencionMemoria.sort();
-      entrada.value = "";
-      renderizarHorariosAtencion();
+      if (!horariosAtencionCargados) return;
+      rangosAtencionMemoria = leerRangosFormularioAtencion();
+      rangosAtencionMemoria.push({ inicio: "", fin: "" });
+      renderizarRangosAtencion();
+      actualizarVistaHorariosAtencion();
     });
 
     btnGuardar.addEventListener("click", async () => {
@@ -2689,20 +2810,32 @@
       if (exitoBox) exitoBox.hidden = true;
       if (!horariosAtencionCargados) {
         if (errorBox) {
-          errorBox.textContent = "Espera a que se carguen los horarios antes de guardarlos.";
+          errorBox.textContent = "Espera a que se cargue la configuración antes de guardarla.";
           errorBox.hidden = false;
         }
         return;
       }
+      let horarios;
+      try {
+        horarios = generarHorariosAtencion(leerRangosFormularioAtencion());
+      } catch (error) {
+        if (errorBox) {
+          errorBox.textContent = error.message;
+          errorBox.hidden = false;
+        }
+        return;
+      }
+
       btnGuardar.disabled = true;
       try {
-        const respuesta = await Api.put("/api/horarios/atencion", {
-          horarios: horariosAtencionMemoria,
-        });
-        horariosAtencionMemoria = respuesta.horarios;
-        renderizarHorariosAtencion();
+        const respuesta = await Api.put("/api/horarios/atencion", { horarios });
+        rangosAtencionMemoria = rangosDesdeHorariosAtencion(respuesta.horarios);
+        renderizarRangosAtencion();
+        actualizarVistaHorariosAtencion();
         if (exitoBox) {
-          exitoBox.textContent = "Horarios de atención guardados correctamente.";
+          exitoBox.textContent = horarios.length === 0
+            ? "Agenda cerrada; no hay turnos disponibles."
+            : "Horarios de atención guardados correctamente.";
           exitoBox.hidden = false;
         }
       } catch (error) {

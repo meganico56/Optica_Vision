@@ -992,13 +992,12 @@ app.put("/api/horarios/atencion", verificarAdministrador, async (req, res) => {
   const formatoHora = /^(?:[01]\d|2[0-3]):(?:00|30)$/;
   if (
     !Array.isArray(horarios) ||
-    horarios.length === 0 ||
     horarios.length > 48 ||
     horarios.some((hora) => typeof hora !== "string" || !formatoHora.test(hora)) ||
     new Set(horarios).size !== horarios.length
   ) {
     return res.status(400).json({
-      error: "Configura al menos un horario válido, sin duplicados y en intervalos de 30 minutos.",
+      error: "Los horarios deben ser válidos, únicos y estar en intervalos de 30 minutos.",
     });
   }
 
