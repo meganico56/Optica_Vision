@@ -120,11 +120,10 @@
 
     function pintarIdentidad(usuario) {
         const nombre = usuario.nombre || '';
-        const identificador = usuario.rol === 'Cliente' ? (usuario.correo || nombre) : nombre;
-        ponerTexto('adminName', identificador);
+        ponerTexto('adminName', nombre);
         ponerTexto('adminRol', usuario.rol || '');
         ponerTexto('adminAvatar', iniciales(nombre));
-        ponerTexto('userName', usuario.rol === 'Cliente' ? identificador : nombre.split(' ')[0]);
+        ponerTexto('userName', nombre.split(' ')[0]);
         ponerTexto('userAvatar', iniciales(nombre));
         ponerTexto('profileAvatarLarge', iniciales(nombre));
     }

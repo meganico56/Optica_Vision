@@ -8,12 +8,9 @@
     const MESES = ['ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'sep', 'oct', 'nov', 'dic'];
 
     // ---------- Quién es el cliente ----------
-    // El login guarda el token "session-<id>" en localStorage (clave bv_token, ver api.js).
-    // Si el equipo cambia el formato del token, solo hay que tocar esta función.
     function idUsuario() {
-        let token = '';
-        try { token = localStorage.getItem('bv_token') || ''; } catch (e) { /* sin acceso */ }
-        const id = Number(token.replace('session-', ''));
+        const usuario = window.Sesion && window.Sesion.usuario();
+        const id = Number(usuario && usuario.id);
         return Number.isInteger(id) && id > 0 ? id : null;
     }
 
@@ -81,9 +78,9 @@
         if ($('profileCiudad')) $('profileCiudad').value = p.ciudad || '';
 
         const inicial = (p.nombre || '?').charAt(0).toUpperCase();
-        if ($('userName')) $('userName').textContent = p.correo || '';
+        if ($('userName')) $('userName').textContent = p.nombre || '';
         if ($('userAvatar')) pintarAvatar($('userAvatar'), inicial, p.foto_perfil);
-        if ($('adminName')) $('adminName').textContent = p.correo || '';
+        if ($('adminName')) $('adminName').textContent = [p.nombre, p.apellido].filter(Boolean).join(' ');
         if ($('adminAvatar')) pintarAvatar($('adminAvatar'), inicial, p.foto_perfil);
         if ($('adminRol')) $('adminRol').textContent = p.rol || 'Cliente';
         if ($('profileAvatarLarge')) pintarAvatar($('profileAvatarLarge'), inicial, p.foto_perfil);

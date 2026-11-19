@@ -4,7 +4,6 @@
 document.addEventListener('DOMContentLoaded', () => {
     const form      = document.getElementById('formRegistro');
     const mensaje   = document.getElementById('mensajeError');
-    const inputCorreo = document.getElementById('correo');
 
     if (!form) return;
 
@@ -57,9 +56,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const numDocumento       = document.getElementById('numDocumento').value.trim();
         const fechaNacimiento    = document.getElementById('fechaNacimiento').value;
         const telefono           = document.getElementById('telefono').value.trim();
-        const correo             = inputCorreo.value.trim();
+        const correo             = document.getElementById('correo').value.trim();
         const direccion          = document.getElementById('direccion').value.trim();
-        const ciudad             = document.getElementById('ciudad').value.trim();
         const contrasena         = document.getElementById('contrasena').value;
         const confirmar          = document.getElementById('confirmarContrasena').value;
         const aceptaDatos        = document.getElementById('aceptaDatos').checked;
@@ -86,12 +84,6 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!correo) {
             return mostrarError('Ingresa tu correo electrónico.');
         }
-        if (!inputCorreo.validity.valid) {
-            return mostrarError('Ingresa un correo electrónico válido.');
-        }
-        if (!ciudad) {
-            return mostrarError('Ingresa tu ciudad.');
-        }
         if (contrasena.length < 8) {
             return mostrarError('La contraseña debe tener al menos 8 caracteres.');
         }
@@ -114,7 +106,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 num_documento: numDocumento,
                 telefono,
                 correo,
-                ciudad,
                 direccion: direccion || null,
                 fecha_nacimiento: fechaNacimiento,
                 contrasena
