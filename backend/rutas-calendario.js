@@ -181,18 +181,13 @@ router.delete("/calendario/bloqueos/:id", async (req, res) => {
 
 // Función exportable para verificar en backend si una fecha está bloqueada
 async function fechaEstaBloqueada(fechaStr) {
-  try {
-    await asegurarTablaBloqueos();
-    const soloFecha = fechaStr.includes(" ") ? fechaStr.split(" ")[0] : (fechaStr.includes("T") ? fechaStr.split("T")[0] : fechaStr);
-    const [filas] = await db.query(
-      `SELECT motivo FROM bloqueo_calendario WHERE ? BETWEEN fecha_inicio AND fecha_fin LIMIT 1`,
-      [soloFecha]
-    );
-    return filas.length > 0 ? filas[0] : null;
-  } catch (err) {
-    console.error("Error al comprobar fecha bloqueada:", err);
-    return null;
-  }
+  await asegurarTablaBloqueos();
+  const soloFecha = fechaStr.includes(" ") ? fechaStr.split(" ")[0] : (fechaStr.includes("T") ? fechaStr.split("T")[0] : fechaStr);
+  const [filas] = await db.query(
+    `SELECT motivo FROM bloqueo_calendario WHERE ? BETWEEN fecha_inicio AND fecha_fin LIMIT 1`,
+    [soloFecha]
+  );
+  return filas.length > 0 ? filas[0] : null;
 }
 
 module.exports = {

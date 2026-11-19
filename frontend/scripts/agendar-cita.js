@@ -15,11 +15,6 @@
   let bloqueosCargados = false;
   let fechaMaxima = "";
 
-  const HORARIOS_DISPONIBLES = [
-    "08:00", "08:30", "09:00", "09:30", "10:00", "10:30", "11:00", "11:30",
-    "14:00", "14:30", "15:00", "15:30", "16:00", "16:30", "17:00", "17:30"
-  ];
-
   function mostrarError(msg) {
     if (errorBox) {
       errorBox.textContent = msg;
@@ -73,19 +68,22 @@
     });
   }
 
-  function poblarHoras() {
+  function poblarHoras(horarios) {
     if (!horaSelect) return;
     horaSelect.innerHTML = '<option value="" disabled selected>Selecciona una hora</option>';
-    HORARIOS_DISPONIBLES.forEach(h => {
+    horarios.forEach(h => {
       const opt = document.createElement("option");
       opt.value = h;
       opt.textContent = `${h} hrs`;
       horaSelect.appendChild(opt);
     });
-    horaSelect.disabled = false;
+    horaSelect.disabled = horarios.length === 0;
+    if (horarios.length === 0) {
+      horaSelect.innerHTML = '<option value="" selected>No hay horarios disponibles para esta fecha</option>';
+    }
   }
 
-  function validarFechaSeleccionada(seleccion) {
+  async function validarFechaSeleccionada(seleccion) {
     if (!horaSelect) return;
     ocultarError();
     if (!seleccion) {
@@ -124,7 +122,22 @@
       return;
     }
 
-    poblarHoras();
+    horaSelect.disabled = true;
+    horaSelect.innerHTML = '<option value="" selected>Cargando horarios disponibles...</option>';
+    try {
+      const disponibilidad = await Api.get("/api/horarios/disponibles", { fecha: seleccion });
+      if (!disponibilidad || !Array.isArray(disponibilidad.horarios)) {
+        throw new Error("La respuesta de horarios disponibles no es válida.");
+      }
+      if (fechaInput.value !== seleccion) return;
+      poblarHoras(disponibilidad.horarios);
+    } catch (error) {
+      console.error("No se pudieron consultar los horarios disponibles:", error);
+      if (fechaInput.value !== seleccion) return;
+      mostrarError(error.message || "No se pudieron consultar los horarios. Intenta nuevamente.");
+      horaSelect.innerHTML = '<option value="" selected>No se pudieron cargar los horarios</option>';
+      horaSelect.disabled = true;
+    }
   }
 
   function inicializarCalendarioCliente() {
@@ -243,6 +256,9 @@
           }
         } catch (err) {
           console.error("Error al agendar cita:", err);
+          if (err.estado === 409) {
+            await validarFechaSeleccionada(fecha);
+          }
           mostrarError(err.message || "Ocurrió un error al agendar la cita. Por favor intenta de nuevo.");
           if (err.estado === 401) {
             if (avisoLogin) avisoLogin.hidden = false;

@@ -811,6 +811,33 @@
                   </table>
                 </div>
               </div>
+              <section class="data-card" data-roles="Administrador" aria-labelledby="tituloHorariosAtencion">
+                <div class="data-card-header">
+                  <h2 class="data-card-title" id="tituloHorariosAtencion">
+                    <i class="fa-regular fa-clock"></i> Horarios de atención
+                  </h2>
+                </div>
+                <p style="margin-bottom: 16px; color: var(--admin-text-muted); font-size: 0.875rem; line-height: 1.5">
+                  Estos horarios de 30 minutos se ofrecen de lunes a sábado. Los espacios reservados dejan de aparecer para los demás clientes.
+                </p>
+                <div id="listaHorariosAtencion" style="display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px" aria-live="polite">
+                  <span>Cargando horarios...</span>
+                </div>
+                <div style="display: flex; gap: 10px; align-items: end; flex-wrap: wrap">
+                  <label for="nuevoHorarioAtencion" style="display: grid; gap: 6px">
+                    Agregar hora
+                    <input class="input-admin" type="time" id="nuevoHorarioAtencion" step="1800" />
+                  </label>
+                  <button class="btn-secondary" type="button" id="btnAgregarHorario">
+                    <i class="fa-solid fa-plus"></i> Agregar
+                  </button>
+                  <button class="btn-primary" type="button" id="btnGuardarHorarios">
+                    <i class="fa-solid fa-floppy-disk"></i> Guardar horarios
+                  </button>
+                </div>
+                <p class="mensaje-error" id="horariosAtencionError" role="alert" hidden></p>
+                <p class="mensaje-exito" id="horariosAtencionExito" role="status" hidden></p>
+              </section>
             </div>
           </div>
 
@@ -987,7 +1014,7 @@
     <script src="../scripts/sesion.js"></script>
     <script src="../scripts/panel-navegacion.js"></script>
     <script src="../scripts/calendario-personalizado.js"></script>
-    <script src="../scripts/panel-admin.js?v=custom-calendar"></script>
+    <script src="../scripts/panel-admin.js?v=horarios-atencion"></script>
     <script src="../scripts/perfil-panel.js"></script>
     <script src="../scripts/intro-animacion.js"></script>
   </body>
