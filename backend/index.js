@@ -395,7 +395,7 @@ app.get("/api/productos", async (req, res) => {
 });
 
 // Crear un nuevo producto (POST /api/productos)
-app.post("/api/productos", async (req, res) => {
+app.post("/api/productos", verificarSesion, async (req, res) => {
   const {
     sku,
     costo_compra,
