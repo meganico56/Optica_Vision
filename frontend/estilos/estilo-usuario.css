@@ -723,14 +723,17 @@ h1, h2, h3, h4, h5, h6 { color: var(--user-text); }
 }
 
 .profile-avatar-large img,
-.admin-avatar img {
+.admin-avatar img,
+.user-avatar img {
+  display: block;
   width: 100%;
   height: 100%;
   border-radius: inherit;
   object-fit: cover;
 }
 
-.admin-avatar {
+.admin-avatar,
+.user-avatar {
   overflow: hidden;
 }
 

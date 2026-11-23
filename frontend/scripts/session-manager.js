@@ -17,8 +17,109 @@ document.addEventListener("DOMContentLoaded", () => {
     sessionStorage.removeItem("usuarioLogueado");
     sessionStorage.removeItem("bv_token");
     sessionStorage.removeItem("bv_usuario");
-
     window.location.href = "inicio.html";
+  }
+
+  const usuarioLogueadoStr =
+    localStorage.getItem("bv_usuario") ||
+    sessionStorage.getItem("bv_usuario") ||
+    localStorage.getItem("usuarioLogueado");
+  const pathActual = window.location.pathname;
+  const avataresNavbar = [];
+
+  function panelDeUsuario(usuario) {
+    const rol = String((usuario && usuario.rol) || "").toLowerCase();
+    if (rol === "cliente") {
+      return {
+        href: "panel-cliente.html",
+        texto: "MI PANEL",
+        icono: "fa-solid fa-user",
+        title: "Mi perfil",
+        ariaLabel: "Abrir mi perfil",
+      };
+    }
+    if (rol === "administrador" || rol === "admin") {
+      return {
+        href: "panel-admin.html",
+        texto: "PANEL ADMIN",
+        icono: "fa-solid fa-chart-pie",
+        title: "Panel de administración",
+        ariaLabel: "Abrir panel de administración",
+      };
+    }
+    if (rol === "vendedor" || rol === "empleado") {
+      return {
+        href: "panel-empleado.html",
+        texto: "MI PANEL",
+        icono: "fa-solid fa-id-badge",
+        title: "Mi panel",
+        ariaLabel: "Abrir mi panel",
+      };
+    }
+    return null;
+  }
+
+  function crearEnlacePanel(panel) {
+    const li = document.createElement("li");
+    const link = document.createElement("a");
+    const fallback = document.createElement("i");
+    const avatar = document.createElement("img");
+    const texto = document.createElement("span");
+
+    link.href = panel.href;
+    link.className = "navbar-profile-link";
+    link.title = panel.title;
+    link.setAttribute("aria-label", panel.ariaLabel);
+
+    fallback.className = panel.icono + " navbar-profile-fallback";
+    fallback.setAttribute("aria-hidden", "true");
+    avatar.className = "navbar-profile-avatar";
+    avatar.alt = "";
+    avatar.hidden = true;
+    avatar.addEventListener(
+      "error",
+      () => {
+        avatar.hidden = true;
+        fallback.hidden = false;
+      },
+      { once: true },
+    );
+    texto.textContent = panel.texto;
+
+    link.appendChild(fallback);
+    link.appendChild(avatar);
+    link.appendChild(texto);
+    li.appendChild(link);
+    avataresNavbar.push({ avatar, fallback });
+    return li;
+  }
+
+  function cargarFotoNavbar(usuario) {
+    if (!avataresNavbar.length || !window.Api) return;
+
+    const idUsuario = Number(usuario && (usuario.id || usuario.id_usuario));
+    if (!Number.isInteger(idUsuario) || idUsuario <= 0) return;
+
+    window.Api.get("/api/perfil/" + idUsuario)
+      .then((perfil) => {
+        if (
+          typeof perfil.foto_perfil !== "string" ||
+          !/^data:image\/(?:jpeg|png|webp);base64,/i.test(perfil.foto_perfil)
+        ) {
+          return;
+        }
+        avataresNavbar.forEach(({ avatar, fallback }) => {
+          avatar.src = perfil.foto_perfil;
+          avatar.hidden = false;
+          fallback.hidden = true;
+        });
+      })
+      .catch((error) => {
+        console.warn(
+          "No se pudo cargar la imagen de perfil del navbar:",
+          error.message,
+        );
+      });
   }
 
   if (usuarioLogueadoStr) {
@@ -28,83 +129,51 @@ document.addEventListener("DOMContentLoaded", () => {
     } catch (e) {}
 
     const menu = document.querySelector(".navbar-menu");
-    const esCliente = userData.rol === "cliente" || userData.rol === "Cliente";
-    const enlacePanelCliente =
-      menu && menu.querySelector('a[href="panel-cliente.html"]');
-    if (esCliente && enlacePanelCliente) {
-      if (enlacePanelCliente.classList.contains("navbar-profile-link")) {
-        avataresNavbar.push({
-          avatar: enlacePanelCliente.querySelector(".navbar-profile-avatar"),
-          fallback: enlacePanelCliente.querySelector(
-            ".navbar-profile-fallback",
-          ),
-        });
-      } else {
-        const elementoPanel = enlacePanelCliente.closest("li");
-        if (elementoPanel) elementoPanel.replaceWith(crearEnlacePanelCliente());
-      }
+    const panel = panelDeUsuario(userData);
+    const enlacePanel =
+      menu && panel && menu.querySelector('a[href="' + panel.href + '"]');
+    if (enlacePanel) {
+      const elementoPanel = enlacePanel.closest("li");
+      if (elementoPanel) elementoPanel.replaceWith(crearEnlacePanel(panel));
     }
 
-    // 1. Reemplazar "REGISTRO / LOGIN" por "CERRAR SESIÓN" en la barra de navegación
     const loginLinks = menu
       ? menu.querySelectorAll('a[href="inicio-sesion.html"]')
       : [];
-
     loginLinks.forEach((link) => {
       if (
-        !pathActual.includes("inicio-sesion.html") &&
-        !pathActual.includes("registro-usuario.html")
+        pathActual.includes("inicio-sesion.html") ||
+        pathActual.includes("registro-usuario.html")
       ) {
-        link.innerHTML =
-          '<i class="fa-solid fa-right-from-bracket"></i> CERRAR SESIÓN';
-        link.href = "#";
+        return;
+      }
 
-        link.addEventListener("click", (e) => {
-          e.preventDefault();
-          cerrarSesionGlobal();
-        });
+      link.innerHTML =
+        '<i class="fa-solid fa-right-from-bracket"></i> CERRAR SESIÓN';
+      link.href = "#";
+      link.addEventListener("click", (event) => {
+        event.preventDefault();
+        cerrarSesionGlobal();
+      });
 
-        // Si es admin, agregar un enlace al Panel Admin justo antes
-        if (userData.rol === "admin" || userData.rol === "Administrador") {
-          const li = document.createElement("li");
-          li.innerHTML =
-            '<a href="panel-admin.html" style="color: var(--gold);"><i class="fa-solid fa-chart-pie"></i> PANEL ADMIN</a>';
-          link.parentElement.insertAdjacentElement("beforebegin", li);
-        }
-
-        // Si es empleado/vendedor, agregar enlace al Panel Empleado
-        if (userData.rol === "empleado" || userData.rol === "Vendedor") {
-          const li = document.createElement("li");
-          li.innerHTML =
-            '<a href="panel-empleado.html" style="color: var(--gold);"><i class="fa-solid fa-id-badge"></i> MI PANEL</a>';
-          link.parentElement.insertAdjacentElement("beforebegin", li);
-        }
-
-        // Si es cliente, agregar enlace al Panel de Usuario
-        if (esCliente && !avataresNavbar.length) {
-          link.parentElement.insertAdjacentElement(
-            "beforebegin",
-            crearEnlacePanelCliente(),
-          );
-        }
+      if (panel && !avataresNavbar.length) {
+        link.parentElement.insertAdjacentElement(
+          "beforebegin",
+          crearEnlacePanel(panel),
+        );
       }
     });
     cargarFotoNavbar(userData);
 
-    // 2. Interceptar botones de logout con la clase .logout-btn
-    const adminLogoutBtns = document.querySelectorAll(".logout-btn");
-    adminLogoutBtns.forEach((btn) => {
-      btn.addEventListener("click", (e) => {
-        e.preventDefault();
+    document.querySelectorAll(".logout-btn").forEach((btn) => {
+      btn.addEventListener("click", (event) => {
+        event.preventDefault();
         cerrarSesionGlobal();
       });
     });
-  } else {
-    // 3. Proteger las rutas que requieren inicio de sesión (ej. panel de admin)
-    if (pathActual.includes("panel-admin.html")) {
-      alert("Debes iniciar sesión para acceder al panel.");
-      window.location.href = "inicio-sesion.html";
-    }
+  } else if (pathActual.includes("panel-admin.html")) {
+    alert("Debes iniciar sesión para acceder al panel.");
+    window.location.href = "inicio-sesion.html";
   }
 });
 
@@ -135,7 +204,7 @@ document.addEventListener("DOMContentLoaded", () => {
       root.classList.remove("dark-mode");
       root.classList.add("light-mode");
     }
-    // Actualizar logo
+
     const logoSrc = dark
       ? "../imagenes/logos/Logo_modo_oscuro.png"
       : "../imagenes/logos/Logo_modo_claro.png";
@@ -148,7 +217,7 @@ document.addEventListener("DOMContentLoaded", () => {
         img.setAttribute("src", logoSrc);
       }
     });
-    // Actualizar texto e icono del botón
+
     const btn = document.getElementById("btnTemaPublico");
     if (btn) {
       const icon = btn.querySelector("i");
@@ -179,19 +248,16 @@ document.addEventListener("DOMContentLoaded", () => {
     }, 900);
   }
 
-  // Aplicar de inmediato (antes del DOMContentLoaded) para evitar parpadeos
   if (!esPaginaPanel) {
     if (isDark) document.documentElement.classList.add("dark-mode");
     else document.documentElement.classList.add("light-mode");
   }
 
   document.addEventListener("DOMContentLoaded", () => {
-    if (esPaginaPanel) return; // Los paneles tienen su propio toggle en panel-navegacion.js
+    if (esPaginaPanel) return;
 
-    // Aplicar tema inicial completo (logos + botón)
     aplicarTemaPublico(isDark);
 
-    // Conectar el botón
     const btn = document.getElementById("btnTemaPublico");
     if (btn) {
       btn.addEventListener("click", () => {
