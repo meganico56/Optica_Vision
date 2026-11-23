@@ -13,7 +13,9 @@
         <div class="footer-col">
           <div class="logo">
             <img
-              src="../imagenes/logos/Logo_modo_claro.png"
+              src="../imagenes/logos/Logo_modo_claro.webp"
+              width="300"
+              height="200"
               class="logo-icon"
             />
           </div>

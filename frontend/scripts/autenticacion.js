@@ -11,6 +11,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Mostrar / ocultar contraseña
     if (togglePassword && inputPass) {
+        togglePassword.addEventListener('mousedown', function (event) {
+            event.preventDefault();
+        });
         togglePassword.addEventListener('click', function () {
             const tipo = inputPass.getAttribute('type') === 'password' ? 'text' : 'password';
             inputPass.setAttribute('type', tipo);
