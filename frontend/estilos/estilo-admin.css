@@ -181,8 +181,25 @@ body {
   margin-right: 10px;
 }
 
+.topbar-logout-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  color: var(--admin-text);
+  text-decoration: none;
+}
+
+.topbar-logout-btn i {
+  margin-right: 0;
+}
+
 .logout-btn:hover {
   color: #ff4d4d;
+}
+
+.topbar-logout-btn:hover {
+  color: var(--admin-gold);
 }
 
 /* el main content */
@@ -940,7 +957,9 @@ body {
 
 @media (max-width: 480px) {
   .kpi-grid { grid-template-columns: 1fr; }
-  .admin-info { display: none; }
+  .admin-info { display: block; max-width: 110px; }
+  .admin-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .admin-role { display: none; }
 }
 
 

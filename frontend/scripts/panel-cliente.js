@@ -20,6 +20,51 @@
         return;
     }
 
+    const avatar = $('adminAvatar');
+    const avatarPreview = $('avatarPreview');
+    const avatarPreviewImage = $('avatarPreviewImage');
+    const avatarPreviewClose = $('avatarPreviewClose');
+
+    if (avatar && avatarPreview && avatarPreviewImage && avatarPreviewClose) {
+        avatar.addEventListener('click', () => {
+            const foto = avatar.querySelector('img');
+            if (foto) {
+                const copia = foto.cloneNode();
+                copia.alt = 'Foto de perfil ampliada';
+                avatarPreviewImage.replaceChildren(copia);
+            } else {
+                avatarPreviewImage.textContent = avatar.textContent.trim() || '?';
+            }
+            if (typeof avatarPreview.showModal === 'function') {
+                avatarPreview.showModal();
+            } else {
+                avatarPreview.classList.add('avatar-preview-fallback');
+                avatarPreview.setAttribute('open', '');
+            }
+        });
+
+        avatarPreviewClose.addEventListener('click', () => {
+            if (typeof avatarPreview.close === 'function') {
+                avatarPreview.close();
+            } else {
+                avatarPreview.removeAttribute('open');
+            }
+        });
+        avatarPreview.addEventListener('click', (evento) => {
+            if (evento.target === avatarPreview) {
+                if (typeof avatarPreview.close === 'function') {
+                    avatarPreview.close();
+                } else {
+                    avatarPreview.removeAttribute('open');
+                }
+            }
+        });
+        avatarPreview.addEventListener('close', () => {
+            avatarPreviewImage.replaceChildren();
+            avatarPreview.classList.remove('avatar-preview-fallback');
+        });
+    }
+
     // ---------- Ayudas ----------
     // "2026-08-01 10:00:00" -> "01/08/2026" (se corta el texto para evitar problemas de zona horaria)
     function fechaCorta(texto) {
@@ -67,6 +112,18 @@
 
     function pintarPerfil(p) {
         perfil = p;
+        const usuarioSesion = window.Sesion && window.Sesion.usuario();
+        if (usuarioSesion) {
+            try {
+                localStorage.setItem('bv_usuario', JSON.stringify(Object.assign({}, usuarioSesion, {
+                    apellido: p.apellido || '',
+                    foto_perfil: p.foto_perfil || null,
+                    avatar_cargado: true
+                })));
+            } catch (error) {
+                console.error('No se pudo actualizar el avatar guardado en la sesión:', error);
+            }
+        }
         $('profileNombre').value = p.nombre || '';
         $('profileApellido').value = p.apellido || '';
         $('profileTipoDoc').value = p.tipo_documento || '';

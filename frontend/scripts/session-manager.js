@@ -1,7 +1,95 @@
 // session-manager.js
 // Script para mantener y gestionar el estado de sesión en todas las páginas
 
+window.actualizarNavbarSesion = function (usuario, cerrarSesion) {
+  const panelesPorRol = {
+    administrador: "panel-admin.html",
+    admin: "panel-admin.html",
+    vendedor: "panel-empleado.html",
+    empleado: "panel-empleado.html",
+    cliente: "panel-cliente.html",
+  };
+  const rol =
+    usuario && typeof usuario.rol === "string"
+      ? usuario.rol.toLowerCase()
+      : "";
+  const panel = Object.prototype.hasOwnProperty.call(panelesPorRol, rol)
+    ? panelesPorRol[rol]
+    : null;
+
+  if (!panel) return;
+
+  const nombre =
+    typeof usuario.nombre === "string" && usuario.nombre.trim()
+      ? usuario.nombre.trim()
+      : "Mi cuenta";
+  const partesNombre = [usuario.nombre, usuario.apellido]
+    .filter((parte) => typeof parte === "string" && parte.trim())
+    .join(" ")
+    .trim()
+    .split(/\s+/);
+  const iniciales =
+    partesNombre.length > 1
+      ? partesNombre[0].charAt(0) +
+        partesNombre[partesNombre.length - 1].charAt(0)
+      : partesNombre[0]
+        ? partesNombre[0].charAt(0)
+        : "?";
+
+  document
+    .querySelectorAll(
+      'header.navbar a[href="inicio-sesion.html"], header.navbar a.navbar-profile-link',
+    )
+    .forEach((enlace) => {
+      const elementoMenu = enlace.closest("li");
+      if (!elementoMenu) return;
+
+      let enlaceCerrar = elementoMenu.querySelector(".navbar-logout-link");
+      if (!enlaceCerrar) {
+        enlaceCerrar = document.createElement("a");
+        enlaceCerrar.href = "#";
+        enlaceCerrar.className = "navbar-logout-link";
+        enlaceCerrar.setAttribute("aria-label", "Cerrar sesión");
+
+        const iconoCerrar = document.createElement("i");
+        iconoCerrar.className = "fa-solid fa-right-from-bracket";
+        iconoCerrar.setAttribute("aria-hidden", "true");
+        enlaceCerrar.appendChild(iconoCerrar);
+        enlaceCerrar.addEventListener("click", (evento) => {
+          evento.preventDefault();
+          cerrarSesion();
+        });
+      }
+
+      const enlaceCuenta = enlace;
+      enlaceCuenta.href = panel;
+      enlaceCuenta.className = "navbar-profile-link";
+      enlaceCuenta.setAttribute("aria-label", `Abrir la cuenta de ${nombre}`);
+
+      const foto =
+        typeof usuario.foto_perfil === "string" &&
+        usuario.foto_perfil.startsWith("data:image/jpeg;base64,");
+      const avatar = document.createElement(foto ? "img" : "span");
+      avatar.className = foto
+        ? "navbar-profile-avatar"
+        : "navbar-profile-fallback";
+      avatar.setAttribute("aria-hidden", "true");
+      if (foto) {
+        avatar.src = usuario.foto_perfil;
+        avatar.alt = "";
+      } else {
+        avatar.textContent = iniciales.toUpperCase();
+      }
+      enlaceCuenta.replaceChildren(avatar, document.createTextNode(nombre));
+
+      elementoMenu.classList.add("navbar-account-item");
+      elementoMenu.replaceChildren(enlaceCuenta, enlaceCerrar);
+    });
+};
+
 document.addEventListener("DOMContentLoaded", () => {
+  const pathActual = window.location.pathname;
+
   function cerrarSesionGlobal() {
     localStorage.removeItem("bv_volver");
     sessionStorage.removeItem("bv_volver");
@@ -21,90 +109,58 @@ document.addEventListener("DOMContentLoaded", () => {
     window.location.href = "inicio.html";
   }
 
+  let userData = null;
+  const usuarioLogueadoStr = localStorage.getItem("bv_usuario");
   if (usuarioLogueadoStr) {
-    let userData = {};
     try {
       userData = JSON.parse(usuarioLogueadoStr);
-    } catch (e) {}
-
-    const menu = document.querySelector(".navbar-menu");
-    const esCliente = userData.rol === "cliente" || userData.rol === "Cliente";
-    const enlacePanelCliente =
-      menu && menu.querySelector('a[href="panel-cliente.html"]');
-    if (esCliente && enlacePanelCliente) {
-      if (enlacePanelCliente.classList.contains("navbar-profile-link")) {
-        avataresNavbar.push({
-          avatar: enlacePanelCliente.querySelector(".navbar-profile-avatar"),
-          fallback: enlacePanelCliente.querySelector(
-            ".navbar-profile-fallback",
-          ),
-        });
-      } else {
-        const elementoPanel = enlacePanelCliente.closest("li");
-        if (elementoPanel) elementoPanel.replaceWith(crearEnlacePanelCliente());
-      }
+    } catch (error) {
+      console.error("No se pudo leer el usuario de la sesión:", error);
     }
+  }
 
-    // 1. Reemplazar "REGISTRO / LOGIN" por "CERRAR SESIÓN" en la barra de navegación
-    const loginLinks = menu
-      ? menu.querySelectorAll('a[href="inicio-sesion.html"]')
-      : [];
+  if (localStorage.getItem("bv_token") && userData) {
+    window.actualizarNavbarSesion(userData, cerrarSesionGlobal);
 
-    loginLinks.forEach((link) => {
-      if (
-        !pathActual.includes("inicio-sesion.html") &&
-        !pathActual.includes("registro-usuario.html")
-      ) {
-        link.innerHTML =
-          '<i class="fa-solid fa-right-from-bracket"></i> CERRAR SESIÓN';
-        link.href = "#";
-
-        link.addEventListener("click", (e) => {
-          e.preventDefault();
-          cerrarSesionGlobal();
+    if (
+      userData.avatar_cargado !== true &&
+      userData.id &&
+      window.Api &&
+      typeof window.Api.get === "function" &&
+      document.querySelector("header.navbar")
+    ) {
+      window.Api.get("/api/perfil/" + encodeURIComponent(userData.id))
+        .then((perfil) => {
+          userData = Object.assign({}, userData, {
+            apellido: perfil.apellido || userData.apellido || "",
+            foto_perfil: perfil.foto_perfil || null,
+            avatar_cargado: true,
+          });
+          window.actualizarNavbarSesion(userData, cerrarSesionGlobal);
+          try {
+            localStorage.setItem("bv_usuario", JSON.stringify(userData));
+          } catch (error) {
+            console.error("No se pudo guardar el avatar de la sesión:", error);
+          }
+        })
+        .catch((error) => {
+          console.error("No se pudo cargar el avatar del usuario:", error);
         });
+    }
+  }
 
-        // Si es admin, agregar un enlace al Panel Admin justo antes
-        if (userData.rol === "admin" || userData.rol === "Administrador") {
-          const li = document.createElement("li");
-          li.innerHTML =
-            '<a href="panel-admin.html" style="color: var(--gold);"><i class="fa-solid fa-chart-pie"></i> PANEL ADMIN</a>';
-          link.parentElement.insertAdjacentElement("beforebegin", li);
-        }
-
-        // Si es empleado/vendedor, agregar enlace al Panel Empleado
-        if (userData.rol === "empleado" || userData.rol === "Vendedor") {
-          const li = document.createElement("li");
-          li.innerHTML =
-            '<a href="panel-empleado.html" style="color: var(--gold);"><i class="fa-solid fa-id-badge"></i> MI PANEL</a>';
-          link.parentElement.insertAdjacentElement("beforebegin", li);
-        }
-
-        // Si es cliente, agregar enlace al Panel de Usuario
-        if (esCliente && !avataresNavbar.length) {
-          link.parentElement.insertAdjacentElement(
-            "beforebegin",
-            crearEnlacePanelCliente(),
-          );
-        }
-      }
-    });
-    cargarFotoNavbar(userData);
-
-    // 2. Interceptar botones de logout con la clase .logout-btn
-    const adminLogoutBtns = document.querySelectorAll(".logout-btn");
-    adminLogoutBtns.forEach((btn) => {
+  if (!window.Sesion || typeof window.Sesion.cerrar !== "function") {
+    document.querySelectorAll(".logout-btn").forEach((btn) => {
       btn.addEventListener("click", (e) => {
         e.preventDefault();
         cerrarSesionGlobal();
       });
     });
-  } else {
-    // 3. Proteger las rutas que requieren inicio de sesión (ej. panel de admin)
-    if (pathActual.includes("panel-admin.html")) {
-      alert("Debes iniciar sesión para acceder al panel.");
-      window.location.href = "inicio-sesion.html";
-    }
+  }
+
+  if (!userData && pathActual.includes("panel-admin.html")) {
+    alert("Debes iniciar sesión para acceder al panel.");
+    window.location.href = "inicio-sesion.html";
   }
 });
 

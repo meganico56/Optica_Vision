@@ -1135,7 +1135,7 @@ app.post("/api/login", async (req, res) => {
 
     // 1. Buscar usuario solo por correo (la contraseña está hasheada con bcrypt)
     const [usuarios] = await db.query(
-      `SELECT u.id_usuario, u.contrasena, u.estado, u.nombre, u.correo, r.nombre_rol AS rol
+      `SELECT u.id_usuario, u.contrasena, u.estado, u.nombre, u.apellido, u.correo, r.nombre_rol AS rol
        FROM usuario u LEFT JOIN rol r ON u.id_rol = r.id_rol WHERE u.correo = ?`,
       [correo],
     );
@@ -1201,6 +1201,7 @@ app.post("/api/login", async (req, res) => {
       usuario: {
         id: usuario.id_usuario,
         nombre: usuario.nombre,
+        apellido: usuario.apellido,
         correo: usuario.correo,
         rol: usuario.rol,
       },

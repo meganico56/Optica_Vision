@@ -25,7 +25,6 @@
 </nav>
 <div class="sidebar-footer">
 <a href="inicio.html" class="store-btn"><i class="fa-solid fa-store"></i><span>Ir a la tienda</span></a>
-<a href="inicio-sesion.html" class="logout-btn" id="logoutBtn"><i class="fa-solid fa-right-from-bracket"></i><span>Cerrar sesión</span></a>
 </div>
 </aside>
 
@@ -41,10 +40,16 @@
 </button>
 <div class="admin-profile">
 <div class="admin-info"><div class="admin-name" id="adminName"></div><div class="admin-role" id="adminRol">Cliente</div></div>
-<div class="admin-avatar" id="adminAvatar"></div>
+<button class="admin-avatar" id="adminAvatar" type="button" aria-label="Ampliar foto de perfil"></button>
+<a href="#" class="logout-btn topbar-logout-btn" id="logoutBtn" aria-label="Cerrar sesión"><i class="fa-solid fa-right-from-bracket" aria-hidden="true"></i></a>
 </div>
 </div>
 </header>
+
+<dialog class="avatar-preview" id="avatarPreview" aria-label="Foto de perfil ampliada">
+<button class="avatar-preview-close" id="avatarPreviewClose" type="button" aria-label="Cerrar vista ampliada"><i class="fa-solid fa-xmark" aria-hidden="true"></i></button>
+<div class="avatar-preview-image" id="avatarPreviewImage"></div>
+</dialog>
 
 <div class="section-content active" id="sec-dashboard">
 <div class="dashboard-container">
@@ -151,11 +156,11 @@
 </template>
 
 <script src="../scripts/api.js"></script>
-<script src="../scripts/session-manager.js?v=profile-avatar-id"></script>
+<script src="../scripts/session-manager.js?v=navbar-profile-left-31"></script>
 <script src="../scripts/sesion.js"></script>
 <script src="../scripts/carrito.js"></script>
 <script src="../scripts/panel-navegacion.js"></script>
-<script src="../scripts/panel-cliente.js"></script>
+<script src="../scripts/panel-cliente.js?v=avatar-preview"></script>
 <script src="../scripts/intro-animacion.js"></script>
 </body>
 </html>

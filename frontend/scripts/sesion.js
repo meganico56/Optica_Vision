@@ -63,7 +63,7 @@
 
       try {
         if (token) {
-          await fetch(window.Api.base +"/api/logout", {
+          await fetch(window.Api.base + "/api/logout", {
             method: "POST",
             headers: {
               Authorization: `Bearer ${token}`,
@@ -95,6 +95,73 @@
   };
 
   window.Sesion = Sesion;
+
+  // ---------- Detectar regreso desde un panel al inicio de sesión ----------
+
+  const MARCA_REGRESO_PANEL = "bv_regreso_panel";
+
+  if (PROTEGIDAS[archivo] && Sesion.estaLogueado()) {
+    window.addEventListener("pagehide", () => {
+      sessionStorage.setItem(MARCA_REGRESO_PANEL, "true");
+    });
+  }
+
+  if (archivo === "inicio-sesion.html") {
+    window.addEventListener("pageshow", async (evento) => {
+      const navegacion = performance.getEntriesByType("navigation")[0];
+
+      const regresoAtras =
+        evento.persisted || (navegacion && navegacion.type === "back_forward");
+
+      if (!regresoAtras) {
+        sessionStorage.removeItem(MARCA_REGRESO_PANEL);
+        return;
+      }
+
+      if (sessionStorage.getItem(MARCA_REGRESO_PANEL) !== "true") {
+        return;
+      }
+
+      sessionStorage.removeItem(MARCA_REGRESO_PANEL);
+
+      const token = Sesion.token();
+
+      Sesion.limpiar();
+
+      try {
+        if (token) {
+          await fetch(window.Api.base + "/api/logout", {
+            method: "POST",
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
+        }
+      } catch (error) {
+        console.error("Error al invalidar la sesión:", error);
+      }
+    });
+  }
+
+  // ---------- Protección al restaurar paneles desde la caché ----------
+
+  if (PROTEGIDAS[archivo]) {
+    window.addEventListener("pageshow", (evento) => {
+      if (!evento.persisted) return;
+
+      document.documentElement.style.visibility = "hidden";
+
+      if (
+        !Sesion.estaLogueado() ||
+        PROTEGIDAS[archivo].indexOf(Sesion.rol()) === -1
+      ) {
+        Sesion.irALogin();
+        return;
+      }
+
+      document.documentElement.style.visibility = "";
+    });
+  }
 
   // ---------- Protección de páginas (corre de inmediato, antes de pintar) ----------
   const permitidos = PROTEGIDAS[archivo];
@@ -203,32 +270,10 @@
     ponerTexto("profileAvatarLarge", iniciales(nombre));
   }
 
-  // "REGISTRO / LOGIN" pasa a "CERRAR SESIÓN" (+ enlace al panel) solo en la barra superior.
   function pintarNavbar(usuario) {
-    document
-      .querySelectorAll('header.navbar a[href="inicio-sesion.html"]')
-      .forEach((enlace) => {
-        const li = document.createElement("li");
-        if (usuario.rol === "Administrador") {
-          li.innerHTML =
-            '<a href="panel-admin.html" style="color: var(--gold);"><i class="fa-solid fa-chart-pie"></i> PANEL</a>';
-        } else if (usuario.rol === "Vendedor") {
-          li.innerHTML =
-            '<a href="panel-empleado.html" style="color: var(--gold);"><i class="fa-solid fa-id-badge"></i> MI PANEL</a>';
-        } else {
-          li.innerHTML =
-            '<a href="panel-cliente.html" style="color: var(--gold);"><i class="fa-solid fa-user"></i> MI PANEL</a>';
-        }
-        enlace.parentElement.insertAdjacentElement("beforebegin", li);
-
-        enlace.innerHTML =
-          '<i class="fa-solid fa-right-from-bracket"></i> CERRAR SESIÓN';
-        enlace.setAttribute("href", "#");
-        enlace.addEventListener("click", (e) => {
-          e.preventDefault();
-          Sesion.cerrar();
-        });
-      });
+    if (typeof window.actualizarNavbarSesion === "function") {
+      window.actualizarNavbarSesion(usuario, () => Sesion.cerrar());
+    }
   }
 
   function alListo(fn) {

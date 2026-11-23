@@ -54,9 +54,7 @@ document.addEventListener('DOMContentLoaded', () => {
         try {
             const respuesta = await Api.post('/api/login', { correo, contrasena });
             Sesion.iniciar(respuesta.token, respuesta.usuario);
-            // Administrador y Vendedor -> panel-admin.html, Cliente -> panel-usuario.html
-            // (o la página donde estaba si el login se pidió desde otra, como el pedido).
-            location.href = Sesion.destinoTrasLogin();
+            location.href = "inicio.html";
         } catch (error) {
             mostrarError(error.message);
             btnLogin.disabled = false;

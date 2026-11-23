@@ -65,6 +65,17 @@
     const nombreCompleto = [datos.nombre, datos.apellido].filter(Boolean).join(" ");
     const avatarIniciales = iniciales(datos.nombre, datos.apellido);
     const rol = usuarioSesion && usuarioSesion.rol ? usuarioSesion.rol : "";
+    if (usuarioSesion) {
+      try {
+        localStorage.setItem("bv_usuario", JSON.stringify(Object.assign({}, usuarioSesion, {
+          apellido: datos.apellido || "",
+          foto_perfil: datos.foto_perfil || null,
+          avatar_cargado: true,
+        })));
+      } catch (error) {
+        console.error("No se pudo actualizar el avatar guardado en la sesión:", error);
+      }
+    }
     if ($("adminName")) $("adminName").textContent = nombreCompleto;
     if ($("adminRol")) $("adminRol").textContent = rol;
     if ($("adminAvatar")) pintarAvatar($("adminAvatar"), avatarIniciales, datos.foto_perfil);
