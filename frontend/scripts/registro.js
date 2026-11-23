@@ -111,7 +111,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 contrasena
             });
 
-            // Registro exitoso → redirigir al login con mensaje de éxito
+            // Registro exitoso → mostrar confirmación temporal al volver al login.
             sessionStorage.setItem('bv_registro_ok', '1');
             window.location.href = 'inicio-sesion.html';
 

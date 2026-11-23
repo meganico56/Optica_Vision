@@ -24,12 +24,21 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (!form) return;
 
-    // Si viene de registrarse con éxito, mostrar mensaje de bienvenida
     if (sessionStorage.getItem('bv_registro_ok') === '1') {
         sessionStorage.removeItem('bv_registro_ok');
-        mensaje.textContent = '✅ ¡Cuenta creada con éxito! Ahora puedes iniciar sesión.';
-        mensaje.style.color = '#2ecc71';
-        mensaje.hidden = false;
+
+        const notificacion = document.createElement('div');
+        notificacion.className = 'registro-toast';
+        notificacion.setAttribute('role', 'status');
+        notificacion.setAttribute('aria-live', 'polite');
+        notificacion.textContent = 'Cuenta creada con éxito. Ya puedes iniciar sesión.';
+        document.body.appendChild(notificacion);
+
+        requestAnimationFrame(() => notificacion.classList.add('visible'));
+        setTimeout(() => {
+            notificacion.classList.remove('visible');
+            setTimeout(() => notificacion.remove(), 250);
+        }, 4000);
     }
 
     function mostrarError(texto) {

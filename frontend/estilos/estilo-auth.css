@@ -93,6 +93,35 @@
   z-index: 2;
 }
 
+.pagina-login .registro-toast {
+  position: fixed;
+  top: 5rem;
+  right: 1.25rem;
+  z-index: 10001;
+  width: min(420px, calc(100vw - 2.5rem));
+  padding: 1rem 1.25rem;
+  border: 1px solid #2e7d32;
+  border-radius: 12px;
+  background: #e8f5e9;
+  color: #1b5e20;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.2);
+  font-weight: 600;
+  opacity: 0;
+  transform: translateY(-10px);
+  transition: opacity 0.25s ease, transform 0.25s ease;
+}
+
+.pagina-login .registro-toast.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+:root.dark-mode .pagina-login .registro-toast {
+  border-color: #4caf50;
+  background: #173d22;
+  color: #d5f5d8;
+}
+
 /* El registro tiene más campos: tarjeta más ancha */
 .formulario:has(.campos) { max-width: 640px; }
 
