@@ -110,6 +110,7 @@
   position: relative;
   box-sizing: border-box;
   padding-right: 145px;
+  min-height: 52px;
   overflow: hidden;
 }
 
@@ -120,7 +121,7 @@
 
 .navbar-menu .navbar-theme-item {
   position: absolute;
-  right: 0;
+  right: 8px;
   top: 50%;
   transform: translateY(-50%);
 }
@@ -359,8 +360,16 @@ footer {
   .footer-container { grid-template-columns: repeat(3, 1fr); }
 }
 
-@media (max-width: 768px) {
-  .hamburguesa { display: flex; }
+@media (max-width: 1280px) {
+  .navbar {
+    padding-inline: 2.5%;
+  }
+
+  .hamburguesa {
+    display: flex;
+    margin-left: 1rem;
+  }
+
   .navbar nav { flex: initial; }
 
   .navbar-menu {
@@ -368,6 +377,7 @@ footer {
     align-items: stretch;
     justify-content: flex-start;
     width: 100%;
+    min-height: 0;
     max-height: 0;
     overflow: hidden;
     gap: 0;
@@ -397,6 +407,13 @@ footer {
   .navbar-menu li a::after { bottom: 4px; }
   .cart-count { right: auto; left: 22px; }
 
+  .buscador {
+    flex: 1 1 240px;
+    min-width: 0;
+  }
+}
+
+@media (max-width: 768px) {
   .buscador { max-width: none; margin: 0 1rem; }
 
   .footer-container {

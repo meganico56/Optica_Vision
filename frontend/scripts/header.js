@@ -34,12 +34,6 @@
 
       <input type="checkbox" id="menu-toggle" class="menu-toggle" />
 
-      <label for="menu-toggle" class="hamburguesa" aria-label="Abrir menú">
-        <span></span>
-        <span></span>
-        <span></span>
-      </label>
-
       <nav>
         <ul class="navbar-menu">
           <li><a href="inicio.html">INICIO</a></li>
@@ -56,6 +50,11 @@
           </li>
         </ul>
       </nav>
+      <label for="menu-toggle" class="hamburguesa" aria-label="Abrir menú">
+        <span></span>
+        <span></span>
+        <span></span>
+      </label>
     </header>
 `;
 
