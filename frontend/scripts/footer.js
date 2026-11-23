@@ -67,7 +67,9 @@
 
             <div class="contact-info">
                 <i class="fa-solid fa-location-dot"></i>
-                <span>CALLE 17 # 14-49 DUITAMA</span>
+                <button class="contacto-direccion" onclick="window.location.href='https://maps.app.goo.gl/fCdMdFSrocppCRu59';">
+                    Calle 17 # 14-17 Duitama
+                </button>
             </div>
 
             <div class="contact-info">
@@ -142,7 +144,7 @@
             <h2>¿Dónde puedo recoger mis lentes?</h2>
             <p>
                 Puedes recoger tus lentes directamente en nuestra óptica,
-                ubicada en la Calle 17 # 14-49 de Duitama. Para consultar
+                ubicada en la Calle 17 # 14-17 de Duitama. Para consultar
                 el estado de tu pedido puedes comunicarte con nuestro
                 equipo de atención.
             </p>
