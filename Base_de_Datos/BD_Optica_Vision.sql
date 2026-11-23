@@ -24,6 +24,7 @@ create table usuario (
     ciudad varchar(60),
     fecha_nacimiento date,
     contrasena varchar(100),
+    foto_perfil mediumtext,
     correo_verificado boolean not null default false,
     fecha_registro datetime not null default current_timestamp,
     estado enum('Activo', 'Inactivo') not null default 'Activo',
@@ -32,13 +33,6 @@ create table usuario (
     unique key uq_usuario_correo (correo),
     unique key uq_usuario_documento (tipo_documento, num_documento)
 );
-
-create table foto_perfil_usuario (
-    id_usuario int not null primary key,
-    foto_perfil mediumtext not null,
-    foreign key (id_usuario) references usuario(id_usuario) on delete cascade
-);
-
 
 create table acudiente (
     id_acudiente int auto_increment primary key,
