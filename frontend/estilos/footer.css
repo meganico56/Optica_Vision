@@ -123,6 +123,42 @@ footer .contact-info i {
     font-size: 1.1rem;
     flex-shrink: 0;
 }
+.contact-info span {
+    display: inline-block;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.contact-info span:hover {
+    color: var(--gold);
+    text-decoration: none;
+}
+footer .contact-info .contacto-direccion {
+    display: inline-block;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+
+    background: none;
+    border: none;
+    padding: 0;
+    margin: 0;
+
+    color: var(--text-muted);
+    font-family: var(--font-body);
+    font-size: 0.95rem;
+    font-weight: 400;
+    text-align: left;
+
+    cursor: pointer;
+    transition: color 0.3s ease;
+}
+footer .contact-info .contacto-direccion:hover {
+    color: var(--gold);
+    text-decoration: none;
+}
 
 /* REDES SOCIALES */
 footer .social-icons {
