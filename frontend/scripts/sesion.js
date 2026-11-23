@@ -162,7 +162,7 @@
   });
 
   // Detectar actividad del usuario
-  ["click", "keydown", "scroll", "touchstart"].forEach((evento) => {
+  ["click", "keydown", "scroll", "touchstart", "mousemove"].forEach((evento) => {
     window.addEventListener(evento, reiniciarTemporizador);
   });
 
