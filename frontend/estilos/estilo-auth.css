@@ -1233,3 +1233,188 @@ footer .copyright {
 :root.dark-mode .pagina-login .campos select {
   background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'><path d='M1 1l5 5 5-5' stroke='%23e5c96d' stroke-width='2' fill='none' stroke-linecap='round' stroke-linejoin='round'/></svg>");
 }
+
+
+
+
+/* la tarjeta de terminos y condiciones el registro y el login
+que se abre con target el enlace #terminos sin el JavaScript */
+
+
+
+.terminos-modal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 99999;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  box-sizing: border-box;
+  background: rgba(0, 0, 0, 0.65);
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+}
+
+.terminos-modal:target { display: flex; }
+
+/* Evita que la página de atrás se desplace con la tarjeta abierta */
+body:has(.terminos-modal:target) { overflow: hidden; }
+
+/* Capa invisible detrás de la tarjeta: al pulsar fuera, se cierra */
+.terminos-fondo {
+  position: absolute;
+  inset: 0;
+  cursor: default;
+}
+
+.terminos-tarjeta {
+  position: relative;
+  width: 100%;
+  max-width: 460px;
+  max-height: 85vh;
+  overflow-y: auto;
+  padding: 2.2rem 2rem 1.8rem;
+  background: #ffffff;
+  border: 2px solid var(--gold);
+  border-radius: 20px;
+  box-shadow: 0 15px 45px rgba(0, 0, 0, 0.25);
+  box-sizing: border-box;
+  text-align: center;
+  animation: aparecer-terminos 0.3s ease;
+}
+
+@keyframes aparecer-terminos {
+  from { opacity: 0; transform: translateY(20px) scale(0.95); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.terminos-cerrar {
+  position: absolute;
+  top: 10px;
+  right: 16px;
+  color: var(--gold-dark);
+  font-size: 30px;
+  line-height: 1;
+  text-decoration: none;
+  transition: color 0.3s ease, transform 0.3s ease;
+}
+
+.terminos-cerrar:hover {
+  color: #b22222;
+  transform: rotate(90deg);
+}
+
+.terminos-icono {
+  display: block;
+  color: var(--gold);
+  font-size: 2.2rem;
+  margin-bottom: 0.8rem;
+}
+
+.terminos-tarjeta h2 {
+  font-family: var(--font-title);
+  color: var(--gold-dark);
+  font-size: 1.4rem;
+  font-weight: 700;
+  margin-bottom: 1.1rem;
+}
+
+.terminos-tarjeta ul {
+  list-style: none;
+  margin: 0 0 1.4rem;
+  padding: 0;
+  text-align: left;
+}
+
+.terminos-tarjeta li {
+  position: relative;
+  padding-left: 1.3rem;
+  margin-bottom: 0.7rem;
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  line-height: 1.6;
+  color: var(--text-muted);
+}
+
+.terminos-tarjeta li::before {
+  content: "";
+  position: absolute;
+  left: 0.1rem;
+  top: 0.65em;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--gold);
+}
+
+.terminos-tarjeta strong { color: var(--text-dark); }
+
+.terminos-completos {
+  display: inline-block;
+  padding: 0.7rem 1.6rem;
+  border: 2px solid var(--gold);
+  border-radius: 12px;
+  color: var(--gold-dark);
+  font-family: var(--font-title);
+  font-size: 0.9rem;
+  font-weight: 700;
+  text-decoration: none;
+  transition: all 0.3s ease;
+}
+
+.terminos-completos:hover {
+  background: var(--gold);
+  color: #ffffff;
+}
+
+/* Frase "Al iniciar sesión aceptas..." del login */
+.pagina-login .aviso-terminos {
+  margin: -0.5rem 0 1.1rem;
+  font-size: 0.82rem;
+  text-align: center;
+  color: #444444;
+}
+
+.pagina-login .aviso-terminos a,
+.pagina-login .aceptar-datos a {
+  color: var(--gold-dark);
+  font-weight: 600;
+  text-decoration: underline;
+}
+
+.pagina-login .aviso-terminos a:hover,
+.pagina-login .aceptar-datos a:hover {
+  color: var(--gold);
+}
+
+@media (max-width: 576px) {
+  .terminos-tarjeta { padding: 2rem 1.3rem 1.5rem; }
+  .terminos-tarjeta h2 { font-size: 1.2rem; }
+  .terminos-tarjeta li { font-size: 0.85rem; }
+}
+
+/* ---------- Modo oscuro ---------- */
+:root.dark-mode .terminos-tarjeta {
+  background: #161512;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.7);
+}
+
+:root.dark-mode .terminos-tarjeta h2,
+:root.dark-mode .terminos-cerrar { color: var(--gold-light); }
+
+:root.dark-mode .terminos-cerrar:hover { color: #ff6b6b; }
+
+:root.dark-mode .terminos-tarjeta strong { color: #fff4d6; }
+
+:root.dark-mode .terminos-completos { color: var(--gold-light); }
+
+:root.dark-mode .terminos-completos:hover {
+  background: var(--gold);
+  color: #ffffff;
+}
+
+:root.dark-mode .pagina-login .aviso-terminos { color: #b0a997; }
+
+:root.dark-mode .pagina-login .aviso-terminos a,
+:root.dark-mode .pagina-login .aceptar-datos a { color: var(--gold-light); }
