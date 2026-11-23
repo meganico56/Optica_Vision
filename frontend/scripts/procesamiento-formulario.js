@@ -51,6 +51,32 @@ document.addEventListener('DOMContentLoaded', function () {
         imagen.src = items[0].imagen;
     }
 
+    // ---------- Datos guardados en el perfil ----------
+    const usuarioActual = Sesion.usuario();
+    if (usuarioActual && usuarioActual.id) {
+        Api.get('/api/perfil/' + encodeURIComponent(usuarioActual.id))
+            .then((perfil) => {
+                const camposPerfil = {
+                    nombre: [perfil.nombre, perfil.apellido].filter(Boolean).join(' '),
+                    documento: perfil.num_documento,
+                    correo: perfil.correo,
+                    telefono: perfil.telefono,
+                    direccion: perfil.direccion,
+                    ciudad: perfil.ciudad
+                };
+
+                Object.entries(camposPerfil).forEach(([id, valor]) => {
+                    const campo = document.getElementById(id);
+                    if (campo && !campo.value.trim() && valor) {
+                        campo.value = valor;
+                    }
+                });
+            })
+            .catch((error) => {
+                console.error('No se pudieron cargar los datos del perfil para el pedido.', error);
+            });
+    }
+
     // ---------- Fórmula óptica ----------
     tieneFormulaRadios.forEach((radio) => {
         radio.addEventListener('change', function () {
