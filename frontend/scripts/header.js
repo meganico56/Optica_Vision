@@ -10,7 +10,9 @@
       <div class="logo">
         <a href="inicio.html">
           <img
-            src="../imagenes/logos/Logo_modo_claro.png"
+            src="../imagenes/logos/Logo_modo_claro.webp"
+            width="300"
+            height="200"
             class="logo-icon"
           />
         </a>

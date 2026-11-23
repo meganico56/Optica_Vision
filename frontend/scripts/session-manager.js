@@ -206,13 +206,13 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     const logoSrc = dark
-      ? "../imagenes/logos/Logo_modo_oscuro.png"
-      : "../imagenes/logos/Logo_modo_claro.png";
+      ? "../imagenes/logos/Logo_modo_oscuro.webp"
+      : "../imagenes/logos/Logo_modo_claro.webp";
     document.querySelectorAll("img").forEach((img) => {
       const src = img.getAttribute("src") || "";
       if (
-        src.includes("Logo_modo_claro.png") ||
-        src.includes("Logo_modo_oscuro.png")
+        src.includes("Logo_modo_claro.webp") ||
+        src.includes("Logo_modo_oscuro.webp")
       ) {
         img.setAttribute("src", logoSrc);
       }

@@ -1,13 +1,8 @@
-@import url('Base.css');
-@import url('Layout-publico.css');
-
-
 body {
-    background-image: url('../imagenes/fondos/fondo-boutique.png');
+    background-image: url('../imagenes/fondos/fondo-boutique.webp');
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
-    background-attachment: fixed;
 }
 
 /* Scroll suave al ir a #nosotros / #servicios (con espacio para el navbar fijo) */
@@ -1140,7 +1135,7 @@ body.disco-arrastrando .glasses-model {
     background-color: #0c0b09;
     background-image: 
         linear-gradient(rgba(12, 11, 9, 0.45), rgba(12, 11, 9, 0.45)),
-        url('../imagenes/fondos/fondo-boutique.png');
+        url('../imagenes/fondos/fondo-boutique.webp');
     background-blend-mode: normal;
 }
 
@@ -1168,7 +1163,7 @@ body.disco-arrastrando .glasses-model {
 }
 
 :root.dark-mode .hero-text p {
-    color: #d4cfc5;
+    color: #ffffff;
 }
 
 :root.dark-mode .btn-arrow-secondary {

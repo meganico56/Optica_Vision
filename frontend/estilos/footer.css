@@ -477,7 +477,7 @@ footer .copyright {
         background-color: #ffffff;
         background-image:
             linear-gradient(rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.9)),
-            url("../imagenes/fondos/fondo-boutique.png");
+            url("../imagenes/fondos/fondo-boutique.webp");
         background-position: center;
         background-size: cover;
         background-repeat: no-repeat;
@@ -488,7 +488,7 @@ footer .copyright {
         background-color: #0c0b09;
         background-image:
             linear-gradient(rgba(12, 11, 9, 0.88), rgba(12, 11, 9, 0.88)),
-            url("../imagenes/fondos/fondo-boutique.png");
+            url("../imagenes/fondos/fondo-boutique.webp");
     }
 }
 

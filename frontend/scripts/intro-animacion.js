@@ -10,14 +10,23 @@
 //   - En panel de administrador siempre se muestra, en otras páginas solo al recargar
 
 document.addEventListener('DOMContentLoaded', () => {
-    // Detectar si estamos en el panel de administrador o panel de usuario (cualquier sección)
     const currentPath = window.location.pathname;
     const isAdminPanel = currentPath.includes('panel-admin.html') || currentPath.includes('panel-admin');
     const isUserPanel = currentPath.includes('panel-cliente.html') || currentPath.includes('panel-cliente');
     const isPanelPage = isAdminPanel || isUserPanel;
+    const storageKey = isPanelPage ? 'introShown_panel' : 'introShown_public';
+
+    const movimientoReducido = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const ahorroDatos = navigator.connection && (
+        navigator.connection.saveData ||
+        ['slow-2g', '2g'].includes(navigator.connection.effectiveType)
+    );
+    if (movimientoReducido || ahorroDatos) {
+        sessionStorage.setItem(storageKey, 'true');
+        return;
+    }
 
     // Clave de almacenamiento por sesión según la sección
-    const storageKey = isPanelPage ? 'introShown_panel' : 'introShown_public';
 
     // Verificar si ya se mostró la animación en esta sesión para esta sección
     if (sessionStorage.getItem(storageKey)) {
@@ -37,8 +46,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const bgColor = isLight ? 'rgba(240,235,220,0.65)' : 'rgba(15,15,15,0.70)';
     const lidBg   = isLight ? '#f0ebdc'                : '#0c0c0c';
     const logoSrc = isLight
-        ? '../imagenes/logos/Logo_modo_claro.png'
-        : '../imagenes/logos/Logo_modo_oscuro.png';
+        ? '../imagenes/logos/Logo_modo_claro.webp'
+        : '../imagenes/logos/Logo_modo_oscuro.webp';
     const gold  = 'rgba(204,164,59,1)';
     const goldG = 'rgba(204,164,59,0.35)';
 

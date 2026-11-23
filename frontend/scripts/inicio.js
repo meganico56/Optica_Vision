@@ -3,7 +3,7 @@
 // navbar scroll, modales de ayuda y rotación del podio.
 
 document.addEventListener("DOMContentLoaded", () => {
-
+    const movimientoReducido = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
     // Animación de entrada del hero 
     const elementosAnimados = document.querySelectorAll(".fade-in-up");
@@ -52,7 +52,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
     function iniciarRotacion() {
         detenerRotacion();
-        temporizador = setInterval(siguienteSlide, INTERVALO);
+        if (!movimientoReducido && !document.hidden) {
+            temporizador = setInterval(siguienteSlide, INTERVALO);
+        }
     }
 
     function detenerRotacion() {
@@ -84,6 +86,11 @@ document.addEventListener("DOMContentLoaded", () => {
             contenedorServicios.addEventListener("mouseleave", iniciarRotacion);
         }
 
+        document.addEventListener("visibilitychange", () => {
+            if (document.hidden) detenerRotacion();
+            else iniciarRotacion();
+        });
+
         document.querySelectorAll(".carrusel-puntos label").forEach((label, i) => {
             label.addEventListener("click", () => {
                 indiceActual = i;
@@ -101,7 +108,6 @@ document.addEventListener("DOMContentLoaded", () => {
     const fotoAnterior = document.getElementById("nosotrosFotoAnterior");
     const fotoSiguiente = document.getElementById("nosotrosFotoSiguiente");
     const dash = nosotrosCarrusel ? nosotrosCarrusel.querySelector(".nosotros-carrusel-dash") : null;
-    const movimientoReducido = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     let indiceFoto = 0;
     let temporizadorFotos = null;
     let dashFrame = null;
@@ -196,14 +202,29 @@ document.addEventListener("DOMContentLoaded", () => {
         // IntersectionObserver: solo anima cuando es visible
         const resenasObserver = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
-                resenasVisible = entry.isIntersecting;
+                resenasVisible = entry.isIntersecting && !movimientoReducido && !document.hidden;
                 if (resenasVisible && !rafId) {
                     rafId = requestAnimationFrame(animar);
+                }
+                if (!resenasVisible && rafId) {
+                    cancelAnimationFrame(rafId);
+                    rafId = null;
                 }
             });
         }, { threshold: 0.1 });
 
         resenasObserver.observe(resenasWrapper);
+
+        document.addEventListener("visibilitychange", () => {
+            if (document.hidden && rafId) {
+                cancelAnimationFrame(rafId);
+                rafId = null;
+                resenasVisible = false;
+            } else if (!document.hidden && !movimientoReducido) {
+                resenasVisible = true;
+                if (!rafId) rafId = requestAnimationFrame(animar);
+            }
+        });
 
         // Eventos de arrastre: registrar mousemove/touchmove solo cuando se necesitan
         function onMouseMove(e) {
