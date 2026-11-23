@@ -63,7 +63,7 @@
 
       try {
         if (token) {
-          await fetch("/api/logout", {
+          await fetch(window.Api.base +"/api/logout", {
             method: "POST",
             headers: {
               Authorization: `Bearer ${token}`,
