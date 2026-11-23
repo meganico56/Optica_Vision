@@ -12,29 +12,49 @@ const db = require("./db");
 
 const router = express.Router();
 
-let tablaFotosPerfil;
+let migracionFotoPerfil;
 
-async function crearTablaFotosPerfil() {
-  await db.query(`
-    CREATE TABLE IF NOT EXISTS foto_perfil_usuario (
-      id_usuario INT NOT NULL PRIMARY KEY,
-      foto_perfil MEDIUMTEXT NOT NULL,
-      FOREIGN KEY (id_usuario) REFERENCES usuario(id_usuario) ON DELETE CASCADE
-    ) DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_unicode_ci
-  `);
+async function migrarFotoPerfilAUsuario() {
+  const [columnas] = await db.query(
+    `SELECT COLUMN_NAME FROM information_schema.COLUMNS
+     WHERE TABLE_SCHEMA = DATABASE()
+       AND TABLE_NAME = 'usuario'
+       AND COLUMN_NAME = 'foto_perfil'`,
+  );
+
+  if (columnas.length === 0) {
+    try {
+      await db.query("ALTER TABLE usuario ADD COLUMN foto_perfil MEDIUMTEXT NULL");
+    } catch (error) {
+      if (error.code !== "ER_DUP_FIELDNAME") throw error;
+    }
+  }
+
+  const [tablas] = await db.query(
+    `SELECT TABLE_NAME FROM information_schema.TABLES
+     WHERE TABLE_SCHEMA = DATABASE()
+       AND TABLE_NAME = 'foto_perfil_usuario'`,
+  );
+
+  if (tablas.length > 0) {
+    await db.query(
+      `UPDATE usuario u
+       JOIN foto_perfil_usuario f ON f.id_usuario = u.id_usuario
+       SET u.foto_perfil = f.foto_perfil
+       WHERE u.foto_perfil IS NULL`,
+    );
+  }
 }
 
-async function asegurarTablaFotosPerfil() {
-  if (!tablaFotosPerfil) {
-    tablaFotosPerfil = crearTablaFotosPerfil();
+async function asegurarFotoPerfilEnUsuario() {
+  if (!migracionFotoPerfil) {
+    migracionFotoPerfil = migrarFotoPerfilAUsuario().catch((error) => {
+      migracionFotoPerfil = null;
+      throw error;
+    });
   }
 
-  try {
-    await tablaFotosPerfil;
-  } catch (error) {
-    tablaFotosPerfil = null;
-    throw error;
-  }
+  await migracionFotoPerfil;
 }
 
 function idValido(valor) {
@@ -48,12 +68,11 @@ router.get("/perfil/:id", async (req, res) => {
   if (!id) return res.status(400).json({ mensaje: "Identificador de usuario no válido" });
 
   try {
-    await asegurarTablaFotosPerfil();
+    await asegurarFotoPerfilEnUsuario();
     const [filas] = await db.query({
       sql: `SELECT u.id_usuario, u.nombre, u.apellido, u.tipo_documento, u.num_documento, u.telefono,
-                   u.correo, u.direccion, u.ciudad, u.fecha_nacimiento, f.foto_perfil
+                   u.correo, u.direccion, u.ciudad, u.fecha_nacimiento, u.foto_perfil
             FROM usuario u
-            LEFT JOIN foto_perfil_usuario f ON f.id_usuario = u.id_usuario
             WHERE u.id_usuario = ?`,
       values: [id],
       dateStrings: true,
@@ -147,7 +166,7 @@ router.put("/perfil/:id/foto", async (req, res) => {
   }
 
   try {
-    await asegurarTablaFotosPerfil();
+    await asegurarFotoPerfilEnUsuario();
     const [usuarios] = await db.query(
       "SELECT id_usuario FROM usuario WHERE id_usuario = ?",
       [id],
@@ -155,10 +174,8 @@ router.put("/perfil/:id/foto", async (req, res) => {
     if (usuarios.length === 0) return res.status(404).json({ mensaje: "Usuario no encontrado" });
 
     await db.query(
-      `INSERT INTO foto_perfil_usuario (id_usuario, foto_perfil)
-       VALUES (?, ?)
-       ON DUPLICATE KEY UPDATE foto_perfil = VALUES(foto_perfil)`,
-      [id, foto],
+      "UPDATE usuario SET foto_perfil = ? WHERE id_usuario = ?",
+      [foto, id],
     );
     res.json({ mensaje: "Imagen de perfil actualizada correctamente" });
   } catch (error) {

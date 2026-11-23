@@ -1,3 +1,4 @@
+drop database if exists optica_vision;
 create database optica_vision character set utf8mb4 collate utf8mb4_unicode_ci;
 use optica_vision;
 
@@ -24,6 +25,7 @@ create table usuario (
     ciudad varchar(60),
     fecha_nacimiento date,
     contrasena varchar(100),
+    foto_perfil mediumtext,
     correo_verificado boolean not null default false,
     fecha_registro datetime not null default current_timestamp,
     estado enum('Activo', 'Inactivo') not null default 'Activo',
@@ -32,13 +34,6 @@ create table usuario (
     unique key uq_usuario_correo (correo),
     unique key uq_usuario_documento (tipo_documento, num_documento)
 );
-
-create table foto_perfil_usuario (
-    id_usuario int not null primary key,
-    foto_perfil mediumtext not null,
-    foreign key (id_usuario) references usuario(id_usuario) on delete cascade
-);
-
 
 create table acudiente (
     id_acudiente int auto_increment primary key,
@@ -455,43 +450,23 @@ insert into rol (nombre_rol, descripcion, es_personal) values
 ('Cliente', 'Persona que agenda citas, recibe formulas y compra productos en la optica', false);
 
 
--- Usuarios 1 a 3: personal. Usuarios 4 a 8: clientes (7 y 8 son menores de edad)
+-- Cuentas de prueba: la contraseña de las tres cuentas es admin1234.
 insert into usuario (nombre, apellido, tipo_documento, num_documento, telefono, correo, direccion, ciudad, fecha_nacimiento, contrasena, correo_verificado, fecha_registro, estado, id_rol) values
-('Camila', 'Torres', 'C.C.', '1032987651', '3115557890', 'camila.torres@boutiquevision.com', null, 'Bogotá', null, '$2b$10$VimUxLrTF27lzO0u1k2qpO2FmSWDfEAZn7ODazomWF7il1qapY3SG', true, '2026-07-01 08:00:00', 'Activo', 1),
-('Andrés', 'Ramírez', 'C.C.', '1019456782', '3124448821', 'andres.ramirez@boutiquevision.com', null, 'Bogotá', null, '$2b$10$6TuJGK7pnHzOn3O47MLiNuoM/rVYqo6mB2kLSsXN5KcvybUgA5iF2', true, '2026-07-01 08:00:00', 'Activo', 2),
-('Diana', 'Castillo', 'C.C.', '1026773401', '3138812345', 'diana.castillo@boutiquevision.com', null, 'Bogotá', null, '$2b$10$QBf.QjHoStrbRhfXVvIK.OX8lAqVfQiPnvrL1EEt3vtdZfqiW.w/q', true, '2026-07-01 08:00:00', 'Activo', 2),
-('Sofía', 'Herrera', 'C.C.', '1032456789', '3201234567', 'sofia.herrera@gmail.com', 'Cra 45 #12-30', 'Bogotá', '1996-03-14', '$2b$10$0YOM74TV59TEn/z73QMgNe9/m7cLb1mt/EzTMuk5.4wjfhTX.pfXm', true, '2026-08-05 10:00:00', 'Activo', 3),
-('Mateo', 'Rojas', 'C.C.', '1098765432', '3112345678', 'mateo.rojas@gmail.com', 'Cll 80 #22-15', 'Bogotá', '1990-11-02', '$2b$10$PD2fASr/bzOQkYEPWMjDuu8I9RRdG0Fb8asd713lwdOzd77Vv3Hvu', true, '2026-08-19 14:00:00', 'Activo', 3),
-('Valentina', 'Cruz', 'C.C.', '52741369', '3023456789', 'valentina.cruz@gmail.com', 'Cra 7 #63-20', 'Bogotá', '1985-06-23', '$2b$10$RA91b67ZH0L7sSZlkTAmZeTpZp6wCcVyygg72bwnJXB5Q5nZpwQDW', true, '2026-08-14 14:30:00', 'Activo', 3),
-('Santiago', 'Molina', 'T.I.', '1015987456', '3134567890', 'contacto.molina@gmail.com', 'Cll 19 #4-56', 'Bogotá', '2010-09-30', null, false, '2026-08-19 10:00:00', 'Activo', 3),
-('Isabella', 'Gómez', 'T.I.', '1100456321', '3145556677', 'contacto.gomez@gmail.com', 'Cra 30 #45-10', 'Bogotá', '2013-04-12', null, false, '2026-10-10 11:00:00', 'Activo', 3);
-
-
-insert into acudiente (nombre, apellido, tipo_documento, num_documento, telefono, correo, parentesco, id_menor) values
-('Laura', 'Molina', 'C.C.', '52987456', '3134567890', 'laura.molina@gmail.com', 'Madre', 7),
-('Jorge', 'Molina', 'C.C.', '80123456', '3167778899', 'jorge.molina@gmail.com', 'Padre', 7),
-('Carlos', 'Gómez', 'C.C.', '79654321', '3145556677', 'carlos.gomez@gmail.com', 'Padre', 8);
+('Admin', 'Óptica', 'C.C.', '1000000001', '3000000001', 'admin@a.com', null, 'Bogotá', null, '$2b$10$OpFC1qBnGefmsMCD5PSiv.zozDS6DEJtpKhkOsK1miFyrw55fILVS', true, '2026-07-01 08:00:00', 'Activo', 1),
+('Empleado', 'Demo', 'C.C.', '1000000002', '3000000002', 'empleado@a.com', null, 'Bogotá', null, '$2b$10$OpFC1qBnGefmsMCD5PSiv.zozDS6DEJtpKhkOsK1miFyrw55fILVS', true, '2026-07-01 08:00:00', 'Activo', 2),
+('Cliente', 'Demo', 'C.C.', '1000000003', '3000000003', 'cliente@a.com', 'Cra 45 #12-30', 'Bogotá', '1996-03-14', '$2b$10$OpFC1qBnGefmsMCD5PSiv.zozDS6DEJtpKhkOsK1miFyrw55fILVS', true, '2026-08-05 10:00:00', 'Activo', 3);
 
 
 insert into consentimiento_datos (tipo, version_politica, aceptado, fecha_aceptacion, medio, id_usuario, id_acudiente) values
-('Datos personales', 'v1.0', true, '2026-08-05 10:00:00', 'Presencial', 4, null),
-('Datos de salud', 'v1.0', true, '2026-08-05 10:00:00', 'Presencial', 4, null),
-('Comunicaciones comerciales', 'v1.0', true, '2026-08-05 10:00:00', 'Presencial', 4, null),
-('Datos personales', 'v1.0', true, '2026-08-19 14:00:00', 'Web', 5, null),
-('Datos de salud', 'v1.0', true, '2026-08-19 14:00:00', 'Web', 5, null),
-('Datos personales', 'v1.0', true, '2026-08-14 14:30:00', 'Presencial', 6, null),
-('Datos de salud', 'v1.0', true, '2026-08-14 14:30:00', 'Presencial', 6, null),
-('Comunicaciones comerciales', 'v1.0', false, '2026-08-14 14:30:00', 'Presencial', 6, null),
-('Datos personales', 'v1.0', true, '2026-08-19 10:00:00', 'Presencial', 7, 1),
-('Datos de salud', 'v1.0', true, '2026-08-19 10:00:00', 'Presencial', 7, 1),
-('Datos personales', 'v1.0', true, '2026-10-10 11:00:00', 'Web', 8, 3),
-('Datos de salud', 'v1.0', true, '2026-10-10 11:00:00', 'Web', 8, 3);
+('Datos personales', 'v1.0', true, '2026-08-05 10:00:00', 'Presencial', 3, null),
+('Datos de salud', 'v1.0', true, '2026-08-05 10:00:00', 'Presencial', 3, null),
+('Comunicaciones comerciales', 'v1.0', false, '2026-08-05 10:00:00', 'Presencial', 3, null);
 
 
 insert into token_recuperacion (token_hash, fecha_creacion, fecha_expiracion, usado, id_usuario) values
-(sha2('token-prueba-sofia', 256), '2026-09-01 10:00:00', '2026-09-01 11:00:00', true, 4),
-(sha2('token-prueba-mateo', 256), '2026-10-10 18:30:00', '2026-10-10 19:30:00', false, 5),
-(sha2('token-prueba-valentina', 256), '2026-10-16 09:00:00', '2026-10-16 10:00:00', false, 6);
+(sha2('token-prueba-sofia', 256), '2026-09-01 10:00:00', '2026-09-01 11:00:00', true, 3),
+(sha2('token-prueba-mateo', 256), '2026-10-10 18:30:00', '2026-10-10 19:30:00', false, 3),
+(sha2('token-prueba-valentina', 256), '2026-10-16 09:00:00', '2026-10-16 10:00:00', false, 3);
 
 
 insert into marca (nombre, pais_origen, estado) values
@@ -554,19 +529,19 @@ insert into detalle_compra (cantidad, precio_unitario, id_producto, numero_compr
 
 
 insert into cita (fecha_hora, duracion_minutos, motivo, canal, estado, observaciones, id_cliente, id_usuario_atiende) values
-('2026-08-10 09:00:00', 30, 'Entrega de resultados de examen visual y asesoría de montura', 'Presencial', 'Completada', 'La cliente trae resultados con miopía y astigmatismo leve, se registra receta', 4, 2),
-('2026-08-14 15:00:00', 30, 'Entrega de resultados de examen visual', 'Web', 'Completada', 'La cliente trae resultados con hipermetropía y presbicia, se recomienda lente progresivo', 6, 3),
-('2026-08-19 10:30:00', 30, 'Entrega de resultados de examen visual pediátrico', 'Presencial', 'Completada', 'Paciente menor de edad acompañado por su acudiente, se registra receta con vigencia reducida', 7, 2),
-('2026-10-20 11:00:00', 30, 'Primera asesoría para elección de montura', 'Web', 'Programada', null, 5, null),
-('2026-09-21 09:00:00', 30, 'Control de seguimiento', 'Telefono', 'Cancelada', 'La cliente reprogramará más adelante', 4, 2),
-('2026-10-22 15:00:00', 30, 'Primera asesoría para elección de montura', 'Presencial', 'Confirmada', 'Asistirá con su acudiente', 8, 2);
+('2026-08-10 09:00:00', 30, 'Entrega de resultados de examen visual y asesoría de montura', 'Presencial', 'Completada', 'La cliente trae resultados con miopía y astigmatismo leve, se registra receta', 3, 2),
+('2026-08-14 15:00:00', 30, 'Entrega de resultados de examen visual', 'Web', 'Completada', 'La cliente trae resultados con hipermetropía y presbicia, se recomienda lente progresivo', 3, 2),
+('2026-08-19 10:30:00', 30, 'Control visual de seguimiento', 'Presencial', 'Completada', 'Se registra receta para control periódico', 3, 2),
+('2026-10-20 11:00:00', 30, 'Primera asesoría para elección de montura', 'Web', 'Programada', null, 3, null),
+('2026-09-21 09:00:00', 30, 'Control de seguimiento', 'Telefono', 'Cancelada', 'La cliente reprogramará más adelante', 3, 2),
+('2026-10-22 15:00:00', 30, 'Primera asesoría para elección de montura', 'Presencial', 'Confirmada', 'Asistirá a su cita de asesoría', 3, 2);
 
 
--- Vigencia: 12 meses para adultos y 6 meses para menores de 18
+-- Vigencia: 12 meses para clientes adultos
 insert into receta_optica (tipo_receta, fecha_emision, fecha_vencimiento, od_esfera, od_cilindro, od_eje, od_adicion, oi_esfera, oi_cilindro, oi_eje, oi_adicion, distancia_pupilar, dp_od, dp_oi, altura_od, altura_oi, od_curva_base, od_diametro, oi_curva_base, oi_diametro, diagnostico, entidad_examinadora, nombre_optometra_externo, registro_profesional, observaciones, id_cliente, id_cita, id_usuario_registra) values
-('Gafas', '2026-08-06', '2027-08-06', -2.25, -0.50, 180, null, -2.00, -0.75, 175, null, 62.0, null, null, null, null, null, null, null, null, 'Miopía y astigmatismo leve', 'Centro de Optometría VisiónTotal S.A.S.', 'Julián Vargas', 'RP-45213', 'Control en un año', 4, 1, 2),
-('Ambos', '2026-08-12', '2027-08-12', 1.00, null, null, 1.75, 1.25, null, null, 1.75, 60.5, 30.5, 30.0, 22.0, 22.0, 8.6, 14.2, 8.6, 14.2, 'Hipermetropía y presbicia', 'Centro de Optometría VisiónTotal S.A.S.', 'Julián Vargas', 'RP-45213', 'Recomendado lente progresivo', 6, 2, 3),
-('Gafas', '2026-08-18', '2027-02-18', -1.00, -0.25, 90, null, -1.25, -0.25, 85, null, 55.0, null, null, null, null, null, null, null, null, 'Miopía leve bilateral', 'Centro de Optometría VisiónTotal S.A.S.', 'Julián Vargas', 'RP-45213', 'Paciente pediátrico, control cada 6 meses', 7, 3, 2);
+('Gafas', '2026-08-06', '2027-08-06', -2.25, -0.50, 180, null, -2.00, -0.75, 175, null, 62.0, null, null, null, null, null, null, null, null, 'Miopía y astigmatismo leve', 'Centro de Optometría VisiónTotal S.A.S.', 'Julián Vargas', 'RP-45213', 'Control en un año', 3, 1, 2),
+('Ambos', '2026-08-12', '2027-08-12', 1.00, null, null, 1.75, 1.25, null, null, 1.75, 60.5, 30.5, 30.0, 22.0, 22.0, 8.6, 14.2, 8.6, 14.2, 'Hipermetropía y presbicia', 'Centro de Optometría VisiónTotal S.A.S.', 'Julián Vargas', 'RP-45213', 'Recomendado lente progresivo', 3, 2, 2),
+('Gafas', '2026-08-18', '2027-08-18', -1.00, -0.25, 90, null, -1.25, -0.25, 85, null, 55.0, null, null, null, null, null, null, null, null, 'Miopía leve bilateral', 'Centro de Optometría VisiónTotal S.A.S.', 'Julián Vargas', 'RP-45213', 'Control anual', 3, 3, 2);
 
 
 insert into promocion (nombre, descripcion, tipo_descuento, valor_descuento, fecha_inicio, fecha_fin, estado) values
@@ -576,12 +551,12 @@ insert into promocion (nombre, descripcion, tipo_descuento, valor_descuento, fec
 
 
 insert into venta (numero_factura, fecha, canal, subtotal, descuento, impuesto, estado, id_cliente, codigo_promocion, id_receta, id_usuario) values
-('FV-0001', '2026-08-18 10:15:00', 'Mostrador', 400000.00, 0, 0, 'Pagada', 4, null, 1, 2),
-('FV-0002', '2026-08-19 14:30:00', 'Mostrador', 250000.00, 0, 0, 'Pagada', 5, null, null, 3),
-('FV-0003', '2026-08-20 09:00:00', 'Mostrador', 202000.00, 0, 0, 'Pagada', 6, null, 2, 2),
-('FV-0004', '2026-08-21 16:45:00', 'Mostrador', 540000.00, 20000.00, 0, 'Pagada', 7, 2, 3, 1),
-('FV-0005', '2026-09-05 19:20:00', 'Web', 48000.00, 0, 0, 'Pagada', 4, null, null, null),
-('FV-0006', '2026-10-05 11:00:00', 'Mostrador', 540000.00, 0, 0, 'Pagada', 6, null, 2, 3);
+('FV-0001', '2026-08-18 10:15:00', 'Mostrador', 400000.00, 0, 0, 'Pagada', 3, null, 1, 2),
+('FV-0002', '2026-08-19 14:30:00', 'Mostrador', 250000.00, 0, 0, 'Pagada', 3, null, null, 2),
+('FV-0003', '2026-08-20 09:00:00', 'Mostrador', 202000.00, 0, 0, 'Pagada', 3, null, 2, 2),
+('FV-0004', '2026-08-21 16:45:00', 'Mostrador', 540000.00, 20000.00, 0, 'Pagada', 3, 2, 3, 1),
+('FV-0005', '2026-09-05 19:20:00', 'Web', 48000.00, 0, 0, 'Pagada', 3, null, null, null),
+('FV-0006', '2026-10-05 11:00:00', 'Mostrador', 540000.00, 0, 0, 'Pagada', 3, null, 2, 2);
 
 
 insert into detalle_venta (cantidad, precio_unitario, codigo_venta, id_producto) values
@@ -599,7 +574,7 @@ insert into detalle_venta (cantidad, precio_unitario, codigo_venta, id_producto)
 
 
 insert into devolucion (fecha, motivo, cantidad, destino, valor_devuelto, observaciones, codigo_detalle_venta, id_usuario) values
-('2026-08-26 15:00:00', 'Producto defectuoso', 1, 'Devuelto a proveedor', 250000.00, 'El cliente reportó que la gafa llegó con la bisagra floja; se genera nota de crédito', 3, 3),
+('2026-08-26 15:00:00', 'Producto defectuoso', 1, 'Devuelto a proveedor', 250000.00, 'El cliente reportó que la gafa llegó con la bisagra floja; se genera nota de crédito', 3, 2),
 ('2026-08-28 11:30:00', 'Cliente se arrepintio', 1, 'Vuelve a inventario', 32000.00, 'Producto sellado, regresa al inventario; se genera nota de crédito', 5, 2),
 ('2026-09-01 10:00:00', 'Cambio de formula', 1, 'Descarte', 85000.00, 'Caja abierta, no se puede reingresar; se genera nota de crédito', 4, 2);
 
@@ -632,26 +607,26 @@ insert into movimiento_inventario (fecha, tipo, cantidad, observaciones, id_prod
 ('2026-07-12 11:05:00', 'Compra', 50, null, 5, 1, 2, null, null),
 ('2026-07-12 11:05:00', 'Compra', 30, null, 7, 1, 2, null, null),
 ('2026-08-18 10:15:00', 'Venta', -1, null, 1, 2, null, 1, null),
-('2026-08-19 14:30:00', 'Venta', -1, null, 4, 3, null, 2, null),
+('2026-08-19 14:30:00', 'Venta', -1, null, 4, 2, null, 2, null),
 ('2026-08-20 09:00:00', 'Venta', -2, null, 5, 2, null, 3, null),
 ('2026-08-20 09:00:00', 'Venta', -1, null, 7, 2, null, 3, null),
 ('2026-08-21 16:45:00', 'Venta', -1, null, 2, 1, null, 4, null),
 ('2026-09-05 19:20:00', 'Venta', -1, 'Venta web', 7, null, null, 5, null),
 ('2026-09-05 19:20:00', 'Venta', -2, 'Venta web', 9, null, null, 5, null),
 ('2026-08-28 11:30:00', 'Devolucion de cliente', 1, 'Producto sellado', 7, 2, null, null, 2),
-('2026-10-05 11:00:00', 'Venta', -1, null, 2, 3, null, 6, null);
+('2026-10-05 11:00:00', 'Venta', -1, null, 2, 2, null, 6, null);
 
 
 insert into orden_trabajo (fecha_creacion, tipo_lente, tratamiento, laboratorio, fecha_promesa, fecha_entrega, estado, observaciones, id_cliente, id_venta, id_receta, id_producto_montura, id_usuario_registra) values
-('2026-08-18 10:30:00', 'Monofocal', 'Antirreflejo', 'Laboratorio Óptico Central', '2026-08-25', '2026-08-24 11:00:00', 'Entregado', null, 4, 1, 1, 1, 2),
-('2026-08-21 17:15:00', 'Monofocal', 'Antirreflejo', 'Laboratorio Óptico Central', '2026-08-28', '2026-08-27 10:00:00', 'Entregado', null, 7, 4, 3, 2, 1),
-('2026-10-05 11:15:00', 'Progresivo', 'Antirreflejo', 'Laboratorio Óptico Central', '2026-10-15', null, 'Listo para entrega', 'La cliente fue avisada por WhatsApp', 6, 6, 2, 2, 3);
+('2026-08-18 10:30:00', 'Monofocal', 'Antirreflejo', 'Laboratorio Óptico Central', '2026-08-25', '2026-08-24 11:00:00', 'Entregado', null, 3, 1, 1, 1, 2),
+('2026-08-21 17:15:00', 'Monofocal', 'Antirreflejo', 'Laboratorio Óptico Central', '2026-08-28', '2026-08-27 10:00:00', 'Entregado', null, 3, 4, 3, 2, 1),
+('2026-10-05 11:15:00', 'Progresivo', 'Antirreflejo', 'Laboratorio Óptico Central', '2026-10-15', null, 'Listo para entrega', 'La cliente fue avisada por WhatsApp', 3, 6, 2, 2, 2);
 
 
 insert into carrito (fecha_creacion, estado, id_cliente, codigo_venta) values
-('2026-10-14 20:10:00', 'Activo', 5, null),
-('2026-09-10 18:30:00', 'Abandonado', 6, null),
-('2026-09-05 19:05:00', 'Convertido', 4, 5);
+('2026-10-14 20:10:00', 'Activo', 3, null),
+('2026-09-10 18:30:00', 'Abandonado', 3, null),
+('2026-09-05 19:05:00', 'Convertido', 3, 5);
 
 
 insert into detalle_carrito (cantidad, id_carrito, id_producto) values
@@ -664,7 +639,7 @@ insert into detalle_carrito (cantidad, id_carrito, id_producto) values
 
 
 insert into favorito (id_cliente, id_producto) values
-(4, 4),
-(6, 2),
-(5, 1),
-(5, 3);
+(3, 4),
+(3, 2),
+(3, 1),
+(3, 3);

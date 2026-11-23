@@ -17,7 +17,7 @@ document.addEventListener('DOMContentLoaded', () => {
         window.location.href = 'inicio.html';
     }
 
-    const usuarioLogueadoStr = localStorage.getItem('usuarioLogueado') || localStorage.getItem('bv_usuario') || sessionStorage.getItem('bv_usuario');
+    const usuarioLogueadoStr = localStorage.getItem('bv_usuario') || sessionStorage.getItem('bv_usuario') || localStorage.getItem('usuarioLogueado');
     const pathActual = window.location.pathname;
     const avataresNavbar = [];
 
@@ -52,14 +52,13 @@ document.addEventListener('DOMContentLoaded', () => {
         return li;
     }
 
-    function cargarFotoNavbar() {
+    function cargarFotoNavbar(usuario) {
         if (!avataresNavbar.length || !window.Api) return;
 
-        const token = localStorage.getItem('bv_token') || sessionStorage.getItem('bv_token') || '';
-        const coincidencia = /^session-(\d+)$/.exec(token);
-        if (!coincidencia) return;
+        const idUsuario = Number(usuario && (usuario.id || usuario.id_usuario));
+        if (!Number.isInteger(idUsuario) || idUsuario <= 0) return;
 
-        window.Api.get('/api/perfil/' + coincidencia[1]).then((perfil) => {
+        window.Api.get('/api/perfil/' + idUsuario).then((perfil) => {
             if (typeof perfil.foto_perfil !== 'string' || !/^data:image\/(?:jpeg|png|webp);base64,/i.test(perfil.foto_perfil)) return;
             avataresNavbar.forEach(({ avatar, fallback }) => {
                 avatar.src = perfil.foto_perfil;
@@ -125,7 +124,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             }
         });
-        cargarFotoNavbar();
+        cargarFotoNavbar(userData);
 
         // 2. Interceptar botones de logout con la clase .logout-btn
         const adminLogoutBtns = document.querySelectorAll('.logout-btn');
