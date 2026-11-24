@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 360" role="img" aria-labelledby="title">
+  <title id="title">Montura infantil azul</title>
+  <defs>
+    <linearGradient id="frame" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0" stop-color="#55c9ee"/>
+      <stop offset="1" stop-color="#1768bc"/>
+    </linearGradient>
+    <linearGradient id="lens" x1="0" x2="0" y1="0" y2="1">
+      <stop stop-color="#c9f3ff" stop-opacity=".75"/>
+      <stop offset="1" stop-color="#fff" stop-opacity=".25"/>
+    </linearGradient>
+    <filter id="shadow" x="-.2" y="-.3" width="1.4" height="1.7">
+      <feDropShadow dx="0" dy="13" stdDeviation="9" flood-color="#173d61" flood-opacity=".2"/>
+    </filter>
+  </defs>
+  <g filter="url(#shadow)" stroke="url(#frame)" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M90 145 32 112M550 145l58-33" fill="none" stroke-width="18"/>
+    <rect x="83" y="112" width="205" height="143" rx="54" fill="url(#lens)" stroke-width="18"/>
+    <rect x="352" y="112" width="205" height="143" rx="54" fill="url(#lens)" stroke-width="18"/>
+    <path d="M288 158c18-21 46-21 64 0" fill="none" stroke-width="16"/>
+    <path d="M118 131c29-17 73-16 105-2M388 131c29-17 73-16 105-2" fill="none" stroke="#fff" stroke-opacity=".72" stroke-width="8"/>
+  </g>
+</svg>

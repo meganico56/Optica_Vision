@@ -21,6 +21,15 @@ const DIRECTORIO_IMAGENES_PRODUCTOS = path.join(
   "productos",
 );
 const IMAGEN_PRODUCTO_PREDETERMINADA = "gafas-modelo1.png";
+const IMAGENES_VECTOR_CATALOGO = new Set([
+  "montura-infantil-azul.svg",
+  "montura-infantil-rosa.svg",
+  "montura-infantil-verde.svg",
+  "estuche-gafas.svg",
+  "cordon-gafas.svg",
+  "kit-limpieza-gafas.svg",
+  "pano-microfibra.svg",
+]);
 
 const app = express();
 
@@ -38,7 +47,9 @@ app.get("/api/imagenes-productos", async (req, res) => {
     const imagenes = archivos
       .filter(
         (archivo) =>
-          archivo.isFile() && /\.(png|jpe?g|webp|gif)$/i.test(archivo.name),
+          archivo.isFile() &&
+          (/\.(png|jpe?g|webp|gif)$/i.test(archivo.name) ||
+            IMAGENES_VECTOR_CATALOGO.has(archivo.name)),
       )
       .map((archivo) => archivo.name)
       .sort((a, b) => a.localeCompare(b));
@@ -116,7 +127,9 @@ function imagenProductoDisponible(nombreArchivo) {
   if (
     typeof nombreArchivo !== "string" ||
     path.basename(nombreArchivo) !== nombreArchivo ||
-    !/\.(png|jpe?g|webp|gif)$/i.test(nombreArchivo)
+    !/\.(png|jpe?g|webp|gif|svg)$/i.test(nombreArchivo) ||
+    (path.extname(nombreArchivo).toLowerCase() === ".svg" &&
+      !IMAGENES_VECTOR_CATALOGO.has(nombreArchivo))
   ) {
     return false;
   }
@@ -356,9 +369,9 @@ app.get("/api/health", async (req, res) => {
   }
 });
 
-// Ruta para obtener productos (soporta filtro por categoria ?categoria= y búsqueda ?q=)
+// Ruta para obtener productos (soporta filtros por categoria, genero y búsqueda).
 app.get("/api/productos", async (req, res) => {
-  const { q: busqueda, categoria, vista } = req.query;
+  const { q: busqueda, categoria, genero, vista } = req.query;
 
   try {
     let query = `
@@ -391,6 +404,11 @@ app.get("/api/productos", async (req, res) => {
     ) {
       query += " AND (LOWER(c.nombre) = LOWER(?) OR p.id_categoria = ?)";
       params.push(categoria, categoria);
+    }
+
+    if (typeof genero === "string" && genero.trim() !== "") {
+      query += " AND LOWER(p.genero) = LOWER(?)";
+      params.push(genero.trim());
     }
 
     const [filas] = await db.query(query, params);

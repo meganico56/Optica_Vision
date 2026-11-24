@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 360" role="img" aria-labelledby="title">
+  <title id="title">Montura infantil verde</title>
+  <defs>
+    <linearGradient id="frame" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0" stop-color="#91d96e"/>
+      <stop offset="1" stop-color="#31865a"/>
+    </linearGradient>
+    <linearGradient id="lens" x1="0" x2="0" y1="0" y2="1">
+      <stop stop-color="#e1ffd9" stop-opacity=".78"/>
+      <stop offset="1" stop-color="#fff" stop-opacity=".28"/>
+    </linearGradient>
+    <filter id="shadow" x="-.2" y="-.3" width="1.4" height="1.7">
+      <feDropShadow dx="0" dy="13" stdDeviation="9" flood-color="#244634" flood-opacity=".2"/>
+    </filter>
+  </defs>
+  <g filter="url(#shadow)" stroke="url(#frame)" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M90 145 32 112M550 145l58-33" fill="none" stroke-width="18"/>
+    <path d="M96 143q0-24 27-24h126q30 0 30 30v70q0 30-30 30H130q-34 0-34-34z" fill="url(#lens)" stroke-width="18"/>
+    <path d="M361 149q0-30 30-30h126q27 0 27 24v72q0 34-34 34h-119q-30 0-30-30z" fill="url(#lens)" stroke-width="18"/>
+    <path d="M279 158c19-20 44-20 63 0M119 137c30-16 68-14 102 0M390 137c34-14 72-16 102 0" fill="none" stroke="#fff" stroke-opacity=".76" stroke-width="8"/>
+  </g>
+</svg>

@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 400" role="img" aria-labelledby="title">
+  <title id="title">Kit de limpieza para gafas</title>
+  <defs>
+    <linearGradient id="bottle" x1="0" x2="1" y1="0" y2="1">
+      <stop stop-color="#eaf7f7"/>
+      <stop offset=".55" stop-color="#a8d7dc"/>
+      <stop offset="1" stop-color="#63aab7"/>
+    </linearGradient>
+    <linearGradient id="cloth" x1="0" x2="1" y1="0" y2="1">
+      <stop stop-color="#e8d9b8"/>
+      <stop offset="1" stop-color="#c8ad78"/>
+    </linearGradient>
+    <filter id="shadow" x="-.2" y="-.3" width="1.4" height="1.7">
+      <feDropShadow dx="0" dy="13" stdDeviation="10" flood-color="#243d43" flood-opacity=".18"/>
+    </filter>
+  </defs>
+  <g filter="url(#shadow)">
+    <path d="M142 111h62v31l17 22v134q0 21-21 21h-54q-21 0-21-21V164l17-22z" fill="url(#bottle)" stroke="#6b9da5" stroke-width="5"/>
+    <path d="M153 90h40v22h-40z" rx="5" fill="#d9bd72"/>
+    <path d="M157 191h32v82h-32z" rx="9" fill="#fff" fill-opacity=".72"/>
+    <path d="M294 176h141l42 105-111 48-84-83z" fill="url(#cloth)" stroke="#b49b69" stroke-width="5" stroke-linejoin="round"/>
+    <path d="m306 244 121-45M322 272l120-46M339 298l116-45" stroke="#fff" stroke-opacity=".55" stroke-width="5"/>
+    <path d="M253 120h78v28h-78z" rx="8" fill="#e1e4e6" stroke="#abb0b5" stroke-width="4"/>
+    <path d="M267 103h50v17h-50z" rx="7" fill="#d1b76c"/>
+  </g>
+</svg>

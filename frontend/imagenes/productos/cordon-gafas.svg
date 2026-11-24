@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 400" role="img" aria-labelledby="title">
+  <title id="title">Cordón ajustable para gafas</title>
+  <defs>
+    <linearGradient id="cord" x1="0" x2="1" y1="0" y2="1">
+      <stop stop-color="#d2ad54"/>
+      <stop offset=".5" stop-color="#7d5b22"/>
+      <stop offset="1" stop-color="#e4c56f"/>
+    </linearGradient>
+    <filter id="shadow" x="-.2" y="-.3" width="1.4" height="1.7">
+      <feDropShadow dx="0" dy="13" stdDeviation="10" flood-color="#493818" flood-opacity=".2"/>
+    </filter>
+  </defs>
+  <g filter="url(#shadow)" fill="none" stroke="url(#cord)" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M133 127c-79 90-26 187 101 187h132c127 0 180-97 101-187" stroke-width="18"/>
+    <path d="M134 127c-39-21-66-7-68 23-2 29 24 43 57 32l34-12M466 127c39-21 66-7 68 23 2 29-24 43-57 32l-34-12" stroke-width="13"/>
+    <path d="M117 126c15 7 23 20 24 36M483 126c-15 7-23 20-24 36" stroke="#fff" stroke-opacity=".75" stroke-width="5"/>
+    <path d="M254 314v-34m92 34v-34" stroke-width="9"/>
+  </g>
+</svg>

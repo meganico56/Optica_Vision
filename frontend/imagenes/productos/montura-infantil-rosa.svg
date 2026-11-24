@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 360" role="img" aria-labelledby="title">
+  <title id="title">Montura infantil rosa</title>
+  <defs>
+    <linearGradient id="frame" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0" stop-color="#ff9fc2"/>
+      <stop offset="1" stop-color="#d94b88"/>
+    </linearGradient>
+    <linearGradient id="lens" x1="0" x2="0" y1="0" y2="1">
+      <stop stop-color="#ffe4ef" stop-opacity=".82"/>
+      <stop offset="1" stop-color="#fff" stop-opacity=".3"/>
+    </linearGradient>
+    <filter id="shadow" x="-.2" y="-.3" width="1.4" height="1.7">
+      <feDropShadow dx="0" dy="13" stdDeviation="9" flood-color="#69304b" flood-opacity=".2"/>
+    </filter>
+  </defs>
+  <g filter="url(#shadow)" stroke="url(#frame)" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M90 145 32 112M550 145l58-33" fill="none" stroke-width="18"/>
+    <circle cx="185" cy="183" r="75" fill="url(#lens)" stroke-width="18"/>
+    <circle cx="455" cy="183" r="75" fill="url(#lens)" stroke-width="18"/>
+    <path d="M260 161c17-17 43-17 60 0M118 143c28-16 61-16 91-4M388 139c30-12 63-12 91 4" fill="none" stroke="#fff" stroke-opacity=".76" stroke-width="8"/>
+  </g>
+</svg>

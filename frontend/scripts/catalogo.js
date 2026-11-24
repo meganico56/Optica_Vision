@@ -60,6 +60,7 @@
       });
 
       const img = tarjeta.querySelector(".img-producto");
+      img.alt = p.nombre;
       img.src = RUTA_IMAGENES + (p.imagen || "gafas-modelo1.png");
       img.onerror = () => {
         img.onerror = null;
@@ -69,6 +70,20 @@
       tarjeta.querySelector(".precio").textContent = BV.moneda(p.precio);
       tarjeta.querySelector(".existencia").textContent =
         "Existencias: " + Number(p.stock);
+
+      const categoria = String(p.categoria || "").trim().toLowerCase();
+      const genero = String(p.genero || "").trim().toLowerCase();
+      const etiqueta =
+        categoria === "accesorios"
+          ? "Accesorio"
+          : genero === "mujer"
+            ? "Mujer"
+            : genero === "hombre"
+              ? "Hombre"
+              : genero === "infantil"
+                ? "Niños"
+                : "Unisex";
+      tarjeta.querySelector(".producto-etiqueta").textContent = etiqueta;
 
       const agotado = p.stock <= 0;
       tarjeta.classList.toggle("agotado", agotado);
@@ -80,6 +95,24 @@
       fragmento.appendChild(tarjeta);
     });
     lista.appendChild(fragmento);
+  }
+
+  function filtrarProductos(productos) {
+    if (filtroActual === "todos") return productos;
+
+    const [campo, valor] = filtroActual.split(":");
+    return productos.filter((producto) => {
+      const valorProducto =
+        campo === "genero"
+          ? producto.genero
+          : campo === "categoria"
+            ? producto.categoria
+            : "";
+      return (
+        String(valorProducto || "").trim().toLowerCase() ===
+        valor.toLowerCase()
+      );
+    });
   }
 
   async function cargar() {
@@ -103,7 +136,7 @@
 
       const productos = await Api.get("/api/productos", params);
       if (peticion !== ultimaPeticion) return; // llegó una respuesta más nueva
-      pintar(productos);
+      pintar(filtrarProductos(productos));
     } catch (error) {
       if (peticion !== ultimaPeticion) return;
       mostrarEstado(

@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 400" role="img" aria-labelledby="title">
+  <title id="title">Estuche rígido para gafas</title>
+  <defs>
+    <linearGradient id="case" x1="0" x2="1" y1="0" y2="1">
+      <stop stop-color="#6f7884"/>
+      <stop offset=".52" stop-color="#303844"/>
+      <stop offset="1" stop-color="#171d25"/>
+    </linearGradient>
+    <linearGradient id="highlight" x1="0" x2="0" y1="0" y2="1">
+      <stop stop-color="#fff" stop-opacity=".3"/>
+      <stop offset="1" stop-color="#fff" stop-opacity="0"/>
+    </linearGradient>
+    <filter id="shadow" x="-.2" y="-.3" width="1.4" height="1.7">
+      <feDropShadow dx="0" dy="17" stdDeviation="12" flood-color="#1b2430" flood-opacity=".24"/>
+    </filter>
+  </defs>
+  <g filter="url(#shadow)">
+    <path d="M106 181q8-75 82-86l234 0q68 10 76 86l-16 77q-8 39-48 43H168q-40-4-48-43z" fill="url(#case)"/>
+    <path d="M116 191q12-69 76-76h226q56 7 67 76l-4 19H121z" fill="url(#highlight)"/>
+    <path d="M121 218h376" fill="none" stroke="#d4b96c" stroke-linecap="round" stroke-width="7"/>
+    <rect x="282" y="210" width="36" height="18" rx="8" fill="#d4b96c"/>
+    <path d="M145 250q10 31 35 33h238q28-2 37-33" fill="none" stroke="#fff" stroke-opacity=".18" stroke-width="5"/>
+  </g>
+</svg>

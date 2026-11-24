@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 400" role="img" aria-labelledby="title">
+  <title id="title">Paño de microfibra para lentes</title>
+  <defs>
+    <linearGradient id="fabric" x1="0" x2="1" y1="0" y2="1">
+      <stop stop-color="#d5e5e6"/>
+      <stop offset=".55" stop-color="#9fc3c7"/>
+      <stop offset="1" stop-color="#709da4"/>
+    </linearGradient>
+    <filter id="shadow" x="-.2" y="-.3" width="1.4" height="1.7">
+      <feDropShadow dx="0" dy="16" stdDeviation="11" flood-color="#27454a" flood-opacity=".2"/>
+    </filter>
+  </defs>
+  <g filter="url(#shadow)">
+    <path d="m142 113 298 18 37 155-288 29-66-97z" fill="url(#fabric)" stroke="#6b969b" stroke-width="5" stroke-linejoin="round"/>
+    <path d="m164 130 260 16 28 120-244 25-53-77z" fill="none" stroke="#f8ffff" stroke-opacity=".75" stroke-width="5" stroke-dasharray="3 9"/>
+    <path d="M190 169c55 27 107 34 174 32M206 211c49 22 96 28 148 24" fill="none" stroke="#fff" stroke-opacity=".2" stroke-width="8" stroke-linecap="round"/>
+  </g>
+</svg>
