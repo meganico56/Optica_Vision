@@ -264,22 +264,6 @@ html { scroll-behavior: smooth; }
     50% { transform: scale(0.9); opacity: 0.75; }
 }
 
-/* El disco (y las gafas sobre él) se gira arrastrando con clic sostenido */
-.podium-tapa,
-.glasses-model {
-    pointer-events: auto;
-    cursor: grab;
-    touch-action: pan-y;
-    user-select: none;
-    -webkit-user-drag: none;
-}
-
-body.disco-arrastrando,
-body.disco-arrastrando .podium-tapa,
-body.disco-arrastrando .glasses-model {
-    cursor: grabbing;
-}
-
 /* VENTAJAS */
 .ventajas {
     display: grid;
