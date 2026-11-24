@@ -374,8 +374,15 @@ app.get("/api/productos", async (req, res) => {
   const { q: busqueda, categoria, genero, vista } = req.query;
 
   try {
+    await rutasSuspension.asegurarTabla();
     let query = `
-      SELECT p.*, c.nombre AS categoria_nombre, m.nombre AS marca_nombre
+      SELECT p.*, c.nombre AS categoria_nombre, m.nombre AS marca_nombre,
+        EXISTS (
+          SELECT 1
+          FROM panel_suspensiones ps
+          WHERE BINARY ps.tipo = BINARY 'producto'
+          AND BINARY ps.id_registro = BINARY CAST(p.id_producto AS CHAR)
+        ) AS suspendido
       FROM producto p
       LEFT JOIN categoria c ON p.id_categoria = c.id_categoria
       LEFT JOIN marca m ON p.id_marca = m.id_marca
@@ -384,10 +391,10 @@ app.get("/api/productos", async (req, res) => {
 
     if (vista === "publica") {
       query += ` AND p.estado = 'Activo' AND NOT EXISTS (
-      SELECT 1 
-      FROM panel_suspensiones ps
-      WHERE ps.tipo = 'producto' COLLATE utf8mb4_unicode_ci
-      AND ps.id_registro = CAST(p.id_producto AS CHAR) COLLATE utf8mb4_unicode_ci
+        SELECT 1
+        FROM panel_suspensiones ps
+        WHERE BINARY ps.tipo = BINARY 'producto'
+        AND BINARY ps.id_registro = BINARY CAST(p.id_producto AS CHAR)
       )`;
     }
     let params = [];
@@ -430,6 +437,7 @@ app.get("/api/productos", async (req, res) => {
       categoria: p.categoria_nombre || "Gafas",
       marca: p.marca_nombre || "Óptica Visión",
       estado: p.estado,
+      suspendido: Number(p.suspendido) === 1,
     }));
     res.json(adaptados);
   } catch (error) {
@@ -754,12 +762,20 @@ app.delete("/api/categorias/:id", async (req, res) => {
 app.get("/api/productos/:id", async (req, res) => {
   const { id } = req.params;
   try {
+    await rutasSuspension.asegurarTabla();
     const [filas] = await db.query(
       `SELECT p.*, c.nombre AS categoria, m.nombre AS marca 
        FROM producto p 
        LEFT JOIN categoria c ON p.id_categoria = c.id_categoria 
        LEFT JOIN marca m ON p.id_marca = m.id_marca 
-       WHERE p.id_producto = ?`,
+       WHERE p.id_producto = ?
+       AND p.estado = 'Activo'
+       AND NOT EXISTS (
+         SELECT 1
+         FROM panel_suspensiones ps
+         WHERE BINARY ps.tipo = BINARY 'producto'
+         AND BINARY ps.id_registro = BINARY CAST(p.id_producto AS CHAR)
+       )`,
       [id],
     );
 
@@ -1176,7 +1192,7 @@ app.post("/api/login", async (req, res) => {
     if (suspensiones.length > 0) {
       return res.status(403).json({
         mensaje:
-          "Tu cuenta ha sido suspendida. Comunicate con la administración para desbloquearla.",
+          "Tu cuenta ha sido suspendida. Comunícate con el administrador de la página para recuperar el acceso.",
       });
     }
 
@@ -2576,6 +2592,7 @@ app.get("/api/reportes", async (req, res) => {
                r.descripcion, r.contenido, CONCAT(u.nombre,' ',u.apellido) AS generado_por
             FROM reporte r
             LEFT JOIN usuario u ON r.id_usuario_genera = u.id_usuario
+            WHERE r.tipo_reporte NOT IN ('Suspensión de producto', 'Suspensión de usuario')
             ORDER BY r.fecha_generacion DESC`,
       dateStrings: true,
     });
@@ -2704,7 +2721,37 @@ app.delete("/api/reportes/:id", async (req, res) => {
 
 // Rutas del panel del cliente: perfil y estado de pedidos (backend/rutas-panel.js)
 app.use("/api", require("./rutas-panel"));
-app.use("/api", rutasSuspension);
+app.use(
+  "/api",
+  (req, res, next) => {
+    const ruta = req.originalUrl
+      .split("?")[0]
+      .replace(/\/+$/, "")
+      .toLowerCase();
+    const tipo = req.body && req.body.tipo;
+    const esCambioProtegido =
+      req.method === "PUT" &&
+      ruta === "/api/suspensiones" &&
+      (tipo === "producto" || tipo === "usuario");
+    const esConsultaProtegida =
+      (req.method === "GET" || req.method === "HEAD") &&
+      ruta === "/api/suspensiones/reportes";
+    if (!esCambioProtegido && !esConsultaProtegida) {
+      return next();
+    }
+
+    verificarSesion(req, res, () => {
+      if (req.usuario.rol !== "Administrador") {
+        return res.status(403).json({
+          mensaje:
+            "Solo un administrador puede gestionar las suspensiones de productos o usuarios.",
+        });
+      }
+      next();
+    });
+  },
+  rutasSuspension,
+);
 app.use("/api", rutasCalendario);
 
 const PORT = Number(process.env.PORT) || 3000;

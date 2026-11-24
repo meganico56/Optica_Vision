@@ -1,7 +1,8 @@
 
 (function () {
     'use strict';
-    const esLocal = ['localhost', '127.0.0.1', '::1'].includes(location.hostname);
+    const hostname = location.hostname.replace(/^\[|\]$/g, '');
+    const esLocal = ['localhost', '127.0.0.1', '::1'].includes(hostname);
     const BASE = window.API_BASE !== undefined
         ? window.API_BASE
         : (location.port === '3000' || !esLocal ? '' : 'http://localhost:3000');
@@ -32,7 +33,7 @@
         const token = localStorage.getItem(CLAVE_TOKEN);
         if (token) headers.Authorization = 'Bearer ' + token;
 
-        const opciones = { method: metodo, headers };
+        const opciones = { method: metodo, headers, cache: 'no-store' };
         if (cuerpo instanceof FormData) {
             // El navegador pone el Content-Type con su boundary (sirve para subir la fórmula).
             opciones.body = cuerpo;

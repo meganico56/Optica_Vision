@@ -5,6 +5,7 @@
   "use strict";
 
   const RUTA_IMAGENES = "../imagenes/productos/";
+  const CLAVE_REPORTES_SUSPENSION = "bv_reportes_suspension_local";
 
   // Referencias DOM
   const tbProductos = document.getElementById("tbProductos");
@@ -19,6 +20,12 @@
   const tbRecetas = document.getElementById("tbRecetas");
   const gridPromos = document.getElementById("gridPromos");
   const gridReportes = document.getElementById("gridReportes");
+  const gridSuspensionesProducto = document.getElementById(
+    "gridSuspensionesProducto",
+  );
+  const gridSuspensionesUsuario = document.getElementById(
+    "gridSuspensionesUsuario",
+  );
   const tbUltimasVentas = document.getElementById("tbUltimasVentas");
   const listaAlertas = document.getElementById("listaAlertas");
   const todayDate = document.getElementById("todayDate");
@@ -45,6 +52,22 @@
   const modalError = document.getElementById("modalError");
   const modalCancelar = document.getElementById("modalCancelar");
   const modalGuardar = document.getElementById("modalGuardar");
+  const modalMotivoSuspension = document.getElementById("modalMotivoSuspension");
+  const formMotivoSuspension = document.getElementById("formMotivoSuspension");
+  const tituloModalSuspension = document.getElementById("tituloModalSuspension");
+  const textoTituloModalSuspension =
+    tituloModalSuspension && tituloModalSuspension.querySelector("span");
+  const descripcionModalSuspension = document.getElementById(
+    "descripcionModalSuspension",
+  );
+  const motivoSuspension = document.getElementById("motivoSuspension");
+  const errorMotivoSuspension = document.getElementById(
+    "errorMotivoSuspension",
+  );
+  const confirmarMotivoSuspension = document.getElementById(
+    "confirmarMotivoSuspension",
+  );
+  let registroPendienteSuspension = null;
 
   let productosMemoria = [];
   let marcasMemoria = [];
@@ -70,6 +93,55 @@
     return `${tipo}:${id}`;
   }
 
+  function leerReportesSuspensionLocal() {
+    const texto = localStorage.getItem(CLAVE_REPORTES_SUSPENSION);
+    if (!texto) return [];
+    const reportes = JSON.parse(texto);
+    if (
+      !Array.isArray(reportes) ||
+      reportes.some(
+        (reporte) =>
+          !reporte ||
+          !["producto", "usuario"].includes(reporte.tipo) ||
+          typeof reporte.id !== "string" ||
+          typeof reporte.motivo !== "string" ||
+          typeof reporte.fecha_suspension !== "string",
+      )
+    ) {
+      throw new Error("Los reportes locales de suspensión tienen un formato inválido.");
+    }
+    return reportes;
+  }
+
+  function guardarReportesSuspensionLocal(reportes) {
+    localStorage.setItem(
+      CLAVE_REPORTES_SUSPENSION,
+      JSON.stringify(reportes),
+    );
+  }
+
+  function registrarReporteSuspensionLocal(tipo, id, motivo, fechaSuspension) {
+    const reportes = leerReportesSuspensionLocal().filter(
+      (reporte) =>
+        reporte.tipo !== tipo || String(reporte.id) !== String(id),
+    );
+    reportes.push({
+      tipo,
+      id: String(id),
+      motivo,
+      fecha_suspension: fechaSuspension,
+    });
+    guardarReportesSuspensionLocal(reportes);
+  }
+
+  function quitarReporteSuspensionLocal(tipo, id) {
+    const reportes = leerReportesSuspensionLocal().filter(
+      (reporte) =>
+        reporte.tipo !== tipo || String(reporte.id) !== String(id),
+    );
+    guardarReportesSuspensionLocal(reportes);
+  }
+
   function estaSuspendido(tipo, id) {
     return suspensionesMemoria.has(claveSuspension(tipo, id));
   }
@@ -80,13 +152,16 @@
       : "";
   }
 
-  function botonSuspension(tipo, id, suspendido) {
+  function botonSuspension(
+    tipo,
+    id,
+    suspendido,
+    disponible = suspensionesDisponibles,
+  ) {
     const accion = suspendido ? "Reactivar" : "Suspender";
     const icono = suspendido ? "fa-play" : "fa-pause";
-    const estado = suspensionesDisponibles ? "" : "disabled";
-    const titulo = suspensionesDisponibles
-      ? accion
-      : "Suspensiones no disponibles";
+    const estado = disponible ? "" : "disabled";
+    const titulo = disponible ? accion : "Suspensiones no disponibles";
     return `<button type="button" class="btn-ghost" data-suspender="${BV.escapar(id)}" data-tipo-suspension="${tipo}" data-suspendido="${suspendido}" title="${titulo}" aria-label="${titulo}" ${estado}><i class="fa-solid ${icono}"></i></button>`;
   }
 
@@ -105,7 +180,7 @@
           console.error("Error al cargar suspensiones:", error);
           suspensionesDisponibles = false;
           if (suspensionWarning) {
-            suspensionWarning.textContent = `No se pudo consultar el estado de suspensión (${error.message}). Los datos de las secciones seguirán visibles, pero suspender o reactivar no estará disponible. Reinicia el servidor backend y verifica que su usuario de base de datos pueda crear la tabla panel_suspensiones; después, recarga esta página.`;
+            suspensionWarning.textContent = `No se pudo consultar el estado de suspensión (${error.message}). Los datos de las secciones seguirán visibles, pero suspender o reactivar no estará disponible. Reinicia el servidor backend y verifica que su usuario de base de datos pueda crear y actualizar la tabla panel_suspensiones; después, recarga esta página.`;
             suspensionWarning.hidden = false;
           }
         })
@@ -115,6 +190,147 @@
         });
     }
     await suspensionesPromise;
+  }
+
+  function cerrarModalMotivoSuspension() {
+    if (!modalMotivoSuspension) return;
+    if (typeof modalMotivoSuspension.close === "function") {
+      modalMotivoSuspension.close();
+    } else {
+      modalMotivoSuspension.removeAttribute("open");
+    }
+    registroPendienteSuspension = null;
+  }
+
+  function abrirModalMotivoSuspension(tipo, id) {
+    const esProducto = tipo === "producto";
+    const registros = esProducto ? productosMemoria : usuariosMemoria;
+    const registro = registros.find((item) =>
+      String(esProducto ? item.id : item.id_usuario) === String(id),
+    );
+    if (!registro) {
+      console.error("No se encontró el registro que se quiere suspender:", id);
+      alert("No se encontró el registro. Actualiza la lista e inténtalo de nuevo.");
+      return;
+    }
+    if (
+      !modalMotivoSuspension ||
+      !formMotivoSuspension ||
+      !textoTituloModalSuspension ||
+      !descripcionModalSuspension ||
+      !motivoSuspension ||
+      !errorMotivoSuspension
+    ) {
+      console.error("No está disponible el formulario para registrar el motivo de suspensión.");
+      return;
+    }
+
+    registroPendienteSuspension = { tipo, id: String(id) };
+    const nombre = esProducto
+      ? registro.nombre
+      : `${registro.nombre} ${registro.apellido}`.trim();
+    textoTituloModalSuspension.textContent = `Suspender ${esProducto ? "producto" : "usuario"}`;
+    descripcionModalSuspension.textContent = esProducto
+      ? `El producto "${nombre}" dejará de aparecer en el catálogo y no se podrá comprar.`
+      : `El usuario "${nombre}" perderá acceso a su cuenta y deberá comunicarse con el administrador para recuperarlo.`;
+    motivoSuspension.value = "";
+    errorMotivoSuspension.hidden = true;
+    if (typeof modalMotivoSuspension.showModal === "function") {
+      modalMotivoSuspension.showModal();
+    } else {
+      modalMotivoSuspension.setAttribute("open", "");
+    }
+    motivoSuspension.focus();
+  }
+
+  if (formMotivoSuspension) {
+    formMotivoSuspension.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      errorMotivoSuspension.hidden = true;
+
+      const motivo = motivoSuspension.value.trim();
+      if (!motivo) {
+        errorMotivoSuspension.textContent =
+          "Escribe el motivo de suspensión.";
+        errorMotivoSuspension.hidden = false;
+        motivoSuspension.focus();
+        return;
+      }
+
+      if (!registroPendienteSuspension) {
+        errorMotivoSuspension.textContent =
+          "No se encontró el registro que se quiere suspender.";
+        errorMotivoSuspension.hidden = false;
+        return;
+      }
+
+      confirmarMotivoSuspension.disabled = true;
+      try {
+        const { tipo, id } = registroPendienteSuspension;
+        const fechaSuspension = new Date().toISOString();
+        await Api.put("/api/suspensiones", {
+          tipo,
+          id,
+          suspendido: true,
+          motivo,
+        });
+        suspensionesMemoria.add(claveSuspension(tipo, id));
+        let errorGuardadoLocal = null;
+        try {
+          registrarReporteSuspensionLocal(
+            tipo,
+            id,
+            motivo,
+            fechaSuspension,
+          );
+        } catch (error) {
+          errorGuardadoLocal = error;
+          console.error("No se pudo guardar el reporte local de suspensión:", error);
+        }
+        cerrarModalMotivoSuspension();
+        await Promise.all([
+          tipo === "producto" ? cargarProductos() : cargarUsuarios(),
+          cargarReportesSuspension(),
+        ]);
+        if (errorGuardadoLocal) {
+          alert(
+            `La suspensión se aplicó, pero no se pudo guardar el reporte en este navegador: ${errorGuardadoLocal.message}`,
+          );
+        }
+      } catch (error) {
+        errorMotivoSuspension.textContent =
+          error.message || "No se pudo suspender el registro.";
+        errorMotivoSuspension.hidden = false;
+      } finally {
+        confirmarMotivoSuspension.disabled = false;
+      }
+    });
+  }
+
+  const cerrarMotivoSuspension = document.getElementById(
+    "cerrarModalMotivoSuspension",
+  );
+  const cancelarMotivoSuspension = document.getElementById(
+    "cancelarMotivoSuspension",
+  );
+  if (cerrarMotivoSuspension) {
+    cerrarMotivoSuspension.addEventListener(
+      "click",
+      cerrarModalMotivoSuspension,
+    );
+  }
+  if (cancelarMotivoSuspension) {
+    cancelarMotivoSuspension.addEventListener(
+      "click",
+      cerrarModalMotivoSuspension,
+    );
+  }
+  if (modalMotivoSuspension) {
+    modalMotivoSuspension.addEventListener("click", (event) => {
+      if (event.target === modalMotivoSuspension) {
+        cerrarModalMotivoSuspension();
+      }
+    });
   }
 
   const IMAGENES_DISPONIBLES = [
@@ -142,7 +358,12 @@
           '<tr><td colspan="9" style="text-align:center;">No hay productos registrados.</td></tr>';
       } else {
         productos.forEach((p) => {
-          const suspendido = estaSuspendido("producto", p.id);
+          const disponibilidadConocida =
+            typeof p.suspendido === "boolean" ||
+            typeof p.suspendido === "number";
+          const suspendido = disponibilidadConocida
+            ? Boolean(Number(p.suspendido))
+            : estaSuspendido("producto", p.id);
           const esBajoMin =
             (p.existencia_actual || p.stock || 0) <= (p.existencia_minima || 5);
           if (esBajoMin) bajoMinimoCount++;
@@ -164,7 +385,12 @@
                         <td>
                             <div style="display:flex;gap:6px;">
                                 <button type="button" class="btn-ghost" data-editar-prod="${p.id}" title="Editar"><i class="fa-solid fa-pen-to-square"></i></button>
-                                ${botonSuspension("producto", p.id, suspendido)}
+                                ${botonSuspension(
+                                  "producto",
+                                  p.id,
+                                  suspendido,
+                                  disponibilidadConocida || suspensionesDisponibles,
+                                )}
                             </div>
                         </td>
                     `;
@@ -1976,6 +2202,10 @@
       }[tipo];
 
       if (!recargar) return;
+      if ((tipo === "producto" || tipo === "usuario") && suspendido) {
+        abrirModalMotivoSuspension(tipo, id);
+        return;
+      }
       if (
         confirm(
           `¿Deseas ${accion} este registro? ${suspendido ? "Podrás reactivarlo después." : ""}`,
@@ -1986,7 +2216,24 @@
           const clave = claveSuspension(tipo, id);
           if (suspendido) suspensionesMemoria.add(clave);
           else suspensionesMemoria.delete(clave);
+          let errorLocal = null;
+          if (!suspendido && (tipo === "producto" || tipo === "usuario")) {
+            try {
+              quitarReporteSuspensionLocal(tipo, id);
+            } catch (error) {
+              errorLocal = error;
+              console.error("No se pudo borrar el reporte local de suspensión:", error);
+            }
+          }
           await recargar();
+          if (tipo === "producto" || tipo === "usuario") {
+            await cargarReportesSuspension();
+          }
+          if (errorLocal) {
+            alert(
+              `El registro se reactivó, pero no se pudo borrar el reporte de este navegador: ${errorLocal.message}`,
+            );
+          }
         } catch (err) {
           alert(`No se pudo ${accion} el registro: ${err.message}`);
         }
@@ -3283,6 +3530,137 @@
     }
   }
 
+  function pintarReportesSuspension(grid, registros, tipo) {
+    if (!grid) return;
+    grid.innerHTML = "";
+    if (registros.length === 0) {
+      grid.innerHTML = `<p class="suspension-report-vacio">No hay ${tipo === "producto" ? "productos" : "usuarios"} suspendidos.</p>`;
+      return;
+    }
+
+    registros.forEach((registro) => {
+      const card = document.createElement("article");
+      card.className = "reporte-card suspension-report-card";
+      const nombre =
+        tipo === "producto"
+          ? registro.nombre
+          : `${registro.nombre} ${registro.apellido}`.trim();
+      const detalle =
+        tipo === "producto"
+          ? `SKU: ${registro.sku || "—"}`
+          : `Correo: ${registro.correo || "—"}`;
+      const motivo =
+        registro.motivo || "El motivo no está guardado en este navegador.";
+      card.innerHTML = `
+        <div class="reporte-header">
+          <span class="badge orange"><i class="fa-solid fa-pause"></i> Suspendido</span>
+          <span class="suspension-report-date"><i class="fa-regular fa-clock"></i> Suspendido: ${BV.escapar(registro.fecha_suspension || "—")}</span>
+        </div>
+        <h3 class="reporte-titulo">${BV.escapar(nombre || "Registro")}</h3>
+        <p class="reporte-desc"><strong>Motivo:</strong> ${BV.escapar(motivo)}</p>
+        <div class="reporte-content">
+          <i class="${tipo === "producto" ? "fa-solid fa-barcode" : "fa-solid fa-envelope"}"></i>
+          <span>${BV.escapar(detalle)} · ID: ${BV.escapar(registro.id_registro)}</span>
+        </div>
+      `;
+      grid.appendChild(card);
+    });
+  }
+
+  function formatearFechaHoraSuspension(fecha) {
+    const valor = new Date(fecha);
+    if (Number.isNaN(valor.getTime())) return String(fecha || "—");
+    return new Intl.DateTimeFormat("es-CO", {
+      dateStyle: "short",
+      timeStyle: "medium",
+    }).format(valor);
+  }
+
+  async function cargarReportesSuspension() {
+    if (!gridSuspensionesProducto && !gridSuspensionesUsuario) return;
+
+    try {
+      const reportes = await Api.get("/api/suspensiones/reportes");
+      if (
+        !reportes ||
+        !Array.isArray(reportes.productos) ||
+        !Array.isArray(reportes.usuarios)
+      ) {
+        throw new Error("La respuesta de reportes de suspensión no es válida.");
+      }
+      const reportesLocales = leerReportesSuspensionLocal();
+      const activos = new Set([
+        ...reportes.productos.map((registro) =>
+          claveSuspension("producto", registro.id_registro),
+        ),
+        ...reportes.usuarios.map((registro) =>
+          claveSuspension("usuario", registro.id_registro),
+        ),
+      ]);
+      const reportesLocalesActivos = reportesLocales.filter((reporte) =>
+        activos.has(claveSuspension(reporte.tipo, reporte.id)),
+      );
+      if (reportesLocalesActivos.length !== reportesLocales.length) {
+        try {
+          guardarReportesSuspensionLocal(reportesLocalesActivos);
+        } catch (error) {
+          console.error("No se pudieron depurar reportes ya reactivados:", error);
+        }
+      }
+      const reportesPorClave = new Map(
+        reportesLocalesActivos.map((reporte) => [
+          claveSuspension(reporte.tipo, reporte.id),
+          reporte,
+        ]),
+      );
+      const completar = (registros, tipo) =>
+        registros.map((registro) => {
+          const local = reportesPorClave.get(
+            claveSuspension(tipo, registro.id_registro),
+          );
+          return {
+            ...registro,
+            motivo: local
+              ? local.motivo
+              : registro.motivo ||
+                "El motivo no está guardado en este navegador.",
+            fecha_suspension: local
+              ? formatearFechaHoraSuspension(local.fecha_suspension)
+              : registro.fecha_suspension,
+          };
+        });
+      pintarReportesSuspension(
+        gridSuspensionesProducto,
+        completar(reportes.productos, "producto"),
+        "producto",
+      );
+      pintarReportesSuspension(
+        gridSuspensionesUsuario,
+        completar(reportes.usuarios, "usuario"),
+        "usuario",
+      );
+    } catch (error) {
+      console.error("Error al cargar reportes de suspensión:", error);
+      const detalle =
+        error.estado === 404
+          ? "El backend activo no reconoce la ruta de reportes de suspensión. Reinícialo desde la carpeta backend y recarga el panel."
+          : `No se pudieron cargar los reportes de suspensión: ${error.message}`;
+      const mensaje = `<p class="suspension-report-vacio error">${BV.escapar(detalle)}</p>`;
+      if (gridSuspensionesProducto) {
+        gridSuspensionesProducto.innerHTML = mensaje;
+      }
+      if (gridSuspensionesUsuario) {
+        gridSuspensionesUsuario.innerHTML = mensaje;
+      }
+    }
+  }
+
+  window.addEventListener("storage", (event) => {
+    if (event.key === CLAVE_REPORTES_SUSPENSION) {
+      void cargarReportesSuspension();
+    }
+  });
+
   // ── Reporte: ventas por producto ─────────────────────────────
   // GET /api/reportes/ventas-productos?desde=YYYY-MM-DD&hasta=YYYY-MM-DD
   // Cada fila: id_producto, nombre, maneja_inventario, unidades, ingresos, stock_actual, existencia_minima, bajo_minimo (0/1)
@@ -3439,6 +3817,7 @@
       cargarBloqueosCalendario(),
       cargarPromociones(),
       cargarReportes(),
+      cargarReportesSuspension(),
       cargarVentasProducto(),
     ]);
   }
@@ -3463,6 +3842,7 @@
         cargarPromociones();
       } else if (seccion === "reportes") {
         cargarReportes();
+        cargarReportesSuspension();
         cargarVentasProducto();
       } else if (seccion === "inventario" || seccion === "catalogo") {
         cargarProductos();

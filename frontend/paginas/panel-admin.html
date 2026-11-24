@@ -21,7 +21,7 @@
     />
     <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" /></noscript>
     <link rel="stylesheet" href="../estilos/calendario-personalizado.css" />
-    <link rel="stylesheet" href="../estilos/estilo-admin.css" />
+    <link rel="stylesheet" href="../estilos/estilo-admin.css?v=reportes-suspension" />
     <title>Panel de gestión | Boutique de la Visión</title>
   </head>
   <body>
@@ -989,6 +989,32 @@
               </tbody>
             </table>
           </div>
+          <section
+            class="data-card suspension-report-section"
+            id="cardSuspensionesProducto"
+            data-roles="Administrador"
+          >
+            <div class="data-card-header">
+              <h2 class="data-card-title">
+                <i class="fa-solid fa-glasses"></i> Reportes de suspensión de
+                productos
+              </h2>
+            </div>
+            <div class="reporte-grid suspension-report-grid" id="gridSuspensionesProducto"></div>
+          </section>
+          <section
+            class="data-card suspension-report-section"
+            id="cardSuspensionesUsuario"
+            data-roles="Administrador"
+          >
+            <div class="data-card-header">
+              <h2 class="data-card-title">
+                <i class="fa-solid fa-user-slash"></i> Reportes de suspensión
+                de usuarios
+              </h2>
+            </div>
+            <div class="reporte-grid suspension-report-grid" id="gridSuspensionesUsuario"></div>
+          </section>
           <div class="reporte-grid" id="gridReportes"></div>
         </div>
       </div>
@@ -1022,11 +1048,68 @@
       </form>
     </dialog>
 
-    <script src="../scripts/api.js"></script>
+    <dialog
+      id="modalMotivoSuspension"
+      class="modal modal-motivo-suspension"
+      aria-labelledby="tituloModalSuspension"
+    >
+      <form id="formMotivoSuspension" novalidate>
+        <div class="modal-header-bar">
+          <h2 id="tituloModalSuspension">
+            <i class="fa-solid fa-pause"></i>
+            <span>Suspender producto</span>
+          </h2>
+          <button
+            type="button"
+            class="modal-close-btn"
+            id="cerrarModalMotivoSuspension"
+            aria-label="Cerrar ventana"
+          >
+            <i class="fa-solid fa-xmark"></i>
+          </button>
+        </div>
+        <div class="motivo-suspension-cuerpo">
+          <p id="descripcionModalSuspension"></p>
+          <label for="motivoSuspension">Motivo de suspensión *</label>
+          <textarea
+            id="motivoSuspension"
+            class="input-admin"
+            rows="4"
+            maxlength="255"
+            required
+            placeholder="Describe por qué se suspende este registro"
+          ></textarea>
+        </div>
+        <p
+          class="mensaje-error"
+          id="errorMotivoSuspension"
+          role="alert"
+          hidden
+        ></p>
+        <div class="modal-footer-bar">
+          <button
+            type="button"
+            class="btn-secondary"
+            id="cancelarMotivoSuspension"
+          >
+            <i class="fa-solid fa-xmark"></i> Cancelar
+          </button>
+          <button
+            type="submit"
+            class="btn-primary"
+            id="confirmarMotivoSuspension"
+          >
+            <i class="fa-solid fa-pause"></i> Confirmar suspensión
+          </button>
+        </div>
+      </form>
+    </dialog>
+
+    <script src="../scripts/api.js?v=suspension-api-host-v1"></script>
     <script src="../scripts/sesion.js"></script>
     <script src="../scripts/panel-navegacion.js"></script>
     <script src="../scripts/calendario-personalizado.js"></script>
-    <script src="../scripts/panel-admin.js?v=horarios-rangos-responsive"></script>
+    <script src="../scripts/panel-admin.js?v=suspension-routing-v5"></script>
     <script src="../scripts/perfil-panel.js"></script>
     <script src="../scripts/intro-animacion.js"></script>
   </body>

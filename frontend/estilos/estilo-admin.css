@@ -1053,6 +1053,37 @@ h1, h2, h3, h4, h5, h6 { color: var(--admin-text); }
   max-height: 90vh;
 }
 
+.modal.modal-motivo-suspension {
+  width: min(520px, 94vw);
+  padding: 0;
+}
+
+.modal-motivo-suspension form {
+  display: flex;
+  flex-direction: column;
+  max-height: 90vh;
+}
+
+.motivo-suspension-cuerpo {
+  display: grid;
+  gap: 14px;
+  padding: 24px 28px;
+}
+
+.motivo-suspension-cuerpo p {
+  margin: 0;
+  line-height: 1.5;
+}
+
+.motivo-suspension-cuerpo label {
+  font-weight: 600;
+}
+
+.motivo-suspension-cuerpo textarea {
+  min-height: 112px;
+  resize: vertical;
+}
+
 .modal-header-bar {
   padding: 22px 28px 18px;
   border-bottom: 1px solid var(--admin-border);
@@ -1485,6 +1516,41 @@ textarea.input-admin {
   line-height: 1.5;
   margin: 0 0 14px 0;
   flex-grow: 1;
+}
+
+.suspension-report-section {
+  margin-top: 24px;
+}
+
+.suspension-report-grid {
+  margin-top: 0;
+}
+
+.suspension-report-card {
+  min-width: 0;
+}
+
+.suspension-report-date {
+  color: var(--admin-text-muted);
+  font-size: 0.75rem;
+  white-space: nowrap;
+}
+
+.suspension-report-date i {
+  color: var(--admin-gold);
+  margin-right: 4px;
+}
+
+.suspension-report-vacio {
+  grid-column: 1 / -1;
+  margin: 0;
+  padding: 14px;
+  color: var(--admin-text-muted);
+  text-align: center;
+}
+
+.suspension-report-vacio.error {
+  color: var(--red);
 }
 
 .promo-descuento {

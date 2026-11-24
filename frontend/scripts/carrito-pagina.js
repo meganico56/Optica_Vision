@@ -173,5 +173,41 @@
     });
 
     document.addEventListener('carrito:cambio', pintar);
-    pintar();
+
+    let sincronizandoProductos = false;
+    async function retirarProductosNoDisponibles() {
+        if (sincronizandoProductos) return;
+        sincronizandoProductos = true;
+        try {
+            if (Carrito.items().length === 0) return;
+            const productosDisponibles = await Api.get('/api/productos', {
+                vista: 'publica'
+            });
+            const idsDisponibles = new Set(
+                productosDisponibles.map((producto) => String(producto.id))
+            );
+            const idsNoDisponibles = Carrito.items()
+                .filter((producto) => !idsDisponibles.has(String(producto.id)))
+                .map((producto) => producto.id);
+            if (idsNoDisponibles.length > 0) {
+                Carrito.quitarVarios(idsNoDisponibles);
+            }
+        } catch (error) {
+            console.error('No se pudo validar la disponibilidad del carrito:', error);
+        } finally {
+            sincronizandoProductos = false;
+        }
+    }
+
+    document.addEventListener('visibilitychange', () => {
+        if (!document.hidden) void retirarProductosNoDisponibles();
+    });
+    window.addEventListener('focus', () => {
+        void retirarProductosNoDisponibles();
+    });
+    window.setInterval(() => {
+        if (!document.hidden) void retirarProductosNoDisponibles();
+    }, 15000);
+
+    void retirarProductosNoDisponibles().finally(pintar);
 })();

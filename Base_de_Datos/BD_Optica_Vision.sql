@@ -499,19 +499,20 @@ insert into producto (sku, nombre, descripcion, precio, costo_compra, imagen, ma
 ('ACC-0002', 'Paño de microfibra', 'Paño de microfibra para limpieza de lentes', 8000.00, 2500.00, 'pano-microfibra.svg', null, null, null, 'Unisex', 38, 15, true, false, 0, 6, 5);
 
 
-insert into producto (sku, nombre, descripcion, precio, costo_compra, imagen, material, color, calibre, genero, existencia_actual, existencia_minima, maneja_inventario, requiere_receta, meses_garantia, id_categoria, id_marca) values
-('MON-MUJ-0001', 'Montura mujer redonda carey', 'Armazón redondo de acetato carey con puente cómodo', 245000.00, 118000.00, 'gafas-modelo2.png', 'Acetato', 'Carey', '50-18-140', 'Mujer', 12, 3, true, false, 12, 1, 2),
-('MON-MUJ-0002', 'Montura mujer cristal transparente', 'Armazón transparente liviano de líneas suaves', 228000.00, 109000.00, 'gafas-modelo4.png', 'Acetato', 'Transparente', '51-17-140', 'Mujer', 9, 3, true, false, 12, 1, 2),
-('MON-MUJ-0003', 'Montura mujer clásica negra', 'Armazón negro versátil con forma rectangular', 215000.00, 102000.00, 'gafas-modelo1.png', 'Acetato', 'Negro', '52-18-145', 'Mujer', 10, 3, true, false, 12, 1, 5),
-('MON-HOM-0001', 'Montura hombre azul metálica', 'Armazón liviano azul de estilo ejecutivo', 285000.00, 139000.00, 'gafas-modelo-antiguo.png', 'Metal', 'Azul', '54-18-145', 'Hombre', 8, 3, true, false, 12, 1, 1),
-('MON-HOM-0002', 'Montura hombre rectangular gris', 'Armazón rectangular de acabado gris oscuro', 238000.00, 114000.00, 'gafas-modelo3.png', 'Acetato', 'Gris', '53-18-145', 'Hombre', 11, 3, true, false, 12, 1, 5),
-('SOL-HOM-0002', 'Gafa de sol urbana hombre UV400', 'Gafa de sol oscura con protección UV400 para uso diario', 298000.00, 145000.00, '1794940266139-ChatGPTImage18ago202613_19_01.png', 'Acetato', 'Negro', '55-18-145', 'Hombre', 7, 3, true, false, 12, 2, 1),
-('INF-0001', 'Montura infantil azul flexible', 'Armazón infantil azul liviano con patillas flexibles', 148000.00, 69000.00, 'montura-infantil-azul.svg', 'Acetato flexible', 'Azul', '45-16-125', 'Infantil', 10, 3, true, false, 6, 1, 5),
-('INF-0002', 'Montura infantil rosa redonda', 'Armazón infantil rosa de forma redonda y cómoda', 152000.00, 71000.00, 'montura-infantil-rosa.svg', 'Acetato flexible', 'Rosa', '44-16-125', 'Infantil', 8, 3, true, false, 6, 1, 2),
-('INF-0003', 'Montura infantil verde liviana', 'Armazón infantil verde resistente para uso diario', 145000.00, 68000.00, 'montura-infantil-verde.svg', 'Acetato flexible', 'Verde', '45-16-125', 'Infantil', 9, 3, true, false, 6, 1, 5),
-('ACC-0003', 'Estuche rígido acolchado compacto', 'Estuche rígido acolchado para guardar monturas', 24000.00, 9500.00, 'estuche-gafas.svg', null, null, null, 'Unisex', 20, 5, true, false, 0, 6, 5),
-('ACC-0004', 'Cordón ajustable para gafas', 'Cordón ligero con terminales seguros para las patillas', 12000.00, 4500.00, 'cordon-gafas.svg', null, 'Dorado', null, 'Unisex', 26, 6, true, false, 0, 6, 5),
-('ACC-0005', 'Kit de limpieza para gafas', 'Kit con atomizador y paño suave para limpiar lentes', 22000.00, 9000.00, 'kit-limpieza-gafas.svg', null, null, null, 'Unisex', 18, 5, true, false, 0, 6, 5);
+-- Catálogo ampliado: 12 productos de mujer, hombre, infantil y accesorios.
+insert into producto (sku, nombre, descripcion, precio, costo_compra, imagen, material, color, calibre, genero, existencia_actual, existencia_minima, maneja_inventario, requiere_receta, meses_garantia, id_categoria, id_marca, estado) values
+('MON-MUJ-0001', 'Montura mujer redonda carey', 'Armazón redondo de acetato carey con puente cómodo', 245000.00, 118000.00, 'gafas-modelo2.png', 'Acetato', 'Carey', '50-18-140', 'Mujer', 12, 3, true, false, 12, 1, 2, 'Activo'),
+('MON-MUJ-0002', 'Montura mujer cristal transparente', 'Armazón transparente liviano de líneas suaves', 228000.00, 109000.00, 'gafas-modelo4.png', 'Acetato', 'Transparente', '51-17-140', 'Mujer', 9, 3, true, false, 12, 1, 2, 'Activo'),
+('MON-MUJ-0003', 'Montura mujer clásica negra', 'Armazón negro versátil con forma rectangular', 215000.00, 102000.00, 'gafas-modelo1.png', 'Acetato', 'Negro', '52-18-145', 'Mujer', 10, 3, true, false, 12, 1, 5, 'Activo'),
+('MON-HOM-0001', 'Montura hombre azul metálica', 'Armazón liviano azul de estilo ejecutivo', 285000.00, 139000.00, 'gafas-modelo-antiguo.png', 'Metal', 'Azul', '54-18-145', 'Hombre', 8, 3, true, false, 12, 1, 1, 'Activo'),
+('MON-HOM-0002', 'Montura hombre rectangular gris', 'Armazón rectangular de acabado gris oscuro', 238000.00, 114000.00, 'gafas-modelo3.png', 'Acetato', 'Gris', '53-18-145', 'Hombre', 11, 3, true, false, 12, 1, 5, 'Activo'),
+('SOL-HOM-0002', 'Gafa de sol urbana hombre UV400', 'Gafa de sol oscura con protección UV400 para uso diario', 298000.00, 145000.00, '1794940266139-ChatGPTImage18ago202613_19_01.png', 'Acetato', 'Negro', '55-18-145', 'Hombre', 7, 3, true, false, 12, 2, 1, 'Activo'),
+('INF-0001', 'Montura infantil azul flexible', 'Armazón infantil azul liviano con patillas flexibles', 148000.00, 69000.00, 'montura-infantil-azul.svg', 'Acetato flexible', 'Azul', '45-16-125', 'Infantil', 10, 3, true, false, 6, 1, 5, 'Activo'),
+('INF-0002', 'Montura infantil rosa redonda', 'Armazón infantil rosa de forma redonda y cómoda', 152000.00, 71000.00, 'montura-infantil-rosa.svg', 'Acetato flexible', 'Rosa', '44-16-125', 'Infantil', 8, 3, true, false, 6, 1, 2, 'Activo'),
+('INF-0003', 'Montura infantil verde liviana', 'Armazón infantil verde resistente para uso diario', 145000.00, 68000.00, 'montura-infantil-verde.svg', 'Acetato flexible', 'Verde', '45-16-125', 'Infantil', 9, 3, true, false, 6, 1, 5, 'Activo'),
+('ACC-0003', 'Estuche rígido acolchado compacto', 'Estuche rígido acolchado para guardar monturas', 24000.00, 9500.00, 'estuche-gafas.svg', null, null, null, 'Unisex', 20, 5, true, false, 0, 6, 5, 'Activo'),
+('ACC-0004', 'Cordón ajustable para gafas', 'Cordón ligero con terminales seguros para las patillas', 12000.00, 4500.00, 'cordon-gafas.svg', null, 'Dorado', null, 'Unisex', 26, 6, true, false, 0, 6, 5, 'Activo'),
+('ACC-0005', 'Kit de limpieza para gafas', 'Kit con atomizador y paño suave para limpiar lentes', 22000.00, 9000.00, 'kit-limpieza-gafas.svg', null, null, null, 'Unisex', 18, 5, true, false, 0, 6, 5, 'Activo');
 
 
 insert into imagen_producto (ruta, orden, id_producto) values
