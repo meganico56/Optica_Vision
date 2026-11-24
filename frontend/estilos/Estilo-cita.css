@@ -15,8 +15,8 @@
   --cita-surface: #171613;
   --cita-surface-soft: #201e19;
   --cita-field: #12110f;
-  --cita-divider: rgba(204, 164, 59, 0.22);
-  --cita-shadow: 0 24px 70px rgba(0, 0, 0, 0.32);
+  --cita-divider: rgba(204, 164, 59, 0.28);
+  --cita-shadow: 0 18px 48px rgba(0, 0, 0, 0.3);
 }
 
 body {
@@ -32,11 +32,13 @@ body {
 }
 
 :root.dark-mode body {
-  background-color: var(--bg);
+  background-color: #0c0b09;
   background-image:
-    radial-gradient(ellipse at 12% 18%, rgba(204, 164, 59, 0.08), transparent 34%),
-    radial-gradient(ellipse at 88% 55%, rgba(204, 164, 59, 0.05), transparent 32%),
+    linear-gradient(rgba(12, 11, 9, 0.45), rgba(12, 11, 9, 0.45)),
+    radial-gradient(ellipse at 12% 18%, rgba(204, 164, 59, 0.06), transparent 34%),
+    radial-gradient(ellipse at 88% 55%, rgba(204, 164, 59, 0.04), transparent 32%),
     url("../imagenes/fondos/fondo-boutique.png");
+  background-size: auto, auto, auto, cover;
 }
 
 .cita-contenedor {
@@ -78,9 +80,8 @@ body {
 }
 
 :root.dark-mode .cita-intro h1 .cita-intro-agenda {
-  text-shadow:
-    0 0 8px rgba(229, 201, 109, 0.72),
-    0 2px 12px rgba(204, 164, 59, 0.55);
+  color: var(--text-dark);
+  text-shadow: none;
 }
 
 .cita-intro h1 span { color: var(--gold); }
@@ -91,7 +92,7 @@ body {
 }
 
 :root.dark-mode .cita-intro-resumen {
-  color: #000000;
+  color: var(--text-muted);
 }
 
 .cita-nota {
@@ -205,21 +206,15 @@ body {
 :root.dark-mode .cita-nota strong,
 :root.dark-mode .cita-paso-heading h2 {
   -webkit-text-stroke: 0;
-  text-shadow:
-    0 0 8px rgba(229, 201, 109, 0.72),
-    0 2px 12px rgba(204, 164, 59, 0.55);
+  text-shadow: none;
 }
 
 :root.dark-mode .cita-nota,
 :root.dark-mode .cita-form,
 :root.dark-mode .cita-campo-calendario,
 :root.dark-mode .cita-detalles {
-  border-color: rgba(229, 201, 109, 0.72);
-  box-shadow:
-    0 16px 30px rgba(0, 0, 0, 0.4),
-    0 10px 24px rgba(204, 164, 59, 0.28),
-    0 18px 34px rgba(204, 164, 59, 0.18);
-  transform: translateY(-2px);
+  border-color: var(--cita-divider);
+  box-shadow: var(--cita-shadow);
 }
 
 .cita-paso-heading p {
