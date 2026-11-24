@@ -24,10 +24,26 @@
   }
 
   function panelDe(rol) {
-    if (rol === "Administrador") return "panel-admin.html";
-    if (rol === "Vendedor") return "panel-empleado.html";
-    if (rol === "Cliente") return "panel-cliente.html";
+    const rolNormalizado = String(rol || "").trim().toLowerCase();
+    if (rolNormalizado === "administrador" || rolNormalizado === "admin") {
+      return "panel-admin.html";
+    }
+    if (rolNormalizado === "vendedor" || rolNormalizado === "empleado") {
+      return "panel-empleado.html";
+    }
+    if (rolNormalizado === "cliente") return "panel-cliente.html";
     return "inicio.html";
+  }
+
+  function rolPermitido(roles) {
+    const normalizarRol = (rol) => {
+      const rolNormalizado = String(rol || "").trim().toLowerCase();
+      if (rolNormalizado === "admin") return "administrador";
+      if (rolNormalizado === "empleado") return "vendedor";
+      return rolNormalizado;
+    };
+    const rolActual = normalizarRol(Sesion.rol());
+    return roles.some((rol) => normalizarRol(rol) === rolActual);
   }
 
   const Sesion = {
@@ -38,7 +54,7 @@
       return u ? u.rol : null;
     },
     estaLogueado: () => !!localStorage.getItem(K_TOKEN) && !!leerUsuario(),
-    esStaff: () => STAFF.indexOf(Sesion.rol()) !== -1,
+    esStaff: () => rolPermitido(STAFF),
     panelDe,
 
     iniciar(token, usuario) {
@@ -153,7 +169,7 @@
 
       if (
         !Sesion.estaLogueado() ||
-        PROTEGIDAS[archivo].indexOf(Sesion.rol()) === -1
+        !rolPermitido(PROTEGIDAS[archivo])
       ) {
         Sesion.irALogin();
         return;
@@ -171,7 +187,7 @@
       Sesion.irALogin();
       return;
     }
-    if (permitidos.indexOf(Sesion.rol()) === -1) {
+    if (!rolPermitido(permitidos)) {
       document.documentElement.style.visibility = "hidden";
       location.replace(panelDe(Sesion.rol()));
       return;

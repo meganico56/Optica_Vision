@@ -18,17 +18,6 @@
       media="print"
       onload="this.media = 'all'"
     />
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
-      media="print"
-      onload="this.media = 'all'"
-    />
-    <noscript
-      ><link
-        rel="stylesheet"
-        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
-    /></noscript>
     <noscript
       ><link
         rel="stylesheet"
@@ -47,9 +36,9 @@
     /></noscript>
     <link
       rel="preload"
-      href="../imagenes/fondos/fondo-boutique.webp"
+      href="../imagenes/fondos/fondo-boutique.png"
       as="image"
-      type="image/webp"
+      type="image/png"
       fetchpriority="high"
     />
     <link
@@ -61,7 +50,6 @@
     />
     <link rel="stylesheet" href="../estilos/Base.css" />
     <link rel="stylesheet" href="../estilos/Layout-publico.css" />
-
     <link rel="stylesheet" href="../estilos/inicio.css" />
     <link rel="stylesheet" href="../estilos/footer.css" />
   </head>
@@ -103,14 +91,6 @@
           <div class="glow"></div>
           <div class="viewer-container">
             <img
-              src="../imagenes/productos/gafas-modelo1.png"
-              class="glasses-model"
-              alt="Gafas Premium"
-              width="450"
-              height="450"
-            />
-
-            <img
               src="../imagenes/productos/gafas-modelo1.webp"
               class="glasses-model"
               alt="Gafas Premium"
@@ -119,7 +99,6 @@
               fetchpriority="high"
               decoding="async"
             />
-
             <div class="podium" aria-hidden="true">
               <div class="podium-sombra"></div>
               <div class="podium-base"></div>
@@ -524,16 +503,13 @@
     <script defer src="../scripts/inicio.js"></script>
     <script defer src="../scripts/api.js"></script>
 
-    <script
-      defer
-      src="../scripts/session-manager.js?v=navbar-profile-left-31"
-    ></script>
-
     <script defer src="../scripts/sesion.js"></script>
     <script
       defer
-      src="../scripts/session-manager.js?v=profile-avatar-roles"
+      src="../scripts/session-manager.js?v=navbar-session-theme-restore-1"
     ></script>
     <script defer src="../scripts/intro-animacion.js"></script>
   </body>
 </html>
+
+

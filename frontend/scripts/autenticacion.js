@@ -57,7 +57,8 @@ document.addEventListener('DOMContentLoaded', () => {
         try {
             const respuesta = await Api.post('/api/login', { correo, contrasena });
             Sesion.iniciar(respuesta.token, respuesta.usuario);
-            location.href = "inicio.html";
+            const destino = Sesion.destinoTrasLogin();
+            location.replace(destino);
         } catch (error) {
             mostrarError(error.message);
             btnLogin.disabled = false;
