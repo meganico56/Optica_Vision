@@ -1,8 +1,9 @@
 body {
-    background-image: url('../imagenes/fondos/fondo-boutique.webp');
+    background-image: url('../imagenes/fondos/fondo-boutique.png');
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
+    background-attachment: fixed;
 }
 
 /* Scroll suave al ir a #nosotros / #servicios (con espacio para el navbar fijo) */
@@ -1135,7 +1136,7 @@ body.disco-arrastrando .glasses-model {
     background-color: #0c0b09;
     background-image: 
         linear-gradient(rgba(12, 11, 9, 0.45), rgba(12, 11, 9, 0.45)),
-        url('../imagenes/fondos/fondo-boutique.webp');
+        url('../imagenes/fondos/fondo-boutique.png');
     background-blend-mode: normal;
 }
 
