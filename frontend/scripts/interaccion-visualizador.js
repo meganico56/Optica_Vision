@@ -55,182 +55,159 @@ document.addEventListener('DOMContentLoaded', function () {
   const zoomModal   = document.getElementById('zoomModal');
   const zoomClose   = document.getElementById('zoomClose');
   const zoomImg     = document.getElementById('zoomImg');
+  const zoomLiveView = document.getElementById('zoomLiveView');
+  const zoomCameraView = document.getElementById('zoomCameraView');
+  const zoomCameraFeed = document.getElementById('zoomCameraFeed');
+  const zoomGlassesOverlay = document.getElementById('zoomGlassesOverlay');
+  const zoomCameraError = document.getElementById('zoomCameraError');
+  const zoomScale = document.getElementById('zoomGlassesScale');
+  const zoomScaleValue = document.getElementById('zoomGlassesScaleValue');
+  const zoomHeight = document.getElementById('zoomGlassesHeight');
+  const zoomHeightValue = document.getElementById('zoomGlassesHeightValue');
+  const zoomResetAdjustments = document.getElementById('zoomResetGlassesAdjustments');
+  const glassesScale = document.getElementById('glassesScale');
+  const glassesHeight = document.getElementById('glassesHeight');
+  const glassesOverlay = document.getElementById('glassesOverlayImg');
+  const mainShell = document.getElementById('mainShell');
+  const colGallery = document.getElementById('colGallery');
+  const cameraFeed = document.getElementById('cameraFeed');
 
   if (zoomTrigger && zoomModal && zoomImg) {
-    zoomTrigger.addEventListener('click', () => {
+    zoomTrigger.addEventListener('click', async () => {
+      const tryOnIsActive = Boolean(
+        colGallery?.classList.contains('try-on-active') &&
+        cameraFeed?.srcObject
+      );
+
+      if (tryOnIsActive && zoomCameraView && zoomCameraFeed) {
+        zoomImg.hidden = true;
+        if (zoomLiveView) zoomLiveView.hidden = false;
+        zoomCameraView.hidden = false;
+        if (zoomCameraError) zoomCameraError.hidden = true;
+        syncZoomAdjustments();
+        zoomCameraFeed.srcObject = cameraFeed.srcObject;
+        zoomModal.classList.remove('hidden');
+        syncZoomGlasses();
+
+        try {
+          await zoomCameraFeed.play();
+        } catch (error) {
+          console.error('No se pudo reproducir la cámara ampliada:', error);
+          if (zoomCameraError) {
+            zoomCameraError.textContent = 'No se pudo mostrar la cámara ampliada.';
+            zoomCameraError.hidden = false;
+          }
+        }
+        return;
+      }
+
+      if (zoomLiveView) zoomLiveView.hidden = true;
+      if (zoomCameraView) zoomCameraView.hidden = true;
+      zoomImg.hidden = false;
       zoomImg.src = mainImage ? mainImage.src : '';
       zoomModal.classList.remove('hidden');
     });
   }
-  if (zoomClose)  zoomClose.addEventListener('click', () => zoomModal.classList.add('hidden'));
+  if (zoomClose) zoomClose.addEventListener('click', closeZoomModal);
   if (zoomModal)  zoomModal.addEventListener('click', e => {
-    if (e.target === zoomModal) zoomModal.classList.add('hidden');
+    if (e.target === zoomModal) closeZoomModal();
   });
   document.addEventListener('keydown', e => {
-    if (e.key === 'Escape' && zoomModal) zoomModal.classList.add('hidden');
+    if (e.key === 'Escape' && zoomModal) closeZoomModal();
   });
 
-  // ══════════════════════════════════════════════════════════
-  // VIRTUAL TRY-ON — Cámara + animación + selector de modelos
-  // ══════════════════════════════════════════════════════════
-  const tryOnBtn        = document.getElementById('tryOnBtn');
-  const tryOnPanel      = document.getElementById('tryOnPanel');
-  const activateCamBtn  = document.getElementById('activateCam');
-  const colGallery      = document.getElementById('colGallery');
-  const cameraFeed      = document.getElementById('cameraFeed');
-  const camGlassesLayer = document.getElementById('camGlassesLayer');
-  const camModeBadge    = document.getElementById('camModeBadge');
-  const glassesOverlay  = document.getElementById('glassesOverlayImg');
-  const closeTryOnBtn   = document.getElementById('closeTryOn');
-
-  let cameraStream = null;
-  let tryOnActive  = false;
-
-  // Paso 1 — Toggle del panel de instrucciones
-  if (tryOnBtn && tryOnPanel) {
-    tryOnBtn.addEventListener('click', () => {
-      tryOnPanel.classList.toggle('hidden');
-      const open = !tryOnPanel.classList.contains('hidden');
-      tryOnBtn.textContent = open ? 'Cerrar' : 'Activar';
-
-      // Desplazar hacia la tarjeta de prueba virtual cuando se abre
-      if (open) {
-        setTimeout(() => {
-          tryOnBtn.closest('.try-on-card')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        }, 120);
-      }
-    });
+  function closeZoomModal() {
+    if (!zoomModal) return;
+    zoomModal.classList.add('hidden');
+    if (zoomCameraFeed) {
+      zoomCameraFeed.pause();
+      zoomCameraFeed.srcObject = null;
+    }
+    if (zoomCameraView) zoomCameraView.hidden = true;
+    if (zoomLiveView) zoomLiveView.hidden = true;
+    if (zoomGlassesOverlay) zoomGlassesOverlay.hidden = true;
+    if (zoomCameraError) zoomCameraError.hidden = true;
+    if (zoomImg) zoomImg.hidden = false;
   }
 
-  // Paso 2 — Activar cámara + secuencia de animación + scroll
-  if (activateCamBtn) {
-    activateCamBtn.addEventListener('click', async () => {
-      if (tryOnActive) return;
-
-      activateCamBtn.textContent = 'Iniciando...';
-      activateCamBtn.disabled = true;
-
-      const launchTryOn = (withCamera) => {
-        tryOnActive = true;
-
-        // 1. Agregar clase activa a la galería → CSS hace la transición
-        colGallery.classList.add('try-on-active');
-
-        // 2. Activar video/badge con pequeño delay
-        setTimeout(() => {
-          if (withCamera) cameraFeed.classList.add('active');
-          if (camModeBadge) camModeBadge.classList.add('active');
-        }, 120);
-
-        // 3. Mostrar overlay de gafas
-        setTimeout(() => {
-          if (camGlassesLayer) camGlassesLayer.classList.add('active');
-        }, 600);
-
-        // 4. Ocultar panel instrucciones
-        if (tryOnPanel) tryOnPanel.classList.add('hidden');
-        if (tryOnBtn)   tryOnBtn.textContent = 'Activar';
-
-        // 5. Scroll suave hasta el top de la página
-        setTimeout(() => {
-          window.scrollTo({ top: 0, behavior: 'smooth' });
-        }, 180);
-
-        activateCamBtn.textContent = 'Activar Cámara';
-        activateCamBtn.disabled = false;
-      };
-
-      try {
-        cameraStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' } });
-        cameraFeed.srcObject = cameraStream;
-        await cameraFeed.play();
-        launchTryOn(true);
-      } catch (err) {
-        // Modo demo sin cámara
-        console.warn('Cámara no disponible, modo demo:', err.message);
-
-        // Fondo simulado
-        if (cameraFeed) {
-          cameraFeed.style.background = 'linear-gradient(135deg, #1e1d18 0%, #2c2b22 100%)';
-          cameraFeed.classList.add('active');
-        }
-
-        // Mensaje demo
-        const mainShell = document.getElementById('mainShell');
-        if (mainShell && !document.getElementById('demoMsg')) {
-          const demoMsg = document.createElement('div');
-          demoMsg.id = 'demoMsg';
-          Object.assign(demoMsg.style, {
-            position: 'absolute', inset: '0', display: 'flex',
-            flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
-            zIndex: '2', color: 'rgba(255,255,255,0.6)', fontSize: '13px',
-            gap: '10px', textAlign: 'center', padding: '24px'
-          });
-          demoMsg.innerHTML = `
-            <i class="fi fi-br-camera" style="font-size:2.2rem;color:#bda229;"></i>
-            <strong>Modo Demo</strong>
-            <span style="font-size:11px;opacity:.7;">Permite el acceso a la cámara en tu navegador para la prueba real</span>`;
-          mainShell.appendChild(demoMsg);
-        }
-        launchTryOn(false);
-      }
-    });
-  }
-
-  // Paso 3 — Selector de modelos de gafas
-  const modelCards = document.querySelectorAll('.model-card');
-  modelCards.forEach(card => {
-    card.addEventListener('click', function () {
-      modelCards.forEach(c => c.classList.remove('active'));
-      this.classList.add('active');
-
-      // Cambiar overlay con fade
-      if (glassesOverlay) {
-        glassesOverlay.style.cssText += 'opacity:0;transform:scale(0.88);transition:opacity .3s,transform .3s';
-        setTimeout(() => {
-          glassesOverlay.src = this.dataset.src;
-          glassesOverlay.style.opacity = '1';
-          glassesOverlay.style.transform = 'scale(1)';
-        }, 200);
-      }
-      showToast(`Probando: ${this.dataset.name}`);
-    });
-  });
-
-  // Paso 4 — Cerrar prueba virtual y restaurar
-  if (closeTryOnBtn) closeTryOnBtn.addEventListener('click', closeTryOn);
-
-  function closeTryOn() {
-    if (!tryOnActive) return;
-    tryOnActive = false;
-
-    if (cameraStream) {
-      cameraStream.getTracks().forEach(t => t.stop());
-      cameraStream = null;
+  function syncZoomGlasses() {
+    if (
+      !zoomCameraView ||
+      !zoomGlassesOverlay ||
+      !glassesOverlay ||
+      !mainShell ||
+      zoomCameraView.hidden
+    ) {
+      return;
     }
 
-    colGallery.classList.remove('try-on-active');
-    if (cameraFeed) {
-      cameraFeed.classList.remove('active');
-      cameraFeed.srcObject = null;
-      cameraFeed.style.background = '';
+    zoomGlassesOverlay.src = glassesOverlay.currentSrc || glassesOverlay.src;
+    const detected = document
+      .getElementById('camGlassesLayer')
+      ?.classList.contains('has-face');
+    zoomGlassesOverlay.hidden = !detected;
+    if (!detected) return;
+
+    const sourceWidth = mainShell.clientWidth;
+    const sourceHeight = mainShell.clientHeight;
+    const left = parseFloat(glassesOverlay.style.left);
+    const top = parseFloat(glassesOverlay.style.top);
+    const width = parseFloat(glassesOverlay.style.width);
+    if (
+      !sourceWidth ||
+      !sourceHeight ||
+      !Number.isFinite(left) ||
+      !Number.isFinite(top) ||
+      !Number.isFinite(width)
+    ) {
+      return;
     }
-    if (camGlassesLayer) camGlassesLayer.classList.remove('active');
-    if (camModeBadge)    camModeBadge.classList.remove('active');
 
-    const demoMsg = document.getElementById('demoMsg');
-    if (demoMsg) demoMsg.remove();
-
-    // Resetear tarjeta de prueba virtual
-    if (tryOnPanel) tryOnPanel.classList.add('hidden');
-    if (tryOnBtn)   tryOnBtn.textContent = 'Activar';
-
-    // Resetear modelo al primero
-    modelCards.forEach((c, i) => c.classList.toggle('active', i === 0));
-    if (glassesOverlay && modelCards[0]) glassesOverlay.src = modelCards[0].dataset.src;
-
-    showToast('Prueba virtual cerrada');
+    zoomGlassesOverlay.style.left = `${(left / sourceWidth) * 100}%`;
+    zoomGlassesOverlay.style.top = `${(top / sourceHeight) * 100}%`;
+    zoomGlassesOverlay.style.width = `${(width / sourceWidth) * 100}%`;
+    zoomGlassesOverlay.style.transform = glassesOverlay.style.transform;
   }
+
+  function syncZoomAdjustments() {
+    if (!zoomScale || !zoomScaleValue || !zoomHeight || !zoomHeightValue) return;
+    if (glassesScale) zoomScale.value = glassesScale.value;
+    if (glassesHeight) zoomHeight.value = glassesHeight.value;
+    zoomScaleValue.textContent = `${zoomScale.value}%`;
+    zoomHeightValue.textContent = `${zoomHeight.value}%`;
+  }
+
+  function applyZoomAdjustment(zoomControl, mainControl) {
+    if (!zoomControl || !mainControl) return;
+    mainControl.value = zoomControl.value;
+    mainControl.dispatchEvent(new Event('input', { bubbles: true }));
+  }
+
+  if (zoomScale && glassesScale) {
+    zoomScale.addEventListener('input', () => applyZoomAdjustment(zoomScale, glassesScale));
+  }
+  if (zoomHeight && glassesHeight) {
+    zoomHeight.addEventListener('input', () => applyZoomAdjustment(zoomHeight, glassesHeight));
+  }
+  if (zoomResetAdjustments) {
+    zoomResetAdjustments.addEventListener('click', () => {
+      if (zoomScale) zoomScale.value = '100';
+      if (zoomHeight) zoomHeight.value = '0';
+      if (glassesScale) glassesScale.value = '100';
+      if (glassesHeight) glassesHeight.value = '0';
+      const mainAdjustment = glassesScale || glassesHeight;
+      if (mainAdjustment) {
+        mainAdjustment.dispatchEvent(new Event('input', { bubbles: true }));
+      } else {
+        syncZoomAdjustments();
+      }
+    });
+  }
+
+  window.addEventListener('bv:tryon-frame', syncZoomGlasses);
+  window.addEventListener('bv:tryon-adjustments', syncZoomAdjustments);
+  window.addEventListener('bv:tryon-closed', closeZoomModal);
+  window.addEventListener('resize', syncZoomGlasses);
 
   // ══════════════════════════════════════════════════════════
   // SELECTOR DE COLOR
@@ -244,19 +221,6 @@ document.addEventListener('DOMContentLoaded', function () {
       if (colorNameEl) colorNameEl.textContent = this.dataset.color;
     });
   });
-
-  // ══════════════════════════════════════════════════════════
-  // TOAST
-  // ══════════════════════════════════════════════════════════
-  const toast        = document.getElementById('toast');
-  const toastMsg     = document.getElementById('toastMsg');
-
-  function showToast(msg) {
-    if (!toast) return;
-    if (toastMsg) toastMsg.textContent = msg;
-    toast.classList.add('show');
-    setTimeout(() => toast.classList.remove('show'), 3000);
-  }
 
   // ══════════════════════════════════════════════════════════
   // CARRUSEL DE PRODUCTOS RELACIONADOS

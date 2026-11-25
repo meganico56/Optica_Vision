@@ -78,6 +78,12 @@
                     mainImage.src = RUTA_IMAGENES + 'gafas-modelo1.png';
                 };
             }
+            window.dispatchEvent(new CustomEvent('bv:producto-cargado', {
+                detail: {
+                    producto,
+                    imagen: RUTA_IMAGENES + (producto.imagen || 'gafas-modelo1.png')
+                }
+            }));
 
             if (marca) marca.textContent = producto.marca || 'Óptica Visión';
             if (nombreProducto) nombreProducto.textContent = producto.nombre || '';

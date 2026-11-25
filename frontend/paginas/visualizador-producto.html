@@ -48,15 +48,16 @@
 
         <div class="col-gallery" id="colGallery">
             <div class="main-image-shell" id="mainShell">
-                <img src="" class="main-img" id="mainImage">
+                <img src="" class="main-img" id="mainImage" alt="Producto seleccionado">
 
                 <video id="cameraFeed" class="camera-feed" autoplay playsinline muted></video>
 
                 <div class="cam-glasses-layer" id="camGlassesLayer">
-                    <img src="" id="glassesOverlayImg">
+                    <img src="" id="glassesOverlayImg" alt="">
                 </div>
 
                 <div class="cam-mode-badge" id="camModeBadge"><i class="fi fi-sr-video-camera"></i> Prueba virtual</div>
+                <p class="try-on-status" id="tryOnStatus" role="status" aria-live="polite" hidden></p>
 
                 <button class="cam-close-btn" id="closeTryOn" type="button" title="Cerrar prueba virtual"><i class="fi fi-br-cross"></i></button>
                 <button class="zoom-trigger" id="zoomTrigger" type="button" title="Ampliar imagen"><i class="fi fi-br-expand"></i></button>
@@ -67,8 +68,19 @@
             </div>
 
             <div class="model-selector" id="modelSelector">
-                <p class="model-selector-title"><i class="fi fi-br-camera"></i> Elige el modelo a probar</p>
+                <p class="model-selector-title"><i class="fi fi-br-camera"></i> Modelo a probar</p>
                 <div class="model-cards-row" id="modelosPrueba"></div>
+                <div class="try-on-adjustments" aria-label="Ajustes de la montura">
+                    <label class="try-on-adjustment" for="glassesScale">
+                        <span>Tamaño <output id="glassesScaleValue">100%</output></span>
+                        <input id="glassesScale" type="range" min="70" max="130" value="100" step="1">
+                    </label>
+                    <label class="try-on-adjustment" for="glassesHeight">
+                        <span>Altura <output id="glassesHeightValue">0%</output></span>
+                        <input id="glassesHeight" type="range" min="-13" max="13" value="0" step="0.5">
+                    </label>
+                    <button class="try-on-reset" id="resetGlassesAdjustments" type="button">Restablecer</button>
+                </div>
             </div>
 
             <div class="try-on-card">
@@ -81,8 +93,9 @@
                 <div class="try-on-panel hidden" id="tryOnPanel">
                     <div class="cam-placeholder">
                         <i class="fi fi-br-user"></i>
-                        <p>Activa tu cámara para probar las gafas</p>
+                        <p>Permite el acceso a la cámara y mira al frente para ajustar las gafas. El video se procesa en tu navegador.</p>
                     </div>
+                    <p class="try-on-error" id="tryOnError" role="status" aria-live="polite" hidden></p>
                     <button class="activate-camera" id="activateCam" type="button">Activar cámara</button>
                 </div>
             </div>
@@ -159,12 +172,26 @@
 
     <div class="zoom-modal hidden" id="zoomModal">
         <button class="zoom-close" id="zoomClose" type="button" aria-label="Cerrar"><i class="fi fi-br-cross"></i></button>
-        <img src="" id="zoomImg">
-    </div>
-
-    <div class="toast" id="toast" role="status">
-        <i class="fi fi-sr-check-circle"></i>
-        <span id="toastMsg"></span>
+        <div class="zoom-live-view" id="zoomLiveView" hidden>
+            <div class="zoom-camera-view" id="zoomCameraView" hidden>
+                <video id="zoomCameraFeed" autoplay playsinline muted></video>
+                <img src="" id="zoomGlassesOverlay" alt="" hidden>
+                <p class="zoom-camera-error" id="zoomCameraError" role="status" hidden></p>
+            </div>
+            <section class="try-on-adjustments zoom-adjustments" aria-labelledby="zoomAdjustmentsTitle">
+                <h2 class="zoom-adjustments-title" id="zoomAdjustmentsTitle">Ajusta tu montura</h2>
+                <label class="try-on-adjustment" for="zoomGlassesScale">
+                    <span>Tamaño <output id="zoomGlassesScaleValue">100%</output></span>
+                    <input id="zoomGlassesScale" type="range" min="70" max="130" value="100" step="1">
+                </label>
+                <label class="try-on-adjustment" for="zoomGlassesHeight">
+                    <span>Altura <output id="zoomGlassesHeightValue">0%</output></span>
+                    <input id="zoomGlassesHeight" type="range" min="-13" max="13" value="0" step="0.5">
+                </label>
+                <button class="try-on-reset" id="zoomResetGlassesAdjustments" type="button">Restablecer</button>
+            </section>
+        </div>
+        <img src="" id="zoomImg" alt="Vista ampliada del producto">
     </div>
 
 <script src="../scripts/header.js"></script>
@@ -175,5 +202,6 @@
     <script src="../scripts/carrito.js"></script>
     <script src="../scripts/visualizador.js"></script>
     <script src="../scripts/interaccion-visualizador.js"></script>
+    <script src="../scripts/prueba-virtual.js"></script>
 </body>
 </html>
