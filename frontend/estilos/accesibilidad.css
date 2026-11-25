@@ -1,0 +1,213 @@
+.accesibilidad {
+  position: fixed;
+  right: 1.5rem;
+  bottom: 1.5rem;
+  z-index: 10001;
+  font-family: var(--font-body, Arial, sans-serif);
+}
+
+.accesibilidad-boton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border: 1px solid var(--gold, #b08c2f);
+  border-radius: 50%;
+  background: var(--bg-card, #ffffff);
+  color: var(--gold-dark, #b08c2f);
+  font-size: 1.2rem;
+  cursor: pointer;
+  box-shadow: 0 4px 15px var(--gold-glow, rgba(204, 164, 59, 0.35));
+  transition: transform 0.3s ease, background 0.3s ease;
+}
+
+.accesibilidad-boton:hover {
+  background: var(--gold-subtle, rgba(204, 164, 59, 0.12));
+  transform: translateY(-2px);
+}
+
+.accesibilidad-boton:focus-visible,
+.accesibilidad-opciones input:focus-visible + label,
+.accesibilidad-lista input:focus-visible + label,
+.accesibilidad-reset:focus-visible {
+  outline: 2px solid var(--gold, #b08c2f);
+  outline-offset: 3px;
+}
+
+/* Texto oscuro sobre dorado: contraste ~6.8:1 (WCAG AA) */
+.accesibilidad-boton[aria-expanded="true"] {
+  background: var(--gold, #cca43b);
+  color: #222222;
+}
+
+.accesibilidad-panel {
+  position: absolute;
+  right: 0;
+  bottom: 56px;
+  width: min(280px, calc(100vw - 2rem));
+  max-height: calc(100vh - 100px);
+  overflow-y: auto;
+  padding: 1rem 1.2rem;
+  border: 1px solid var(--border, #e8e8e8);
+  border-radius: 16px;
+  background: var(--bg-card, #ffffff);
+  color: var(--text-dark, #222222);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2);
+}
+
+.accesibilidad-panel[hidden] {
+  display: none;
+}
+
+.accesibilidad-panel h2 {
+  margin: 0 0 0.8rem;
+  color: inherit;
+  font: 700 1rem/1.4 var(--font-title, Arial, sans-serif);
+}
+
+.accesibilidad-titulo {
+  margin: 0.8rem 0 0.4rem;
+  color: var(--text-muted, #555555);
+  font-size: 0.8rem;
+}
+
+.accesibilidad-opciones,
+.accesibilidad-lista {
+  display: flex;
+  gap: 6px;
+}
+
+.accesibilidad-opciones input,
+.accesibilidad-lista input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  clip-path: inset(50%);
+}
+
+.accesibilidad-opciones label,
+.accesibilidad-lista label {
+  border: 1px solid var(--border, #e8e8e8);
+  border-radius: 10px;
+  color: var(--text-dark, #222222);
+  cursor: pointer;
+  font-family: var(--font-title, Arial, sans-serif);
+  font-size: 0.8rem;
+  font-weight: 600;
+  transition: background 0.3s ease, transform 0.3s ease;
+}
+
+.accesibilidad-opciones label {
+  flex: 1;
+  padding: 8px 4px;
+  text-align: center;
+}
+
+.accesibilidad-lista {
+  flex-direction: column;
+}
+
+.accesibilidad-lista label {
+  padding: 9px 12px;
+}
+
+.accesibilidad-lista label i {
+  width: 18px;
+  color: var(--gold-dark, #b08c2f);
+  text-align: center;
+}
+
+.accesibilidad-opciones label:hover,
+.accesibilidad-lista label:hover {
+  transform: translateY(-2px);
+  border-color: var(--gold, #cca43b);
+}
+
+.accesibilidad-opciones input:checked + label,
+.accesibilidad-lista input:checked + label {
+  border-color: var(--gold, #cca43b);
+  background: var(--gold, #cca43b);
+  color: #222222;
+}
+
+.accesibilidad-lista input:checked + label i {
+  color: #222222;
+}
+
+.accesibilidad-reset {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  width: 100%;
+  margin-top: 1rem;
+  padding: 9px;
+  border: 1.5px solid var(--gold, #cca43b);
+  border-radius: 10px;
+  background: transparent;
+  color: var(--text-dark, #222222);
+  font-family: var(--font-title, Arial, sans-serif);
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.accesibilidad-reset:hover {
+  background: var(--gold, #cca43b);
+  color: #222222;
+}
+
+body.accesibilidad-escala-chica {
+  zoom: 0.85;
+}
+
+body.accesibilidad-escala-grande {
+  zoom: 1.2;
+}
+
+body.accesibilidad-contraste > :not(.accesibilidad),
+body.accesibilidad-grises > :not(.accesibilidad) {
+  filter: contrast(var(--accesibilidad-contraste, 1))
+    grayscale(var(--accesibilidad-grises, 0));
+}
+
+body.accesibilidad-contraste {
+  --accesibilidad-contraste: 1.5;
+}
+
+body.accesibilidad-grises {
+  --accesibilidad-grises: 1;
+}
+
+body.accesibilidad-fuente,
+body.accesibilidad-fuente :not(i):not([class*="fa-"]):not(svg) {
+  font-family: Verdana, Arial, sans-serif !important;
+}
+
+body.accesibilidad-enlaces a {
+  text-decoration: underline !important;
+  text-decoration-thickness: 2px !important;
+  text-underline-offset: 4px;
+  outline: 2px solid var(--gold, #cca43b);
+  outline-offset: 2px;
+}
+
+body.accesibilidad-sin-animaciones *,
+body.accesibilidad-sin-animaciones *::before,
+body.accesibilidad-sin-animaciones *::after {
+  animation: none !important;
+  scroll-behavior: auto !important;
+  transition: none !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .accesibilidad-boton,
+  .accesibilidad-opciones label,
+  .accesibilidad-lista label {
+    transition: none;
+  }
+}
