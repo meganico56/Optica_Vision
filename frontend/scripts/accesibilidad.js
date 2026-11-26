@@ -16,7 +16,7 @@
       fuente: false,
       enlaces: false,
       animaciones: menosMovimiento
-    };
+    };  
   }
 
   function cargarPreferencias() {

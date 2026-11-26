@@ -1,5 +1,4 @@
-/* este mismo reutiliza el navbar footer botones fondo y variables del inicio.css */
-@import url('inicio.css');
+/* Este condenado archivo se carga despues de Base.css Layout-publico.css e inicio.css */
 
 html { scroll-behavior: smooth; }
 
@@ -68,7 +67,7 @@ html { scroll-behavior: smooth; }
     align-items: start;
 }
 
-/* El indice lateral wey */
+/* El indice lateral */
 .terminos-indice {
     position: sticky;
     top: 105px;
@@ -127,7 +126,7 @@ html { scroll-behavior: smooth; }
     color: var(--text-dark);
 }
 
-/* Del contenideishon*/
+/* Del contenido */
 .terminos-contenido {
     display: flex;
     flex-direction: column;
@@ -222,8 +221,7 @@ html { scroll-behavior: smooth; }
 
 .termino-card strong { color: var(--text-dark); }
 
-/* Los datos en filas tanto de clientes como desarrolladores */
-
+/* Los datos en filas, tanto de clientes como de desarrolladores */
 .datos-lista {
     display: grid;
     gap: 0.6rem;
@@ -254,7 +252,7 @@ html { scroll-behavior: smooth; }
     color: var(--text-muted);
 }
 
-/* El del marcador de las cosas por confirmar */
+/* El marcador de las cosas por confirmar */
 .por-confirmar {
     display: inline-block;
     padding: 1px 10px;
@@ -268,7 +266,7 @@ html { scroll-behavior: smooth; }
     line-height: 1.7;
 }
 
-/* El del aviso de destacado*/
+/* El aviso destacado */
 .termino-aviso {
     display: flex;
     gap: 0.9rem;
@@ -287,7 +285,7 @@ html { scroll-behavior: smooth; }
 
 .termino-aviso p { margin: 0; font-size: 0.9rem; }
 
-/* La aceptacion final wey */
+/* La aceptación final */
 .terminos-cta {
     text-align: center;
     padding: 2.2rem 1.5rem;
@@ -338,7 +336,8 @@ html { scroll-behavior: smooth; }
     }
 }
 
-/* El modo oscuro de terminos html mamon */
+/* El modo oscuro de terminos.html
+   (los colores de respaldo evitan texto negro si falta alguna variable) */
 :root.dark-mode .terminos-h1-dark { color: #ffffff; }
 
 :root.dark-mode .terminos-hero p,
@@ -346,7 +345,7 @@ html { scroll-behavior: smooth; }
 :root.dark-mode .termino-card li,
 :root.dark-mode .terminos-cta p,
 :root.dark-mode .dato-fila dd,
-:root.dark-mode .terminos-indice a { color: var(--text-muted); }
+:root.dark-mode .terminos-indice a { color: var(--text-muted, #cfc8b4); }
 
 :root.dark-mode .terminos-fecha,
 :root.dark-mode .termino-card {
@@ -358,8 +357,8 @@ html { scroll-behavior: smooth; }
 :root.dark-mode .terminos-fecha { color: #fff4d6; }
 
 :root.dark-mode .termino-card:hover {
-    border-color: var(--gold);
-    box-shadow: 0 14px 32px var(--gold-glow);
+    border-color: var(--gold, #cca43b);
+    box-shadow: 0 14px 32px var(--gold-glow, rgba(204, 164, 59, 0.35));
 }
 
 :root.dark-mode .terminos-indice,
@@ -391,7 +390,7 @@ html { scroll-behavior: smooth; }
 
 :root.dark-mode .por-confirmar {
     background: rgba(204, 164, 59, 0.12);
-    color: var(--gold-light);
+    color: var(--gold-light, #e6c76a);
 }
 
 :root.dark-mode .termino-aviso { background: rgba(204, 164, 59, 0.08); }
