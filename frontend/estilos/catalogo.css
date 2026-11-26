@@ -140,6 +140,7 @@ body {
   border-radius: 14px;
   padding: 22px 12px;
   width: 100%;
+  min-height: 214px;
   overflow: hidden;
   display: flex;
   align-items: center;
@@ -154,6 +155,23 @@ body {
   z-index: 2;
   transition: transform 0.4s ease;
   filter: drop-shadow(0 8px 16px rgba(0,0,0,0.12));
+}
+
+.producto-imagen .modelo-3d-producto {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  width: 100%;
+  height: 100%;
+  background: transparent;
+}
+
+.producto-imagen .modelo-3d-producto[hidden] {
+  display: none;
+}
+
+.producto-imagen .modelo-3d-producto[data-loaded="false"] {
+  visibility: hidden;
 }
 
 .producto-card:hover .producto-imagen img {

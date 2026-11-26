@@ -60,12 +60,37 @@
       });
 
       const img = tarjeta.querySelector(".img-producto");
+      const modelo3d = tarjeta.querySelector(".modelo-3d-producto");
       img.alt = p.nombre;
       img.src = RUTA_IMAGENES + (p.imagen || "gafas-modelo1.png");
       img.onerror = () => {
         img.onerror = null;
         img.src = RUTA_IMAGENES + "gafas-modelo1.png";
       };
+      modelo3d.hidden = true;
+      if (p.modelo_3d) {
+        modelo3d.alt = p.nombre || "Modelo 3D del producto";
+        modelo3d.dataset.loaded = "false";
+        modelo3d.hidden = false;
+        modelo3d.addEventListener("load", () => {
+          modelo3d.dataset.loaded = "true";
+          modelo3d.hidden = false;
+          img.hidden = true;
+        }, { once: true });
+        modelo3d.addEventListener("error", () => {
+          modelo3d.dataset.loaded = "false";
+          modelo3d.hidden = true;
+          img.hidden = false;
+        }, { once: true });
+        modelo3d.setAttribute(
+          "src",
+          "../modelos_gafas/" + encodeURIComponent(p.modelo_3d),
+        );
+      } else {
+        modelo3d.removeAttribute("src");
+        delete modelo3d.dataset.loaded;
+        img.hidden = false;
+      }
       tarjeta.querySelector(".nombre-producto").textContent = p.nombre;
       tarjeta.querySelector(".precio").textContent = BV.moneda(p.precio);
       tarjeta.querySelector(".existencia").textContent =

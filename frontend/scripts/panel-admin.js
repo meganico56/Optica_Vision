@@ -82,6 +82,8 @@
   let tipoModal = null; // 'producto', 'marca', 'categoria', 'usuario', 'compra', 'venta', 'cita', 'receta', 'devolucion', 'reporte'
   let nuevaImagenBase64 = null;
   let nombreNuevaImagen = null;
+  let nuevoModelo3dBase64 = null;
+  let nombreNuevoModelo3d = null;
   let tabActual = "productos";
   let suspensionesMemoria = new Set();
   let suspensionesCargadas = false;
@@ -862,6 +864,8 @@
     editandoId = producto ? producto.id : null;
     nuevaImagenBase64 = null;
     nombreNuevaImagen = null;
+    nuevoModelo3dBase64 = null;
+    nombreNuevoModelo3d = null;
 
     let imagenesDisponibles = IMAGENES_DISPONIBLES;
     let errorImagenes = null;
@@ -901,7 +905,7 @@
 
                 <div class="form-field form-grid-full">
                     <label for="mDescripcion">Descripción del producto</label>
-                    <textarea id="mDescripcion" class="input-admin" rows="2" placeholder="Detalles de la montura, características, tipo de lente...">${BV.escapar(p.descripcion || "")}</textarea>
+                    <textarea id="mDescripcion" class="input-admin" rows="2" maxlength="150" placeholder="Detalles de la montura, características, tipo de lente...">${BV.escapar(p.descripcion || "")}</textarea>
                 </div>
             </div>
 
@@ -929,6 +933,18 @@
                             <input type="file" id="mImagenFile" accept="image/*">
                         </div>
                     </div>
+                </div>
+            </div>
+
+            <div class="form-section-group">
+                <div class="form-section-title">
+                    <i class="fa-solid fa-cube"></i> Modelo 3D (.GLB)
+                </div>
+                <div class="form-field form-grid-full">
+                    <label for="mModelo3DFile">Selecciona un archivo GLB (máximo 10 MB)</label>
+                    <input type="hidden" id="mModelo3D" value="${BV.escapar(p.modelo_3d || "")}">
+                    <input type="file" id="mModelo3DFile" class="input-admin" accept=".glb,model/gltf-binary">
+                    <p id="mModelo3DStatus" role="status" aria-live="polite">${p.modelo_3d ? `Modelo actual: ${BV.escapar(p.modelo_3d)}` : "Sin modelo 3D seleccionado."}</p>
                 </div>
             </div>
 
@@ -1025,6 +1041,13 @@
                         </div>
                     </div>
                     <div class="form-field">
+                        <label for="mColor">Color / acabado</label>
+                        <div class="input-icon-wrapper">
+                            <i class="fa-solid fa-palette prefix-icon"></i>
+                            <input type="text" id="mColor" class="input-admin" placeholder="Ej. Dorado y vino" value="${BV.escapar(p.color || "")}">
+                        </div>
+                    </div>
+                    <div class="form-field">
                         <label for="mGenero">Género</label>
                         <div class="input-icon-wrapper">
                             <i class="fa-solid fa-venus-mars prefix-icon"></i>
@@ -1048,6 +1071,8 @@
     const selectImg = document.getElementById("mImagenSelect");
     const fileImg = document.getElementById("mImagenFile");
     const previewImg = document.getElementById("mPreviewImg");
+    const fileModelo3d = document.getElementById("mModelo3DFile");
+    const modelo3dStatus = document.getElementById("mModelo3DStatus");
 
     if (selectImg) {
       selectImg.addEventListener("change", () => {
@@ -1068,6 +1093,54 @@
           nuevaImagenBase64 = evt.target.result;
           nombreNuevaImagen = archivo.name;
           previewImg.src = nuevaImagenBase64;
+        };
+        lector.readAsDataURL(archivo);
+      });
+    }
+
+    if (fileModelo3d) {
+      fileModelo3d.addEventListener("change", (e) => {
+        const archivo = e.target.files[0];
+        if (!archivo) {
+          nuevoModelo3dBase64 = null;
+          nombreNuevoModelo3d = null;
+          return;
+        }
+        if (!/\.glb$/i.test(archivo.name) || archivo.size > 10 * 1024 * 1024) {
+          nuevoModelo3dBase64 = null;
+          nombreNuevoModelo3d = null;
+          fileModelo3d.value = "";
+          if (modalError) {
+            modalError.textContent = "Selecciona un archivo .glb de máximo 10 MB.";
+            modalError.hidden = false;
+          }
+          return;
+        }
+
+        const lector = new FileReader();
+        lector.onerror = () => {
+          nuevoModelo3dBase64 = null;
+          nombreNuevoModelo3d = null;
+          fileModelo3d.value = "";
+          if (modalError) {
+            modalError.textContent = "No se pudo leer el modelo 3D seleccionado.";
+            modalError.hidden = false;
+          }
+        };
+        lector.onload = (evt) => {
+          if (typeof evt.target.result !== "string") {
+            if (modalError) {
+              modalError.textContent = "No se pudo procesar el modelo 3D seleccionado.";
+              modalError.hidden = false;
+            }
+            return;
+          }
+          nuevoModelo3dBase64 = evt.target.result;
+          nombreNuevoModelo3d = archivo.name;
+          if (modelo3dStatus) {
+            modelo3dStatus.textContent = `Nuevo modelo seleccionado: ${archivo.name}`;
+          }
+          if (modalError) modalError.hidden = true;
         };
         lector.readAsDataURL(archivo);
       });
@@ -1657,8 +1730,11 @@
         );
         const id_marca = parseInt(document.getElementById("mMarca").value, 10);
         const material = document.getElementById("mMaterial").value.trim();
+        const color = document.getElementById("mColor").value.trim();
         const genero = document.getElementById("mGenero").value;
         let imagenFinal = document.getElementById("mImagenSelect").value;
+        let modelo3dFinal = document.getElementById("mModelo3D").value || null;
+        const archivoModelo3d = document.getElementById("mModelo3DFile");
 
         if (!nombre || isNaN(precio)) {
           if (modalError) {
@@ -1670,6 +1746,12 @@
         }
 
         try {
+          if (
+            archivoModelo3d.files.length > 0 &&
+            (!nuevoModelo3dBase64 || !nombreNuevoModelo3d)
+          ) {
+            throw new Error("Espera a que termine de procesarse el modelo GLB.");
+          }
           if (nuevaImagenBase64 && nombreNuevaImagen) {
             const resUpload = await Api.post("/api/upload-imagen", {
               nombreArchivo: nombreNuevaImagen,
@@ -1677,17 +1759,26 @@
             });
             imagenFinal = resUpload.filename;
           }
+          if (nuevoModelo3dBase64 && nombreNuevoModelo3d) {
+            const resModelo3d = await Api.post("/api/upload-modelo-3d", {
+              nombreArchivo: nombreNuevoModelo3d,
+              base64Data: nuevoModelo3dBase64,
+            });
+            modelo3dFinal = resModelo3d.filename;
+          }
 
           const datos = {
             nombre,
             descripcion,
             precio,
             imagen: imagenFinal,
+            modelo_3d: modelo3dFinal,
             existencia_actual,
             existencia_minima,
             id_categoria,
             id_marca,
             material,
+            color: color || null,
             genero,
             estado: "Activo",
           };

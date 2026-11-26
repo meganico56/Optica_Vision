@@ -14,11 +14,14 @@
     const bcProducto = document.getElementById('bcProducto');
 
     const mainImage = document.getElementById('mainImage');
+    const productModelViewer = document.getElementById('productModelViewer');
     const marca = document.getElementById('marca');
     const nombreProducto = document.getElementById('nombreProducto');
     const precio = document.getElementById('precio');
     const descripcion = document.getElementById('descripcion');
     const material = document.getElementById('material');
+    const color = document.getElementById('color');
+    const specColor = document.getElementById('specColor');
     const genero = document.getElementById('genero');
     const categoria = document.getElementById('categoria');
     const disponibilidad = document.getElementById('disponibilidad');
@@ -73,6 +76,30 @@
 
             if (mainImage) {
                 mainImage.src = RUTA_IMAGENES + (producto.imagen || 'gafas-modelo1.png');
+                const hasModel = Boolean(producto.modelo_3d && productModelViewer);
+                mainImage.hidden = false;
+                if (productModelViewer) {
+                    productModelViewer.hidden = !hasModel;
+                    productModelViewer.dataset.loaded = 'false';
+                    productModelViewer.dataset.failed = 'false';
+                    if (hasModel) {
+                        productModelViewer.alt = producto.nombre || 'Modelo 3D del producto';
+                        productModelViewer.setAttribute(
+                            'src',
+                            '../modelos_gafas/' + encodeURIComponent(producto.modelo_3d)
+                        );
+                        productModelViewer.addEventListener('load', () => {
+                            productModelViewer.dataset.loaded = 'true';
+                            mainImage.hidden = true;
+                        }, { once: true });
+                        productModelViewer.addEventListener('error', () => {
+                            productModelViewer.hidden = true;
+                            productModelViewer.dataset.loaded = 'false';
+                            productModelViewer.dataset.failed = 'true';
+                            mainImage.hidden = false;
+                        }, { once: true });
+                    }
+                }
                 mainImage.onerror = () => {
                     mainImage.onerror = null;
                     mainImage.src = RUTA_IMAGENES + 'gafas-modelo1.png';
@@ -90,6 +117,8 @@
             if (precio) precio.textContent = (window.BV && window.BV.moneda) ? window.BV.moneda(producto.precio) : ('$' + producto.precio);
             if (descripcion) descripcion.textContent = producto.descripcion || 'Sin descripción disponible.';
             if (material) material.textContent = producto.material || 'N/A';
+            if (color) color.textContent = producto.color || 'N/A';
+            if (specColor) specColor.hidden = !producto.color;
             if (genero) genero.textContent = producto.genero || 'Unisex';
             if (categoria) categoria.textContent = producto.categoria || 'Gafas';
 

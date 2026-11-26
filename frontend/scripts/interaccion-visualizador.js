@@ -55,10 +55,13 @@ document.addEventListener('DOMContentLoaded', function () {
   const zoomModal   = document.getElementById('zoomModal');
   const zoomClose   = document.getElementById('zoomClose');
   const zoomImg     = document.getElementById('zoomImg');
+  const zoomModelViewer = document.getElementById('zoomModelViewer');
+  const productModelViewer = document.getElementById('productModelViewer');
   const zoomLiveView = document.getElementById('zoomLiveView');
   const zoomCameraView = document.getElementById('zoomCameraView');
   const zoomCameraFeed = document.getElementById('zoomCameraFeed');
   const zoomGlassesOverlay = document.getElementById('zoomGlassesOverlay');
+  const zoomTryOnModelViewer = document.getElementById('zoomTryOnModelViewer');
   const zoomCameraError = document.getElementById('zoomCameraError');
   const zoomScale = document.getElementById('zoomGlassesScale');
   const zoomScaleValue = document.getElementById('zoomGlassesScaleValue');
@@ -68,6 +71,8 @@ document.addEventListener('DOMContentLoaded', function () {
   const glassesScale = document.getElementById('glassesScale');
   const glassesHeight = document.getElementById('glassesHeight');
   const glassesOverlay = document.getElementById('glassesOverlayImg');
+  const glassesLayer = document.getElementById('camGlassesLayer');
+  const tryOnModelViewer = document.getElementById('tryOnModelViewer');
   const mainShell = document.getElementById('mainShell');
   const colGallery = document.getElementById('colGallery');
   const cameraFeed = document.getElementById('cameraFeed');
@@ -81,6 +86,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
       if (tryOnIsActive && zoomCameraView && zoomCameraFeed) {
         zoomImg.hidden = true;
+        if (zoomModelViewer) zoomModelViewer.hidden = true;
         if (zoomLiveView) zoomLiveView.hidden = false;
         zoomCameraView.hidden = false;
         if (zoomCameraError) zoomCameraError.hidden = true;
@@ -103,7 +109,25 @@ document.addEventListener('DOMContentLoaded', function () {
 
       if (zoomLiveView) zoomLiveView.hidden = true;
       if (zoomCameraView) zoomCameraView.hidden = true;
-      zoomImg.hidden = false;
+      const modelIsActive = Boolean(
+        productModelViewer &&
+        !productModelViewer.hidden &&
+        productModelViewer.dataset.loaded === 'true' &&
+        productModelViewer.src &&
+        zoomModelViewer
+      );
+      if (zoomModelViewer) {
+        zoomModelViewer.hidden = !modelIsActive;
+        if (modelIsActive) {
+          zoomModelViewer.src = productModelViewer.src;
+          zoomModelViewer.alt = productModelViewer.alt;
+        }
+      }
+      zoomImg.hidden = modelIsActive;
+      if (modelIsActive) {
+        zoomModal.classList.remove('hidden');
+        return;
+      }
       zoomImg.src = mainImage ? mainImage.src : '';
       zoomModal.classList.remove('hidden');
     });
@@ -126,8 +150,13 @@ document.addEventListener('DOMContentLoaded', function () {
     if (zoomCameraView) zoomCameraView.hidden = true;
     if (zoomLiveView) zoomLiveView.hidden = true;
     if (zoomGlassesOverlay) zoomGlassesOverlay.hidden = true;
+    if (zoomTryOnModelViewer) zoomTryOnModelViewer.hidden = true;
     if (zoomCameraError) zoomCameraError.hidden = true;
     if (zoomImg) zoomImg.hidden = false;
+    if (zoomModelViewer) {
+      zoomModelViewer.hidden = true;
+      zoomModelViewer.src = '';
+    }
   }
 
   function syncZoomGlasses() {
@@ -142,10 +171,19 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     zoomGlassesOverlay.src = glassesOverlay.currentSrc || glassesOverlay.src;
-    const detected = document
-      .getElementById('camGlassesLayer')
-      ?.classList.contains('has-face');
-    zoomGlassesOverlay.hidden = !detected;
+    const detected = glassesLayer?.classList.contains('has-face');
+    const use3dModel = Boolean(
+      detected &&
+      glassesLayer?.classList.contains('use-3d-model') &&
+      tryOnModelViewer &&
+      zoomTryOnModelViewer &&
+      tryOnModelViewer.getAttribute('src') &&
+      zoomTryOnModelViewer.dataset.failed !== 'true'
+    );
+    zoomGlassesOverlay.hidden = !detected || use3dModel;
+    if (zoomTryOnModelViewer) {
+      zoomTryOnModelViewer.hidden = !use3dModel;
+    }
     if (!detected) return;
 
     const sourceWidth = mainShell.clientWidth;
@@ -167,6 +205,39 @@ document.addEventListener('DOMContentLoaded', function () {
     zoomGlassesOverlay.style.top = `${(top / sourceHeight) * 100}%`;
     zoomGlassesOverlay.style.width = `${(width / sourceWidth) * 100}%`;
     zoomGlassesOverlay.style.transform = glassesOverlay.style.transform;
+
+    if (use3dModel && tryOnModelViewer && zoomTryOnModelViewer) {
+      const source = tryOnModelViewer.getAttribute('src');
+      if (zoomTryOnModelViewer.getAttribute('src') !== source) {
+        zoomTryOnModelViewer.dataset.failed = 'false';
+        zoomTryOnModelViewer.setAttribute('src', source);
+        zoomTryOnModelViewer.addEventListener('error', () => {
+          zoomTryOnModelViewer.dataset.failed = 'true';
+          syncZoomGlasses();
+        }, { once: true });
+      }
+
+      const modelLeft = parseFloat(tryOnModelViewer.style.left);
+      const modelTop = parseFloat(tryOnModelViewer.style.top);
+      const modelWidth = parseFloat(tryOnModelViewer.style.width);
+      const modelHeight = parseFloat(tryOnModelViewer.style.height);
+      if (
+        Number.isFinite(modelLeft) &&
+        Number.isFinite(modelTop) &&
+        Number.isFinite(modelWidth) &&
+        Number.isFinite(modelHeight)
+      ) {
+        zoomTryOnModelViewer.style.left = `${(modelLeft / sourceWidth) * 100}%`;
+        zoomTryOnModelViewer.style.top = `${(modelTop / sourceHeight) * 100}%`;
+        zoomTryOnModelViewer.style.width = `${(modelWidth / sourceWidth) * 100}%`;
+        zoomTryOnModelViewer.style.height = `${(modelHeight / sourceHeight) * 100}%`;
+        zoomTryOnModelViewer.style.transform = tryOnModelViewer.style.transform;
+        zoomTryOnModelViewer.setAttribute(
+          'camera-orbit',
+          tryOnModelViewer.getAttribute('camera-orbit')
+        );
+      }
+    }
   }
 
   function syncZoomAdjustments() {

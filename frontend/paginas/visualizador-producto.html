@@ -25,6 +25,7 @@
     <title>Producto | Boutique de la Visión</title>
     <link rel="stylesheet" href="../estilos/footer.css" />
     <link rel="stylesheet" href="../estilos/accesibilidad.css" />
+    <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/4.0.0/model-viewer.min.js"></script>
   </head>
 <body>
     <div id="header"></div>
@@ -50,11 +51,13 @@
         <div class="col-gallery" id="colGallery">
             <div class="main-image-shell" id="mainShell">
                 <img src="" class="main-img" id="mainImage" alt="Producto seleccionado">
+                <model-viewer id="productModelViewer" class="product-model-viewer" alt="" camera-controls auto-rotate shadow-intensity="1" loading="eager" hidden></model-viewer>
 
                 <video id="cameraFeed" class="camera-feed" autoplay playsinline muted></video>
 
                 <div class="cam-glasses-layer" id="camGlassesLayer">
                     <img src="" id="glassesOverlayImg" alt="">
+                    <model-viewer id="tryOnModelViewer" class="try-on-model-viewer" alt="" camera-orbit="0deg 75deg auto" disable-zoom disable-pan shadow-intensity="1" loading="eager" hidden></model-viewer>
                 </div>
 
                 <div class="cam-mode-badge" id="camModeBadge"><i class="fi fi-sr-video-camera"></i> Prueba virtual</div>
@@ -94,7 +97,7 @@
                 <div class="try-on-panel hidden" id="tryOnPanel">
                     <div class="cam-placeholder">
                         <i class="fi fi-br-user"></i>
-                        <p>Permite el acceso a la cámara y mira al frente para ajustar las gafas. El video se procesa en tu navegador.</p>
+                        <p>Permite el acceso a la cámara y mira al frente para ajustar las gafas. Gira el rostro a izquierda, derecha, arriba o abajo para cambiar la perspectiva 3D. Haz un pellizco con pulgar e índice para moverlas con la mano; sepáralos para soltarlas. El video se procesa en tu navegador.</p>
                     </div>
                     <p class="try-on-error" id="tryOnError" role="status" aria-live="polite" hidden></p>
                     <button class="activate-camera" id="activateCam" type="button">Activar cámara</button>
@@ -116,6 +119,10 @@
                 <div class="spec-item" id="specMaterial">
                     <span class="spec-label">Material</span>
                     <span class="spec-value" id="material"></span>
+                </div>
+                <div class="spec-item" id="specColor" hidden>
+                    <span class="spec-label">Color / acabado</span>
+                    <span class="spec-value" id="color"></span>
                 </div>
                 <div class="spec-item" id="specGenero">
                     <span class="spec-label">Género</span>
@@ -177,6 +184,7 @@
             <div class="zoom-camera-view" id="zoomCameraView" hidden>
                 <video id="zoomCameraFeed" autoplay playsinline muted></video>
                 <img src="" id="zoomGlassesOverlay" alt="" hidden>
+                <model-viewer id="zoomTryOnModelViewer" class="zoom-try-on-model-viewer" alt="" camera-orbit="0deg 75deg auto" disable-zoom disable-pan shadow-intensity="1" loading="eager" hidden></model-viewer>
                 <p class="zoom-camera-error" id="zoomCameraError" role="status" hidden></p>
             </div>
             <section class="try-on-adjustments zoom-adjustments" aria-labelledby="zoomAdjustmentsTitle">
@@ -192,6 +200,7 @@
                 <button class="try-on-reset" id="zoomResetGlassesAdjustments" type="button">Restablecer</button>
             </section>
         </div>
+        <model-viewer id="zoomModelViewer" class="zoom-model-viewer" alt="" camera-controls shadow-intensity="1" hidden></model-viewer>
         <img src="" id="zoomImg" alt="Vista ampliada del producto">
     </div>
 

@@ -20,6 +20,13 @@ const DIRECTORIO_IMAGENES_PRODUCTOS = path.join(
   "imagenes",
   "productos",
 );
+const DIRECTORIO_MODELOS_3D = path.join(
+  __dirname,
+  "..",
+  "frontend",
+  "modelos_gafas",
+);
+const MAX_MODELO_3D_BYTES = 10 * 1024 * 1024;
 const IMAGEN_PRODUCTO_PREDETERMINADA = "gafas-modelo1.png";
 const IMAGENES_VECTOR_CATALOGO = new Set([
   "montura-infantil-azul.svg",
@@ -98,6 +105,58 @@ app.post("/api/upload-imagen", (req, res) => {
   }
 });
 
+app.post("/api/upload-modelo-3d", verificarAdministrador, async (req, res) => {
+  const { nombreArchivo, base64Data } = req.body || {};
+  if (
+    typeof nombreArchivo !== "string" ||
+    path.basename(nombreArchivo) !== nombreArchivo ||
+    !/\.glb$/i.test(nombreArchivo) ||
+    typeof base64Data !== "string"
+  ) {
+    return res.status(400).json({ mensaje: "Selecciona un archivo GLB válido" });
+  }
+
+  const encoded = /^data:[^;,]+;base64,([A-Za-z0-9+/]+={0,2})$/.exec(
+    base64Data,
+  );
+  if (!encoded) {
+    return res.status(400).json({ mensaje: "El archivo GLB no tiene un formato válido" });
+  }
+
+  const buffer = Buffer.from(encoded[1], "base64");
+  if (
+    buffer.length === 0 ||
+    buffer.length > MAX_MODELO_3D_BYTES ||
+    buffer.toString("base64") !== encoded[1] ||
+    buffer.toString("ascii", 0, 4) !== "glTF" ||
+    buffer.length < 12 ||
+    buffer.readUInt32LE(4) !== 2 ||
+    buffer.readUInt32LE(8) !== buffer.length
+  ) {
+    return res.status(400).json({
+      mensaje: "El archivo debe ser un GLB 2.0 válido de máximo 10 MB",
+    });
+  }
+
+  const nombreBase = path
+    .basename(nombreArchivo, path.extname(nombreArchivo))
+    .replace(/[^a-zA-Z0-9-_]/g, "");
+  const filename = `${Date.now()}-${nombreBase || "modelo"}.glb`;
+
+  try {
+    await fs.promises.mkdir(DIRECTORIO_MODELOS_3D, { recursive: true });
+    await fs.promises.writeFile(
+      path.join(DIRECTORIO_MODELOS_3D, filename),
+      buffer,
+      { flag: "wx" },
+    );
+    res.status(201).json({ mensaje: "Modelo 3D guardado", filename });
+  } catch (error) {
+    console.error("Error al guardar el modelo 3D:", error);
+    res.status(500).json({ mensaje: "No se pudo guardar el modelo 3D" });
+  }
+});
+
 // ─ CONSTANTES Y AYUDAS ──
 // Los valores salen de los enum de BD_Optica_Vision.sql
 const ESTADOS_CITA = [
@@ -140,6 +199,19 @@ function resolverImagenProducto(nombreArchivo) {
   return imagenProductoDisponible(nombreArchivo)
     ? nombreArchivo
     : IMAGEN_PRODUCTO_PREDETERMINADA;
+}
+
+function modelo3dDisponible(nombreArchivo) {
+  return (
+    typeof nombreArchivo === "string" &&
+    path.basename(nombreArchivo) === nombreArchivo &&
+    /\.glb$/i.test(nombreArchivo) &&
+    fs.existsSync(path.join(DIRECTORIO_MODELOS_3D, nombreArchivo))
+  );
+}
+
+function resolverModelo3d(nombreArchivo) {
+  return modelo3dDisponible(nombreArchivo) ? nombreArchivo : null;
 }
 
 // Error con código HTTP para responder mensajes claros desde dentro de una transacción
@@ -427,7 +499,10 @@ app.get("/api/productos", async (req, res) => {
       descripcion: p.descripcion,
       precio: p.precio,
       imagen: resolverImagenProducto(p.imagen),
+      modelo_3d: resolverModelo3d(p.modelo_3d),
       material: p.material,
+      color: p.color,
+      calibre: p.calibre,
       genero: p.genero,
       existencia_actual: p.existencia_actual,
       existencia_minima: p.existencia_minima,
@@ -458,7 +533,10 @@ app.post("/api/productos", verificarSesion, async (req, res) => {
     descripcion,
     precio,
     imagen,
+    modelo_3d,
     material,
+    color,
+    calibre,
     genero,
     existencia_actual,
     existencia_minima,
@@ -477,6 +555,11 @@ app.post("/api/productos", verificarSesion, async (req, res) => {
       mensaje: "Selecciona una imagen existente del catálogo de productos",
     });
   }
+  if (modelo_3d && !modelo3dDisponible(modelo_3d)) {
+    return res.status(400).json({
+      mensaje: "Selecciona un modelo GLB existente en el catálogo",
+    });
+  }
 
   try {
     // El SKU es obligatorio y único en la base de datos; si el formulario no lo envía se genera uno
@@ -486,8 +569,8 @@ app.post("/api/productos", verificarSesion, async (req, res) => {
         : "SKU-" + Date.now().toString(36).toUpperCase();
 
     const [result] = await db.query(
-      `INSERT INTO producto (sku, nombre, descripcion, precio, costo_compra, imagen, material, genero, existencia_actual, existencia_minima, id_categoria, id_marca, estado)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      `INSERT INTO producto (sku, nombre, descripcion, precio, costo_compra, imagen, modelo_3d, material, color, calibre, genero, existencia_actual, existencia_minima, id_categoria, id_marca, estado)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
       [
         skuFinal,
         nombre,
@@ -495,7 +578,10 @@ app.post("/api/productos", verificarSesion, async (req, res) => {
         precio,
         costo_compra || 0,
         imagen,
+        modelo_3d || null,
         material || "Acetato",
+        color || null,
+        calibre || null,
         genero || "Unisex",
         existencia_actual !== undefined ? existencia_actual : 10,
         existencia_minima !== undefined ? existencia_minima : 3,
@@ -533,7 +619,10 @@ app.put("/api/productos/:id", async (req, res) => {
     descripcion,
     precio,
     imagen,
+    modelo_3d,
     material,
+    color,
+    calibre,
     genero,
     existencia_actual,
     existencia_minima,
@@ -551,6 +640,16 @@ app.put("/api/productos/:id", async (req, res) => {
       mensaje: "Selecciona una imagen existente del catálogo de productos",
     });
   }
+  if (
+    modelo_3d !== undefined &&
+    modelo_3d !== null &&
+    modelo_3d !== "" &&
+    !modelo3dDisponible(modelo_3d)
+  ) {
+    return res.status(400).json({
+      mensaje: "Selecciona un modelo GLB existente en el catálogo",
+    });
+  }
 
   try {
     await db.query(
@@ -561,7 +660,10 @@ app.put("/api/productos/:id", async (req, res) => {
          descripcion = COALESCE(?, descripcion),
          precio = COALESCE(?, precio),
          imagen = COALESCE(?, imagen),
+         modelo_3d = COALESCE(?, modelo_3d),
          material = COALESCE(?, material),
+         color = COALESCE(?, color),
+         calibre = COALESCE(?, calibre),
          genero = COALESCE(?, genero),
          existencia_actual = COALESCE(?, existencia_actual),
          existencia_minima = COALESCE(?, existencia_minima),
@@ -576,7 +678,10 @@ app.put("/api/productos/:id", async (req, res) => {
         descripcion,
         precio,
         imagen,
+        modelo_3d,
         material,
+        color,
+        calibre,
         genero,
         existencia_actual,
         existencia_minima,
@@ -790,7 +895,10 @@ app.get("/api/productos/:id", async (req, res) => {
       descripcion: p.descripcion,
       precio: p.precio,
       imagen: resolverImagenProducto(p.imagen),
+      modelo_3d: resolverModelo3d(p.modelo_3d),
       material: p.material,
+      color: p.color,
+      calibre: p.calibre,
       genero: p.genero,
       existencia_actual: p.existencia_actual,
       stock: p.existencia_actual,

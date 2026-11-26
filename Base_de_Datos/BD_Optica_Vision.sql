@@ -104,6 +104,7 @@ create table producto (
     precio decimal(10,2) not null,
     costo_compra decimal(10,2) not null default 0,
     imagen varchar(150) not null,
+    modelo_3d varchar(255) default null,
     material varchar(50),
     color varchar(50),
     calibre varchar(20),
@@ -513,6 +514,9 @@ insert into producto (sku, nombre, descripcion, precio, costo_compra, imagen, ma
 ('ACC-0003', 'Estuche rígido acolchado compacto', 'Estuche rígido acolchado para guardar monturas', 24000.00, 9500.00, 'estuche-gafas.svg', null, null, null, 'Unisex', 20, 5, true, false, 0, 6, 5, 'Activo'),
 ('ACC-0004', 'Cordón ajustable para gafas', 'Cordón ligero con terminales seguros para las patillas', 12000.00, 4500.00, 'cordon-gafas.svg', null, 'Dorado', null, 'Unisex', 26, 6, true, false, 0, 6, 5, 'Activo'),
 ('ACC-0005', 'Kit de limpieza para gafas', 'Kit con atomizador y paño suave para limpiar lentes', 22000.00, 9000.00, 'kit-limpieza-gafas.svg', null, null, null, 'Unisex', 18, 5, true, false, 0, 6, 5, 'Activo');
+
+insert into producto (sku, nombre, descripcion, precio, costo_compra, imagen, modelo_3d, material, color, calibre, genero, existencia_actual, existencia_minima, maneja_inventario, requiere_receta, meses_garantia, id_categoria, id_marca, estado) values
+('MON-GLB-0001', 'Montura dorada y vino - Modelo 3D', 'Montura unisex dorada con lentes transparentes, puente metálico y patillas de acetato color vino; cómoda y ligera para uso diario.', 280000.00, 140000.00, 'gafas-modelo1.png', 'gafas.glb', 'Metal y acetato', 'Dorado, negro y vino', null, 'Unisex', 4, 3, true, false, 12, 1, 5, 'Activo');
 
 
 insert into imagen_producto (ruta, orden, id_producto) values
