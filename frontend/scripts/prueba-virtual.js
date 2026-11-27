@@ -9,6 +9,8 @@
   const HAND_MODEL_URL =
     "https://storage.googleapis.com/mediapipe-models/hand_landmarker/hand_landmarker/float16/1/hand_landmarker.task";
   const RUTA_IMAGENES = "../imagenes/productos/";
+  const TEMPLES_SHOW_YAW = 0.22;
+  const TEMPLES_HIDE_YAW = 0.16;
 
   const tryOnBtn = document.getElementById("tryOnBtn");
   const tryOnPanel = document.getElementById("tryOnPanel");
@@ -55,6 +57,16 @@
     return;
   }
 
+  tryOnModelViewer.addEventListener("load", () => {
+    tryOnModelViewer.dataset.loaded = "true";
+    tryOnModelViewer.dataset.failed = "false";
+  });
+  tryOnModelViewer.addEventListener("error", () => {
+    tryOnModelViewer.dataset.loaded = "false";
+    tryOnModelViewer.dataset.failed = "true";
+    if (tryOnActive) setError("No se pudo cargar el modelo 3D de las gafas.");
+  });
+
   let cameraStream = null;
   let faceLandmarker = null;
   let handLandmarker = null;
@@ -65,6 +77,8 @@
   let currentImage = "";
   let hasCurrentModel = false;
   let currentModelUrl = "";
+  let frontFacingModelUrl = "";
+  let templesVisible = false;
   let modelOverlayImage = "";
   let filteredPose = null;
   let lastPoseTime = null;
@@ -136,6 +150,11 @@
     currentModelUrl = producto.modelo_3d
       ? "../modelos_gafas/" + encodeURIComponent(producto.modelo_3d)
       : "";
+    frontFacingModelUrl =
+      producto.modelo_3d === "gafas.glb"
+        ? "../modelos_gafas/gafas-frontal.glb"
+        : currentModelUrl;
+    templesVisible = false;
     hasCurrentModel = Boolean(
       currentModelUrl && productModelViewer && tryOnModelViewer,
     );
@@ -386,12 +405,13 @@
       );
     }
 
+    const modelUrl = frontFacingModelUrl || currentModelUrl;
     tryOnModelViewer.hidden = false;
     tryOnModelViewer.style.left = "50%";
     tryOnModelViewer.style.top = "50%";
     tryOnModelViewer.style.width = "220px";
     tryOnModelViewer.style.height = "120px";
-    const sameModel = tryOnModelViewer.getAttribute("src") === currentModelUrl;
+    const sameModel = tryOnModelViewer.getAttribute("src") === modelUrl;
     if (sameModel && tryOnModelViewer.dataset.loaded === "true") {
       return Promise.resolve();
     }
@@ -429,7 +449,7 @@
       if (!sameModel) {
         tryOnModelViewer.dataset.loaded = "false";
         tryOnModelViewer.dataset.failed = "false";
-        tryOnModelViewer.setAttribute("src", currentModelUrl);
+        tryOnModelViewer.setAttribute("src", modelUrl);
       }
       if (tryOnModelViewer.dataset.loaded === "true") onLoad();
     });
@@ -683,6 +703,7 @@
     const use3dModel = hasCurrentModel && poseSource === "face";
     glassesLayer.classList.toggle("use-3d-model", use3dModel);
     if (use3dModel) {
+      updateTempleVisibility(pose.yaw);
       const modelHeight = width * 0.55;
       const theta = clamp(-pose.yaw * 52, -42, 42);
       const phi = clamp(75 + pose.pitch * 48, 52, 102);
@@ -698,6 +719,24 @@
         `${theta.toFixed(1)}deg ${phi.toFixed(1)}deg 60%`,
       );
     }
+  }
+
+  function updateTempleVisibility(yaw) {
+    if (!frontFacingModelUrl || frontFacingModelUrl === currentModelUrl) return;
+
+    const yawMagnitude = Math.abs(yaw);
+    const shouldShowTemples = templesVisible
+      ? yawMagnitude > TEMPLES_HIDE_YAW
+      : yawMagnitude >= TEMPLES_SHOW_YAW;
+    if (shouldShowTemples === templesVisible) return;
+
+    templesVisible = shouldShowTemples;
+    const modelUrl = templesVisible ? currentModelUrl : frontFacingModelUrl;
+    if (tryOnModelViewer.getAttribute("src") === modelUrl) return;
+
+    tryOnModelViewer.dataset.loaded = "false";
+    tryOnModelViewer.dataset.failed = "false";
+    tryOnModelViewer.setAttribute("src", modelUrl);
   }
 
   function clamp(value, minimum, maximum) {
@@ -732,6 +771,7 @@
     lastPoseTime = null;
     poseSource = null;
     handPinched = false;
+    templesVisible = false;
     colGallery.classList.remove("try-on-active");
     cameraFeed.classList.remove("active");
     glassesLayer.classList.remove("active", "has-face", "use-3d-model");
